@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вселенная паркура</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Russo+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- background dynamic canvas container -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Fullscreen Fade Transition Overlay -->
+        <div id="fadeOverlay" class="fade-overlay"></div>
+
+        <!-- Main Menu Overlay -->
+        <div id="mainMenu" class="overlay screen-active">
+            <div class="menu-card glass-panel animate-pop">
+                <div class="badge">🚀 Космическая Вселенная</div>
+                <h1 class="game-title">Вселенная <span class="highlight">паркура</span></h1>
+                <p class="subtitle">Покоряй препятствия и ищи новые приключения!</p>
+                <div class="menu-actions">
+                    <button id="btnPlay" class="btn btn-primary">
+                        <span class="btn-icon">▶</span>
+                        <span class="btn-text">Играть</span>
+                    </button>
+                </div>
+                <div class="controls-preview">
+                    <div class="control-item">
+                        <span class="key">A</span><span class="key">D</span> / <span class="key">←</span><span class="key">→</span> Бег
+                    </div>
+                    <div class="control-item">
+                        <span class="key">Shift</span> Рывок вперёд
+                    </div>
+                    <div class="control-item">
+                        <span class="key">Ctrl</span> + <span class="key">Shift</span> Кувырок
+                    </div>
+                    <div class="control-item">
+                        <span class="key">Ctrl</span> Присесть / Проползти
+                    </div>
+                    <div class="control-item">
+                        <span class="key">Пробел</span> Прыжок / Двойной прыжок в воздухе
+                    </div>
+                    <div class="control-item">
+                        <span class="key">E</span> Лестница
+                    </div>
+                    <div class="control-item">
+                        <span class="key">Канат</span> A/D раскачка, Пробел рывок
+                    </div>
+                    <div class="control-item">
+                        <span class="key">Esc</span> Пауза
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Level Selection Overlay -->
+        <div id="levelSelectScreen" class="overlay hidden">
+            <div class="level-card glass-panel animate-pop">
+                <div class="level-header">
+                    <h2 class="level-title">Выбор уровня</h2>
+                    <span class="level-page-badge">1 страница - Здание Препятствий</span>
+                    <button id="btnBackToMenu" class="btn-close">✕</button>
+                </div>
+                <p class="level-subtext">Выберите доступный уровень для старта</p>
+                <div class="levels-grid" id="levelsGrid">
+                    <!-- 20 Level tiles generated via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- HUD overlay (during gameplay) -->
+        <div id="hud" class="overlay hud-overlay hidden">
+            <div class="hint-banner hidden" id="ledgeHint">
+                <span class="hint-key">ПРОБЕЛ</span> Нажмите, чтобы залезть на край!
+            </div>
+            <!-- Boss Health Bar HUD -->
+            <div class="boss-hud hidden" id="bossHud">
+                <div class="boss-hud-header">
+                    <span class="boss-name">🤖 ЛЕТАЮЩИЙ МИНИ-РОБОТ</span>
+                    <span class="boss-phase-text" id="bossPhaseText">ФАЗА 1</span>
+                </div>
+                <div class="boss-health-track">
+                    <div class="boss-health-fill" id="bossHealthBar"></div>
+                </div>
+            </div>
+            <div class="controls-overlay">
+                <div><span>A/D</span> Движение</div>
+                <div><span>SHIFT</span> Рывок</div>
+                <div><span>CTRL+SHIFT</span> Кувырок</div>
+                <div><span>ПРОБЕЛ</span> Прыжок / Залезть</div>
+                <div><span>E</span> Лестница</div>
+                <div><span>КАНАТ</span> A/D раскачка, Пробел рывок</div>
+                <div><span>ESC</span> Пауза</div>
+            </div>
+            <button id="btnPause" class="btn-pause">
+                <span>⏸️</span> Пауза
+            </button>
+        </div>
+
+        <!-- Pause Screen Overlay -->
+        <div id="pauseScreen" class="overlay hidden">
+            <div class="pause-card glass-panel animate-pop">
+                <div class="pause-icon">⏸️</div>
+                <h2 class="pause-title">Пауза</h2>
+                <p class="pause-subtext">Игра приостановлена</p>
+                <div class="pause-actions">
+                    <button id="btnResume" class="btn btn-primary">
+                        <span class="btn-icon">▶</span> Продолжить
+                    </button>
+                    <button id="btnPauseReplay" class="btn btn-secondary">
+                        <span class="btn-icon">🔄</span> Заново
+                    </button>
+                    <button id="btnPauseToLevels" class="btn btn-secondary">
+                        <span class="btn-icon">📋</span> В меню уровней
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Victory Screen Overlay -->
+        <div id="victoryScreen" class="overlay hidden">
+            <div class="victory-card glass-panel animate-pop">
+                <div class="victory-icon">🏆</div>
+                <h2 class="victory-title">Уровень пройден!</h2>
+                <p class="victory-subtext">Отличный паркур и результат!</p>
+                <div class="victory-actions">
+                    <div class="victory-top-actions">
+                        <button id="btnReplay" class="btn btn-secondary">
+                            <span class="btn-icon">🔄</span> Пройти снова
+                        </button>
+                        <button id="btnToMenu" class="btn btn-secondary">
+                            <span class="btn-icon">🏠</span> В меню
+                        </button>
+                    </div>
+                    <button id="btnNextLevel" class="btn btn-primary btn-full">
+                        <span class="btn-icon">➡️</span> Следующий уровень
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Defeat Screen Overlay -->
+        <div id="defeatScreen" class="overlay hidden">
+            <div class="defeat-card glass-panel animate-pop">
+                <div class="defeat-icon">💥</div>
+                <h2 class="defeat-title">Поражение</h2>
+                <p class="defeat-subtext">Робот-босс прервал ваш забег!</p>
+                <div class="defeat-actions">
+                    <button id="btnDefeatReplay" class="btn btn-primary btn-full">
+                        <span class="btn-icon">🔄</span> Заново
+                    </button>
+                    <button id="btnDefeatToLevels" class="btn btn-secondary btn-full">
+                        <span class="btn-icon">📋</span> В меню уровней
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
