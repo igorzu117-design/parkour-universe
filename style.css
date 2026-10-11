@@ -684,7 +684,286 @@ canvas {
     transition: width 0.3s ease;
 }
 
+/* ==========================================
+   PAGE NAVIGATION ARROWS & LEVEL BROWSER
+   ========================================== */
+.level-browser-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    position: relative;
+    width: 100%;
+}
+
+.level-browser-wrapper .levels-grid {
+    flex: 1;
+    min-width: 0;
+}
+
+.level-page-arrow {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.78);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    color: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+    flex-shrink: 0;
+    user-select: none;
+    outline: none;
+}
+
+.level-page-arrow svg {
+    display: block;
+    transition: transform 0.2s ease;
+}
+
+.level-page-arrow:hover:not(.disabled) {
+    transform: scale(1.12);
+}
+
+.level-page-arrow.prev:hover:not(.disabled) {
+    background: rgba(30, 27, 75, 0.9);
+    border-color: #a855f7;
+    color: #c084fc;
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.6);
+}
+
+.level-page-arrow.prev:hover:not(.disabled) svg {
+    transform: translateX(-2px);
+}
+
+.level-page-arrow.next:hover:not(.disabled) {
+    background: rgba(6, 78, 59, 0.9);
+    border-color: #34d399;
+    color: #34d399;
+    box-shadow: 0 0 25px rgba(52, 211, 153, 0.65);
+}
+
+.level-page-arrow.next:hover:not(.disabled) svg {
+    transform: translateX(2px);
+}
+
+.level-page-arrow:active:not(.disabled) {
+    transform: scale(0.96);
+}
+
+.level-page-arrow.disabled {
+    opacity: 0.18;
+    cursor: default;
+    pointer-events: none;
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: none;
+    filter: grayscale(1);
+}
+
+/* Eye-catching pulsating glow on next page arrow when on page 1 */
+.level-page-arrow.next.pulse-hint {
+    border-color: rgba(52, 211, 153, 0.7);
+    color: #34d399;
+    animation: arrowGlowPulse 2.2s infinite ease-in-out;
+}
+
+@keyframes arrowGlowPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 14px rgba(16, 185, 129, 0.35);
+        border-color: rgba(52, 211, 153, 0.5);
+    }
+    50% {
+        transform: scale(1.08);
+        box-shadow: 0 0 28px rgba(52, 211, 153, 0.75), 0 0 45px rgba(16, 185, 129, 0.35);
+        border-color: #34d399;
+    }
+}
+
+/* Pagination Dots */
+.level-pagination-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 18px;
+    position: relative;
+    z-index: 2;
+}
+
+.indicator-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.indicator-dot:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.45);
+    transform: scale(1.2);
+}
+
+.indicator-dot.active {
+    width: 28px;
+    background: linear-gradient(90deg, #8b5cf6, #38bdf8);
+    border-color: #38bdf8;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.6);
+}
+
+.indicator-dot.active.nature {
+    background: linear-gradient(90deg, #059669, #34d399);
+    border-color: #34d399;
+    box-shadow: 0 0 14px rgba(52, 211, 153, 0.65);
+}
+
+.level-page-badge.page-building {
+    color: #38bdf8;
+    background: rgba(14, 165, 233, 0.16);
+    border-color: rgba(56, 189, 248, 0.45);
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+}
+
+.level-page-badge.page-nature {
+    color: #34d399;
+    background: rgba(16, 185, 129, 0.18);
+    border-color: rgba(52, 211, 153, 0.55);
+    box-shadow: 0 0 18px rgba(52, 211, 153, 0.35);
+}
+
+/* Nature Level Tile Style */
+.level-tile.unlocked.nature {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    border: 1px solid rgba(167, 243, 208, 0.55);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.5);
+    color: #ffffff;
+}
+
+.level-tile.unlocked.nature:hover {
+    transform: translateY(-4px) scale(1.06);
+    box-shadow: 0 8px 30px rgba(16, 185, 129, 0.8);
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+}
+
+.level-tile.boss-level-20 {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 45%, #b91c1c 100%) !important;
+    border: 2px solid rgba(239, 68, 68, 0.85) !important;
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.6), inset 0 0 15px rgba(99, 102, 241, 0.4) !important;
+    animation: bossPulseRobot 2s infinite ease-in-out;
+}
+@keyframes bossPulseRobot {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(239, 68, 68, 0.6); }
+    50% { transform: scale(1.06); box-shadow: 0 0 32px rgba(239, 68, 68, 0.95), 0 0 15px rgba(139, 92, 246, 0.8); }
+}
+
+.level-tile.boss-level-40 {
+    background: linear-gradient(135deg, #065f46 0%, #047857 45%, #991b1b 100%) !important;
+    border: 2px solid rgba(239, 68, 68, 0.8) !important;
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.6), inset 0 0 15px rgba(34, 197, 94, 0.4) !important;
+    animation: bossPulse 2s infinite ease-in-out;
+}
+@keyframes bossPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(239, 68, 68, 0.6); }
+    50% { transform: scale(1.06); box-shadow: 0 0 32px rgba(239, 68, 68, 0.95), 0 0 15px rgba(34, 197, 94, 0.8); }
+}
+
+
+/* ==========================================
+   CUTSCENE CINEMATIC OVERLAY
+   ========================================== */
+.cutscene-overlay {
+    pointer-events: none;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 45px;
+}
+
+.btn-skip-cutscene {
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    pointer-events: auto;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    padding: 10px 22px;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.btn-skip-cutscene:hover {
+    background: rgba(16, 185, 129, 0.7);
+    border-color: #34d399;
+    box-shadow: 0 0 20px rgba(52, 211, 153, 0.6);
+    transform: scale(1.05);
+}
+
+.cutscene-banner {
+    pointer-events: auto;
+    max-width: 720px;
+    width: 90%;
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(52, 211, 153, 0.5);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7), 0 0 35px rgba(16, 185, 129, 0.3);
+    border-radius: 20px;
+    padding: 22px 34px;
+    text-align: center;
+}
+
+.cutscene-chapter {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #34d399;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: inline-block;
+    padding: 3px 12px;
+    background: rgba(16, 185, 129, 0.15);
+    border-radius: 99px;
+    border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.cutscene-text {
+    font-family: var(--font-sans);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.4;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.cutscene-hint {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 @media (max-width: 660px) {
+    .level-card {
+        padding: 24px 14px;
+        width: 96%;
+    }
     .level-header {
         flex-wrap: wrap;
     }
@@ -697,6 +976,28 @@ canvas {
     }
     .level-title {
         font-size: 1.8rem;
+    }
+    .level-browser-wrapper {
+        gap: 8px;
+    }
+    .level-page-arrow {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+    }
+    .level-page-arrow svg {
+        width: 20px;
+        height: 20px;
+    }
+    .levels-grid {
+        gap: 8px;
+    }
+    .level-tile {
+        height: 52px;
+        font-size: 1.1rem;
+    }
+    .cutscene-text {
+        font-size: 1.1rem;
     }
 }
 

@@ -63,13 +63,44 @@
             <div class="level-card glass-panel animate-pop">
                 <div class="level-header">
                     <h2 class="level-title">Выбор уровня</h2>
-                    <span class="level-page-badge">1 страница - Здание Препятствий</span>
+                    <span class="level-page-badge" id="levelPageBadge">1 страница - Здание Препятствий</span>
                     <button id="btnBackToMenu" class="btn-close">✕</button>
                 </div>
-                <p class="level-subtext">Выберите доступный уровень для старта</p>
-                <div class="levels-grid" id="levelsGrid">
-                    <!-- 20 Level tiles generated via JS -->
+
+                <p class="level-subtext" id="levelSubtext">Выберите доступный уровень для старта</p>
+                
+                <div class="level-browser-wrapper">
+                    <button id="btnPrevPage" class="level-page-arrow prev" title="Предыдущая страница (Здание)" aria-label="Предыдущая страница">
+                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+
+                    <div class="levels-grid" id="levelsGrid">
+                        <!-- 20 Level tiles generated via JS -->
+                    </div>
+
+                    <button id="btnNextPage" class="level-page-arrow next" title="Следующая страница (Природа)" aria-label="Следующая страница">
+                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
                 </div>
+
+                <div class="level-pagination-indicator" id="levelPaginationIndicator">
+                    <span class="indicator-dot active" id="dotPage1" title="1 Страница: Здание"></span>
+                    <span class="indicator-dot" id="dotPage2" title="2 Страница: Природа"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cutscene Cinematic Overlay (Level 21 Intro) -->
+        <div id="cutsceneOverlay" class="overlay cutscene-overlay hidden">
+            <button id="btnSkipCutscene" class="btn-skip-cutscene">Пропустить ⏩</button>
+            <div class="cutscene-banner animate-slide-up">
+                <div class="cutscene-chapter" id="cutsceneChapter">🌲 СТРАНИЦА 2: ДИКАЯ ПРИРОДА</div>
+                <div class="cutscene-text" id="cutsceneText">Стикмен выходит из темного здания...</div>
+                <div class="cutscene-hint">Нажмите [Пробел] чтобы пропустить катсцену</div>
             </div>
         </div>
 
@@ -81,20 +112,21 @@
             <!-- Boss Health Bar HUD -->
             <div class="boss-hud hidden" id="bossHud">
                 <div class="boss-hud-header">
-                    <span class="boss-name">🤖 ЛЕТАЮЩИЙ МИНИ-РОБОТ</span>
+                    <span class="boss-name" id="bossName">🤖 ЛЕТАЮЩИЙ МИНИ-РОБОТ</span>
                     <span class="boss-phase-text" id="bossPhaseText">ФАЗА 1</span>
                 </div>
                 <div class="boss-health-track">
                     <div class="boss-health-fill" id="bossHealthBar"></div>
                 </div>
             </div>
-            <div class="controls-overlay">
+            <div class="controls-overlay" id="controlsOverlay">
                 <div><span>A/D</span> Движение</div>
                 <div><span>SHIFT</span> Рывок</div>
                 <div><span>CTRL+SHIFT</span> Кувырок</div>
                 <div><span>ПРОБЕЛ</span> Прыжок / Залезть</div>
-                <div><span>E</span> Лестница</div>
-                <div><span>КАНАТ</span> A/D раскачка, Пробел рывок</div>
+                <div id="ctrlLadder"><span>E</span> Лестница</div>
+                <div id="ctrlTurnik"><span>ТУРНИК</span> A/D раскачка, Пробел рывок</div>
+                <div id="ctrlRope"><span>КАНАТ</span> A/D раскачка, Пробел рывок</div>
                 <div><span>ESC</span> Пауза</div>
             </div>
             <button id="btnPause" class="btn-pause">
@@ -162,6 +194,6 @@
         </div>
     </div>
 
-    <script src="game.js"></script>
+    <script src="game.js?v=rope_turnik_anim_fix"></script>
 </body>
 </html>
