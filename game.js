@@ -40,11 +40,12 @@
     const bossHealthBar = document.getElementById('bossHealthBar');
     const bossPhaseText = document.getElementById('bossPhaseText');
 
-    // Page 2 Navigation & Cutscene Elements
+    // Page Navigation & Cutscene Elements
     const btnPrevPage = document.getElementById('btnPrevPage');
     const btnNextPage = document.getElementById('btnNextPage');
     const dotPage1 = document.getElementById('dotPage1');
     const dotPage2 = document.getElementById('dotPage2');
+    const dotPage3 = document.getElementById('dotPage3');
     const levelPageBadge = document.getElementById('levelPageBadge');
     const cutsceneOverlay = document.getElementById('cutsceneOverlay');
     const cutsceneChapter = document.getElementById('cutsceneChapter');
@@ -53,6 +54,13 @@
     const ctrlTurnik = document.getElementById('ctrlTurnik');
     const ctrlRope = document.getElementById('ctrlRope');
     const ctrlLadder = document.getElementById('ctrlLadder');
+    const inventoryHud = document.getElementById('inventoryHud');
+    const coldHud = document.getElementById('coldHud');
+    const coldIcon = document.getElementById('coldIcon');
+    const coldTitle = document.getElementById('coldTitle');
+    const coldPercent = document.getElementById('coldPercent');
+    const coldBarFill = document.getElementById('coldBarFill');
+    const coldStatusText = document.getElementById('coldStatusText');
 
     // Sound Engine (Web Audio API)
     let audioCtx = null;
@@ -354,6 +362,149 @@
                 gain2.connect(audioCtx.destination);
                 osc2.start(now);
                 osc2.stop(now + 1.9);
+            } else if (type === 'yetiRoar') {
+                // Colossal guttural primal beast roar
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.type = 'sawtooth';
+                osc1.frequency.setValueAtTime(55, now);
+                osc1.frequency.exponentialRampToValueAtTime(140, now + 0.4);
+                osc1.frequency.exponentialRampToValueAtTime(40, now + 1.8);
+                gain1.gain.setValueAtTime(0.7, now);
+                gain1.gain.exponentialRampToValueAtTime(0.01, now + 1.8);
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.start(now);
+                osc1.stop(now + 1.8);
+
+                const osc2 = audioCtx.createOscillator();
+                const gain2 = audioCtx.createGain();
+                osc2.type = 'square';
+                osc2.frequency.setValueAtTime(80, now);
+                osc2.frequency.exponentialRampToValueAtTime(170, now + 0.5);
+                osc2.frequency.exponentialRampToValueAtTime(30, now + 1.9);
+                gain2.gain.setValueAtTime(0.4, now);
+                gain2.gain.exponentialRampToValueAtTime(0.01, now + 1.9);
+                osc2.connect(gain2);
+                gain2.connect(audioCtx.destination);
+                osc2.start(now);
+                osc2.stop(now + 1.9);
+            } else if (type === 'snowHit') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(280, now);
+                osc.frequency.exponentialRampToValueAtTime(70, now + 0.12);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.12);
+            } else if (type === 'snowCraft') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(350, now);
+                osc.frequency.exponentialRampToValueAtTime(180, now + 0.09);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.09);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.09);
+            } else if (type === 'lighterClick') {
+                // Sharp mechanical flint click / wheel snap
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(2200, now);
+                osc.frequency.exponentialRampToValueAtTime(750, now + 0.05);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.05);
+
+                const ping = audioCtx.createOscillator();
+                const pingGain = audioCtx.createGain();
+                ping.type = 'sine';
+                ping.frequency.setValueAtTime(980, now + 0.02);
+                pingGain.gain.setValueAtTime(0.25, now + 0.02);
+                pingGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                ping.connect(pingGain);
+                pingGain.connect(audioCtx.destination);
+                ping.start(now + 0.02);
+                ping.stop(now + 0.12);
+            } else if (type === 'lighterFlame') {
+                // Whoosh of lighter gas ignition
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(140, now);
+                osc.frequency.exponentialRampToValueAtTime(320, now + 0.1);
+                osc.frequency.exponentialRampToValueAtTime(180, now + 0.35);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            } else if (type === 'fireCrackling') {
+                // Cozy crackling campfire sound
+                [0, 0.07, 0.15, 0.24].forEach((del) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(320 + Math.random() * 250, now + del);
+                    osc.frequency.exponentialRampToValueAtTime(90, now + del + 0.06);
+                    gain.gain.setValueAtTime(0.2, now + del);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + del + 0.06);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + del);
+                    osc.stop(now + del + 0.06);
+                });
+            } else if (type === 'freeze') {
+                // Freezing frost crack & deep howling cold wind
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(420, now);
+                osc.frequency.exponentialRampToValueAtTime(90, now + 0.65);
+                gain.gain.setValueAtTime(0.35, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.65);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.65);
+
+                // High crystalline ice shatter ring
+                const crystal = audioCtx.createOscillator();
+                const crystalGain = audioCtx.createGain();
+                crystal.type = 'sine';
+                crystal.frequency.setValueAtTime(1480, now + 0.04);
+                crystal.frequency.exponentialRampToValueAtTime(760, now + 0.7);
+                crystalGain.gain.setValueAtTime(0.25, now + 0.04);
+                crystalGain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+                crystal.connect(crystalGain);
+                crystalGain.connect(audioCtx.destination);
+                crystal.start(now + 0.04);
+                crystal.stop(now + 0.7);
+            } else if (type === 'warmUp') {
+                // Gentle warm restorative chime
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(320, now);
+                osc.frequency.exponentialRampToValueAtTime(640, now + 0.22);
+                gain.gain.setValueAtTime(0.18, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.22);
             }
         } catch (e) {
             console.error(e);
@@ -436,6 +587,11 @@
                     finishLevel21IntroCutscene();
                     return;
                 }
+            } else if (typeof cutsceneIntro41 !== 'undefined' && cutsceneIntro41 && cutsceneIntro41.active) {
+                if (e.code === 'Space' || e.code === 'Escape' || e.code === 'Enter') {
+                    finishLevel41IntroCutscene();
+                    return;
+                }
             } else if (typeof golemCutscene !== 'undefined' && golemCutscene && golemCutscene.active) {
                 if (e.code === 'Space' || e.code === 'Escape' || e.code === 'Enter') {
                     finishGolemDefeatCutscene();
@@ -446,20 +602,44 @@
                     finishGolemIntroCutscene();
                     return;
                 }
+            } else if (typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene && yetiIntroCutscene.active) {
+                if (e.code === 'Space' || e.code === 'Escape' || e.code === 'Enter') {
+                    finishYetiIntroCutscene();
+                    return;
+                }
+            } else if (typeof yetiDefeatCutscene !== 'undefined' && yetiDefeatCutscene && yetiDefeatCutscene.active) {
+                if (e.code === 'Space' || e.code === 'Escape' || e.code === 'Enter') {
+                    finishYetiDefeatCutscene();
+                    return;
+                }
             }
         }
 
         if (currentState === STATES.LEVEL_SELECT || (levelSelectScreen && !levelSelectScreen.classList.contains('hidden'))) {
-            if (e.code === 'ArrowRight' && currentSelectPage === 1) {
-                currentSelectPage = 2;
-                playSound('jump');
-                generateLevelsGrid();
-                return;
-            } else if (e.code === 'ArrowLeft' && currentSelectPage === 2) {
-                currentSelectPage = 1;
-                playSound('jump');
-                generateLevelsGrid();
-                return;
+            if (e.code === 'ArrowRight') {
+                if (currentSelectPage === 1) {
+                    currentSelectPage = 2;
+                    playSound('jump');
+                    generateLevelsGrid();
+                    return;
+                } else if (currentSelectPage === 2) {
+                    currentSelectPage = 3;
+                    playSound('jump');
+                    generateLevelsGrid();
+                    return;
+                }
+            } else if (e.code === 'ArrowLeft') {
+                if (currentSelectPage === 3) {
+                    currentSelectPage = 2;
+                    playSound('jump');
+                    generateLevelsGrid();
+                    return;
+                } else if (currentSelectPage === 2) {
+                    currentSelectPage = 1;
+                    playSound('jump');
+                    generateLevelsGrid();
+                    return;
+                }
             }
         }
 
@@ -479,9 +659,12 @@
             if (!keys.shift) keys.shiftPressedThisFrame = true;
             keys.shift = true;
         }
-        if (e.code === 'KeyE') {
+        if (e.code === 'KeyE' || e.code === 'KeyF') {
             if (!keys.interact) keys.interactPressedThisFrame = true;
             keys.interact = true;
+            if (currentState === STATES.PLAYING && currentLevelIndex === 60 && typeof yeti !== 'undefined' && yeti.active && player.state !== 'DEFEAT') {
+                playerThrowSnowball();
+            }
         }
         if (e.code === 'Space') {
             if (!keys.jump) keys.jumpPressedThisFrame = true;
@@ -489,11 +672,18 @@
         }
     });
 
+    canvas.addEventListener('pointerdown', () => {
+        initAudio();
+        if (currentState === STATES.PLAYING && currentLevelIndex === 60 && typeof yeti !== 'undefined' && yeti.active && player.state !== 'DEFEAT') {
+            playerThrowSnowball();
+        }
+    });
+
     window.addEventListener('keyup', (e) => {
         const isGameKey = [
             'KeyA', 'KeyD', 'KeyW', 'KeyS',
             'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
-            'ControlLeft', 'ControlRight', 'KeyC', 'KeyE', 'Space',
+            'ControlLeft', 'ControlRight', 'KeyC', 'KeyE', 'KeyF', 'Space',
             'ShiftLeft', 'ShiftRight'
         ].includes(e.code) || e.key === 'Control' || e.key === 'Shift';
 
@@ -507,14 +697,15 @@
         if (e.code === 'KeyS' || e.code === 'ArrowDown') keys.down = false;
         if (e.code === 'ControlLeft' || e.code === 'ControlRight' || e.key === 'Control' || e.code === 'KeyC') keys.crouch = false;
         if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.key === 'Shift') keys.shift = false;
-        if (e.code === 'KeyE') keys.interact = false;
+        if (e.code === 'KeyE' || e.code === 'KeyF') keys.interact = false;
         if (e.code === 'Space') keys.jump = false;
     });
 
     // --- LEVELS DATABASE & PAGE PROGRESSION ---
     let unlockedPage1Levels = 20; // 1st Page: all 20 levels unlocked
     let unlockedPage2Levels = 40; // 2nd Page: levels 21 to 40 unlocked!
-    let currentSelectPage = 1;    // 1: Building (levels 1-20), 2: Nature (levels 21-40)
+    let unlockedPage3Levels = 60; // 3rd Page (Вечный холод): levels 41 to 60 unlocked!
+    let currentSelectPage = 1;    // 1: Building (1-20), 2: Nature (21-40), 3: Eternal Cold (41-60)
     let currentLevelIndex = 1;
 
     const levelsData = {
@@ -3413,35 +3604,3335 @@
                 { x: 5470, topY: 80, bottomY: 540, w: 42, isVineLadder: true, isWoodLadder: true }
             ],
             flag: null
+        },
+        41: {
+            id: 41,
+            title: "Уровень 41",
+            theme: "snow",
+            worldWidth: 9200,
+            groundY: 540,
+            playerStartX: 160,
+            platforms: [
+                { x: 0, y: 540, w: 2200, h: 140, type: 'ground' },
+                { x: 2600, y: 540, w: 2300, h: 140, type: 'ground' },
+                { x: 5350, y: 540, w: 2050, h: 140, type: 'ground' },
+                { x: 7850, y: 540, w: 1350, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 2200, endX: 2600 },
+                { startX: 4900, endX: 5350 },
+                { startX: 7400, endX: 7850 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень, покрытый снегом)
+                { id: 'snow_s1', x: 680, y: 440, w: 160, h: 100, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (с шапкой снега и сосульками)
+                { id: 'snow_s2', x: 1040, y: 340, w: 190, h: 200, isStone: true, isSnow: true },
+                // 4th Object: Заснеженное плато 3 после сухого турника 1
+                { id: 'snow_s3', x: 1820, y: 260, w: 220, h: 280, isStone: true, isSnow: true },
+                // 6th Object: Заснеженный камень 4 перед пещерой
+                { id: 'snow_s4', x: 2850, y: 350, w: 190, h: 190, isStone: true, isSnow: true },
+                // 8th Object: Скала над пещерой (сбоку лестница из сухих веток, ведущая наверх)
+                { id: 'snow_s5', x: 4180, y: 160, w: 260, h: 380, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 10th Object: Уступ приземления после пещеры
+                { id: 'snow_s6', x: 4560, y: 260, w: 200, h: 280, isStone: true, isSnow: true },
+                // 12th Object: Камень 7 на платформе 3
+                { id: 'snow_s7', x: 5500, y: 340, w: 180, h: 200, isStone: true, isSnow: true },
+                // 14th Object: Высокий заснеженный монолит 8 с сухой ветвяной лестницей (высота y: 80)
+                { id: 'snow_s8', x: 6350, y: 80, w: 250, h: 460, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 16th Object: Заснеженный уступ 9 после высокого турника 4
+                { id: 'snow_s9', x: 7100, y: 210, w: 220, h: 330, isStone: true, isSnow: true },
+                // 18th Object: Скалистый гребень 10 на финишной платформе
+                { id: 'snow_s10', x: 8050, y: 320, w: 200, h: 220, isStone: true, isSnow: true },
+                // 19th Object: Вершинная скала 11 с флагом победы
+                { id: 'snow_s11', x: 8480, y: 140, w: 360, h: 400, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 3rd Object: Сухое дерево 1 с обычной горизонтальной веткой без листьев (не свисает)
+                { id: 'snow_t1', x: 1480, y: 150, length: 90, trunkX: 1435, isTree: true, isBareTree: true },
+                // 7th Object: Сухое дерево 2 с горизонтальной веткой перед пещерой
+                { id: 'snow_t2', x: 3350, y: 160, length: 90, trunkX: 3305, isTree: true, isBareTree: true },
+                // 13th Object: Сухое дерево 3 перед высоким монолитом
+                { id: 'snow_t3', x: 5950, y: 150, length: 90, trunkX: 5905, isTree: true, isBareTree: true },
+                // 15th Object: Высокая ветка сухого дерева 4 для прыжка через пропасть 3
+                { id: 'snow_t4', x: 6780, y: 10, length: 90, trunkX: 6735, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 5th Object: Сухая свисающая ветка дерева 1 над пропастью 1 (без листьев)
+                { id: 'snow_r1', x: 2410, anchorY: -90, length: 280, trunkX: 2320, isVine: true, isDryHangingBranch: true },
+                // 11th Object: Сухая свисающая ветка дерева 2 над пропастью 2 (без листьев)
+                { id: 'snow_r2', x: 5120, anchorY: -100, length: 280, trunkX: 5030, isVine: true, isDryHangingBranch: true },
+                // 17th Object: Сухая свисающая ветка дерева 3 над пропастью 3 (без листьев)
+                { id: 'snow_r3', x: 7620, anchorY: -90, length: 280, trunkX: 7530, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 9th Object: Лестница из сухих веток, покрытая снегом, на скале над пещерой
+                { x: 4200, topY: 160, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 14th Object: Лестница из сухих веток, покрытая снегом, на монолите 8
+                { x: 6370, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            // Редкая пещера с дровами, которые можно поджечь зажигалкой
+            cave: {
+                x: 3620,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 3880,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 8680, y: 140, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        42: {
+            id: 42,
+            title: "Уровень 42",
+            theme: "snow",
+            worldWidth: 25134,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1465, h: 140, type: 'ground' },
+                { x: 2739, y: 540, w: 324, h: 140, type: 'ground' },
+                { x: 3820, y: 540, w: 945, h: 140, type: 'ground' },
+                { x: 6045, y: 540, w: 329, h: 140, type: 'ground' },
+                { x: 7662, y: 540, w: 932, h: 140, type: 'ground' },
+                { x: 9857, y: 540, w: 927, h: 140, type: 'ground' },
+                { x: 11548, y: 540, w: 322, h: 140, type: 'ground' },
+                { x: 12632, y: 540, w: 1546, h: 140, type: 'ground' },
+                { x: 14940, y: 540, w: 877, h: 140, type: 'ground' },
+                { x: 17126, y: 540, w: 1391, h: 140, type: 'ground' },
+                { x: 19266, y: 540, w: 848, h: 140, type: 'ground' },
+                { x: 20905, y: 540, w: 3829, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1465, endX: 2739 },
+                { startX: 3063, endX: 3820 },
+                { startX: 4765, endX: 6045 },
+                { startX: 6374, endX: 7662 },
+                { startX: 8594, endX: 9857 },
+                { startX: 10784, endX: 11548 },
+                { startX: 11870, endX: 12632 },
+                { startX: 14178, endX: 14940 },
+                { startX: 15817, endX: 17126 },
+                { startX: 18517, endX: 19266 },
+                { startX: 20114, endX: 20905 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 431, w: 172, h: 109, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1190, y: 345, w: 215, h: 195, isStone: true, isSnow: true },
+                // 5th Object: Скалистая арка 3 с лазом под ней (требует подкат)
+                { id: 'snow_s3', x: 2779, y: -200, w: 224, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 7th Object: Заснеженный монолит 4 с ветвяной лестницей для подъема
+                { id: 'snow_s4', x: 3860, y: 73, w: 275, h: 467, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 8th Object: Скалистая арка 5 с лазом под ней (требует подкат)
+                { id: 'snow_s5', x: 4480, y: -200, w: 225, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 11th Object: Скалистая арка 6 с лазом под ней (требует подкат)
+                { id: 'snow_s6', x: 6085, y: -200, w: 229, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 14th Object: Заснеженный утес 7 (Высокая скала-уступ)
+                { id: 'snow_s7', x: 7702, y: 258, w: 231, h: 282, isStone: true, isSnow: true },
+                // 15th Object: Заснеженный монолит 8 с ветвяной лестницей для подъема
+                { id: 'snow_s8', x: 8278, y: 67, w: 256, h: 473, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 18th Object: Скалистая арка 9 с лазом под ней (требует подкат)
+                { id: 'snow_s9', x: 9897, y: -200, w: 230, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 19th Object: Заснеженный утес 10 (Высокая скала-уступ)
+                { id: 'snow_s10', x: 10491, y: 226, w: 233, h: 314, isStone: true, isSnow: true },
+                // 21st Object: Скалистая арка 11 с лазом под ней (требует подкат)
+                { id: 'snow_s11', x: 11588, y: -200, w: 222, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 23rd Object: Заснеженный утес 12 (Высокая скала-уступ)
+                { id: 'snow_s12', x: 12672, y: 253, w: 226, h: 287, isStone: true, isSnow: true },
+                // 24th Object: Скалистая арка 13 с лазом под ней (требует подкат)
+                { id: 'snow_s13', x: 13880, y: -200, w: 238, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 26th Object: Заснеженная гранитная скала 14 (Средний валун)
+                { id: 'snow_s14', x: 14980, y: 332, w: 192, h: 208, isStone: true, isSnow: true },
+                // 27th Object: Заснеженный утес 15 (Высокая скала-уступ)
+                { id: 'snow_s15', x: 15526, y: 259, w: 231, h: 281, isStone: true, isSnow: true },
+                // 30th Object: Заснеженный валун 16 (Низкий камень-препятствие)
+                { id: 'snow_s16', x: 17166, y: 432, w: 169, h: 108, isStone: true, isSnow: true, isSmall: true },
+                // 31st Object: Парящая заснеженная плита 17
+                { id: 'snow_s17', x: 17685, y: 204, w: 237, h: 65, isStone: true, isSnow: true },
+                // 32nd Object: Заснеженный валун 18 (Низкий камень-препятствие)
+                { id: 'snow_s18', x: 18297, y: 430, w: 160, h: 110, isStone: true, isSnow: true, isSmall: true },
+                // 34th Object: Заснеженная гранитная скала 19 (Средний валун)
+                { id: 'snow_s19', x: 19306, y: 346, w: 184, h: 194, isStone: true, isSnow: true },
+                // 35th Object: Парящая заснеженная плита 20
+                { id: 'snow_s20', x: 19839, y: 190, w: 215, h: 65, isStone: true, isSnow: true },
+                // 37th Object: Заснеженная гранитная скала 21 (Средний валун)
+                { id: 'snow_s21', x: 20945, y: 354, w: 208, h: 186, isStone: true, isSnow: true },
+                // 38th Object: Заснеженная гранитная скала 22 (Средний валун)
+                { id: 'snow_s22', x: 21515, y: 342, w: 187, h: 198, isStone: true, isSnow: true },
+                // 39th Object: Заснеженная гранитная скала 23 (Средний валун)
+                { id: 'snow_s23', x: 22057, y: 326, w: 210, h: 214, isStone: true, isSnow: true },
+                // 40th Object: Заснеженная гранитная скала 24 (Средний валун)
+                { id: 'snow_s24', x: 22637, y: 328, w: 188, h: 212, isStone: true, isSnow: true },
+                // 41st Object: Парящая заснеженная плита 25
+                { id: 'snow_s25', x: 23169, y: 221, w: 231, h: 65, isStone: true, isSnow: true },
+                // 42nd Object: Вершинная скала 26 с флагом победы!
+                { id: 'snow_s26', x: 23774, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 4th Object: Сухое дерево 1 с веткой над пропастью (y: 126)
+                { id: 'snow_t1', x: 2255, y: 126, length: 90, trunkX: 2210, isTree: true, isBareTree: true },
+                // 6th Object: Сухое дерево 2 с веткой над пропастью (y: 143)
+                { id: 'snow_t2', x: 3355, y: 143, length: 90, trunkX: 3310, isTree: true, isBareTree: true },
+                // 10th Object: Сухое дерево 3 с веткой над пропастью (y: 128)
+                { id: 'snow_t3', x: 5583, y: 128, length: 90, trunkX: 5538, isTree: true, isBareTree: true },
+                // 13th Object: Сухое дерево 4 с веткой над пропастью (y: 150)
+                { id: 'snow_t4', x: 7203, y: 150, length: 90, trunkX: 7158, isTree: true, isBareTree: true },
+                // 17th Object: Сухое дерево 5 с веткой над пропастью (y: 131)
+                { id: 'snow_t5', x: 9398, y: 131, length: 90, trunkX: 9353, isTree: true, isBareTree: true },
+                // 20th Object: Сухое дерево 6 с веткой над пропастью (y: 135)
+                { id: 'snow_t6', x: 11076, y: 135, length: 90, trunkX: 11031, isTree: true, isBareTree: true },
+                // 25th Object: Сухое дерево 7 с веткой над пропастью (y: 119)
+                { id: 'snow_t7', x: 14473, y: 119, length: 90, trunkX: 14428, isTree: true, isBareTree: true },
+                // 29th Object: Сухое дерево 8 с веткой над пропастью (y: 121)
+                { id: 'snow_t8', x: 16646, y: 121, length: 90, trunkX: 16601, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 3rd Object: Сухая свисающая ветка 1 над пропастью (ветка y: -104)
+                { id: 'snow_r1', x: 1753, anchorY: -104, length: 279, trunkX: 1663, isVine: true, isDryHangingBranch: true },
+                // 9th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -132)
+                { id: 'snow_r2', x: 5071, anchorY: -132, length: 275, trunkX: 4981, isVine: true, isDryHangingBranch: true },
+                // 12th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -113)
+                { id: 'snow_r3', x: 6682, anchorY: -113, length: 270, trunkX: 6592, isVine: true, isDryHangingBranch: true },
+                // 16th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -125)
+                { id: 'snow_r4', x: 8892, anchorY: -125, length: 277, trunkX: 8802, isVine: true, isDryHangingBranch: true },
+                // 22nd Object: Сухая свисающая ветка 5 над пропастью (ветка y: -130)
+                { id: 'snow_r5', x: 12157, anchorY: -130, length: 268, trunkX: 12067, isVine: true, isDryHangingBranch: true },
+                // 28th Object: Сухая свисающая ветка 6 над пропастью (ветка y: -101)
+                { id: 'snow_r6', x: 16129, anchorY: -101, length: 274, trunkX: 16039, isVine: true, isDryHangingBranch: true },
+                // 33rd Object: Сухая свисающая ветка 7 над пропастью (ветка y: -119)
+                { id: 'snow_r7', x: 18801, anchorY: -119, length: 268, trunkX: 18711, isVine: true, isDryHangingBranch: true },
+                // 36th Object: Сухая свисающая ветка 8 над пропастью (ветка y: -102)
+                { id: 'snow_r8', x: 20425, anchorY: -102, length: 272, trunkX: 20335, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 7th Object: Лестница из сухих веток на монолите 4
+                { x: 3880, topY: 73, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 15th Object: Лестница из сухих веток на монолите 8
+                { x: 8298, topY: 67, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 42nd Object: Лестница из сухих веток на вершинной скале 26
+                { x: 23794, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 12998,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 13258,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 23974, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        43: {
+            id: 43,
+            title: "Уровень 43",
+            theme: "snow",
+            worldWidth: 25403,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1432, h: 140, type: 'ground' },
+                { x: 2721, y: 540, w: 332, h: 140, type: 'ground' },
+                { x: 3812, y: 540, w: 906, h: 140, type: 'ground' },
+                { x: 6008, y: 540, w: 345, h: 140, type: 'ground' },
+                { x: 7623, y: 540, w: 923, h: 140, type: 'ground' },
+                { x: 9313, y: 540, w: 1377, h: 140, type: 'ground' },
+                { x: 11448, y: 540, w: 352, h: 140, type: 'ground' },
+                { x: 12560, y: 540, w: 323, h: 140, type: 'ground' },
+                { x: 13620, y: 540, w: 1464, h: 140, type: 'ground' },
+                { x: 15848, y: 540, w: 894, h: 140, type: 'ground' },
+                { x: 17997, y: 540, w: 306, h: 140, type: 'ground' },
+                { x: 19096, y: 540, w: 844, h: 140, type: 'ground' },
+                { x: 20687, y: 540, w: 806, h: 140, type: 'ground' },
+                { x: 22271, y: 540, w: 2732, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1432, endX: 2721 },
+                { startX: 3053, endX: 3812 },
+                { startX: 4718, endX: 6008 },
+                { startX: 6353, endX: 7623 },
+                { startX: 8546, endX: 9313 },
+                { startX: 10690, endX: 11448 },
+                { startX: 11800, endX: 12560 },
+                { startX: 12883, endX: 13620 },
+                { startX: 15084, endX: 15848 },
+                { startX: 16742, endX: 17997 },
+                { startX: 18303, endX: 19096 },
+                { startX: 19940, endX: 20687 },
+                { startX: 21493, endX: 22271 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 438, w: 165, h: 102, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1178, y: 333, w: 194, h: 207, isStone: true, isSnow: true },
+                // 5th Object: Парящая заснеженная плита 3
+                { id: 'snow_s3', x: 2761, y: 222, w: 232, h: 65, isStone: true, isSnow: true },
+                // 7th Object: Заснеженный монолит 4 с ветвяной лестницей для подъема
+                { id: 'snow_s4', x: 3852, y: 68, w: 253, h: 472, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 8th Object: Парящая заснеженная плита 5
+                { id: 'snow_s5', x: 4447, y: 225, w: 211, h: 65, isStone: true, isSnow: true },
+                // 11th Object: Заснеженный утес 6 (Высокая скала-уступ)
+                { id: 'snow_s6', x: 6048, y: 255, w: 245, h: 285, isStone: true, isSnow: true },
+                // 14th Object: Заснеженный монолит 7 с ветвяной лестницей для подъема
+                { id: 'snow_s7', x: 7663, y: 70, w: 279, h: 470, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 15th Object: Заснеженная гранитная скала 8 (Средний валун)
+                { id: 'snow_s8', x: 8302, y: 349, w: 184, h: 191, isStone: true, isSnow: true },
+                // 17th Object: Заснеженная гранитная скала 9 (Средний валун)
+                { id: 'snow_s9', x: 9353, y: 351, w: 182, h: 189, isStone: true, isSnow: true },
+                // 18th Object: Заснеженная гранитная скала 10 (Средний валун)
+                { id: 'snow_s10', x: 9889, y: 356, w: 204, h: 184, isStone: true, isSnow: true },
+                // 19th Object: Заснеженный валун 11 (Низкий камень-препятствие)
+                { id: 'snow_s11', x: 10464, y: 433, w: 166, h: 107, isStone: true, isSnow: true, isSmall: true },
+                // 21st Object: Заснеженный утес 12 (Высокая скала-уступ)
+                { id: 'snow_s12', x: 11488, y: 252, w: 252, h: 288, isStone: true, isSnow: true },
+                // 23rd Object: Скалистая арка 13 с лазом под ней (требует подкат)
+                { id: 'snow_s13', x: 12600, y: -200, w: 223, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 25th Object: Заснеженная гранитная скала 14 (Средний валун)
+                { id: 'snow_s14', x: 13660, y: 332, w: 203, h: 208, isStone: true, isSnow: true },
+                // 26th Object: Заснеженный валун 15 (Низкий камень-препятствие)
+                { id: 'snow_s15', x: 14852, y: 436, w: 172, h: 104, isStone: true, isSnow: true, isSmall: true },
+                // 28th Object: Заснеженный утес 16 (Высокая скала-уступ)
+                { id: 'snow_s16', x: 15888, y: 255, w: 251, h: 285, isStone: true, isSnow: true },
+                // 29th Object: Заснеженный валун 17 (Низкий камень-препятствие)
+                { id: 'snow_s17', x: 16519, y: 434, w: 163, h: 106, isStone: true, isSnow: true, isSmall: true },
+                // 32nd Object: Заснеженная гранитная скала 18 (Средний валун)
+                { id: 'snow_s18', x: 18037, y: 328, w: 206, h: 212, isStone: true, isSnow: true },
+                // 34th Object: Скалистая арка 19 с лазом под ней (требует подкат)
+                { id: 'snow_s19', x: 19136, y: -200, w: 229, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 35th Object: Заснеженный валун 20 (Низкий камень-препятствие)
+                { id: 'snow_s20', x: 19716, y: 434, w: 164, h: 106, isStone: true, isSnow: true, isSmall: true },
+                // 37th Object: Заснеженный валун 21 (Низкий камень-препятствие)
+                { id: 'snow_s21', x: 20727, y: 439, w: 153, h: 101, isStone: true, isSnow: true, isSmall: true },
+                // 38th Object: Заснеженная гранитная скала 22 (Средний валун)
+                { id: 'snow_s22', x: 21236, y: 343, w: 197, h: 197, isStone: true, isSnow: true },
+                // 40th Object: Парящая заснеженная плита 23
+                { id: 'snow_s23', x: 22311, y: 193, w: 214, h: 65, isStone: true, isSnow: true },
+                // 41st Object: Заснеженная гранитная скала 24 (Средний валун)
+                { id: 'snow_s24', x: 22902, y: 354, w: 201, h: 186, isStone: true, isSnow: true },
+                // 42nd Object: Парящая заснеженная плита 25
+                { id: 'snow_s25', x: 23448, y: 203, w: 219, h: 65, isStone: true, isSnow: true },
+                // 43rd Object: Вершинная скала 26 с флагом победы!
+                { id: 'snow_s26', x: 24043, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 3rd Object: Сухое дерево 1 с веткой над пропастью (y: 142)
+                { id: 'snow_t1', x: 1723, y: 142, length: 90, trunkX: 1678, isTree: true, isBareTree: true },
+                // 6th Object: Сухое дерево 2 с веткой над пропастью (y: 123)
+                { id: 'snow_t2', x: 3351, y: 123, length: 90, trunkX: 3306, isTree: true, isBareTree: true },
+                // 9th Object: Сухое дерево 3 с веткой над пропастью (y: 145)
+                { id: 'snow_t3', x: 5012, y: 145, length: 90, trunkX: 4967, isTree: true, isBareTree: true },
+                // 13th Object: Сухое дерево 4 с веткой над пропастью (y: 135)
+                { id: 'snow_t4', x: 7149, y: 135, length: 90, trunkX: 7104, isTree: true, isBareTree: true },
+                // 20th Object: Сухое дерево 5 с веткой над пропастью (y: 128)
+                { id: 'snow_t5', x: 10976, y: 128, length: 90, trunkX: 10931, isTree: true, isBareTree: true },
+                // 31st Object: Сухое дерево 6 с веткой над пропастью (y: 119)
+                { id: 'snow_t6', x: 17522, y: 119, length: 90, trunkX: 17477, isTree: true, isBareTree: true },
+                // 33rd Object: Сухое дерево 7 с веткой над пропастью (y: 147)
+                { id: 'snow_t7', x: 18614, y: 147, length: 90, trunkX: 18569, isTree: true, isBareTree: true },
+                // 36th Object: Сухое дерево 8 с веткой над пропастью (y: 124)
+                { id: 'snow_t8', x: 20227, y: 124, length: 90, trunkX: 20182, isTree: true, isBareTree: true },
+                // 39th Object: Сухое дерево 9 с веткой над пропастью (y: 138)
+                { id: 'snow_t9', x: 21792, y: 138, length: 90, trunkX: 21747, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 4th Object: Сухая свисающая ветка 1 над пропастью (ветка y: -116)
+                { id: 'snow_r1', x: 2240, anchorY: -116, length: 266, trunkX: 2150, isVine: true, isDryHangingBranch: true },
+                // 10th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -127)
+                { id: 'snow_r2', x: 5528, anchorY: -127, length: 275, trunkX: 5438, isVine: true, isDryHangingBranch: true },
+                // 12th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -121)
+                { id: 'snow_r3', x: 6642, anchorY: -121, length: 272, trunkX: 6552, isVine: true, isDryHangingBranch: true },
+                // 16th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -105)
+                { id: 'snow_r4', x: 8848, anchorY: -105, length: 277, trunkX: 8758, isVine: true, isDryHangingBranch: true },
+                // 22nd Object: Сухая свисающая ветка 5 над пропастью (ветка y: -109)
+                { id: 'snow_r5', x: 12085, anchorY: -109, length: 276, trunkX: 11995, isVine: true, isDryHangingBranch: true },
+                // 24th Object: Сухая свисающая ветка 6 над пропастью (ветка y: -123)
+                { id: 'snow_r6', x: 13169, anchorY: -123, length: 272, trunkX: 13079, isVine: true, isDryHangingBranch: true },
+                // 27th Object: Сухая свисающая ветка 7 над пропастью (ветка y: -127)
+                { id: 'snow_r7', x: 15388, anchorY: -127, length: 268, trunkX: 15298, isVine: true, isDryHangingBranch: true },
+                // 30th Object: Сухая свисающая ветка 8 над пропастью (ветка y: -111)
+                { id: 'snow_r8', x: 17028, anchorY: -111, length: 269, trunkX: 16938, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 7th Object: Лестница из сухих веток на монолите 4
+                { x: 3872, topY: 68, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 14th Object: Лестница из сухих веток на монолите 7
+                { x: 7683, topY: 70, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 43rd Object: Лестница из сухих веток на вершинной скале 26
+                { x: 24063, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 13963,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 14223,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 24243, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        44: {
+            id: 44,
+            title: "Уровень 44",
+            theme: "snow",
+            worldWidth: 25947,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1443, h: 140, type: 'ground' },
+                { x: 2200, y: 540, w: 975, h: 140, type: 'ground' },
+                { x: 3966, y: 540, w: 360, h: 140, type: 'ground' },
+                { x: 5590, y: 540, w: 822, h: 140, type: 'ground' },
+                { x: 7165, y: 540, w: 273, h: 140, type: 'ground' },
+                { x: 8224, y: 540, w: 844, h: 140, type: 'ground' },
+                { x: 10353, y: 540, w: 846, h: 140, type: 'ground' },
+                { x: 12481, y: 540, w: 1994, h: 140, type: 'ground' },
+                { x: 15771, y: 540, w: 333, h: 140, type: 'ground' },
+                { x: 17357, y: 540, w: 352, h: 140, type: 'ground' },
+                { x: 18973, y: 540, w: 6574, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1443, endX: 2200 },
+                { startX: 3175, endX: 3966 },
+                { startX: 4326, endX: 5590 },
+                { startX: 6412, endX: 7165 },
+                { startX: 7438, endX: 8224 },
+                { startX: 9068, endX: 10353 },
+                { startX: 11199, endX: 12481 },
+                { startX: 14475, endX: 15771 },
+                { startX: 16104, endX: 17357 },
+                { startX: 17709, endX: 18973 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 445, w: 171, h: 95, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1200, y: 352, w: 183, h: 188, isStone: true, isSnow: true },
+                // 4th Object: Заснеженный монолит 3 с ветвяной лестницей для подъема
+                { id: 'snow_s3', x: 2240, y: 75, w: 272, h: 465, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 5th Object: Парящая заснеженная плита 4
+                { id: 'snow_s4', x: 2876, y: 223, w: 239, h: 65, isStone: true, isSnow: true },
+                // 7th Object: Заснеженный монолит 5 с ветвяной лестницей для подъема
+                { id: 'snow_s5', x: 4006, y: 71, w: 260, h: 469, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 10th Object: Заснеженная гранитная скала 6 (Средний валун)
+                { id: 'snow_s6', x: 5630, y: 327, w: 181, h: 213, isStone: true, isSnow: true },
+                // 11th Object: Заснеженный валун 7 (Низкий камень-препятствие)
+                { id: 'snow_s7', x: 6182, y: 439, w: 170, h: 101, isStone: true, isSnow: true, isSmall: true },
+                // 13th Object: Заснеженный валун 8 (Низкий камень-препятствие)
+                { id: 'snow_s8', x: 7205, y: 441, w: 173, h: 99, isStone: true, isSnow: true, isSmall: true },
+                // 15th Object: Заснеженный валун 9 (Низкий камень-препятствие)
+                { id: 'snow_s9', x: 8264, y: 430, w: 161, h: 110, isStone: true, isSnow: true, isSmall: true },
+                // 16th Object: Скалистая арка 10 с лазом под ней (требует подкат)
+                { id: 'snow_s10', x: 8773, y: -200, w: 235, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 19th Object: Заснеженная гранитная скала 11 (Средний валун)
+                { id: 'snow_s11', x: 10393, y: 358, w: 214, h: 182, isStone: true, isSnow: true },
+                // 20th Object: Заснеженная гранитная скала 12 (Средний валун)
+                { id: 'snow_s12', x: 10958, y: 336, w: 181, h: 204, isStone: true, isSnow: true },
+                // 23rd Object: Заснеженная гранитная скала 13 (Средний валун)
+                { id: 'snow_s13', x: 12521, y: 353, w: 182, h: 187, isStone: true, isSnow: true },
+                // 24th Object: Заснеженная гранитная скала 14 (Средний валун)
+                { id: 'snow_s14', x: 13677, y: 338, w: 182, h: 202, isStone: true, isSnow: true },
+                // 25th Object: Заснеженная гранитная скала 15 (Средний валун)
+                { id: 'snow_s15', x: 14235, y: 345, w: 180, h: 195, isStone: true, isSnow: true },
+                // 28th Object: Заснеженный утес 16 (Высокая скала-уступ)
+                { id: 'snow_s16', x: 15811, y: 243, w: 233, h: 297, isStone: true, isSnow: true },
+                // 31st Object: Заснеженный утес 17 (Высокая скала-уступ)
+                { id: 'snow_s17', x: 17397, y: 231, w: 252, h: 309, isStone: true, isSnow: true },
+                // 34th Object: Заснеженная гранитная скала 18 (Средний валун)
+                { id: 'snow_s18', x: 19013, y: 328, w: 196, h: 212, isStone: true, isSnow: true },
+                // 35th Object: Заснеженная гранитная скала 19 (Средний валун)
+                { id: 'snow_s19', x: 19570, y: 326, w: 193, h: 214, isStone: true, isSnow: true },
+                // 36th Object: Заснеженный утес 20 (Высокая скала-уступ)
+                { id: 'snow_s20', x: 20106, y: 240, w: 233, h: 300, isStone: true, isSnow: true },
+                // 37th Object: Заснеженная гранитная скала 21 (Средний валун)
+                { id: 'snow_s21', x: 20692, y: 355, w: 211, h: 185, isStone: true, isSnow: true },
+                // 38th Object: Заснеженная гранитная скала 22 (Средний валун)
+                { id: 'snow_s22', x: 21271, y: 357, w: 190, h: 183, isStone: true, isSnow: true },
+                // 39th Object: Заснеженный валун 23 (Низкий камень-препятствие)
+                { id: 'snow_s23', x: 21824, y: 432, w: 151, h: 108, isStone: true, isSnow: true, isSmall: true },
+                // 40th Object: Скалистая арка 24 с лазом под ней (требует подкат)
+                { id: 'snow_s24', x: 22331, y: -200, w: 231, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 41st Object: Скалистая арка 25 с лазом под ней (требует подкат)
+                { id: 'snow_s25', x: 22936, y: -200, w: 232, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 42nd Object: Заснеженная гранитная скала 26 (Средний валун)
+                { id: 'snow_s26', x: 23515, y: 341, w: 196, h: 199, isStone: true, isSnow: true },
+                // 43rd Object: Заснеженный валун 27 (Низкий камень-препятствие)
+                { id: 'snow_s27', x: 24068, y: 435, w: 153, h: 105, isStone: true, isSnow: true, isSmall: true },
+                // 44th Object: Вершинная скала 28 с флагом победы!
+                { id: 'snow_s28', x: 24587, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 8th Object: Сухое дерево 1 с веткой над пропастью (y: 120)
+                { id: 'snow_t1', x: 4622, y: 120, length: 90, trunkX: 4577, isTree: true, isBareTree: true },
+                // 12th Object: Сухое дерево 2 с веткой над пропастью (y: 117)
+                { id: 'snow_t2', x: 6708, y: 117, length: 90, trunkX: 6663, isTree: true, isBareTree: true },
+                // 14th Object: Сухое дерево 3 с веткой над пропастью (y: 137)
+                { id: 'snow_t3', x: 7744, y: 137, length: 90, trunkX: 7699, isTree: true, isBareTree: true },
+                // 17th Object: Сухое дерево 4 с веткой над пропастью (y: 116)
+                { id: 'snow_t4', x: 9361, y: 116, length: 90, trunkX: 9316, isTree: true, isBareTree: true },
+                // 22nd Object: Сухое дерево 5 с веткой над пропастью (y: 140)
+                { id: 'snow_t5', x: 11999, y: 140, length: 90, trunkX: 11954, isTree: true, isBareTree: true },
+                // 27th Object: Сухое дерево 6 с веткой над пропастью (y: 126)
+                { id: 'snow_t6', x: 15289, y: 126, length: 90, trunkX: 15244, isTree: true, isBareTree: true },
+                // 30th Object: Сухое дерево 7 с веткой над пропастью (y: 146)
+                { id: 'snow_t7', x: 16906, y: 146, length: 90, trunkX: 16861, isTree: true, isBareTree: true },
+                // 32nd Object: Сухое дерево 8 с веткой над пропастью (y: 144)
+                { id: 'snow_t8', x: 17996, y: 144, length: 90, trunkX: 17951, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 3rd Object: Сухая свисающая ветка 1 над пропастью (ветка y: -131)
+                { id: 'snow_r1', x: 1741, anchorY: -131, length: 272, trunkX: 1651, isVine: true, isDryHangingBranch: true },
+                // 6th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -91)
+                { id: 'snow_r2', x: 3489, anchorY: -91, length: 276, trunkX: 3399, isVine: true, isDryHangingBranch: true },
+                // 9th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -108)
+                { id: 'snow_r3', x: 5123, anchorY: -108, length: 271, trunkX: 5033, isVine: true, isDryHangingBranch: true },
+                // 18th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -101)
+                { id: 'snow_r4', x: 9877, anchorY: -101, length: 278, trunkX: 9787, isVine: true, isDryHangingBranch: true },
+                // 21st Object: Сухая свисающая ветка 5 над пропастью (ветка y: -97)
+                { id: 'snow_r5', x: 11481, anchorY: -97, length: 273, trunkX: 11391, isVine: true, isDryHangingBranch: true },
+                // 26th Object: Сухая свисающая ветка 6 над пропастью (ветка y: -93)
+                { id: 'snow_r6', x: 14789, anchorY: -93, length: 265, trunkX: 14699, isVine: true, isDryHangingBranch: true },
+                // 29th Object: Сухая свисающая ветка 7 над пропастью (ветка y: -101)
+                { id: 'snow_r7', x: 16397, anchorY: -101, length: 279, trunkX: 16307, isVine: true, isDryHangingBranch: true },
+                // 33rd Object: Сухая свисающая ветка 8 над пропастью (ветка y: -99)
+                { id: 'snow_r8', x: 18514, anchorY: -99, length: 265, trunkX: 18424, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 4th Object: Лестница из сухих веток на монолите 3
+                { x: 2260, topY: 75, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 7th Object: Лестница из сухих веток на монолите 5
+                { x: 4026, topY: 71, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 44th Object: Лестница из сухих веток на вершинной скале 28
+                { x: 24607, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 12803,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 13063,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 24787, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        45: {
+            id: 45,
+            title: "Уровень 45",
+            theme: "snow",
+            worldWidth: 26582,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1407, h: 140, type: 'ground' },
+                { x: 2187, y: 540, w: 345, h: 140, type: 'ground' },
+                { x: 3800, y: 540, w: 304, h: 140, type: 'ground' },
+                { x: 4856, y: 540, w: 289, h: 140, type: 'ground' },
+                { x: 6447, y: 540, w: 378, h: 140, type: 'ground' },
+                { x: 8107, y: 540, w: 350, h: 140, type: 'ground' },
+                { x: 9755, y: 540, w: 343, h: 140, type: 'ground' },
+                { x: 11378, y: 540, w: 913, h: 140, type: 'ground' },
+                { x: 13592, y: 540, w: 330, h: 140, type: 'ground' },
+                { x: 15196, y: 540, w: 273, h: 140, type: 'ground' },
+                { x: 16239, y: 540, w: 327, h: 140, type: 'ground' },
+                { x: 17329, y: 540, w: 313, h: 140, type: 'ground' },
+                { x: 18393, y: 540, w: 7789, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1407, endX: 2187 },
+                { startX: 2532, endX: 3800 },
+                { startX: 4104, endX: 4856 },
+                { startX: 5145, endX: 6447 },
+                { startX: 6825, endX: 8107 },
+                { startX: 8457, endX: 9755 },
+                { startX: 10098, endX: 11378 },
+                { startX: 12291, endX: 13592 },
+                { startX: 13922, endX: 15196 },
+                { startX: 15469, endX: 16239 },
+                { startX: 16566, endX: 17329 },
+                { startX: 17642, endX: 18393 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 433, w: 154, h: 107, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1149, y: 350, w: 198, h: 190, isStone: true, isSnow: true },
+                // 4th Object: Заснеженный утес 3 (Высокая скала-уступ)
+                { id: 'snow_s3', x: 2227, y: 255, w: 245, h: 285, isStone: true, isSnow: true },
+                // 7th Object: Заснеженная гранитная скала 4 (Средний валун)
+                { id: 'snow_s4', x: 3840, y: 359, w: 204, h: 181, isStone: true, isSnow: true },
+                // 9th Object: Заснеженная гранитная скала 5 (Средний валун)
+                { id: 'snow_s5', x: 4896, y: 333, w: 189, h: 207, isStone: true, isSnow: true },
+                // 12th Object: Заснеженный монолит 6 с ветвяной лестницей для подъема
+                { id: 'snow_s6', x: 6487, y: 76, w: 278, h: 464, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 15th Object: Заснеженный монолит 7 с ветвяной лестницей для подъема
+                { id: 'snow_s7', x: 8147, y: 56, w: 250, h: 484, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 18th Object: Заснеженный утес 8 (Высокая скала-уступ)
+                { id: 'snow_s8', x: 9795, y: 248, w: 243, h: 292, isStone: true, isSnow: true },
+                // 21st Object: Заснеженная гранитная скала 9 (Средний валун)
+                { id: 'snow_s9', x: 11418, y: 330, w: 197, h: 210, isStone: true, isSnow: true },
+                // 22nd Object: Заснеженный монолит 10 с ветвяной лестницей для подъема
+                { id: 'snow_s10', x: 11961, y: 60, w: 270, h: 480, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 25th Object: Парящая заснеженная плита 11
+                { id: 'snow_s11', x: 13632, y: 225, w: 230, h: 65, isStone: true, isSnow: true },
+                // 28th Object: Заснеженный валун 12 (Низкий камень-препятствие)
+                { id: 'snow_s12', x: 15236, y: 442, w: 173, h: 98, isStone: true, isSnow: true, isSmall: true },
+                // 30th Object: Заснеженный утес 13 (Высокая скала-уступ)
+                { id: 'snow_s13', x: 16279, y: 227, w: 227, h: 313, isStone: true, isSnow: true },
+                // 32nd Object: Заснеженная гранитная скала 14 (Средний валун)
+                { id: 'snow_s14', x: 17369, y: 353, w: 213, h: 187, isStone: true, isSnow: true },
+                // 34th Object: Заснеженный утес 15 (Высокая скала-уступ)
+                { id: 'snow_s15', x: 18433, y: 233, w: 251, h: 307, isStone: true, isSnow: true },
+                // 35th Object: Заснеженная гранитная скала 16 (Средний валун)
+                { id: 'snow_s16', x: 19651, y: 355, w: 213, h: 185, isStone: true, isSnow: true },
+                // 36th Object: Заснеженный валун 17 (Низкий камень-препятствие)
+                { id: 'snow_s17', x: 20237, y: 434, w: 150, h: 106, isStone: true, isSnow: true, isSmall: true },
+                // 37th Object: Заснеженный валун 18 (Низкий камень-препятствие)
+                { id: 'snow_s18', x: 20746, y: 431, w: 164, h: 109, isStone: true, isSnow: true, isSmall: true },
+                // 38th Object: Заснеженная гранитная скала 19 (Средний валун)
+                { id: 'snow_s19', x: 21272, y: 356, w: 181, h: 184, isStone: true, isSnow: true },
+                // 39th Object: Скалистая арка 20 с лазом под ней (требует подкат)
+                { id: 'snow_s20', x: 21811, y: -200, w: 235, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 40th Object: Заснеженный утес 21 (Высокая скала-уступ)
+                { id: 'snow_s21', x: 22416, y: 252, w: 241, h: 288, isStone: true, isSnow: true },
+                // 41st Object: Скалистая арка 22 с лазом под ней (требует подкат)
+                { id: 'snow_s22', x: 23007, y: -200, w: 228, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 42nd Object: Заснеженный валун 23 (Низкий камень-препятствие)
+                { id: 'snow_s23', x: 23609, y: 441, w: 151, h: 99, isStone: true, isSnow: true, isSmall: true },
+                // 43rd Object: Заснеженная гранитная скала 24 (Средний валун)
+                { id: 'snow_s24', x: 24100, y: 336, w: 198, h: 204, isStone: true, isSnow: true },
+                // 44th Object: Парящая заснеженная плита 25
+                { id: 'snow_s25', x: 24643, y: 229, w: 213, h: 65, isStone: true, isSnow: true },
+                // 45th Object: Вершинная скала 26 с флагом победы!
+                { id: 'snow_s26', x: 25222, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 5th Object: Сухое дерево 1 с веткой над пропастью (y: 128)
+                { id: 'snow_t1', x: 2835, y: 128, length: 90, trunkX: 2790, isTree: true, isBareTree: true },
+                // 10th Object: Сухое дерево 2 с веткой над пропастью (y: 126)
+                { id: 'snow_t2', x: 5456, y: 126, length: 90, trunkX: 5411, isTree: true, isBareTree: true },
+                // 14th Object: Сухое дерево 3 с веткой над пропастью (y: 115)
+                { id: 'snow_t3', x: 7633, y: 115, length: 90, trunkX: 7588, isTree: true, isBareTree: true },
+                // 16th Object: Сухое дерево 4 с веткой над пропастью (y: 129)
+                { id: 'snow_t4', x: 8757, y: 129, length: 90, trunkX: 8712, isTree: true, isBareTree: true },
+                // 20th Object: Сухое дерево 5 с веткой над пропастью (y: 149)
+                { id: 'snow_t5', x: 10908, y: 149, length: 90, trunkX: 10863, isTree: true, isBareTree: true },
+                // 23rd Object: Сухое дерево 6 с веткой над пропастью (y: 123)
+                { id: 'snow_t6', x: 12603, y: 123, length: 90, trunkX: 12558, isTree: true, isBareTree: true },
+                // 27th Object: Сухое дерево 7 с веткой над пропастью (y: 123)
+                { id: 'snow_t7', x: 14715, y: 123, length: 90, trunkX: 14670, isTree: true, isBareTree: true },
+                // 29th Object: Сухое дерево 8 с веткой над пропастью (y: 148)
+                { id: 'snow_t8', x: 15759, y: 148, length: 90, trunkX: 15714, isTree: true, isBareTree: true },
+                // 31st Object: Сухое дерево 9 с веткой над пропастью (y: 116)
+                { id: 'snow_t9', x: 16868, y: 116, length: 90, trunkX: 16823, isTree: true, isBareTree: true },
+                // 33rd Object: Сухое дерево 10 с веткой над пропастью (y: 121)
+                { id: 'snow_t10', x: 17939, y: 121, length: 90, trunkX: 17894, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 3rd Object: Сухая свисающая ветка 1 над пропастью (ветка y: -115)
+                { id: 'snow_r1', x: 1717, anchorY: -115, length: 269, trunkX: 1627, isVine: true, isDryHangingBranch: true },
+                // 6th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -116)
+                { id: 'snow_r2', x: 3339, anchorY: -116, length: 266, trunkX: 3249, isVine: true, isDryHangingBranch: true },
+                // 8th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -110)
+                { id: 'snow_r3', x: 4400, anchorY: -110, length: 277, trunkX: 4310, isVine: true, isDryHangingBranch: true },
+                // 11th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -135)
+                { id: 'snow_r4', x: 5965, anchorY: -135, length: 276, trunkX: 5875, isVine: true, isDryHangingBranch: true },
+                // 13th Object: Сухая свисающая ветка 5 над пропастью (ветка y: -106)
+                { id: 'snow_r5', x: 7138, anchorY: -106, length: 278, trunkX: 7048, isVine: true, isDryHangingBranch: true },
+                // 17th Object: Сухая свисающая ветка 6 над пропастью (ветка y: -109)
+                { id: 'snow_r6', x: 9278, anchorY: -109, length: 278, trunkX: 9188, isVine: true, isDryHangingBranch: true },
+                // 19th Object: Сухая свисающая ветка 7 над пропастью (ветка y: -125)
+                { id: 'snow_r7', x: 10394, anchorY: -125, length: 278, trunkX: 10304, isVine: true, isDryHangingBranch: true },
+                // 24th Object: Сухая свисающая ветка 8 над пропастью (ветка y: -103)
+                { id: 'snow_r8', x: 13123, anchorY: -103, length: 272, trunkX: 13033, isVine: true, isDryHangingBranch: true },
+                // 26th Object: Сухая свисающая ветка 9 над пропастью (ветка y: -114)
+                { id: 'snow_r9', x: 14207, anchorY: -114, length: 272, trunkX: 14117, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 12th Object: Лестница из сухих веток на монолите 6
+                { x: 6507, topY: 76, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 15th Object: Лестница из сухих веток на монолите 7
+                { x: 8167, topY: 56, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 22nd Object: Лестница из сухих веток на монолите 10
+                { x: 11981, topY: 60, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 45th Object: Лестница из сухих веток на вершинной скале 26
+                { x: 25242, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 18784,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 19044,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 25422, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        46: {
+            id: 46,
+            title: "Уровень 46",
+            theme: "snow",
+            worldWidth: 27053,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1422, h: 140, type: 'ground' },
+                { x: 2201, y: 540, w: 930, h: 140, type: 'ground' },
+                { x: 4386, y: 540, w: 861, h: 140, type: 'ground' },
+                { x: 6526, y: 540, w: 356, h: 140, type: 'ground' },
+                { x: 8145, y: 540, w: 921, h: 140, type: 'ground' },
+                { x: 9829, y: 540, w: 312, h: 140, type: 'ground' },
+                { x: 11404, y: 540, w: 874, h: 140, type: 'ground' },
+                { x: 13567, y: 540, w: 1408, h: 140, type: 'ground' },
+                { x: 15724, y: 540, w: 911, h: 140, type: 'ground' },
+                { x: 17391, y: 540, w: 320, h: 140, type: 'ground' },
+                { x: 18501, y: 540, w: 1440, h: 140, type: 'ground' },
+                { x: 20697, y: 540, w: 265, h: 140, type: 'ground' },
+                { x: 21728, y: 540, w: 326, h: 140, type: 'ground' },
+                { x: 22833, y: 540, w: 3820, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1422, endX: 2201 },
+                { startX: 3131, endX: 4386 },
+                { startX: 5247, endX: 6526 },
+                { startX: 6882, endX: 8145 },
+                { startX: 9066, endX: 9829 },
+                { startX: 10141, endX: 11404 },
+                { startX: 12278, endX: 13567 },
+                { startX: 14975, endX: 15724 },
+                { startX: 16635, endX: 17391 },
+                { startX: 17711, endX: 18501 },
+                { startX: 19941, endX: 20697 },
+                { startX: 20962, endX: 21728 },
+                { startX: 22054, endX: 22833 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 442, w: 166, h: 98, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1178, y: 352, w: 184, h: 188, isStone: true, isSnow: true },
+                // 4th Object: Заснеженный монолит 3 с ветвяной лестницей для подъема
+                { id: 'snow_s3', x: 2241, y: 73, w: 269, h: 467, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 5th Object: Заснеженная гранитная скала 4 (Средний валун)
+                { id: 'snow_s4', x: 2873, y: 355, w: 198, h: 185, isStone: true, isSnow: true },
+                // 8th Object: Заснеженная гранитная скала 5 (Средний валун)
+                { id: 'snow_s5', x: 4426, y: 337, w: 182, h: 203, isStone: true, isSnow: true },
+                // 9th Object: Заснеженный утес 6 (Высокая скала-уступ)
+                { id: 'snow_s6', x: 4950, y: 228, w: 237, h: 312, isStone: true, isSnow: true },
+                // 12th Object: Заснеженный монолит 7 с ветвяной лестницей для подъема
+                { id: 'snow_s7', x: 6566, y: 69, w: 256, h: 471, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 15th Object: Парящая заснеженная плита 8
+                { id: 'snow_s8', x: 8185, y: 222, w: 213, h: 65, isStone: true, isSnow: true },
+                // 16th Object: Заснеженный монолит 9 с ветвяной лестницей для подъема
+                { id: 'snow_s9', x: 8744, y: 68, w: 262, h: 472, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 18th Object: Заснеженная гранитная скала 10 (Средний валун)
+                { id: 'snow_s10', x: 9869, y: 329, w: 212, h: 211, isStone: true, isSnow: true },
+                // 21st Object: Заснеженная гранитная скала 11 (Средний валун)
+                { id: 'snow_s11', x: 11444, y: 332, w: 187, h: 208, isStone: true, isSnow: true },
+                // 22nd Object: Скалистая арка 12 с лазом под ней (требует подкат)
+                { id: 'snow_s12', x: 11989, y: -200, w: 229, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 25th Object: Заснеженная гранитная скала 13 (Средний валун)
+                { id: 'snow_s13', x: 13607, y: 326, w: 196, h: 214, isStone: true, isSnow: true },
+                // 26th Object: Заснеженный валун 14 (Низкий камень-препятствие)
+                { id: 'snow_s14', x: 14763, y: 437, w: 152, h: 103, isStone: true, isSnow: true, isSmall: true },
+                // 28th Object: Скалистая арка 15 с лазом под ней (требует подкат)
+                { id: 'snow_s15', x: 15764, y: -200, w: 221, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 29th Object: Скалистая арка 16 с лазом под ней (требует подкат)
+                { id: 'snow_s16', x: 16354, y: -200, w: 221, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 31st Object: Скалистая арка 17 с лазом под ней (требует подкат)
+                { id: 'snow_s17', x: 17431, y: -200, w: 220, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 33rd Object: Заснеженная гранитная скала 18 (Средний валун)
+                { id: 'snow_s18', x: 18541, y: 333, w: 213, h: 207, isStone: true, isSnow: true },
+                // 34th Object: Заснеженная гранитная скала 19 (Средний валун)
+                { id: 'snow_s19', x: 19106, y: 347, w: 183, h: 193, isStone: true, isSnow: true },
+                // 35th Object: Парящая заснеженная плита 20
+                { id: 'snow_s20', x: 19653, y: 209, w: 228, h: 65, isStone: true, isSnow: true },
+                // 37th Object: Заснеженный валун 21 (Низкий камень-препятствие)
+                { id: 'snow_s21', x: 20737, y: 438, w: 165, h: 102, isStone: true, isSnow: true, isSmall: true },
+                // 39th Object: Скалистая арка 22 с лазом под ней (требует подкат)
+                { id: 'snow_s22', x: 21768, y: -200, w: 226, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 41st Object: Заснеженный валун 23 (Низкий камень-препятствие)
+                { id: 'snow_s23', x: 22873, y: 431, w: 162, h: 109, isStone: true, isSnow: true, isSmall: true },
+                // 42nd Object: Заснеженная гранитная скала 24 (Средний валун)
+                { id: 'snow_s24', x: 23380, y: 349, w: 197, h: 191, isStone: true, isSnow: true },
+                // 43rd Object: Заснеженная гранитная скала 25 (Средний валун)
+                { id: 'snow_s25', x: 23917, y: 328, w: 213, h: 212, isStone: true, isSnow: true },
+                // 44th Object: Заснеженный утес 26 (Высокая скала-уступ)
+                { id: 'snow_s26', x: 24495, y: 253, w: 228, h: 287, isStone: true, isSnow: true },
+                // 45th Object: Заснеженный утес 27 (Высокая скала-уступ)
+                { id: 'snow_s27', x: 25078, y: 240, w: 249, h: 300, isStone: true, isSnow: true },
+                // 46th Object: Вершинная скала 28 с флагом победы!
+                { id: 'snow_s28', x: 25693, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 7th Object: Сухое дерево 1 с веткой над пропастью (y: 136)
+                { id: 'snow_t1', x: 3914, y: 136, length: 90, trunkX: 3869, isTree: true, isBareTree: true },
+                // 10th Object: Сухое дерево 2 с веткой над пропастью (y: 143)
+                { id: 'snow_t2', x: 5557, y: 143, length: 90, trunkX: 5512, isTree: true, isBareTree: true },
+                // 14th Object: Сухое дерево 3 с веткой над пропастью (y: 148)
+                { id: 'snow_t3', x: 7678, y: 148, length: 90, trunkX: 7633, isTree: true, isBareTree: true },
+                // 17th Object: Сухое дерево 4 с веткой над пропастью (y: 146)
+                { id: 'snow_t4', x: 9363, y: 146, length: 90, trunkX: 9318, isTree: true, isBareTree: true },
+                // 20th Object: Сухое дерево 5 с веткой над пропастью (y: 138)
+                { id: 'snow_t5', x: 10945, y: 138, length: 90, trunkX: 10900, isTree: true, isBareTree: true },
+                // 23rd Object: Сухое дерево 6 с веткой над пропастью (y: 117)
+                { id: 'snow_t6', x: 12583, y: 117, length: 90, trunkX: 12538, isTree: true, isBareTree: true },
+                // 30th Object: Сухое дерево 7 с веткой над пропастью (y: 121)
+                { id: 'snow_t7', x: 16922, y: 121, length: 90, trunkX: 16877, isTree: true, isBareTree: true },
+                // 32nd Object: Сухое дерево 8 с веткой над пропастью (y: 126)
+                { id: 'snow_t8', x: 18019, y: 126, length: 90, trunkX: 17974, isTree: true, isBareTree: true },
+                // 36th Object: Сухое дерево 9 с веткой над пропастью (y: 147)
+                { id: 'snow_t9', x: 20229, y: 147, length: 90, trunkX: 20184, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 3rd Object: Сухая свисающая ветка 1 над пропастью (ветка y: -104)
+                { id: 'snow_r1', x: 1729, anchorY: -104, length: 267, trunkX: 1639, isVine: true, isDryHangingBranch: true },
+                // 6th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -96)
+                { id: 'snow_r2', x: 3411, anchorY: -96, length: 271, trunkX: 3321, isVine: true, isDryHangingBranch: true },
+                // 11th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -109)
+                { id: 'snow_r3', x: 6050, anchorY: -109, length: 269, trunkX: 5960, isVine: true, isDryHangingBranch: true },
+                // 13th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -92)
+                { id: 'snow_r4', x: 7168, anchorY: -92, length: 272, trunkX: 7078, isVine: true, isDryHangingBranch: true },
+                // 19th Object: Сухая свисающая ветка 5 над пропастью (ветка y: -130)
+                { id: 'snow_r5', x: 10426, anchorY: -130, length: 279, trunkX: 10336, isVine: true, isDryHangingBranch: true },
+                // 24th Object: Сухая свисающая ветка 6 над пропастью (ветка y: -126)
+                { id: 'snow_r6', x: 13102, anchorY: -126, length: 278, trunkX: 13012, isVine: true, isDryHangingBranch: true },
+                // 27th Object: Сухая свисающая ветка 7 над пропастью (ветка y: -97)
+                { id: 'snow_r7', x: 15261, anchorY: -97, length: 279, trunkX: 15171, isVine: true, isDryHangingBranch: true },
+                // 38th Object: Сухая свисающая ветка 8 над пропастью (ветка y: -97)
+                { id: 'snow_r8', x: 21274, anchorY: -97, length: 274, trunkX: 21184, isVine: true, isDryHangingBranch: true },
+                // 40th Object: Сухая свисающая ветка 9 над пропастью (ветка y: -112)
+                { id: 'snow_r9', x: 22364, anchorY: -112, length: 271, trunkX: 22274, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 4th Object: Лестница из сухих веток на монолите 3
+                { x: 2261, topY: 73, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 12th Object: Лестница из сухих веток на монолите 7
+                { x: 6586, topY: 69, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 16th Object: Лестница из сухих веток на монолите 9
+                { x: 8764, topY: 68, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 46th Object: Лестница из сухих веток на вершинной скале 28
+                { x: 25713, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 13903,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 14163,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 25893, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        47: {
+            id: 47,
+            title: "Уровень 47",
+            theme: "snow",
+            worldWidth: 27804,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1390, h: 140, type: 'ground' },
+                { x: 2161, y: 540, w: 330, h: 140, type: 'ground' },
+                { x: 3790, y: 540, w: 854, h: 140, type: 'ground' },
+                { x: 5920, y: 540, w: 361, h: 140, type: 'ground' },
+                { x: 7056, y: 540, w: 970, h: 140, type: 'ground' },
+                { x: 8763, y: 540, w: 835, h: 140, type: 'ground' },
+                { x: 10891, y: 540, w: 864, h: 140, type: 'ground' },
+                { x: 13033, y: 540, w: 348, h: 140, type: 'ground' },
+                { x: 14149, y: 540, w: 253, h: 140, type: 'ground' },
+                { x: 15662, y: 540, w: 1543, h: 140, type: 'ground' },
+                { x: 17961, y: 540, w: 899, h: 140, type: 'ground' },
+                { x: 19627, y: 540, w: 918, h: 140, type: 'ground' },
+                { x: 21323, y: 540, w: 855, h: 140, type: 'ground' },
+                { x: 22953, y: 540, w: 900, h: 140, type: 'ground' },
+                { x: 24631, y: 540, w: 2773, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1390, endX: 2161 },
+                { startX: 2491, endX: 3790 },
+                { startX: 4644, endX: 5920 },
+                { startX: 6281, endX: 7056 },
+                { startX: 8026, endX: 8763 },
+                { startX: 9598, endX: 10891 },
+                { startX: 11755, endX: 13033 },
+                { startX: 13381, endX: 14149 },
+                { startX: 14402, endX: 15662 },
+                { startX: 17205, endX: 17961 },
+                { startX: 18860, endX: 19627 },
+                { startX: 20545, endX: 21323 },
+                { startX: 22178, endX: 22953 },
+                { startX: 23853, endX: 24631 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 443, w: 151, h: 97, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1143, y: 328, w: 187, h: 212, isStone: true, isSnow: true },
+                // 4th Object: Скалистая арка 3 с лазом под ней (требует подкат)
+                { id: 'snow_s3', x: 2201, y: -200, w: 230, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 7th Object: Заснеженный утес 4 (Высокая скала-уступ)
+                { id: 'snow_s4', x: 3830, y: 240, w: 224, h: 300, isStone: true, isSnow: true },
+                // 8th Object: Заснеженная гранитная скала 5 (Средний валун)
+                { id: 'snow_s5', x: 4402, y: 338, w: 182, h: 202, isStone: true, isSnow: true },
+                // 11th Object: Заснеженный монолит 6 с ветвяной лестницей для подъема
+                { id: 'snow_s6', x: 5960, y: 56, w: 261, h: 484, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 13th Object: Заснеженный монолит 7 с ветвяной лестницей для подъема
+                { id: 'snow_s7', x: 7096, y: 75, w: 252, h: 465, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 14th Object: Заснеженный монолит 8 с ветвяной лестницей для подъема
+                { id: 'snow_s8', x: 7708, y: 59, w: 258, h: 481, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 16th Object: Заснеженная гранитная скала 9 (Средний валун)
+                { id: 'snow_s9', x: 8803, y: 347, w: 208, h: 193, isStone: true, isSnow: true },
+                // 17th Object: Заснеженный валун 10 (Низкий камень-препятствие)
+                { id: 'snow_s10', x: 9364, y: 443, w: 174, h: 97, isStone: true, isSnow: true, isSmall: true },
+                // 20th Object: Парящая заснеженная плита 11
+                { id: 'snow_s11', x: 10931, y: 204, w: 215, h: 65, isStone: true, isSnow: true },
+                // 21st Object: Заснеженная гранитная скала 12 (Средний валун)
+                { id: 'snow_s12', x: 11495, y: 341, w: 200, h: 199, isStone: true, isSnow: true },
+                // 24th Object: Заснеженный утес 13 (Высокая скала-уступ)
+                { id: 'snow_s13', x: 13073, y: 228, w: 248, h: 312, isStone: true, isSnow: true },
+                // 26th Object: Заснеженный валун 14 (Низкий камень-препятствие)
+                { id: 'snow_s14', x: 14189, y: 444, w: 153, h: 96, isStone: true, isSnow: true, isSmall: true },
+                // 29th Object: Заснеженная гранитная скала 15 (Средний валун)
+                { id: 'snow_s15', x: 15702, y: 330, w: 204, h: 210, isStone: true, isSnow: true },
+                // 30th Object: Заснеженный утес 16 (Высокая скала-уступ)
+                { id: 'snow_s16', x: 16891, y: 245, w: 254, h: 295, isStone: true, isSnow: true },
+                // 32nd Object: Заснеженная гранитная скала 17 (Средний валун)
+                { id: 'snow_s17', x: 18001, y: 339, w: 205, h: 201, isStone: true, isSnow: true },
+                // 33rd Object: Заснеженный утес 18 (Высокая скала-уступ)
+                { id: 'snow_s18', x: 18548, y: 232, w: 252, h: 308, isStone: true, isSnow: true },
+                // 35th Object: Заснеженная гранитная скала 19 (Средний валун)
+                { id: 'snow_s19', x: 19667, y: 335, w: 184, h: 205, isStone: true, isSnow: true },
+                // 36th Object: Заснеженный утес 20 (Высокая скала-уступ)
+                { id: 'snow_s20', x: 20231, y: 255, w: 254, h: 285, isStone: true, isSnow: true },
+                // 38th Object: Заснеженный утес 21 (Высокая скала-уступ)
+                { id: 'snow_s21', x: 21363, y: 245, w: 223, h: 295, isStone: true, isSnow: true },
+                // 39th Object: Заснеженная гранитная скала 22 (Средний валун)
+                { id: 'snow_s22', x: 21934, y: 330, w: 184, h: 210, isStone: true, isSnow: true },
+                // 41st Object: Заснеженный утес 23 (Высокая скала-уступ)
+                { id: 'snow_s23', x: 22993, y: 250, w: 228, h: 290, isStone: true, isSnow: true },
+                // 42nd Object: Парящая заснеженная плита 24
+                { id: 'snow_s24', x: 23570, y: 199, w: 223, h: 65, isStone: true, isSnow: true },
+                // 44th Object: Заснеженный утес 25 (Высокая скала-уступ)
+                { id: 'snow_s25', x: 24671, y: 227, w: 227, h: 313, isStone: true, isSnow: true },
+                // 45th Object: Парящая заснеженная плита 26
+                { id: 'snow_s26', x: 25269, y: 212, w: 229, h: 65, isStone: true, isSnow: true },
+                // 46th Object: Заснеженный утес 27 (Высокая скала-уступ)
+                { id: 'snow_s27', x: 25862, y: 229, w: 230, h: 311, isStone: true, isSnow: true },
+                // 47th Object: Вершинная скала 28 с флагом победы!
+                { id: 'snow_s28', x: 26444, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 6th Object: Сухое дерево 1 с веткой над пропастью (y: 138)
+                { id: 'snow_t1', x: 3308, y: 138, length: 90, trunkX: 3263, isTree: true, isBareTree: true },
+                // 9th Object: Сухое дерево 2 с веткой над пропастью (y: 123)
+                { id: 'snow_t2', x: 4950, y: 123, length: 90, trunkX: 4905, isTree: true, isBareTree: true },
+                // 15th Object: Сухое дерево 3 с веткой над пропастью (y: 122)
+                { id: 'snow_t3', x: 8310, y: 122, length: 90, trunkX: 8265, isTree: true, isBareTree: true },
+                // 19th Object: Сухое дерево 4 с веткой над пропастью (y: 126)
+                { id: 'snow_t4', x: 10436, y: 126, length: 90, trunkX: 10391, isTree: true, isBareTree: true },
+                // 23rd Object: Сухое дерево 5 с веткой над пропастью (y: 116)
+                { id: 'snow_t5', x: 12548, y: 116, length: 90, trunkX: 12503, isTree: true, isBareTree: true },
+                // 28th Object: Сухое дерево 6 с веткой над пропастью (y: 146)
+                { id: 'snow_t6', x: 15180, y: 146, length: 90, trunkX: 15135, isTree: true, isBareTree: true },
+                // 31st Object: Сухое дерево 7 с веткой над пропастью (y: 119)
+                { id: 'snow_t7', x: 17511, y: 119, length: 90, trunkX: 17466, isTree: true, isBareTree: true },
+                // 34th Object: Сухое дерево 8 с веткой над пропастью (y: 142)
+                { id: 'snow_t8', x: 19173, y: 142, length: 90, trunkX: 19128, isTree: true, isBareTree: true },
+                // 37th Object: Сухое дерево 9 с веткой над пропастью (y: 148)
+                { id: 'snow_t9', x: 20855, y: 148, length: 90, trunkX: 20810, isTree: true, isBareTree: true },
+                // 40th Object: Сухое дерево 10 с веткой над пропастью (y: 128)
+                { id: 'snow_t10', x: 22480, y: 128, length: 90, trunkX: 22435, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 3rd Object: Сухая свисающая ветка 1 над пропастью (ветка y: -115)
+                { id: 'snow_r1', x: 1690, anchorY: -115, length: 275, trunkX: 1600, isVine: true, isDryHangingBranch: true },
+                // 5th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -112)
+                { id: 'snow_r2', x: 2801, anchorY: -112, length: 278, trunkX: 2711, isVine: true, isDryHangingBranch: true },
+                // 10th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -135)
+                { id: 'snow_r3', x: 5442, anchorY: -135, length: 273, trunkX: 5352, isVine: true, isDryHangingBranch: true },
+                // 12th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -101)
+                { id: 'snow_r4', x: 6588, anchorY: -101, length: 276, trunkX: 6498, isVine: true, isDryHangingBranch: true },
+                // 18th Object: Сухая свисающая ветка 5 над пропастью (ветка y: -131)
+                { id: 'snow_r5', x: 9912, anchorY: -131, length: 272, trunkX: 9822, isVine: true, isDryHangingBranch: true },
+                // 22nd Object: Сухая свисающая ветка 6 над пропастью (ветка y: -103)
+                { id: 'snow_r6', x: 12056, anchorY: -103, length: 275, trunkX: 11966, isVine: true, isDryHangingBranch: true },
+                // 25th Object: Сухая свисающая ветка 7 над пропастью (ветка y: -113)
+                { id: 'snow_r7', x: 13664, anchorY: -113, length: 267, trunkX: 13574, isVine: true, isDryHangingBranch: true },
+                // 27th Object: Сухая свисающая ветка 8 над пропастью (ветка y: -100)
+                { id: 'snow_r8', x: 14686, anchorY: -100, length: 278, trunkX: 14596, isVine: true, isDryHangingBranch: true },
+                // 43rd Object: Сухая свисающая ветка 9 над пропастью (ветка y: -117)
+                { id: 'snow_r9', x: 24168, anchorY: -117, length: 275, trunkX: 24078, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 11th Object: Лестница из сухих веток на монолите 6
+                { x: 5980, topY: 56, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 13th Object: Лестница из сухих веток на монолите 7
+                { x: 7116, topY: 75, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 14th Object: Лестница из сухих веток на монолите 8
+                { x: 7728, topY: 59, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 47th Object: Лестница из сухих веток на вершинной скале 28
+                { x: 26464, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 16006,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 16266,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 26644, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        48: {
+            id: 48,
+            title: "Уровень 48",
+            theme: "snow",
+            worldWidth: 28321,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1444, h: 140, type: 'ground' },
+                { x: 2216, y: 540, w: 976, h: 140, type: 'ground' },
+                { x: 3942, y: 540, w: 841, h: 140, type: 'ground' },
+                { x: 5559, y: 540, w: 327, h: 140, type: 'ground' },
+                { x: 6659, y: 540, w: 901, h: 140, type: 'ground' },
+                { x: 8862, y: 540, w: 942, h: 140, type: 'ground' },
+                { x: 11044, y: 540, w: 853, h: 140, type: 'ground' },
+                { x: 12647, y: 540, w: 290, h: 140, type: 'ground' },
+                { x: 14231, y: 540, w: 375, h: 140, type: 'ground' },
+                { x: 15341, y: 540, w: 1525, h: 140, type: 'ground' },
+                { x: 17625, y: 540, w: 328, h: 140, type: 'ground' },
+                { x: 18702, y: 540, w: 928, h: 140, type: 'ground' },
+                { x: 20903, y: 540, w: 290, h: 140, type: 'ground' },
+                { x: 21965, y: 540, w: 851, h: 140, type: 'ground' },
+                { x: 23576, y: 540, w: 4345, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1444, endX: 2216 },
+                { startX: 3192, endX: 3942 },
+                { startX: 4783, endX: 5559 },
+                { startX: 5886, endX: 6659 },
+                { startX: 7560, endX: 8862 },
+                { startX: 9804, endX: 11044 },
+                { startX: 11897, endX: 12647 },
+                { startX: 12937, endX: 14231 },
+                { startX: 14606, endX: 15341 },
+                { startX: 16866, endX: 17625 },
+                { startX: 17953, endX: 18702 },
+                { startX: 19630, endX: 20903 },
+                { startX: 21193, endX: 21965 },
+                { startX: 22816, endX: 23576 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 437, w: 172, h: 103, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1194, y: 352, w: 190, h: 188, isStone: true, isSnow: true },
+                // 4th Object: Заснеженный монолит 3 с ветвяной лестницей для подъема
+                { id: 'snow_s3', x: 2256, y: 62, w: 276, h: 478, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 5th Object: Скалистая арка 4 с лазом под ней (требует подкат)
+                { id: 'snow_s4', x: 2895, y: -200, w: 237, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 7th Object: Заснеженная гранитная скала 5 (Средний валун)
+                { id: 'snow_s5', x: 3982, y: 342, w: 187, h: 198, isStone: true, isSnow: true },
+                // 8th Object: Заснеженная гранитная скала 6 (Средний валун)
+                { id: 'snow_s6', x: 4522, y: 347, w: 201, h: 193, isStone: true, isSnow: true },
+                // 10th Object: Парящая заснеженная плита 7
+                { id: 'snow_s7', x: 5599, y: 222, w: 227, h: 65, isStone: true, isSnow: true },
+                // 12th Object: Заснеженная гранитная скала 8 (Средний валун)
+                { id: 'snow_s8', x: 6699, y: 348, w: 212, h: 192, isStone: true, isSnow: true },
+                // 13th Object: Заснеженный утес 9 (Высокая скала-уступ)
+                { id: 'snow_s9', x: 7274, y: 228, w: 226, h: 312, isStone: true, isSnow: true },
+                // 16th Object: Парящая заснеженная плита 10
+                { id: 'snow_s10', x: 8902, y: 200, w: 232, h: 65, isStone: true, isSnow: true },
+                // 17th Object: Скалистая арка 11 с лазом под ней (требует подкат)
+                { id: 'snow_s11', x: 9504, y: -200, w: 240, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 20th Object: Заснеженная гранитная скала 12 (Средний валун)
+                { id: 'snow_s12', x: 11084, y: 341, w: 183, h: 199, isStone: true, isSnow: true },
+                // 21st Object: Скалистая арка 13 с лазом под ней (требует подкат)
+                { id: 'snow_s13', x: 11617, y: -200, w: 220, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 23rd Object: Заснеженная гранитная скала 14 (Средний валун)
+                { id: 'snow_s14', x: 12687, y: 336, w: 190, h: 204, isStone: true, isSnow: true },
+                // 26th Object: Заснеженный монолит 15 с ветвяной лестницей для подъема
+                { id: 'snow_s15', x: 14271, y: 78, w: 275, h: 462, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 28th Object: Парящая заснеженная плита 16
+                { id: 'snow_s16', x: 15381, y: 199, w: 225, h: 65, isStone: true, isSnow: true },
+                // 29th Object: Скалистая арка 17 с лазом под ней (требует подкат)
+                { id: 'snow_s17', x: 16575, y: -200, w: 231, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 31st Object: Скалистая арка 18 с лазом под ней (требует подкат)
+                { id: 'snow_s18', x: 17665, y: -200, w: 228, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 33rd Object: Заснеженный монолит 19 с ветвяной лестницей для подъема
+                { id: 'snow_s19', x: 18742, y: 64, w: 255, h: 476, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 34th Object: Заснеженная гранитная скала 20 (Средний валун)
+                { id: 'snow_s20', x: 19369, y: 339, w: 201, h: 201, isStone: true, isSnow: true },
+                // 37th Object: Заснеженная гранитная скала 21 (Средний валун)
+                { id: 'snow_s21', x: 20943, y: 347, w: 190, h: 193, isStone: true, isSnow: true },
+                // 39th Object: Заснеженный валун 22 (Низкий камень-препятствие)
+                { id: 'snow_s22', x: 22005, y: 436, w: 166, h: 104, isStone: true, isSnow: true, isSmall: true },
+                // 40th Object: Скалистая арка 23 с лазом под ней (требует подкат)
+                { id: 'snow_s23', x: 22527, y: -200, w: 229, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 42nd Object: Заснеженный утес 24 (Высокая скала-уступ)
+                { id: 'snow_s24', x: 23616, y: 241, w: 234, h: 299, isStone: true, isSnow: true },
+                // 43rd Object: Заснеженная гранитная скала 25 (Средний валун)
+                { id: 'snow_s25', x: 24227, y: 338, w: 188, h: 202, isStone: true, isSnow: true },
+                // 44th Object: Скалистая арка 26 с лазом под ней (требует подкат)
+                { id: 'snow_s26', x: 24759, y: -200, w: 223, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 45th Object: Заснеженный валун 27 (Низкий камень-препятствие)
+                { id: 'snow_s27', x: 25347, y: 435, w: 166, h: 105, isStone: true, isSnow: true, isSmall: true },
+                // 46th Object: Заснеженная гранитная скала 28 (Средний валун)
+                { id: 'snow_s28', x: 25891, y: 358, w: 214, h: 182, isStone: true, isSnow: true },
+                // 47th Object: Заснеженный валун 29 (Низкий камень-препятствие)
+                { id: 'snow_s29', x: 26446, y: 433, w: 164, h: 107, isStone: true, isSnow: true, isSmall: true },
+                // 48th Object: Вершинная скала 30 с флагом победы!
+                { id: 'snow_s30', x: 26961, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 6th Object: Сухое дерево 1 с веткой над пропастью (y: 141)
+                { id: 'snow_t1', x: 3485, y: 141, length: 90, trunkX: 3440, isTree: true, isBareTree: true },
+                // 9th Object: Сухое дерево 2 с веткой над пропастью (y: 150)
+                { id: 'snow_t2', x: 5086, y: 150, length: 90, trunkX: 5041, isTree: true, isBareTree: true },
+                // 14th Object: Сухое дерево 3 с веткой над пропастью (y: 134)
+                { id: 'snow_t3', x: 7873, y: 134, length: 90, trunkX: 7828, isTree: true, isBareTree: true },
+                // 19th Object: Сухое дерево 4 с веткой над пропастью (y: 124)
+                { id: 'snow_t4', x: 10582, y: 124, length: 90, trunkX: 10537, isTree: true, isBareTree: true },
+                // 22nd Object: Сухое дерево 5 с веткой над пропастью (y: 123)
+                { id: 'snow_t5', x: 12192, y: 123, length: 90, trunkX: 12147, isTree: true, isBareTree: true },
+                // 24th Object: Сухое дерево 6 с веткой над пропастью (y: 116)
+                { id: 'snow_t6', x: 13247, y: 116, length: 90, trunkX: 13202, isTree: true, isBareTree: true },
+                // 27th Object: Сухое дерево 7 с веткой над пропастью (y: 146)
+                { id: 'snow_t7', x: 14887, y: 146, length: 90, trunkX: 14842, isTree: true, isBareTree: true },
+                // 30th Object: Сухое дерево 8 с веткой над пропастью (y: 144)
+                { id: 'snow_t8', x: 17155, y: 144, length: 90, trunkX: 17110, isTree: true, isBareTree: true },
+                // 36th Object: Сухое дерево 9 с веткой над пропастью (y: 143)
+                { id: 'snow_t9', x: 20443, y: 143, length: 90, trunkX: 20398, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 3rd Object: Сухая свисающая ветка 1 над пропастью (ветка y: -126)
+                { id: 'snow_r1', x: 1743, anchorY: -126, length: 277, trunkX: 1653, isVine: true, isDryHangingBranch: true },
+                // 11th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -114)
+                { id: 'snow_r2', x: 6196, anchorY: -114, length: 272, trunkX: 6106, isVine: true, isDryHangingBranch: true },
+                // 15th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -128)
+                { id: 'snow_r3', x: 8388, anchorY: -128, length: 279, trunkX: 8298, isVine: true, isDryHangingBranch: true },
+                // 18th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -92)
+                { id: 'snow_r4', x: 10088, anchorY: -92, length: 279, trunkX: 9998, isVine: true, isDryHangingBranch: true },
+                // 25th Object: Сухая свисающая ветка 5 над пропастью (ветка y: -118)
+                { id: 'snow_r5', x: 13758, anchorY: -118, length: 276, trunkX: 13668, isVine: true, isDryHangingBranch: true },
+                // 32nd Object: Сухая свисающая ветка 6 над пропастью (ветка y: -134)
+                { id: 'snow_r6', x: 18245, anchorY: -134, length: 266, trunkX: 18155, isVine: true, isDryHangingBranch: true },
+                // 35th Object: Сухая свисающая ветка 7 над пропастью (ветка y: -106)
+                { id: 'snow_r7', x: 19930, anchorY: -106, length: 279, trunkX: 19840, isVine: true, isDryHangingBranch: true },
+                // 38th Object: Сухая свисающая ветка 8 над пропастью (ветка y: -91)
+                { id: 'snow_r8', x: 21502, anchorY: -91, length: 278, trunkX: 21412, isVine: true, isDryHangingBranch: true },
+                // 41st Object: Сухая свисающая ветка 9 над пропастью (ветка y: -102)
+                { id: 'snow_r9', x: 23100, anchorY: -102, length: 280, trunkX: 23010, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 4th Object: Лестница из сухих веток на монолите 3
+                { x: 2276, topY: 62, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 26th Object: Лестница из сухих веток на монолите 15
+                { x: 14291, topY: 78, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 33rd Object: Лестница из сухих веток на монолите 19
+                { x: 18762, topY: 64, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 48th Object: Лестница из сухих веток на вершинной скале 30
+                { x: 26981, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 15706,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 15966,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 27161, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        49: {
+            id: 49,
+            title: "Уровень 49",
+            theme: "snow",
+            worldWidth: 28901,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1431, h: 140, type: 'ground' },
+                { x: 2203, y: 540, w: 356, h: 140, type: 'ground' },
+                { x: 3819, y: 540, w: 865, h: 140, type: 'ground' },
+                { x: 5452, y: 540, w: 932, h: 140, type: 'ground' },
+                { x: 7680, y: 540, w: 934, h: 140, type: 'ground' },
+                { x: 9389, y: 540, w: 323, h: 140, type: 'ground' },
+                { x: 10971, y: 540, w: 914, h: 140, type: 'ground' },
+                { x: 13145, y: 540, w: 352, h: 140, type: 'ground' },
+                { x: 14247, y: 540, w: 317, h: 140, type: 'ground' },
+                { x: 15317, y: 540, w: 253, h: 140, type: 'ground' },
+                { x: 16332, y: 540, w: 2048, h: 140, type: 'ground' },
+                { x: 19150, y: 540, w: 302, h: 140, type: 'ground' },
+                { x: 20194, y: 540, w: 1480, h: 140, type: 'ground' },
+                { x: 22445, y: 540, w: 868, h: 140, type: 'ground' },
+                { x: 24601, y: 540, w: 3900, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1431, endX: 2203 },
+                { startX: 2559, endX: 3819 },
+                { startX: 4684, endX: 5452 },
+                { startX: 6384, endX: 7680 },
+                { startX: 8614, endX: 9389 },
+                { startX: 9712, endX: 10971 },
+                { startX: 11885, endX: 13145 },
+                { startX: 13497, endX: 14247 },
+                { startX: 14564, endX: 15317 },
+                { startX: 15570, endX: 16332 },
+                { startX: 18380, endX: 19150 },
+                { startX: 19452, endX: 20194 },
+                { startX: 21674, endX: 22445 },
+                { startX: 23313, endX: 24601 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 431, w: 167, h: 109, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1178, y: 342, w: 193, h: 198, isStone: true, isSnow: true },
+                // 4th Object: Заснеженный монолит 3 с ветвяной лестницей для подъема
+                { id: 'snow_s3', x: 2243, y: 66, w: 256, h: 474, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 7th Object: Заснеженная гранитная скала 4 (Средний валун)
+                { id: 'snow_s4', x: 3859, y: 344, w: 196, h: 196, isStone: true, isSnow: true },
+                // 8th Object: Заснеженный утес 5 (Высокая скала-уступ)
+                { id: 'snow_s5', x: 4401, y: 241, w: 223, h: 299, isStone: true, isSnow: true },
+                // 10th Object: Скалистая арка 6 с лазом под ней (требует подкат)
+                { id: 'snow_s6', x: 5492, y: -200, w: 221, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 11th Object: Скалистая арка 7 с лазом под ней (требует подкат)
+                { id: 'snow_s7', x: 6090, y: -200, w: 234, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 14th Object: Заснеженный монолит 8 с ветвяной лестницей для подъема
+                { id: 'snow_s8', x: 7720, y: 71, w: 269, h: 469, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 15th Object: Парящая заснеженная плита 9
+                { id: 'snow_s9', x: 8336, y: 212, w: 218, h: 65, isStone: true, isSnow: true },
+                // 17th Object: Скалистая арка 10 с лазом под ней (требует подкат)
+                { id: 'snow_s10', x: 9429, y: -200, w: 223, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 20th Object: Заснеженный утес 11 (Высокая скала-уступ)
+                { id: 'snow_s11', x: 11011, y: 247, w: 222, h: 293, isStone: true, isSnow: true },
+                // 21st Object: Заснеженный утес 12 (Высокая скала-уступ)
+                { id: 'snow_s12', x: 11573, y: 254, w: 252, h: 286, isStone: true, isSnow: true },
+                // 24th Object: Заснеженный монолит 13 с ветвяной лестницей для подъема
+                { id: 'snow_s13', x: 13185, y: 76, w: 252, h: 464, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 26th Object: Парящая заснеженная плита 14
+                { id: 'snow_s14', x: 14287, y: 196, w: 217, h: 65, isStone: true, isSnow: true },
+                // 28th Object: Заснеженный валун 15 (Низкий камень-препятствие)
+                { id: 'snow_s15', x: 15357, y: 431, w: 153, h: 109, isStone: true, isSnow: true, isSmall: true },
+                // 30th Object: Заснеженный валун 16 (Низкий камень-препятствие)
+                { id: 'snow_s16', x: 16372, y: 438, w: 168, h: 102, isStone: true, isSnow: true, isSmall: true },
+                // 31st Object: Заснеженная гранитная скала 17 (Средний валун)
+                { id: 'snow_s17', x: 17537, y: 325, w: 183, h: 215, isStone: true, isSnow: true },
+                // 32nd Object: Скалистая арка 18 с лазом под ней (требует подкат)
+                { id: 'snow_s18', x: 18087, y: -200, w: 233, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 34th Object: Заснеженная гранитная скала 19 (Средний валун)
+                { id: 'snow_s19', x: 19190, y: 354, w: 202, h: 186, isStone: true, isSnow: true },
+                // 36th Object: Заснеженный валун 20 (Низкий камень-препятствие)
+                { id: 'snow_s20', x: 20234, y: 438, w: 161, h: 102, isStone: true, isSnow: true, isSmall: true },
+                // 37th Object: Парящая заснеженная плита 21
+                { id: 'snow_s21', x: 20768, y: 217, w: 233, h: 65, isStone: true, isSnow: true },
+                // 38th Object: Скалистая арка 22 с лазом под ней (требует подкат)
+                { id: 'snow_s22', x: 21377, y: -200, w: 237, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 40th Object: Заснеженный утес 23 (Высокая скала-уступ)
+                { id: 'snow_s23', x: 22485, y: 256, w: 245, h: 284, isStone: true, isSnow: true },
+                // 41st Object: Заснеженный валун 24 (Низкий камень-препятствие)
+                { id: 'snow_s24', x: 23096, y: 443, w: 157, h: 97, isStone: true, isSnow: true, isSmall: true },
+                // 44th Object: Заснеженный утес 25 (Высокая скала-уступ)
+                { id: 'snow_s25', x: 24641, y: 237, w: 232, h: 303, isStone: true, isSnow: true },
+                // 45th Object: Скалистая арка 26 с лазом под ней (требует подкат)
+                { id: 'snow_s26', x: 25238, y: -200, w: 238, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 46th Object: Заснеженный утес 27 (Высокая скала-уступ)
+                { id: 'snow_s27', x: 25845, y: 248, w: 220, h: 292, isStone: true, isSnow: true },
+                // 47th Object: Скалистая арка 28 с лазом под ней (требует подкат)
+                { id: 'snow_s28', x: 26423, y: -200, w: 231, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 48th Object: Заснеженная гранитная скала 29 (Средний валун)
+                { id: 'snow_s29', x: 26995, y: 339, w: 189, h: 201, isStone: true, isSnow: true },
+                // 49th Object: Вершинная скала 30 с флагом победы!
+                { id: 'snow_s30', x: 27541, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 5th Object: Сухое дерево 1 с веткой над пропастью (y: 145)
+                { id: 'snow_t1', x: 2863, y: 145, length: 90, trunkX: 2818, isTree: true, isBareTree: true },
+                // 9th Object: Сухое дерево 2 с веткой над пропастью (y: 119)
+                { id: 'snow_t2', x: 4997, y: 119, length: 90, trunkX: 4952, isTree: true, isBareTree: true },
+                // 12th Object: Сухое дерево 3 с веткой над пропастью (y: 136)
+                { id: 'snow_t3', x: 6697, y: 136, length: 90, trunkX: 6652, isTree: true, isBareTree: true },
+                // 16th Object: Сухое дерево 4 с веткой над пропастью (y: 125)
+                { id: 'snow_t4', x: 8917, y: 125, length: 90, trunkX: 8872, isTree: true, isBareTree: true },
+                // 19th Object: Сухое дерево 5 с веткой над пропастью (y: 120)
+                { id: 'snow_t5', x: 10489, y: 120, length: 90, trunkX: 10444, isTree: true, isBareTree: true },
+                // 23rd Object: Сухое дерево 6 с веткой над пропастью (y: 134)
+                { id: 'snow_t6', x: 12692, y: 134, length: 90, trunkX: 12647, isTree: true, isBareTree: true },
+                // 25th Object: Сухое дерево 7 с веткой над пропастью (y: 130)
+                { id: 'snow_t7', x: 13779, y: 130, length: 90, trunkX: 13734, isTree: true, isBareTree: true },
+                // 27th Object: Сухое дерево 8 с веткой над пропастью (y: 116)
+                { id: 'snow_t8', x: 14845, y: 116, length: 90, trunkX: 14800, isTree: true, isBareTree: true },
+                // 33rd Object: Сухое дерево 9 с веткой над пропастью (y: 125)
+                { id: 'snow_t9', x: 18668, y: 125, length: 90, trunkX: 18623, isTree: true, isBareTree: true },
+                // 43rd Object: Сухое дерево 10 с веткой над пропастью (y: 145)
+                { id: 'snow_t10', x: 24118, y: 145, length: 90, trunkX: 24073, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 3rd Object: Сухая свисающая ветка 1 над пропастью (ветка y: -93)
+                { id: 'snow_r1', x: 1728, anchorY: -93, length: 279, trunkX: 1638, isVine: true, isDryHangingBranch: true },
+                // 6th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -126)
+                { id: 'snow_r2', x: 3360, anchorY: -126, length: 272, trunkX: 3270, isVine: true, isDryHangingBranch: true },
+                // 13th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -90)
+                { id: 'snow_r3', x: 7220, anchorY: -90, length: 274, trunkX: 7130, isVine: true, isDryHangingBranch: true },
+                // 18th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -95)
+                { id: 'snow_r4', x: 9998, anchorY: -95, length: 269, trunkX: 9908, isVine: true, isDryHangingBranch: true },
+                // 22nd Object: Сухая свисающая ветка 5 над пропастью (ветка y: -132)
+                { id: 'snow_r5', x: 12192, anchorY: -132, length: 275, trunkX: 12102, isVine: true, isDryHangingBranch: true },
+                // 29th Object: Сухая свисающая ветка 6 над пропастью (ветка y: -100)
+                { id: 'snow_r6', x: 15861, anchorY: -100, length: 269, trunkX: 15771, isVine: true, isDryHangingBranch: true },
+                // 35th Object: Сухая свисающая ветка 7 над пропастью (ветка y: -115)
+                { id: 'snow_r7', x: 19741, anchorY: -115, length: 276, trunkX: 19651, isVine: true, isDryHangingBranch: true },
+                // 39th Object: Сухая свисающая ветка 8 над пропастью (ветка y: -123)
+                { id: 'snow_r8', x: 21983, anchorY: -123, length: 267, trunkX: 21893, isVine: true, isDryHangingBranch: true },
+                // 42nd Object: Сухая свисающая ветка 9 над пропастью (ветка y: -117)
+                { id: 'snow_r9', x: 23598, anchorY: -117, length: 268, trunkX: 23508, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 4th Object: Лестница из сухих веток на монолите 3
+                { x: 2263, topY: 66, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 14th Object: Лестница из сухих веток на монолите 8
+                { x: 7740, topY: 71, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 24th Object: Лестница из сухих веток на монолите 13
+                { x: 13205, topY: 76, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 49th Object: Лестница из сухих веток на вершинной скале 30
+                { x: 27561, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 16640,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 16900,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 27741, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        50: {
+            id: 50,
+            title: "Уровень 50",
+            theme: "snow",
+            worldWidth: 29379,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1434, h: 140, type: 'ground' },
+                { x: 2195, y: 540, w: 918, h: 140, type: 'ground' },
+                { x: 3892, y: 540, w: 903, h: 140, type: 'ground' },
+                { x: 6076, y: 540, w: 963, h: 140, type: 'ground' },
+                { x: 8311, y: 540, w: 952, h: 140, type: 'ground' },
+                { x: 10010, y: 540, w: 316, h: 140, type: 'ground' },
+                { x: 11096, y: 540, w: 910, h: 140, type: 'ground' },
+                { x: 13280, y: 540, w: 1510, h: 140, type: 'ground' },
+                { x: 16060, y: 540, w: 354, h: 140, type: 'ground' },
+                { x: 17666, y: 540, w: 862, h: 140, type: 'ground' },
+                { x: 19818, y: 540, w: 322, h: 140, type: 'ground' },
+                { x: 20918, y: 540, w: 330, h: 140, type: 'ground' },
+                { x: 22526, y: 540, w: 798, h: 140, type: 'ground' },
+                { x: 24074, y: 540, w: 4905, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1434, endX: 2195 },
+                { startX: 3113, endX: 3892 },
+                { startX: 4795, endX: 6076 },
+                { startX: 7039, endX: 8311 },
+                { startX: 9263, endX: 10010 },
+                { startX: 10326, endX: 11096 },
+                { startX: 12006, endX: 13280 },
+                { startX: 14790, endX: 16060 },
+                { startX: 16414, endX: 17666 },
+                { startX: 18528, endX: 19818 },
+                { startX: 20140, endX: 20918 },
+                { startX: 21248, endX: 22526 },
+                { startX: 23324, endX: 24074 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 441, w: 158, h: 99, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1166, y: 345, w: 208, h: 195, isStone: true, isSnow: true },
+                // 4th Object: Заснеженная гранитная скала 3 (Средний валун)
+                { id: 'snow_s3', x: 2235, y: 332, w: 194, h: 208, isStone: true, isSnow: true },
+                // 5th Object: Заснеженный монолит 4 с ветвяной лестницей для подъема
+                { id: 'snow_s4', x: 2792, y: 58, w: 261, h: 482, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 7th Object: Скалистая арка 5 с лазом под ней (требует подкат)
+                { id: 'snow_s5', x: 3932, y: -200, w: 234, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 8th Object: Заснеженная гранитная скала 6 (Средний валун)
+                { id: 'snow_s6', x: 4539, y: 329, w: 196, h: 211, isStone: true, isSnow: true },
+                // 11th Object: Заснеженный монолит 7 с ветвяной лестницей для подъема
+                { id: 'snow_s7', x: 6116, y: 73, w: 267, h: 467, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 12th Object: Парящая заснеженная плита 8
+                { id: 'snow_s8', x: 6749, y: 206, w: 230, h: 65, isStone: true, isSnow: true },
+                // 15th Object: Скалистая арка 9 с лазом под ней (требует подкат)
+                { id: 'snow_s9', x: 8351, y: -200, w: 238, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 16th Object: Заснеженный монолит 10 с ветвяной лестницей для подъема
+                { id: 'snow_s10', x: 8951, y: 66, w: 252, h: 474, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 18th Object: Парящая заснеженная плита 11
+                { id: 'snow_s11', x: 10050, y: 227, w: 216, h: 65, isStone: true, isSnow: true },
+                // 20th Object: Заснеженный утес 12 (Высокая скала-уступ)
+                { id: 'snow_s12', x: 11136, y: 240, w: 223, h: 300, isStone: true, isSnow: true },
+                // 21st Object: Заснеженный утес 13 (Высокая скала-уступ)
+                { id: 'snow_s13', x: 11704, y: 253, w: 242, h: 287, isStone: true, isSnow: true },
+                // 24th Object: Заснеженная гранитная скала 14 (Средний валун)
+                { id: 'snow_s14', x: 13320, y: 332, w: 191, h: 208, isStone: true, isSnow: true },
+                // 25th Object: Парящая заснеженная плита 15
+                { id: 'snow_s15', x: 14490, y: 193, w: 240, h: 65, isStone: true, isSnow: true },
+                // 28th Object: Заснеженный утес 16 (Высокая скала-уступ)
+                { id: 'snow_s16', x: 16100, y: 238, w: 254, h: 302, isStone: true, isSnow: true },
+                // 31st Object: Парящая заснеженная плита 17
+                { id: 'snow_s17', x: 17706, y: 227, w: 219, h: 65, isStone: true, isSnow: true },
+                // 32nd Object: Заснеженная гранитная скала 18 (Средний валун)
+                { id: 'snow_s18', x: 18266, y: 334, w: 202, h: 206, isStone: true, isSnow: true },
+                // 35th Object: Парящая заснеженная плита 19
+                { id: 'snow_s19', x: 19858, y: 195, w: 222, h: 65, isStone: true, isSnow: true },
+                // 37th Object: Заснеженный утес 20 (Высокая скала-уступ)
+                { id: 'snow_s20', x: 20958, y: 230, w: 230, h: 310, isStone: true, isSnow: true },
+                // 40th Object: Заснеженный валун 21 (Низкий камень-препятствие)
+                { id: 'snow_s21', x: 22566, y: 432, w: 162, h: 108, isStone: true, isSnow: true, isSmall: true },
+                // 41st Object: Заснеженная гранитная скала 22 (Средний валун)
+                { id: 'snow_s22', x: 23075, y: 352, w: 189, h: 188, isStone: true, isSnow: true },
+                // 43rd Object: Скалистая арка 23 с лазом под ней (требует подкат)
+                { id: 'snow_s23', x: 24114, y: -200, w: 234, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 44th Object: Парящая заснеженная плита 24
+                { id: 'snow_s24', x: 24712, y: 209, w: 215, h: 65, isStone: true, isSnow: true },
+                // 45th Object: Парящая заснеженная плита 25
+                { id: 'snow_s25', x: 25268, y: 224, w: 228, h: 65, isStone: true, isSnow: true },
+                // 46th Object: Заснеженный валун 26 (Низкий камень-препятствие)
+                { id: 'snow_s26', x: 25856, y: 441, w: 156, h: 99, isStone: true, isSnow: true, isSmall: true },
+                // 47th Object: Заснеженный валун 27 (Низкий камень-препятствие)
+                { id: 'snow_s27', x: 26370, y: 445, w: 162, h: 95, isStone: true, isSnow: true, isSmall: true },
+                // 48th Object: Парящая заснеженная плита 28
+                { id: 'snow_s28', x: 26884, y: 216, w: 232, h: 65, isStone: true, isSnow: true },
+                // 49th Object: Заснеженная гранитная скала 29 (Средний валун)
+                { id: 'snow_s29', x: 27473, y: 342, w: 195, h: 198, isStone: true, isSnow: true },
+                // 50th Object: Вершинная скала 30 с флагом победы!
+                { id: 'snow_s30', x: 28019, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 9th Object: Сухое дерево 1 с веткой над пропастью (y: 127)
+                { id: 'snow_t1', x: 5094, y: 127, length: 90, trunkX: 5049, isTree: true, isBareTree: true },
+                // 14th Object: Сухое дерево 2 с веткой над пропастью (y: 124)
+                { id: 'snow_t2', x: 7848, y: 124, length: 90, trunkX: 7803, isTree: true, isBareTree: true },
+                // 17th Object: Сухое дерево 3 с веткой над пропастью (y: 119)
+                { id: 'snow_t3', x: 9545, y: 119, length: 90, trunkX: 9500, isTree: true, isBareTree: true },
+                // 22nd Object: Сухое дерево 4 с веткой над пропастью (y: 125)
+                { id: 'snow_t4', x: 12314, y: 125, length: 90, trunkX: 12269, isTree: true, isBareTree: true },
+                // 26th Object: Сухое дерево 5 с веткой над пропастью (y: 126)
+                { id: 'snow_t5', x: 15083, y: 126, length: 90, trunkX: 15038, isTree: true, isBareTree: true },
+                // 29th Object: Сухое дерево 6 с веткой над пропастью (y: 143)
+                { id: 'snow_t6', x: 16706, y: 143, length: 90, trunkX: 16661, isTree: true, isBareTree: true },
+                // 33rd Object: Сухое дерево 7 с веткой над пропастью (y: 121)
+                { id: 'snow_t7', x: 18841, y: 121, length: 90, trunkX: 18796, isTree: true, isBareTree: true },
+                // 36th Object: Сухое дерево 8 с веткой над пропастью (y: 143)
+                { id: 'snow_t8', x: 20438, y: 143, length: 90, trunkX: 20393, isTree: true, isBareTree: true },
+                // 39th Object: Сухое дерево 9 с веткой над пропастью (y: 116)
+                { id: 'snow_t9', x: 22054, y: 116, length: 90, trunkX: 22009, isTree: true, isBareTree: true },
+                // 42nd Object: Сухое дерево 10 с веткой над пропастью (y: 144)
+                { id: 'snow_t10', x: 23606, y: 144, length: 90, trunkX: 23561, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 3rd Object: Сухая свисающая ветка 1 над пропастью (ветка y: -91)
+                { id: 'snow_r1', x: 1725, anchorY: -91, length: 277, trunkX: 1635, isVine: true, isDryHangingBranch: true },
+                // 6th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -104)
+                { id: 'snow_r2', x: 3421, anchorY: -104, length: 271, trunkX: 3331, isVine: true, isDryHangingBranch: true },
+                // 10th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -134)
+                { id: 'snow_r3', x: 5610, anchorY: -134, length: 278, trunkX: 5520, isVine: true, isDryHangingBranch: true },
+                // 13th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -118)
+                { id: 'snow_r4', x: 7331, anchorY: -118, length: 279, trunkX: 7241, isVine: true, isDryHangingBranch: true },
+                // 19th Object: Сухая свисающая ветка 5 над пропастью (ветка y: -109)
+                { id: 'snow_r5', x: 10636, anchorY: -109, length: 279, trunkX: 10546, isVine: true, isDryHangingBranch: true },
+                // 23rd Object: Сухая свисающая ветка 6 над пропастью (ветка y: -123)
+                { id: 'snow_r6', x: 12821, anchorY: -123, length: 266, trunkX: 12731, isVine: true, isDryHangingBranch: true },
+                // 27th Object: Сухая свисающая ветка 7 над пропастью (ветка y: -108)
+                { id: 'snow_r7', x: 15578, anchorY: -108, length: 268, trunkX: 15488, isVine: true, isDryHangingBranch: true },
+                // 30th Object: Сухая свисающая ветка 8 над пропастью (ветка y: -90)
+                { id: 'snow_r8', x: 17212, anchorY: -90, length: 270, trunkX: 17122, isVine: true, isDryHangingBranch: true },
+                // 34th Object: Сухая свисающая ветка 9 над пропастью (ветка y: -101)
+                { id: 'snow_r9', x: 19346, anchorY: -101, length: 267, trunkX: 19256, isVine: true, isDryHangingBranch: true },
+                // 38th Object: Сухая свисающая ветка 10 над пропастью (ветка y: -134)
+                { id: 'snow_r10', x: 21553, anchorY: -134, length: 267, trunkX: 21463, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 5th Object: Лестница из сухих веток на монолите 4
+                { x: 2812, topY: 58, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 11th Object: Лестница из сухих веток на монолите 7
+                { x: 6136, topY: 73, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 16th Object: Лестница из сухих веток на монолите 10
+                { x: 8971, topY: 66, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 50th Object: Лестница из сухих веток на вершинной скале 30
+                { x: 28039, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 13611,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 13871,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 28219, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        51: {
+            id: 51,
+            title: "Уровень 51",
+            theme: "snow",
+            worldWidth: 29964,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1429, h: 140, type: 'ground' },
+                { x: 2195, y: 540, w: 293, h: 140, type: 'ground' },
+                { x: 3263, y: 540, w: 958, h: 140, type: 'ground' },
+                { x: 4957, y: 540, w: 986, h: 140, type: 'ground' },
+                { x: 6703, y: 540, w: 938, h: 140, type: 'ground' },
+                { x: 8426, y: 540, w: 326, h: 140, type: 'ground' },
+                { x: 10062, y: 540, w: 781, h: 140, type: 'ground' },
+                { x: 12117, y: 540, w: 259, h: 140, type: 'ground' },
+                { x: 13144, y: 540, w: 1483, h: 140, type: 'ground' },
+                { x: 15403, y: 540, w: 915, h: 140, type: 'ground' },
+                { x: 17574, y: 540, w: 936, h: 140, type: 'ground' },
+                { x: 19807, y: 540, w: 313, h: 140, type: 'ground' },
+                { x: 20864, y: 540, w: 335, h: 140, type: 'ground' },
+                { x: 21991, y: 540, w: 899, h: 140, type: 'ground' },
+                { x: 23650, y: 540, w: 839, h: 140, type: 'ground' },
+                { x: 25245, y: 540, w: 297, h: 140, type: 'ground' },
+                { x: 26318, y: 540, w: 312, h: 140, type: 'ground' },
+                { x: 27397, y: 540, w: 2167, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1429, endX: 2195 },
+                { startX: 2488, endX: 3263 },
+                { startX: 4221, endX: 4957 },
+                { startX: 5943, endX: 6703 },
+                { startX: 7641, endX: 8426 },
+                { startX: 8752, endX: 10062 },
+                { startX: 10843, endX: 12117 },
+                { startX: 12376, endX: 13144 },
+                { startX: 14627, endX: 15403 },
+                { startX: 16318, endX: 17574 },
+                { startX: 18510, endX: 19807 },
+                { startX: 20120, endX: 20864 },
+                { startX: 21199, endX: 21991 },
+                { startX: 22890, endX: 23650 },
+                { startX: 24489, endX: 25245 },
+                { startX: 25542, endX: 26318 },
+                { startX: 26630, endX: 27397 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 432, w: 153, h: 108, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1180, y: 328, w: 189, h: 212, isStone: true, isSnow: true },
+                // 4th Object: Заснеженная гранитная скала 3 (Средний валун)
+                { id: 'snow_s3', x: 2235, y: 348, w: 193, h: 192, isStone: true, isSnow: true },
+                // 6th Object: Парящая заснеженная плита 4
+                { id: 'snow_s4', x: 3303, y: 224, w: 220, h: 65, isStone: true, isSnow: true },
+                // 7th Object: Заснеженный монолит 5 с ветвяной лестницей для подъема
+                { id: 'snow_s5', x: 3902, y: 65, w: 259, h: 475, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 9th Object: Заснеженный монолит 6 с ветвяной лестницей для подъема
+                { id: 'snow_s6', x: 4997, y: 72, w: 279, h: 468, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 10th Object: Заснеженный утес 7 (Высокая скала-уступ)
+                { id: 'snow_s7', x: 5645, y: 258, w: 238, h: 282, isStone: true, isSnow: true },
+                // 12th Object: Заснеженная гранитная скала 8 (Средний валун)
+                { id: 'snow_s8', x: 6743, y: 357, w: 214, h: 183, isStone: true, isSnow: true },
+                // 13th Object: Заснеженный монолит 9 с ветвяной лестницей для подъема
+                { id: 'snow_s9', x: 7317, y: 56, w: 264, h: 484, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 15th Object: Скалистая арка 10 с лазом под ней (требует подкат)
+                { id: 'snow_s10', x: 8466, y: -200, w: 226, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 18th Object: Заснеженный валун 11 (Низкий камень-препятствие)
+                { id: 'snow_s11', x: 10102, y: 430, w: 158, h: 110, isStone: true, isSnow: true, isSmall: true },
+                // 19th Object: Заснеженный валун 12 (Низкий камень-препятствие)
+                { id: 'snow_s12', x: 10614, y: 444, w: 169, h: 96, isStone: true, isSnow: true, isSmall: true },
+                // 22nd Object: Заснеженный валун 13 (Низкий камень-препятствие)
+                { id: 'snow_s13', x: 12157, y: 433, w: 159, h: 107, isStone: true, isSnow: true, isSmall: true },
+                // 24th Object: Заснеженная гранитная скала 14 (Средний валун)
+                { id: 'snow_s14', x: 13184, y: 336, w: 186, h: 204, isStone: true, isSnow: true },
+                // 25th Object: Парящая заснеженная плита 15
+                { id: 'snow_s15', x: 14350, y: 215, w: 217, h: 65, isStone: true, isSnow: true },
+                // 27th Object: Заснеженная гранитная скала 16 (Средний валун)
+                { id: 'snow_s16', x: 15443, y: 359, w: 198, h: 181, isStone: true, isSnow: true },
+                // 28th Object: Заснеженный утес 17 (Высокая скала-уступ)
+                { id: 'snow_s17', x: 16018, y: 248, w: 240, h: 292, isStone: true, isSnow: true },
+                // 31st Object: Парящая заснеженная плита 18
+                { id: 'snow_s18', x: 17614, y: 206, w: 228, h: 65, isStone: true, isSnow: true },
+                // 32nd Object: Скалистая арка 19 с лазом под ней (требует подкат)
+                { id: 'snow_s19', x: 18214, y: -200, w: 236, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 35th Object: Заснеженная гранитная скала 20 (Средний валун)
+                { id: 'snow_s20', x: 19847, y: 351, w: 213, h: 189, isStone: true, isSnow: true },
+                // 37th Object: Заснеженный утес 21 (Высокая скала-уступ)
+                { id: 'snow_s21', x: 20904, y: 227, w: 235, h: 313, isStone: true, isSnow: true },
+                // 39th Object: Заснеженный утес 22 (Высокая скала-уступ)
+                { id: 'snow_s22', x: 22031, y: 250, w: 228, h: 290, isStone: true, isSnow: true },
+                // 40th Object: Заснеженная гранитная скала 23 (Средний валун)
+                { id: 'snow_s23', x: 22626, y: 335, w: 204, h: 205, isStone: true, isSnow: true },
+                // 42nd Object: Заснеженный валун 24 (Низкий камень-препятствие)
+                { id: 'snow_s24', x: 23690, y: 432, w: 151, h: 108, isStone: true, isSnow: true, isSmall: true },
+                // 43rd Object: Заснеженный утес 25 (Высокая скала-уступ)
+                { id: 'snow_s25', x: 24192, y: 245, w: 237, h: 295, isStone: true, isSnow: true },
+                // 45th Object: Заснеженная гранитная скала 26 (Средний валун)
+                { id: 'snow_s26', x: 25285, y: 327, w: 197, h: 213, isStone: true, isSnow: true },
+                // 47th Object: Заснеженная гранитная скала 27 (Средний валун)
+                { id: 'snow_s27', x: 26358, y: 336, w: 212, h: 204, isStone: true, isSnow: true },
+                // 49th Object: Заснеженная гранитная скала 28 (Средний валун)
+                { id: 'snow_s28', x: 27437, y: 352, w: 195, h: 188, isStone: true, isSnow: true },
+                // 50th Object: Заснеженный утес 29 (Высокая скала-уступ)
+                { id: 'snow_s29', x: 28004, y: 246, w: 233, h: 294, isStone: true, isSnow: true },
+                // 51st Object: Вершинная скала 30 с флагом победы!
+                { id: 'snow_s30', x: 28604, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 5th Object: Сухое дерево 1 с веткой над пропастью (y: 123)
+                { id: 'snow_t1', x: 2794, y: 123, length: 90, trunkX: 2749, isTree: true, isBareTree: true },
+                // 11th Object: Сухое дерево 2 с веткой над пропастью (y: 118)
+                { id: 'snow_t2', x: 6230, y: 118, length: 90, trunkX: 6185, isTree: true, isBareTree: true },
+                // 17th Object: Сухое дерево 3 с веткой над пропастью (y: 138)
+                { id: 'snow_t3', x: 9577, y: 138, length: 90, trunkX: 9532, isTree: true, isBareTree: true },
+                // 21st Object: Сухое дерево 4 с веткой над пропастью (y: 117)
+                { id: 'snow_t4', x: 11663, y: 117, length: 90, trunkX: 11618, isTree: true, isBareTree: true },
+                // 23rd Object: Сухое дерево 5 с веткой над пропастью (y: 118)
+                { id: 'snow_t5', x: 12689, y: 118, length: 90, trunkX: 12644, isTree: true, isBareTree: true },
+                // 30th Object: Сухое дерево 6 с веткой над пропастью (y: 136)
+                { id: 'snow_t6', x: 17113, y: 136, length: 90, trunkX: 17068, isTree: true, isBareTree: true },
+                // 34th Object: Сухое дерево 7 с веткой над пропастью (y: 145)
+                { id: 'snow_t7', x: 19331, y: 145, length: 90, trunkX: 19286, isTree: true, isBareTree: true },
+                // 36th Object: Сухое дерево 8 с веткой над пропастью (y: 124)
+                { id: 'snow_t8', x: 20410, y: 124, length: 90, trunkX: 20365, isTree: true, isBareTree: true },
+                // 41st Object: Сухое дерево 9 с веткой над пропастью (y: 131)
+                { id: 'snow_t9', x: 23191, y: 131, length: 90, trunkX: 23146, isTree: true, isBareTree: true },
+                // 44th Object: Сухое дерево 10 с веткой над пропастью (y: 126)
+                { id: 'snow_t10', x: 24777, y: 126, length: 90, trunkX: 24732, isTree: true, isBareTree: true },
+                // 46th Object: Сухое дерево 11 с веткой над пропастью (y: 133)
+                { id: 'snow_t11', x: 25841, y: 133, length: 90, trunkX: 25796, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 3rd Object: Сухая свисающая ветка 1 над пропастью (ветка y: -129)
+                { id: 'snow_r1', x: 1742, anchorY: -129, length: 279, trunkX: 1652, isVine: true, isDryHangingBranch: true },
+                // 8th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -92)
+                { id: 'snow_r2', x: 4502, anchorY: -92, length: 279, trunkX: 4412, isVine: true, isDryHangingBranch: true },
+                // 14th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -95)
+                { id: 'snow_r3', x: 7956, anchorY: -95, length: 266, trunkX: 7866, isVine: true, isDryHangingBranch: true },
+                // 16th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -110)
+                { id: 'snow_r4', x: 9064, anchorY: -110, length: 278, trunkX: 8974, isVine: true, isDryHangingBranch: true },
+                // 20th Object: Сухая свисающая ветка 5 над пропастью (ветка y: -104)
+                { id: 'snow_r5', x: 11155, anchorY: -104, length: 267, trunkX: 11065, isVine: true, isDryHangingBranch: true },
+                // 26th Object: Сухая свисающая ветка 6 над пропастью (ветка y: -115)
+                { id: 'snow_r6', x: 14918, anchorY: -115, length: 269, trunkX: 14828, isVine: true, isDryHangingBranch: true },
+                // 29th Object: Сухая свисающая ветка 7 над пропастью (ветка y: -119)
+                { id: 'snow_r7', x: 16618, anchorY: -119, length: 270, trunkX: 16528, isVine: true, isDryHangingBranch: true },
+                // 33rd Object: Сухая свисающая ветка 8 над пропастью (ветка y: -107)
+                { id: 'snow_r8', x: 18823, anchorY: -107, length: 275, trunkX: 18733, isVine: true, isDryHangingBranch: true },
+                // 38th Object: Сухая свисающая ветка 9 над пропастью (ветка y: -117)
+                { id: 'snow_r9', x: 21509, anchorY: -117, length: 272, trunkX: 21419, isVine: true, isDryHangingBranch: true },
+                // 48th Object: Сухая свисающая ветка 10 над пропастью (ветка y: -93)
+                { id: 'snow_r10', x: 26919, anchorY: -93, length: 272, trunkX: 26829, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 7th Object: Лестница из сухих веток на монолите 5
+                { x: 3922, topY: 65, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 9th Object: Лестница из сухих веток на монолите 6
+                { x: 5017, topY: 72, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 13th Object: Лестница из сухих веток на монолите 9
+                { x: 7337, topY: 56, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 51st Object: Лестница из сухих веток на вершинной скале 30
+                { x: 28624, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 13470,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 13730,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 28804, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        52: {
+            id: 52,
+            title: "Уровень 52",
+            theme: "snow",
+            worldWidth: 30408,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1421, h: 140, type: 'ground' },
+                { x: 2189, y: 540, w: 902, h: 140, type: 'ground' },
+                { x: 4386, y: 540, w: 358, h: 140, type: 'ground' },
+                { x: 5533, y: 540, w: 376, h: 140, type: 'ground' },
+                { x: 7181, y: 540, w: 946, h: 140, type: 'ground' },
+                { x: 9413, y: 540, w: 1443, h: 140, type: 'ground' },
+                { x: 12119, y: 540, w: 319, h: 140, type: 'ground' },
+                { x: 13198, y: 540, w: 350, h: 140, type: 'ground' },
+                { x: 14342, y: 540, w: 284, h: 140, type: 'ground' },
+                { x: 15372, y: 540, w: 1522, h: 140, type: 'ground' },
+                { x: 18132, y: 540, w: 317, h: 140, type: 'ground' },
+                { x: 19727, y: 540, w: 877, h: 140, type: 'ground' },
+                { x: 21878, y: 540, w: 863, h: 140, type: 'ground' },
+                { x: 23516, y: 540, w: 6492, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1421, endX: 2189 },
+                { startX: 3091, endX: 4386 },
+                { startX: 4744, endX: 5533 },
+                { startX: 5909, endX: 7181 },
+                { startX: 8127, endX: 9413 },
+                { startX: 10856, endX: 12119 },
+                { startX: 12438, endX: 13198 },
+                { startX: 13548, endX: 14342 },
+                { startX: 14626, endX: 15372 },
+                { startX: 16894, endX: 18132 },
+                { startX: 18449, endX: 19727 },
+                { startX: 20604, endX: 21878 },
+                { startX: 22741, endX: 23516 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 434, w: 153, h: 106, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1167, y: 349, w: 194, h: 191, isStone: true, isSnow: true },
+                // 4th Object: Заснеженный утес 3 (Высокая скала-уступ)
+                { id: 'snow_s3', x: 2229, y: 259, w: 223, h: 281, isStone: true, isSnow: true },
+                // 5th Object: Скалистая арка 4 с лазом под ней (требует подкат)
+                { id: 'snow_s4', x: 2804, y: -200, w: 227, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 8th Object: Заснеженный монолит 5 с ветвяной лестницей для подъема
+                { id: 'snow_s5', x: 4426, y: 74, w: 258, h: 466, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 10th Object: Заснеженный монолит 6 с ветвяной лестницей для подъема
+                { id: 'snow_s6', x: 5573, y: 78, w: 276, h: 462, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 13th Object: Заснеженный утес 7 (Высокая скала-уступ)
+                { id: 'snow_s7', x: 7221, y: 233, w: 242, h: 307, isStone: true, isSnow: true },
+                // 14th Object: Заснеженный утес 8 (Высокая скала-уступ)
+                { id: 'snow_s8', x: 7828, y: 248, w: 239, h: 292, isStone: true, isSnow: true },
+                // 17th Object: Заснеженная гранитная скала 9 (Средний валун)
+                { id: 'snow_s9', x: 9453, y: 357, w: 185, h: 183, isStone: true, isSnow: true },
+                // 18th Object: Заснеженная гранитная скала 10 (Средний валун)
+                { id: 'snow_s10', x: 10007, y: 328, w: 193, h: 212, isStone: true, isSnow: true },
+                // 19th Object: Заснеженный утес 11 (Высокая скала-уступ)
+                { id: 'snow_s11', x: 10559, y: 232, w: 237, h: 308, isStone: true, isSnow: true },
+                // 22nd Object: Парящая заснеженная плита 12
+                { id: 'snow_s12', x: 12159, y: 202, w: 219, h: 65, isStone: true, isSnow: true },
+                // 24th Object: Заснеженный утес 13 (Высокая скала-уступ)
+                { id: 'snow_s13', x: 13238, y: 228, w: 250, h: 312, isStone: true, isSnow: true },
+                // 26th Object: Заснеженная гранитная скала 14 (Средний валун)
+                { id: 'snow_s14', x: 14382, y: 329, w: 184, h: 211, isStone: true, isSnow: true },
+                // 28th Object: Заснеженная гранитная скала 15 (Средний валун)
+                { id: 'snow_s15', x: 15412, y: 336, w: 190, h: 204, isStone: true, isSnow: true },
+                // 29th Object: Заснеженный монолит 16 с ветвяной лестницей для подъема
+                { id: 'snow_s16', x: 16580, y: 67, w: 254, h: 473, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 32nd Object: Парящая заснеженная плита 17
+                { id: 'snow_s17', x: 18172, y: 216, w: 217, h: 65, isStone: true, isSnow: true },
+                // 35th Object: Заснеженная гранитная скала 18 (Средний валун)
+                { id: 'snow_s18', x: 19767, y: 342, w: 214, h: 198, isStone: true, isSnow: true },
+                // 36th Object: Заснеженная гранитная скала 19 (Средний валун)
+                { id: 'snow_s19', x: 20356, y: 341, w: 188, h: 199, isStone: true, isSnow: true },
+                // 39th Object: Заснеженный утес 20 (Высокая скала-уступ)
+                { id: 'snow_s20', x: 21918, y: 232, w: 224, h: 308, isStone: true, isSnow: true },
+                // 40th Object: Заснеженная гранитная скала 21 (Средний валун)
+                { id: 'snow_s21', x: 22493, y: 348, w: 188, h: 192, isStone: true, isSnow: true },
+                // 42nd Object: Заснеженный валун 22 (Низкий камень-препятствие)
+                { id: 'snow_s22', x: 23556, y: 432, w: 164, h: 108, isStone: true, isSnow: true, isSmall: true },
+                // 43rd Object: Заснеженный утес 23 (Высокая скала-уступ)
+                { id: 'snow_s23', x: 24090, y: 235, w: 240, h: 305, isStone: true, isSnow: true },
+                // 44th Object: Заснеженный валун 24 (Низкий камень-препятствие)
+                { id: 'snow_s24', x: 24670, y: 442, w: 152, h: 98, isStone: true, isSnow: true, isSmall: true },
+                // 45th Object: Скалистая арка 25 с лазом под ней (требует подкат)
+                { id: 'snow_s25', x: 25190, y: -200, w: 229, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 46th Object: Заснеженный утес 26 (Высокая скала-уступ)
+                { id: 'snow_s26', x: 25785, y: 254, w: 227, h: 286, isStone: true, isSnow: true },
+                // 47th Object: Заснеженный валун 27 (Низкий камень-препятствие)
+                { id: 'snow_s27', x: 26375, y: 436, w: 174, h: 104, isStone: true, isSnow: true, isSmall: true },
+                // 48th Object: Заснеженный валун 28 (Низкий камень-препятствие)
+                { id: 'snow_s28', x: 26903, y: 443, w: 159, h: 97, isStone: true, isSnow: true, isSmall: true },
+                // 49th Object: Заснеженный валун 29 (Низкий камень-препятствие)
+                { id: 'snow_s29', x: 27419, y: 442, w: 172, h: 98, isStone: true, isSnow: true, isSmall: true },
+                // 50th Object: Скалистая арка 30 с лазом под ней (требует подкат)
+                { id: 'snow_s30', x: 27938, y: -200, w: 237, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 51st Object: Заснеженный валун 31 (Низкий камень-препятствие)
+                { id: 'snow_s31', x: 28527, y: 433, w: 151, h: 107, isStone: true, isSnow: true, isSmall: true },
+                // 52nd Object: Вершинная скала 32 с флагом победы!
+                { id: 'snow_s32', x: 29048, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 6th Object: Сухое дерево 1 с веткой над пропастью (y: 131)
+                { id: 'snow_t1', x: 3406, y: 131, length: 90, trunkX: 3361, isTree: true, isBareTree: true },
+                // 9th Object: Сухое дерево 2 с веткой над пропастью (y: 129)
+                { id: 'snow_t2', x: 5052, y: 129, length: 90, trunkX: 5007, isTree: true, isBareTree: true },
+                // 12th Object: Сухое дерево 3 с веткой над пропастью (y: 148)
+                { id: 'snow_t3', x: 6703, y: 148, length: 90, trunkX: 6658, isTree: true, isBareTree: true },
+                // 16th Object: Сухое дерево 4 с веткой над пропастью (y: 145)
+                { id: 'snow_t4', x: 8949, y: 145, length: 90, trunkX: 8904, isTree: true, isBareTree: true },
+                // 20th Object: Сухое дерево 5 с веткой над пропастью (y: 119)
+                { id: 'snow_t5', x: 11137, y: 119, length: 90, trunkX: 11092, isTree: true, isBareTree: true },
+                // 23rd Object: Сухое дерево 6 с веткой над пропастью (y: 146)
+                { id: 'snow_t6', x: 12743, y: 146, length: 90, trunkX: 12698, isTree: true, isBareTree: true },
+                // 25th Object: Сухое дерево 7 с веткой над пропастью (y: 119)
+                { id: 'snow_t7', x: 13861, y: 119, length: 90, trunkX: 13816, isTree: true, isBareTree: true },
+                // 30th Object: Сухое дерево 8 с веткой над пропастью (y: 135)
+                { id: 'snow_t8', x: 17183, y: 135, length: 90, trunkX: 17138, isTree: true, isBareTree: true },
+                // 34th Object: Сухое дерево 9 с веткой над пропастью (y: 135)
+                { id: 'snow_t9', x: 19260, y: 135, length: 90, trunkX: 19215, isTree: true, isBareTree: true },
+                // 38th Object: Сухое дерево 10 с веткой над пропастью (y: 123)
+                { id: 'snow_t10', x: 21410, y: 123, length: 90, trunkX: 21365, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 3rd Object: Сухая свисающая ветка 1 над пропастью (ветка y: -101)
+                { id: 'snow_r1', x: 1730, anchorY: -101, length: 279, trunkX: 1640, isVine: true, isDryHangingBranch: true },
+                // 7th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -102)
+                { id: 'snow_r2', x: 3909, anchorY: -102, length: 278, trunkX: 3819, isVine: true, isDryHangingBranch: true },
+                // 11th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -123)
+                { id: 'snow_r3', x: 6197, anchorY: -123, length: 275, trunkX: 6107, isVine: true, isDryHangingBranch: true },
+                // 15th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -94)
+                { id: 'snow_r4', x: 8431, anchorY: -94, length: 271, trunkX: 8341, isVine: true, isDryHangingBranch: true },
+                // 21st Object: Сухая свисающая ветка 5 над пропастью (ветка y: -128)
+                { id: 'snow_r5', x: 11659, anchorY: -128, length: 266, trunkX: 11569, isVine: true, isDryHangingBranch: true },
+                // 27th Object: Сухая свисающая ветка 6 над пропастью (ветка y: -94)
+                { id: 'snow_r6', x: 14913, anchorY: -94, length: 274, trunkX: 14823, isVine: true, isDryHangingBranch: true },
+                // 31st Object: Сухая свисающая ветка 7 над пропастью (ветка y: -92)
+                { id: 'snow_r7', x: 17674, anchorY: -92, length: 271, trunkX: 17584, isVine: true, isDryHangingBranch: true },
+                // 33rd Object: Сухая свисающая ветка 8 над пропастью (ветка y: -99)
+                { id: 'snow_r8', x: 18760, anchorY: -99, length: 265, trunkX: 18670, isVine: true, isDryHangingBranch: true },
+                // 37th Object: Сухая свисающая ветка 9 над пропастью (ветка y: -93)
+                { id: 'snow_r9', x: 20914, anchorY: -93, length: 277, trunkX: 20824, isVine: true, isDryHangingBranch: true },
+                // 41st Object: Сухая свисающая ветка 10 над пропастью (ветка y: -116)
+                { id: 'snow_r10', x: 23049, anchorY: -116, length: 268, trunkX: 22959, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 8th Object: Лестница из сухих веток на монолите 5
+                { x: 4446, topY: 74, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 10th Object: Лестница из сухих веток на монолите 6
+                { x: 5593, topY: 78, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 29th Object: Лестница из сухих веток на монолите 16
+                { x: 16600, topY: 67, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 52nd Object: Лестница из сухих веток на вершинной скале 32
+                { x: 29068, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 15702,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 15962,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 29248, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        53: {
+            id: 53,
+            title: "Уровень 53",
+            theme: "snow",
+            worldWidth: 30789,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1447, h: 140, type: 'ground' },
+                { x: 2223, y: 540, w: 338, h: 140, type: 'ground' },
+                { x: 3326, y: 540, w: 285, h: 140, type: 'ground' },
+                { x: 4909, y: 540, w: 292, h: 140, type: 'ground' },
+                { x: 5978, y: 540, w: 365, h: 140, type: 'ground' },
+                { x: 7122, y: 540, w: 991, h: 140, type: 'ground' },
+                { x: 8881, y: 540, w: 895, h: 140, type: 'ground' },
+                { x: 11061, y: 540, w: 270, h: 140, type: 'ground' },
+                { x: 12092, y: 540, w: 267, h: 140, type: 'ground' },
+                { x: 13136, y: 540, w: 831, h: 140, type: 'ground' },
+                { x: 14719, y: 540, w: 321, h: 140, type: 'ground' },
+                { x: 15811, y: 540, w: 1450, h: 140, type: 'ground' },
+                { x: 18535, y: 540, w: 286, h: 140, type: 'ground' },
+                { x: 20059, y: 540, w: 1457, h: 140, type: 'ground' },
+                { x: 22257, y: 540, w: 912, h: 140, type: 'ground' },
+                { x: 23953, y: 540, w: 793, h: 140, type: 'ground' },
+                { x: 25497, y: 540, w: 317, h: 140, type: 'ground' },
+                { x: 26554, y: 540, w: 3835, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1447, endX: 2223 },
+                { startX: 2561, endX: 3326 },
+                { startX: 3611, endX: 4909 },
+                { startX: 5201, endX: 5978 },
+                { startX: 6343, endX: 7122 },
+                { startX: 8113, endX: 8881 },
+                { startX: 9776, endX: 11061 },
+                { startX: 11331, endX: 12092 },
+                { startX: 12359, endX: 13136 },
+                { startX: 13967, endX: 14719 },
+                { startX: 15040, endX: 15811 },
+                { startX: 17261, endX: 18535 },
+                { startX: 18821, endX: 20059 },
+                { startX: 21516, endX: 22257 },
+                { startX: 23169, endX: 23953 },
+                { startX: 24746, endX: 25497 },
+                { startX: 25814, endX: 26554 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 445, w: 159, h: 95, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1174, y: 355, w: 213, h: 185, isStone: true, isSnow: true },
+                // 4th Object: Заснеженный утес 3 (Высокая скала-уступ)
+                { id: 'snow_s3', x: 2263, y: 253, w: 238, h: 287, isStone: true, isSnow: true },
+                // 6th Object: Заснеженная гранитная скала 4 (Средний валун)
+                { id: 'snow_s4', x: 3366, y: 334, w: 185, h: 206, isStone: true, isSnow: true },
+                // 9th Object: Заснеженная гранитная скала 5 (Средний валун)
+                { id: 'snow_s5', x: 4949, y: 348, w: 192, h: 192, isStone: true, isSnow: true },
+                // 11th Object: Заснеженный монолит 6 с ветвяной лестницей для подъема
+                { id: 'snow_s6', x: 6018, y: 79, w: 265, h: 461, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 13th Object: Заснеженный монолит 7 с ветвяной лестницей для подъема
+                { id: 'snow_s7', x: 7162, y: 63, w: 266, h: 477, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 14th Object: Заснеженный монолит 8 с ветвяной лестницей для подъема
+                { id: 'snow_s8', x: 7781, y: 59, w: 272, h: 481, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 16th Object: Скалистая арка 9 с лазом под ней (требует подкат)
+                { id: 'snow_s9', x: 8921, y: -200, w: 229, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 17th Object: Заснеженная гранитная скала 10 (Средний валун)
+                { id: 'snow_s10', x: 9527, y: 341, w: 189, h: 199, isStone: true, isSnow: true },
+                // 20th Object: Заснеженный валун 11 (Низкий камень-препятствие)
+                { id: 'snow_s11', x: 11101, y: 436, w: 170, h: 104, isStone: true, isSnow: true, isSmall: true },
+                // 22nd Object: Заснеженный валун 12 (Низкий камень-препятствие)
+                { id: 'snow_s12', x: 12132, y: 434, w: 167, h: 106, isStone: true, isSnow: true, isSmall: true },
+                // 24th Object: Заснеженная гранитная скала 13 (Средний валун)
+                { id: 'snow_s13', x: 13176, y: 338, w: 185, h: 202, isStone: true, isSnow: true },
+                // 25th Object: Заснеженная гранитная скала 14 (Средний валун)
+                { id: 'snow_s14', x: 13710, y: 336, w: 197, h: 204, isStone: true, isSnow: true },
+                // 27th Object: Заснеженный утес 15 (Высокая скала-уступ)
+                { id: 'snow_s15', x: 14759, y: 258, w: 221, h: 282, isStone: true, isSnow: true },
+                // 29th Object: Заснеженная гранитная скала 16 (Средний валун)
+                { id: 'snow_s16', x: 15851, y: 344, w: 197, h: 196, isStone: true, isSnow: true },
+                // 30th Object: Заснеженный валун 17 (Низкий камень-препятствие)
+                { id: 'snow_s17', x: 17042, y: 435, w: 159, h: 105, isStone: true, isSnow: true, isSmall: true },
+                // 33rd Object: Заснеженная гранитная скала 18 (Средний валун)
+                { id: 'snow_s18', x: 18575, y: 358, w: 186, h: 182, isStone: true, isSnow: true },
+                // 36th Object: Заснеженный валун 19 (Низкий камень-препятствие)
+                { id: 'snow_s19', x: 20099, y: 442, w: 158, h: 98, isStone: true, isSnow: true, isSmall: true },
+                // 37th Object: Заснеженный утес 20 (Высокая скала-уступ)
+                { id: 'snow_s20', x: 20628, y: 253, w: 223, h: 287, isStone: true, isSnow: true },
+                // 38th Object: Заснеженный утес 21 (Высокая скала-уступ)
+                { id: 'snow_s21', x: 21215, y: 258, w: 241, h: 282, isStone: true, isSnow: true },
+                // 40th Object: Скалистая арка 22 с лазом под ней (требует подкат)
+                { id: 'snow_s22', x: 22297, y: -200, w: 234, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 41st Object: Скалистая арка 23 с лазом под ней (требует подкат)
+                { id: 'snow_s23', x: 22888, y: -200, w: 221, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 43rd Object: Заснеженный валун 24 (Низкий камень-препятствие)
+                { id: 'snow_s24', x: 23993, y: 438, w: 153, h: 102, isStone: true, isSnow: true, isSmall: true },
+                // 44th Object: Заснеженная гранитная скала 25 (Средний валун)
+                { id: 'snow_s25', x: 24490, y: 330, w: 196, h: 210, isStone: true, isSnow: true },
+                // 46th Object: Парящая заснеженная плита 26
+                { id: 'snow_s26', x: 25537, y: 197, w: 217, h: 65, isStone: true, isSnow: true },
+                // 48th Object: Заснеженная гранитная скала 27 (Средний валун)
+                { id: 'snow_s27', x: 26594, y: 351, w: 187, h: 189, isStone: true, isSnow: true },
+                // 49th Object: Заснеженный утес 28 (Высокая скала-уступ)
+                { id: 'snow_s28', x: 27133, y: 238, w: 249, h: 302, isStone: true, isSnow: true },
+                // 50th Object: Заснеженный утес 29 (Высокая скала-уступ)
+                { id: 'snow_s29', x: 27736, y: 245, w: 246, h: 295, isStone: true, isSnow: true },
+                // 51st Object: Заснеженная гранитная скала 30 (Средний валун)
+                { id: 'snow_s30', x: 28349, y: 356, w: 193, h: 184, isStone: true, isSnow: true },
+                // 52nd Object: Заснеженный валун 31 (Низкий камень-препятствие)
+                { id: 'snow_s31', x: 28908, y: 444, w: 153, h: 96, isStone: true, isSnow: true, isSmall: true },
+                // 53rd Object: Вершинная скала 32 с флагом победы!
+                { id: 'snow_s32', x: 29429, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 5th Object: Сухое дерево 1 с веткой над пропастью (y: 127)
+                { id: 'snow_t1', x: 2841, y: 127, length: 90, trunkX: 2796, isTree: true, isBareTree: true },
+                // 7th Object: Сухое дерево 2 с веткой над пропастью (y: 120)
+                { id: 'snow_t2', x: 3920, y: 120, length: 90, trunkX: 3875, isTree: true, isBareTree: true },
+                // 10th Object: Сухое дерево 3 с веткой над пропастью (y: 144)
+                { id: 'snow_t3', x: 5502, y: 144, length: 90, trunkX: 5457, isTree: true, isBareTree: true },
+                // 12th Object: Сухое дерево 4 с веткой над пропастью (y: 117)
+                { id: 'snow_t4', x: 6658, y: 117, length: 90, trunkX: 6613, isTree: true, isBareTree: true },
+                // 15th Object: Сухое дерево 5 с веткой над пропастью (y: 118)
+                { id: 'snow_t5', x: 8400, y: 118, length: 90, trunkX: 8355, isTree: true, isBareTree: true },
+                // 18th Object: Сухое дерево 6 с веткой над пропастью (y: 144)
+                { id: 'snow_t6', x: 10081, y: 144, length: 90, trunkX: 10036, isTree: true, isBareTree: true },
+                // 23rd Object: Сухое дерево 7 с веткой над пропастью (y: 130)
+                { id: 'snow_t7', x: 12656, y: 130, length: 90, trunkX: 12611, isTree: true, isBareTree: true },
+                // 28th Object: Сухое дерево 8 с веткой над пропастью (y: 117)
+                { id: 'snow_t8', x: 15354, y: 117, length: 90, trunkX: 15309, isTree: true, isBareTree: true },
+                // 31st Object: Сухое дерево 9 с веткой над пропастью (y: 118)
+                { id: 'snow_t9', x: 17557, y: 118, length: 90, trunkX: 17512, isTree: true, isBareTree: true },
+                // 35th Object: Сухое дерево 10 с веткой над пропастью (y: 137)
+                { id: 'snow_t10', x: 19603, y: 137, length: 90, trunkX: 19558, isTree: true, isBareTree: true },
+                // 39th Object: Сухое дерево 11 с веткой над пропастью (y: 123)
+                { id: 'snow_t11', x: 21800, y: 123, length: 90, trunkX: 21755, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 3rd Object: Сухая свисающая ветка 1 над пропастью (ветка y: -128)
+                { id: 'snow_r1', x: 1750, anchorY: -128, length: 266, trunkX: 1660, isVine: true, isDryHangingBranch: true },
+                // 8th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -97)
+                { id: 'snow_r2', x: 4426, anchorY: -97, length: 271, trunkX: 4336, isVine: true, isDryHangingBranch: true },
+                // 19th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -130)
+                { id: 'snow_r3', x: 10585, anchorY: -130, length: 275, trunkX: 10495, isVine: true, isDryHangingBranch: true },
+                // 21st Object: Сухая свисающая ветка 4 над пропастью (ветка y: -132)
+                { id: 'snow_r4', x: 11636, anchorY: -132, length: 272, trunkX: 11546, isVine: true, isDryHangingBranch: true },
+                // 26th Object: Сухая свисающая ветка 5 над пропастью (ветка y: -134)
+                { id: 'snow_r5', x: 14256, anchorY: -134, length: 265, trunkX: 14166, isVine: true, isDryHangingBranch: true },
+                // 32nd Object: Сухая свисающая ветка 6 над пропастью (ветка y: -109)
+                { id: 'snow_r6', x: 18080, anchorY: -109, length: 276, trunkX: 17990, isVine: true, isDryHangingBranch: true },
+                // 34th Object: Сухая свисающая ветка 7 над пропастью (ветка y: -109)
+                { id: 'snow_r7', x: 19110, anchorY: -109, length: 278, trunkX: 19020, isVine: true, isDryHangingBranch: true },
+                // 42nd Object: Сухая свисающая ветка 8 над пропастью (ветка y: -116)
+                { id: 'snow_r8', x: 23476, anchorY: -116, length: 280, trunkX: 23386, isVine: true, isDryHangingBranch: true },
+                // 45th Object: Сухая свисающая ветка 9 над пропастью (ветка y: -91)
+                { id: 'snow_r9', x: 25032, anchorY: -91, length: 274, trunkX: 24942, isVine: true, isDryHangingBranch: true },
+                // 47th Object: Сухая свисающая ветка 10 над пропастью (ветка y: -112)
+                { id: 'snow_r10', x: 26102, anchorY: -112, length: 279, trunkX: 26012, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 11th Object: Лестница из сухих веток на монолите 6
+                { x: 6038, topY: 79, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 13th Object: Лестница из сухих веток на монолите 7
+                { x: 7182, topY: 63, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 14th Object: Лестница из сухих веток на монолите 8
+                { x: 7801, topY: 59, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 53rd Object: Лестница из сухих веток на вершинной скале 32
+                { x: 29449, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 16148,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 16408,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 29629, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        54: {
+            id: 54,
+            title: "Уровень 54",
+            theme: "snow",
+            worldWidth: 31703,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1434, h: 140, type: 'ground' },
+                { x: 2208, y: 540, w: 926, h: 140, type: 'ground' },
+                { x: 3902, y: 540, w: 315, h: 140, type: 'ground' },
+                { x: 5477, y: 540, w: 356, h: 140, type: 'ground' },
+                { x: 7132, y: 540, w: 287, h: 140, type: 'ground' },
+                { x: 8689, y: 540, w: 941, h: 140, type: 'ground' },
+                { x: 10929, y: 540, w: 896, h: 140, type: 'ground' },
+                { x: 13093, y: 540, w: 838, h: 140, type: 'ground' },
+                { x: 15180, y: 540, w: 1527, h: 140, type: 'ground' },
+                { x: 17970, y: 540, w: 866, h: 140, type: 'ground' },
+                { x: 20139, y: 540, w: 339, h: 140, type: 'ground' },
+                { x: 21221, y: 540, w: 257, h: 140, type: 'ground' },
+                { x: 22234, y: 540, w: 9069, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1434, endX: 2208 },
+                { startX: 3134, endX: 3902 },
+                { startX: 4217, endX: 5477 },
+                { startX: 5833, endX: 7132 },
+                { startX: 7419, endX: 8689 },
+                { startX: 9630, endX: 10929 },
+                { startX: 11825, endX: 13093 },
+                { startX: 13931, endX: 15180 },
+                { startX: 16707, endX: 17970 },
+                { startX: 18836, endX: 20139 },
+                { startX: 20478, endX: 21221 },
+                { startX: 21478, endX: 22234 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 434, w: 156, h: 106, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1186, y: 348, w: 188, h: 192, isStone: true, isSnow: true },
+                // 4th Object: Скалистая арка 3 с лазом под ней (требует подкат)
+                { id: 'snow_s3', x: 2248, y: -200, w: 225, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 5th Object: Заснеженный монолит 4 с ветвяной лестницей для подъема
+                { id: 'snow_s4', x: 2814, y: 77, w: 260, h: 463, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 7th Object: Парящая заснеженная плита 5
+                { id: 'snow_s5', x: 3942, y: 225, w: 215, h: 65, isStone: true, isSnow: true },
+                // 10th Object: Заснеженный монолит 6 с ветвяной лестницей для подъема
+                { id: 'snow_s6', x: 5517, y: 66, w: 256, h: 474, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 13th Object: Заснеженная гранитная скала 7 (Средний валун)
+                { id: 'snow_s7', x: 7172, y: 343, w: 187, h: 197, isStone: true, isSnow: true },
+                // 16th Object: Заснеженный монолит 8 с ветвяной лестницей для подъема
+                { id: 'snow_s8', x: 8729, y: 74, w: 269, h: 466, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 17th Object: Заснеженный утес 9 (Высокая скала-уступ)
+                { id: 'snow_s9', x: 9348, y: 259, w: 222, h: 281, isStone: true, isSnow: true },
+                // 20th Object: Заснеженная гранитная скала 10 (Средний валун)
+                { id: 'snow_s10', x: 10969, y: 337, w: 205, h: 203, isStone: true, isSnow: true },
+                // 21st Object: Скалистая арка 11 с лазом под ней (требует подкат)
+                { id: 'snow_s11', x: 11536, y: -200, w: 229, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 24th Object: Заснеженный валун 12 (Низкий камень-препятствие)
+                { id: 'snow_s12', x: 13133, y: 437, w: 162, h: 103, isStone: true, isSnow: true, isSmall: true },
+                // 25th Object: Парящая заснеженная плита 13
+                { id: 'snow_s13', x: 13638, y: 222, w: 233, h: 65, isStone: true, isSnow: true },
+                // 28th Object: Заснеженный утес 14 (Высокая скала-уступ)
+                { id: 'snow_s14', x: 15220, y: 246, w: 244, h: 294, isStone: true, isSnow: true },
+                // 29th Object: Заснеженная гранитная скала 15 (Средний валун)
+                { id: 'snow_s15', x: 16435, y: 339, w: 212, h: 201, isStone: true, isSnow: true },
+                // 32nd Object: Заснеженная гранитная скала 16 (Средний валун)
+                { id: 'snow_s16', x: 18010, y: 337, w: 196, h: 203, isStone: true, isSnow: true },
+                // 33rd Object: Парящая заснеженная плита 17
+                { id: 'snow_s17', x: 18547, y: 229, w: 229, h: 65, isStone: true, isSnow: true },
+                // 36th Object: Скалистая арка 18 с лазом под ней (требует подкат)
+                { id: 'snow_s18', x: 20179, y: -200, w: 239, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 38th Object: Заснеженный валун 19 (Низкий камень-препятствие)
+                { id: 'snow_s19', x: 21261, y: 432, w: 157, h: 108, isStone: true, isSnow: true, isSmall: true },
+                // 40th Object: Заснеженный утес 20 (Высокая скала-уступ)
+                { id: 'snow_s20', x: 22274, y: 226, w: 253, h: 314, isStone: true, isSnow: true },
+                // 41st Object: Заснеженная гранитная скала 21 (Средний валун)
+                { id: 'snow_s21', x: 22899, y: 329, w: 195, h: 211, isStone: true, isSnow: true },
+                // 42nd Object: Скалистая арка 22 с лазом под ней (требует подкат)
+                { id: 'snow_s22', x: 23442, y: -200, w: 238, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 43rd Object: Заснеженная гранитная скала 23 (Средний валун)
+                { id: 'snow_s23', x: 24031, y: 332, w: 188, h: 208, isStone: true, isSnow: true },
+                // 44th Object: Заснеженный валун 24 (Низкий камень-препятствие)
+                { id: 'snow_s24', x: 24581, y: 437, w: 156, h: 103, isStone: true, isSnow: true, isSmall: true },
+                // 45th Object: Заснеженная гранитная скала 25 (Средний валун)
+                { id: 'snow_s25', x: 25083, y: 342, w: 206, h: 198, isStone: true, isSnow: true },
+                // 46th Object: Парящая заснеженная плита 26
+                { id: 'snow_s26', x: 25647, y: 196, w: 212, h: 65, isStone: true, isSnow: true },
+                // 47th Object: Заснеженная гранитная скала 27 (Средний валун)
+                { id: 'snow_s27', x: 26234, y: 329, w: 204, h: 211, isStone: true, isSnow: true },
+                // 48th Object: Заснеженная гранитная скала 28 (Средний валун)
+                { id: 'snow_s28', x: 26813, y: 356, w: 215, h: 184, isStone: true, isSnow: true },
+                // 49th Object: Парящая заснеженная плита 29
+                { id: 'snow_s29', x: 27401, y: 200, w: 222, h: 65, isStone: true, isSnow: true },
+                // 50th Object: Скалистая арка 30 с лазом под ней (требует подкат)
+                { id: 'snow_s30', x: 27970, y: -200, w: 227, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 51st Object: Заснеженный утес 31 (Высокая скала-уступ)
+                { id: 'snow_s31', x: 28565, y: 252, w: 231, h: 288, isStone: true, isSnow: true },
+                // 52nd Object: Скалистая арка 32 с лазом под ней (требует подкат)
+                { id: 'snow_s32', x: 29173, y: -200, w: 234, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 53rd Object: Парящая заснеженная плита 33
+                { id: 'snow_s33', x: 29765, y: 218, w: 219, h: 65, isStone: true, isSnow: true },
+                // 54th Object: Вершинная скала 34 с флагом победы!
+                { id: 'snow_s34', x: 30343, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 6th Object: Сухое дерево 1 с веткой над пропастью (y: 135)
+                { id: 'snow_t1', x: 3447, y: 135, length: 90, trunkX: 3402, isTree: true, isBareTree: true },
+                // 9th Object: Сухое дерево 2 с веткой над пропастью (y: 116)
+                { id: 'snow_t2', x: 5013, y: 116, length: 90, trunkX: 4968, isTree: true, isBareTree: true },
+                // 12th Object: Сухое дерево 3 с веткой над пропастью (y: 146)
+                { id: 'snow_t3', x: 6652, y: 146, length: 90, trunkX: 6607, isTree: true, isBareTree: true },
+                // 15th Object: Сухое дерево 4 с веткой над пропастью (y: 125)
+                { id: 'snow_t4', x: 8231, y: 125, length: 90, trunkX: 8186, isTree: true, isBareTree: true },
+                // 19th Object: Сухое дерево 5 с веткой над пропастью (y: 138)
+                { id: 'snow_t5', x: 10452, y: 138, length: 90, trunkX: 10407, isTree: true, isBareTree: true },
+                // 23rd Object: Сухое дерево 6 с веткой над пропастью (y: 116)
+                { id: 'snow_t6', x: 12636, y: 116, length: 90, trunkX: 12591, isTree: true, isBareTree: true },
+                // 27th Object: Сухое дерево 7 с веткой над пропастью (y: 143)
+                { id: 'snow_t7', x: 14721, y: 143, length: 90, trunkX: 14676, isTree: true, isBareTree: true },
+                // 31st Object: Сухое дерево 8 с веткой над пропастью (y: 133)
+                { id: 'snow_t8', x: 17503, y: 133, length: 90, trunkX: 17458, isTree: true, isBareTree: true },
+                // 34th Object: Сухое дерево 9 с веткой над пропастью (y: 144)
+                { id: 'snow_t9', x: 19145, y: 144, length: 90, trunkX: 19100, isTree: true, isBareTree: true },
+                // 37th Object: Сухое дерево 10 с веткой над пропастью (y: 145)
+                { id: 'snow_t10', x: 20768, y: 145, length: 90, trunkX: 20723, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 3rd Object: Сухая свисающая ветка 1 над пропастью (ветка y: -94)
+                { id: 'snow_r1', x: 1731, anchorY: -94, length: 280, trunkX: 1641, isVine: true, isDryHangingBranch: true },
+                // 8th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -121)
+                { id: 'snow_r2', x: 4522, anchorY: -121, length: 269, trunkX: 4432, isVine: true, isDryHangingBranch: true },
+                // 11th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -91)
+                { id: 'snow_r3', x: 6129, anchorY: -91, length: 269, trunkX: 6039, isVine: true, isDryHangingBranch: true },
+                // 14th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -96)
+                { id: 'snow_r4', x: 7715, anchorY: -96, length: 269, trunkX: 7625, isVine: true, isDryHangingBranch: true },
+                // 18th Object: Сухая свисающая ветка 5 над пропастью (ветка y: -93)
+                { id: 'snow_r5', x: 9929, anchorY: -93, length: 273, trunkX: 9839, isVine: true, isDryHangingBranch: true },
+                // 22nd Object: Сухая свисающая ветка 6 над пропастью (ветка y: -96)
+                { id: 'snow_r6', x: 12117, anchorY: -96, length: 267, trunkX: 12027, isVine: true, isDryHangingBranch: true },
+                // 26th Object: Сухая свисающая ветка 7 над пропастью (ветка y: -101)
+                { id: 'snow_r7', x: 14217, anchorY: -101, length: 278, trunkX: 14127, isVine: true, isDryHangingBranch: true },
+                // 30th Object: Сухая свисающая ветка 8 над пропастью (ветка y: -127)
+                { id: 'snow_r8', x: 17011, anchorY: -127, length: 279, trunkX: 16921, isVine: true, isDryHangingBranch: true },
+                // 35th Object: Сухая свисающая ветка 9 над пропастью (ветка y: -105)
+                { id: 'snow_r9', x: 19666, anchorY: -105, length: 274, trunkX: 19576, isVine: true, isDryHangingBranch: true },
+                // 39th Object: Сухая свисающая ветка 10 над пропастью (ветка y: -91)
+                { id: 'snow_r10', x: 21763, anchorY: -91, length: 266, trunkX: 21673, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 5th Object: Лестница из сухих веток на монолите 4
+                { x: 2834, topY: 77, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 10th Object: Лестница из сухих веток на монолите 6
+                { x: 5537, topY: 66, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 16th Object: Лестница из сухих веток на монолите 8
+                { x: 8749, topY: 74, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 54th Object: Лестница из сухих веток на вершинной скале 34
+                { x: 30363, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 15564,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 15824,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 30543, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        55: {
+            id: 55,
+            title: "Уровень 55",
+            theme: "snow",
+            worldWidth: 31965,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1442, h: 140, type: 'ground' },
+                { x: 2191, y: 540, w: 329, h: 140, type: 'ground' },
+                { x: 3291, y: 540, w: 953, h: 140, type: 'ground' },
+                { x: 5550, y: 540, w: 1565, h: 140, type: 'ground' },
+                { x: 8399, y: 540, w: 378, h: 140, type: 'ground' },
+                { x: 9550, y: 540, w: 335, h: 140, type: 'ground' },
+                { x: 11162, y: 540, w: 884, h: 140, type: 'ground' },
+                { x: 13330, y: 540, w: 885, h: 140, type: 'ground' },
+                { x: 15482, y: 540, w: 264, h: 140, type: 'ground' },
+                { x: 16517, y: 540, w: 331, h: 140, type: 'ground' },
+                { x: 17605, y: 540, w: 1505, h: 140, type: 'ground' },
+                { x: 19863, y: 540, w: 326, h: 140, type: 'ground' },
+                { x: 21472, y: 540, w: 1402, h: 140, type: 'ground' },
+                { x: 23615, y: 540, w: 778, h: 140, type: 'ground' },
+                { x: 25167, y: 540, w: 308, h: 140, type: 'ground' },
+                { x: 26226, y: 540, w: 325, h: 140, type: 'ground' },
+                { x: 27314, y: 540, w: 830, h: 140, type: 'ground' },
+                { x: 28918, y: 540, w: 2647, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1442, endX: 2191 },
+                { startX: 2520, endX: 3291 },
+                { startX: 4244, endX: 5550 },
+                { startX: 7115, endX: 8399 },
+                { startX: 8777, endX: 9550 },
+                { startX: 9885, endX: 11162 },
+                { startX: 12046, endX: 13330 },
+                { startX: 14215, endX: 15482 },
+                { startX: 15746, endX: 16517 },
+                { startX: 16848, endX: 17605 },
+                { startX: 19110, endX: 19863 },
+                { startX: 20189, endX: 21472 },
+                { startX: 22874, endX: 23615 },
+                { startX: 24393, endX: 25167 },
+                { startX: 25475, endX: 26226 },
+                { startX: 26551, endX: 27314 },
+                { startX: 28144, endX: 28918 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 440, w: 166, h: 100, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1172, y: 353, w: 210, h: 187, isStone: true, isSnow: true },
+                // 4th Object: Скалистая арка 3 с лазом под ней (требует подкат)
+                { id: 'snow_s3', x: 2231, y: -200, w: 229, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 6th Object: Заснеженный монолит 4 с ветвяной лестницей для подъема
+                { id: 'snow_s4', x: 3331, y: 63, w: 268, h: 477, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 7th Object: Скалистая арка 5 с лазом под ней (требует подкат)
+                { id: 'snow_s5', x: 3949, y: -200, w: 235, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 10th Object: Парящая заснеженная плита 6
+                { id: 'snow_s6', x: 5590, y: 226, w: 238, h: 65, isStone: true, isSnow: true },
+                // 11th Object: Заснеженная гранитная скала 7 (Средний валун)
+                { id: 'snow_s7', x: 6204, y: 331, w: 196, h: 209, isStone: true, isSnow: true },
+                // 12th Object: Заснеженный монолит 8 с ветвяной лестницей для подъема
+                { id: 'snow_s8', x: 6778, y: 76, w: 277, h: 464, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 15th Object: Заснеженный монолит 9 с ветвяной лестницей для подъема
+                { id: 'snow_s9', x: 8439, y: 58, w: 278, h: 482, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 17th Object: Заснеженный утес 10 (Высокая скала-уступ)
+                { id: 'snow_s10', x: 9590, y: 246, w: 235, h: 294, isStone: true, isSnow: true },
+                // 20th Object: Заснеженная гранитная скала 11 (Средний валун)
+                { id: 'snow_s11', x: 11202, y: 350, w: 188, h: 190, isStone: true, isSnow: true },
+                // 21st Object: Заснеженный утес 12 (Высокая скала-уступ)
+                { id: 'snow_s12', x: 11744, y: 257, w: 242, h: 283, isStone: true, isSnow: true },
+                // 24th Object: Скалистая арка 13 с лазом под ней (требует подкат)
+                { id: 'snow_s13', x: 13370, y: -200, w: 225, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 25th Object: Заснеженная гранитная скала 14 (Средний валун)
+                { id: 'snow_s14', x: 13949, y: 354, w: 206, h: 186, isStone: true, isSnow: true },
+                // 28th Object: Заснеженный валун 15 (Низкий камень-препятствие)
+                { id: 'snow_s15', x: 15522, y: 443, w: 164, h: 97, isStone: true, isSnow: true, isSmall: true },
+                // 30th Object: Заснеженный утес 16 (Высокая скала-уступ)
+                { id: 'snow_s16', x: 16557, y: 230, w: 231, h: 310, isStone: true, isSnow: true },
+                // 32nd Object: Заснеженная гранитная скала 17 (Средний валун)
+                { id: 'snow_s17', x: 17645, y: 359, w: 187, h: 181, isStone: true, isSnow: true },
+                // 33rd Object: Заснеженный утес 18 (Высокая скала-уступ)
+                { id: 'snow_s18', x: 18824, y: 230, w: 226, h: 310, isStone: true, isSnow: true },
+                // 35th Object: Скалистая арка 19 с лазом под ней (требует подкат)
+                { id: 'snow_s19', x: 19903, y: -200, w: 226, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 38th Object: Заснеженная гранитная скала 20 (Средний валун)
+                { id: 'snow_s20', x: 21512, y: 353, w: 199, h: 187, isStone: true, isSnow: true },
+                // 39th Object: Заснеженная гранитная скала 21 (Средний валун)
+                { id: 'snow_s21', x: 22056, y: 346, w: 185, h: 194, isStone: true, isSnow: true },
+                // 40th Object: Заснеженная гранитная скала 22 (Средний валун)
+                { id: 'snow_s22', x: 22615, y: 342, w: 199, h: 198, isStone: true, isSnow: true },
+                // 42nd Object: Заснеженный валун 23 (Низкий камень-препятствие)
+                { id: 'snow_s23', x: 23655, y: 439, w: 173, h: 101, isStone: true, isSnow: true, isSmall: true },
+                // 43rd Object: Заснеженный валун 24 (Низкий камень-препятствие)
+                { id: 'snow_s24', x: 24179, y: 434, w: 154, h: 106, isStone: true, isSnow: true, isSmall: true },
+                // 45th Object: Заснеженная гранитная скала 25 (Средний валун)
+                { id: 'snow_s25', x: 25207, y: 326, w: 208, h: 214, isStone: true, isSnow: true },
+                // 47th Object: Заснеженный утес 26 (Высокая скала-уступ)
+                { id: 'snow_s26', x: 26266, y: 245, w: 225, h: 295, isStone: true, isSnow: true },
+                // 49th Object: Заснеженная гранитная скала 27 (Средний валун)
+                { id: 'snow_s27', x: 27354, y: 337, w: 197, h: 203, isStone: true, isSnow: true },
+                // 50th Object: Заснеженный валун 28 (Низкий камень-препятствие)
+                { id: 'snow_s28', x: 27911, y: 444, w: 173, h: 96, isStone: true, isSnow: true, isSmall: true },
+                // 52nd Object: Заснеженный утес 29 (Высокая скала-уступ)
+                { id: 'snow_s29', x: 28958, y: 234, w: 231, h: 306, isStone: true, isSnow: true },
+                // 53rd Object: Заснеженный валун 30 (Низкий камень-препятствие)
+                { id: 'snow_s30', x: 29534, y: 431, w: 158, h: 109, isStone: true, isSnow: true, isSmall: true },
+                // 54th Object: Заснеженная гранитная скала 31 (Средний валун)
+                { id: 'snow_s31', x: 30059, y: 330, w: 189, h: 210, isStone: true, isSnow: true },
+                // 55th Object: Вершинная скала 32 с флагом победы!
+                { id: 'snow_s32', x: 30605, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 9th Object: Сухое дерево 1 с веткой над пропастью (y: 148)
+                { id: 'snow_t1', x: 5066, y: 148, length: 90, trunkX: 5021, isTree: true, isBareTree: true },
+                // 14th Object: Сухое дерево 2 с веткой над пропастью (y: 122)
+                { id: 'snow_t2', x: 7927, y: 122, length: 90, trunkX: 7882, isTree: true, isBareTree: true },
+                // 18th Object: Сухое дерево 3 с веткой над пропастью (y: 118)
+                { id: 'snow_t3', x: 10170, y: 118, length: 90, trunkX: 10125, isTree: true, isBareTree: true },
+                // 22nd Object: Сухое дерево 4 с веткой над пропастью (y: 120)
+                { id: 'snow_t4', x: 12353, y: 120, length: 90, trunkX: 12308, isTree: true, isBareTree: true },
+                // 27th Object: Сухое дерево 5 с веткой над пропастью (y: 131)
+                { id: 'snow_t5', x: 15018, y: 131, length: 90, trunkX: 14973, isTree: true, isBareTree: true },
+                // 29th Object: Сухое дерево 6 с веткой над пропастью (y: 139)
+                { id: 'snow_t6', x: 16046, y: 139, length: 90, trunkX: 16001, isTree: true, isBareTree: true },
+                // 36th Object: Сухое дерево 7 с веткой над пропастью (y: 124)
+                { id: 'snow_t7', x: 20472, y: 124, length: 90, trunkX: 20427, isTree: true, isBareTree: true },
+                // 41st Object: Сухое дерево 8 с веткой над пропастью (y: 121)
+                { id: 'snow_t8', x: 23165, y: 121, length: 90, trunkX: 23120, isTree: true, isBareTree: true },
+                // 44th Object: Сухое дерево 9 с веткой над пропастью (y: 127)
+                { id: 'snow_t9', x: 24699, y: 127, length: 90, trunkX: 24654, isTree: true, isBareTree: true },
+                // 46th Object: Сухое дерево 10 с веткой над пропастью (y: 146)
+                { id: 'snow_t10', x: 25761, y: 146, length: 90, trunkX: 25716, isTree: true, isBareTree: true },
+                // 48th Object: Сухое дерево 11 с веткой над пропастью (y: 144)
+                { id: 'snow_t11', x: 26835, y: 144, length: 90, trunkX: 26790, isTree: true, isBareTree: true },
+                // 51st Object: Сухое дерево 12 с веткой над пропастью (y: 146)
+                { id: 'snow_t12', x: 28454, y: 146, length: 90, trunkX: 28409, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 3rd Object: Сухая свисающая ветка 1 над пропастью (ветка y: -119)
+                { id: 'snow_r1', x: 1731, anchorY: -119, length: 266, trunkX: 1641, isVine: true, isDryHangingBranch: true },
+                // 5th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -132)
+                { id: 'snow_r2', x: 2816, anchorY: -132, length: 274, trunkX: 2726, isVine: true, isDryHangingBranch: true },
+                // 8th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -122)
+                { id: 'snow_r3', x: 4557, anchorY: -122, length: 279, trunkX: 4467, isVine: true, isDryHangingBranch: true },
+                // 13th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -103)
+                { id: 'snow_r4', x: 7414, anchorY: -103, length: 266, trunkX: 7324, isVine: true, isDryHangingBranch: true },
+                // 16th Object: Сухая свисающая ветка 5 над пропастью (ветка y: -117)
+                { id: 'snow_r5', x: 9078, anchorY: -117, length: 267, trunkX: 8988, isVine: true, isDryHangingBranch: true },
+                // 19th Object: Сухая свисающая ветка 6 над пропастью (ветка y: -114)
+                { id: 'snow_r6', x: 10691, anchorY: -114, length: 271, trunkX: 10601, isVine: true, isDryHangingBranch: true },
+                // 23rd Object: Сухая свисающая ветка 7 над пропастью (ветка y: -102)
+                { id: 'snow_r7', x: 12849, anchorY: -102, length: 269, trunkX: 12759, isVine: true, isDryHangingBranch: true },
+                // 26th Object: Сухая свисающая ветка 8 над пропастью (ветка y: -109)
+                { id: 'snow_r8', x: 14524, anchorY: -109, length: 266, trunkX: 14434, isVine: true, isDryHangingBranch: true },
+                // 31st Object: Сухая свисающая ветка 9 над пропастью (ветка y: -92)
+                { id: 'snow_r9', x: 17137, anchorY: -92, length: 272, trunkX: 17047, isVine: true, isDryHangingBranch: true },
+                // 34th Object: Сухая свисающая ветка 10 над пропастью (ветка y: -108)
+                { id: 'snow_r10', x: 19409, anchorY: -108, length: 271, trunkX: 19319, isVine: true, isDryHangingBranch: true },
+                // 37th Object: Сухая свисающая ветка 11 над пропастью (ветка y: -105)
+                { id: 'snow_r11', x: 20996, anchorY: -105, length: 273, trunkX: 20906, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 6th Object: Лестница из сухих веток на монолите 4
+                { x: 3351, topY: 63, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 12th Object: Лестница из сухих веток на монолите 8
+                { x: 6798, topY: 76, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 15th Object: Лестница из сухих веток на монолите 9
+                { x: 8459, topY: 58, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 55th Object: Лестница из сухих веток на вершинной скале 32
+                { x: 30625, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 17932,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 18192,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 30805, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        56: {
+            id: 56,
+            title: "Уровень 56",
+            theme: "snow",
+            worldWidth: 32613,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1416, h: 140, type: 'ground' },
+                { x: 2209, y: 540, w: 914, h: 140, type: 'ground' },
+                { x: 3868, y: 540, w: 334, h: 140, type: 'ground' },
+                { x: 4990, y: 540, w: 897, h: 140, type: 'ground' },
+                { x: 7159, y: 540, w: 863, h: 140, type: 'ground' },
+                { x: 8792, y: 540, w: 299, h: 140, type: 'ground' },
+                { x: 10370, y: 540, w: 355, h: 140, type: 'ground' },
+                { x: 11466, y: 540, w: 294, h: 140, type: 'ground' },
+                { x: 12507, y: 540, w: 330, h: 140, type: 'ground' },
+                { x: 13580, y: 540, w: 920, h: 140, type: 'ground' },
+                { x: 15255, y: 540, w: 2235, h: 140, type: 'ground' },
+                { x: 18251, y: 540, w: 863, h: 140, type: 'ground' },
+                { x: 20389, y: 540, w: 321, h: 140, type: 'ground' },
+                { x: 21467, y: 540, w: 287, h: 140, type: 'ground' },
+                { x: 22526, y: 540, w: 299, h: 140, type: 'ground' },
+                { x: 23569, y: 540, w: 806, h: 140, type: 'ground' },
+                { x: 25162, y: 540, w: 887, h: 140, type: 'ground' },
+                { x: 26800, y: 540, w: 857, h: 140, type: 'ground' },
+                { x: 28428, y: 540, w: 329, h: 140, type: 'ground' },
+                { x: 29497, y: 540, w: 2716, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1416, endX: 2209 },
+                { startX: 3123, endX: 3868 },
+                { startX: 4202, endX: 4990 },
+                { startX: 5887, endX: 7159 },
+                { startX: 8022, endX: 8792 },
+                { startX: 9091, endX: 10370 },
+                { startX: 10725, endX: 11466 },
+                { startX: 11760, endX: 12507 },
+                { startX: 12837, endX: 13580 },
+                { startX: 14500, endX: 15255 },
+                { startX: 17490, endX: 18251 },
+                { startX: 19114, endX: 20389 },
+                { startX: 20710, endX: 21467 },
+                { startX: 21754, endX: 22526 },
+                { startX: 22825, endX: 23569 },
+                { startX: 24375, endX: 25162 },
+                { startX: 26049, endX: 26800 },
+                { startX: 27657, endX: 28428 },
+                { startX: 28757, endX: 29497 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 437, w: 157, h: 103, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1175, y: 345, w: 181, h: 195, isStone: true, isSnow: true },
+                // 4th Object: Парящая заснеженная плита 3
+                { id: 'snow_s3', x: 2249, y: 196, w: 227, h: 65, isStone: true, isSnow: true },
+                // 5th Object: Скалистая арка 4 с лазом под ней (требует подкат)
+                { id: 'snow_s4', x: 2824, y: -200, w: 239, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 7th Object: Заснеженный утес 5 (Высокая скала-уступ)
+                { id: 'snow_s5', x: 3908, y: 241, w: 234, h: 299, isStone: true, isSnow: true },
+                // 9th Object: Парящая заснеженная плита 6
+                { id: 'snow_s6', x: 5030, y: 204, w: 220, h: 65, isStone: true, isSnow: true },
+                // 10th Object: Скалистая арка 7 с лазом под ней (требует подкат)
+                { id: 'snow_s7', x: 5596, y: -200, w: 231, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 13th Object: Заснеженная гранитная скала 8 (Средний валун)
+                { id: 'snow_s8', x: 7199, y: 348, w: 182, h: 192, isStone: true, isSnow: true },
+                // 14th Object: Заснеженная гранитная скала 9 (Средний валун)
+                { id: 'snow_s9', x: 7749, y: 336, w: 213, h: 204, isStone: true, isSnow: true },
+                // 16th Object: Заснеженная гранитная скала 10 (Средний валун)
+                { id: 'snow_s10', x: 8832, y: 353, w: 199, h: 187, isStone: true, isSnow: true },
+                // 19th Object: Заснеженный монолит 11 с ветвяной лестницей для подъема
+                { id: 'snow_s11', x: 10410, y: 74, w: 255, h: 466, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 21st Object: Заснеженная гранитная скала 12 (Средний валун)
+                { id: 'snow_s12', x: 11506, y: 335, w: 194, h: 205, isStone: true, isSnow: true },
+                // 23rd Object: Парящая заснеженная плита 13
+                { id: 'snow_s13', x: 12547, y: 229, w: 230, h: 65, isStone: true, isSnow: true },
+                // 25th Object: Скалистая арка 14 с лазом под ней (требует подкат)
+                { id: 'snow_s14', x: 13620, y: -200, w: 222, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 26th Object: Парящая заснеженная плита 15
+                { id: 'snow_s15', x: 14210, y: 196, w: 230, h: 65, isStone: true, isSnow: true },
+                // 28th Object: Заснеженный монолит 16 с ветвяной лестницей для подъема
+                { id: 'snow_s16', x: 15295, y: 63, w: 273, h: 477, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 29th Object: Скалистая арка 17 с лазом под ней (требует подкат)
+                { id: 'snow_s17', x: 16556, y: -200, w: 223, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 30th Object: Заснеженный монолит 18 с ветвяной лестницей для подъема
+                { id: 'snow_s18', x: 17158, y: 63, w: 272, h: 477, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 32nd Object: Заснеженный утес 19 (Высокая скала-уступ)
+                { id: 'snow_s19', x: 18291, y: 246, w: 246, h: 294, isStone: true, isSnow: true },
+                // 33rd Object: Заснеженный валун 20 (Низкий камень-препятствие)
+                { id: 'snow_s20', x: 18903, y: 432, w: 151, h: 108, isStone: true, isSnow: true, isSmall: true },
+                // 36th Object: Парящая заснеженная плита 21
+                { id: 'snow_s21', x: 20429, y: 214, w: 221, h: 65, isStone: true, isSnow: true },
+                // 38th Object: Заснеженная гранитная скала 22 (Средний валун)
+                { id: 'snow_s22', x: 21507, y: 353, w: 187, h: 187, isStone: true, isSnow: true },
+                // 40th Object: Заснеженная гранитная скала 23 (Средний валун)
+                { id: 'snow_s23', x: 22566, y: 332, w: 199, h: 208, isStone: true, isSnow: true },
+                // 42nd Object: Заснеженный валун 24 (Низкий камень-препятствие)
+                { id: 'snow_s24', x: 23609, y: 438, w: 160, h: 102, isStone: true, isSnow: true, isSmall: true },
+                // 43rd Object: Заснеженная гранитная скала 25 (Средний валун)
+                { id: 'snow_s25', x: 24114, y: 332, w: 201, h: 208, isStone: true, isSnow: true },
+                // 45th Object: Заснеженная гранитная скала 26 (Средний валун)
+                { id: 'snow_s26', x: 25202, y: 346, w: 199, h: 194, isStone: true, isSnow: true },
+                // 46th Object: Заснеженный утес 27 (Высокая скала-уступ)
+                { id: 'snow_s27', x: 25765, y: 242, w: 224, h: 298, isStone: true, isSnow: true },
+                // 48th Object: Заснеженный валун 28 (Низкий камень-препятствие)
+                { id: 'snow_s28', x: 26840, y: 437, w: 166, h: 103, isStone: true, isSnow: true, isSmall: true },
+                // 49th Object: Скалистая арка 29 с лазом под ней (требует подкат)
+                { id: 'snow_s29', x: 27369, y: -200, w: 228, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 51st Object: Заснеженный утес 30 (Высокая скала-уступ)
+                { id: 'snow_s30', x: 28468, y: 226, w: 229, h: 314, isStone: true, isSnow: true },
+                // 53rd Object: Заснеженная гранитная скала 31 (Средний валун)
+                { id: 'snow_s31', x: 29537, y: 345, w: 212, h: 195, isStone: true, isSnow: true },
+                // 54th Object: Скалистая арка 32 с лазом под ней (требует подкат)
+                { id: 'snow_s32', x: 30108, y: -200, w: 234, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 55th Object: Заснеженная гранитная скала 33 (Средний валун)
+                { id: 'snow_s33', x: 30713, y: 328, w: 196, h: 212, isStone: true, isSnow: true },
+                // 56th Object: Вершинная скала 34 с флагом победы!
+                { id: 'snow_s34', x: 31253, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 3rd Object: Сухое дерево 1 с веткой над пропастью (y: 121)
+                { id: 'snow_t1', x: 1730, y: 121, length: 90, trunkX: 1685, isTree: true, isBareTree: true },
+                // 8th Object: Сухое дерево 2 с веткой над пропастью (y: 117)
+                { id: 'snow_t2', x: 4517, y: 117, length: 90, trunkX: 4472, isTree: true, isBareTree: true },
+                // 12th Object: Сухое дерево 3 с веткой над пропастью (y: 118)
+                { id: 'snow_t3', x: 6698, y: 118, length: 90, trunkX: 6653, isTree: true, isBareTree: true },
+                // 15th Object: Сухое дерево 4 с веткой над пропастью (y: 133)
+                { id: 'snow_t4', x: 8324, y: 133, length: 90, trunkX: 8279, isTree: true, isBareTree: true },
+                // 18th Object: Сухое дерево 5 с веткой над пропастью (y: 148)
+                { id: 'snow_t5', x: 9899, y: 148, length: 90, trunkX: 9854, isTree: true, isBareTree: true },
+                // 20th Object: Сухое дерево 6 с веткой над пропастью (y: 120)
+                { id: 'snow_t6', x: 11009, y: 120, length: 90, trunkX: 10964, isTree: true, isBareTree: true },
+                // 22nd Object: Сухое дерево 7 с веткой над пропастью (y: 146)
+                { id: 'snow_t7', x: 12047, y: 146, length: 90, trunkX: 12002, isTree: true, isBareTree: true },
+                // 24th Object: Сухое дерево 8 с веткой над пропастью (y: 117)
+                { id: 'snow_t8', x: 13126, y: 117, length: 90, trunkX: 13081, isTree: true, isBareTree: true },
+                // 31st Object: Сухое дерево 9 с веткой над пропастью (y: 121)
+                { id: 'snow_t9', x: 17777, y: 121, length: 90, trunkX: 17732, isTree: true, isBareTree: true },
+                // 34th Object: Сухое дерево 10 с веткой над пропастью (y: 148)
+                { id: 'snow_t10', x: 19428, y: 148, length: 90, trunkX: 19383, isTree: true, isBareTree: true },
+                // 37th Object: Сухое дерево 11 с веткой над пропастью (y: 124)
+                { id: 'snow_t11', x: 21015, y: 124, length: 90, trunkX: 20970, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 6th Object: Сухая свисающая ветка 1 над пропастью (ветка y: -131)
+                { id: 'snow_r1', x: 3414, anchorY: -131, length: 272, trunkX: 3324, isVine: true, isDryHangingBranch: true },
+                // 11th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -94)
+                { id: 'snow_r2', x: 6191, anchorY: -94, length: 271, trunkX: 6101, isVine: true, isDryHangingBranch: true },
+                // 17th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -109)
+                { id: 'snow_r3', x: 9380, anchorY: -109, length: 270, trunkX: 9290, isVine: true, isDryHangingBranch: true },
+                // 27th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -94)
+                { id: 'snow_r4', x: 14783, anchorY: -94, length: 278, trunkX: 14693, isVine: true, isDryHangingBranch: true },
+                // 35th Object: Сухая свисающая ветка 5 над пропастью (ветка y: -93)
+                { id: 'snow_r5', x: 19936, anchorY: -93, length: 273, trunkX: 19846, isVine: true, isDryHangingBranch: true },
+                // 39th Object: Сухая свисающая ветка 6 над пропастью (ветка y: -90)
+                { id: 'snow_r6', x: 22046, anchorY: -90, length: 273, trunkX: 21956, isVine: true, isDryHangingBranch: true },
+                // 41st Object: Сухая свисающая ветка 7 над пропастью (ветка y: -99)
+                { id: 'snow_r7', x: 23107, anchorY: -99, length: 269, trunkX: 23017, isVine: true, isDryHangingBranch: true },
+                // 44th Object: Сухая свисающая ветка 8 над пропастью (ветка y: -97)
+                { id: 'snow_r8', x: 24683, anchorY: -97, length: 274, trunkX: 24593, isVine: true, isDryHangingBranch: true },
+                // 47th Object: Сухая свисающая ветка 9 над пропастью (ветка y: -106)
+                { id: 'snow_r9', x: 26348, anchorY: -106, length: 271, trunkX: 26258, isVine: true, isDryHangingBranch: true },
+                // 50th Object: Сухая свисающая ветка 10 над пропастью (ветка y: -112)
+                { id: 'snow_r10', x: 27945, anchorY: -112, length: 265, trunkX: 27855, isVine: true, isDryHangingBranch: true },
+                // 52nd Object: Сухая свисающая ветка 11 над пропастью (ветка y: -102)
+                { id: 'snow_r11', x: 29041, anchorY: -102, length: 275, trunkX: 28951, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 19th Object: Лестница из сухих веток на монолите 11
+                { x: 10430, topY: 74, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 28th Object: Лестница из сухих веток на монолите 16
+                { x: 15315, topY: 63, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 30th Object: Лестница из сухих веток на монолите 18
+                { x: 17178, topY: 63, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 56th Object: Лестница из сухих веток на вершинной скале 34
+                { x: 31273, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 15668,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 15928,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 31453, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        57: {
+            id: 57,
+            title: "Уровень 57",
+            theme: "snow",
+            worldWidth: 33090,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1439, h: 140, type: 'ground' },
+                { x: 2216, y: 540, w: 366, h: 140, type: 'ground' },
+                { x: 3860, y: 540, w: 283, h: 140, type: 'ground' },
+                { x: 4905, y: 540, w: 870, h: 140, type: 'ground' },
+                { x: 6549, y: 540, w: 323, h: 140, type: 'ground' },
+                { x: 8149, y: 540, w: 353, h: 140, type: 'ground' },
+                { x: 9766, y: 540, w: 326, h: 140, type: 'ground' },
+                { x: 10871, y: 540, w: 1002, h: 140, type: 'ground' },
+                { x: 12636, y: 540, w: 369, h: 140, type: 'ground' },
+                { x: 14266, y: 540, w: 301, h: 140, type: 'ground' },
+                { x: 15338, y: 540, w: 1557, h: 140, type: 'ground' },
+                { x: 17654, y: 540, w: 321, h: 140, type: 'ground' },
+                { x: 18753, y: 540, w: 1413, h: 140, type: 'ground' },
+                { x: 20931, y: 540, w: 816, h: 140, type: 'ground' },
+                { x: 23018, y: 540, w: 337, h: 140, type: 'ground' },
+                { x: 24120, y: 540, w: 260, h: 140, type: 'ground' },
+                { x: 25124, y: 540, w: 810, h: 140, type: 'ground' },
+                { x: 26725, y: 540, w: 310, h: 140, type: 'ground' },
+                { x: 27794, y: 540, w: 4896, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1439, endX: 2216 },
+                { startX: 2582, endX: 3860 },
+                { startX: 4143, endX: 4905 },
+                { startX: 5775, endX: 6549 },
+                { startX: 6872, endX: 8149 },
+                { startX: 8502, endX: 9766 },
+                { startX: 10092, endX: 10871 },
+                { startX: 11873, endX: 12636 },
+                { startX: 13005, endX: 14266 },
+                { startX: 14567, endX: 15338 },
+                { startX: 16895, endX: 17654 },
+                { startX: 17975, endX: 18753 },
+                { startX: 20166, endX: 20931 },
+                { startX: 21747, endX: 23018 },
+                { startX: 23355, endX: 24120 },
+                { startX: 24380, endX: 25124 },
+                { startX: 25934, endX: 26725 },
+                { startX: 27035, endX: 27794 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 443, w: 164, h: 97, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1188, y: 331, w: 191, h: 209, isStone: true, isSnow: true },
+                // 4th Object: Заснеженный монолит 3 с ветвяной лестницей для подъема
+                { id: 'snow_s3', x: 2256, y: 57, w: 266, h: 483, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 7th Object: Заснеженная гранитная скала 4 (Средний валун)
+                { id: 'snow_s4', x: 3900, y: 327, w: 183, h: 213, isStone: true, isSnow: true },
+                // 9th Object: Заснеженная гранитная скала 5 (Средний валун)
+                { id: 'snow_s5', x: 4945, y: 354, w: 182, h: 186, isStone: true, isSnow: true },
+                // 10th Object: Парящая заснеженная плита 6
+                { id: 'snow_s6', x: 5482, y: 223, w: 233, h: 65, isStone: true, isSnow: true },
+                // 12th Object: Заснеженный утес 7 (Высокая скала-уступ)
+                { id: 'snow_s7', x: 6589, y: 225, w: 223, h: 315, isStone: true, isSnow: true },
+                // 15th Object: Заснеженный утес 8 (Высокая скала-уступ)
+                { id: 'snow_s8', x: 8189, y: 243, w: 253, h: 297, isStone: true, isSnow: true },
+                // 18th Object: Парящая заснеженная плита 9
+                { id: 'snow_s9', x: 9806, y: 229, w: 226, h: 65, isStone: true, isSnow: true },
+                // 20th Object: Заснеженный утес 10 (Высокая скала-уступ)
+                { id: 'snow_s10', x: 10911, y: 250, w: 246, h: 290, isStone: true, isSnow: true },
+                // 21st Object: Заснеженный монолит 11 с ветвяной лестницей для подъема
+                { id: 'snow_s11', x: 11534, y: 61, w: 279, h: 479, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 23rd Object: Заснеженный монолит 12 с ветвяной лестницей для подъема
+                { id: 'snow_s12', x: 12676, y: 72, w: 269, h: 468, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 26th Object: Заснеженная гранитная скала 13 (Средний валун)
+                { id: 'snow_s13', x: 14306, y: 353, w: 201, h: 187, isStone: true, isSnow: true },
+                // 28th Object: Скалистая арка 14 с лазом под ней (требует подкат)
+                { id: 'snow_s14', x: 15378, y: -200, w: 233, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 29th Object: Заснеженный утес 15 (Высокая скала-уступ)
+                { id: 'snow_s15', x: 16588, y: 235, w: 247, h: 305, isStone: true, isSnow: true },
+                // 31st Object: Парящая заснеженная плита 16
+                { id: 'snow_s16', x: 17694, y: 224, w: 221, h: 65, isStone: true, isSnow: true },
+                // 33rd Object: Заснеженная гранитная скала 17 (Средний валун)
+                { id: 'snow_s17', x: 18793, y: 330, w: 212, h: 210, isStone: true, isSnow: true },
+                // 34th Object: Заснеженный валун 18 (Низкий камень-препятствие)
+                { id: 'snow_s18', x: 19362, y: 438, w: 166, h: 102, isStone: true, isSnow: true, isSmall: true },
+                // 35th Object: Скалистая арка 19 с лазом под ней (требует подкат)
+                { id: 'snow_s19', x: 19870, y: -200, w: 236, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 37th Object: Заснеженный валун 20 (Низкий камень-препятствие)
+                { id: 'snow_s20', x: 20971, y: 445, w: 152, h: 95, isStone: true, isSnow: true, isSmall: true },
+                // 38th Object: Заснеженная гранитная скала 21 (Средний валун)
+                { id: 'snow_s21', x: 21477, y: 353, w: 210, h: 187, isStone: true, isSnow: true },
+                // 41st Object: Скалистая арка 22 с лазом под ней (требует подкат)
+                { id: 'snow_s22', x: 23058, y: -200, w: 237, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 43rd Object: Заснеженный валун 23 (Низкий камень-препятствие)
+                { id: 'snow_s23', x: 24160, y: 435, w: 160, h: 105, isStone: true, isSnow: true, isSmall: true },
+                // 45th Object: Заснеженный валун 24 (Низкий камень-препятствие)
+                { id: 'snow_s24', x: 25164, y: 439, w: 170, h: 101, isStone: true, isSnow: true, isSmall: true },
+                // 46th Object: Заснеженный валун 25 (Низкий камень-препятствие)
+                { id: 'snow_s25', x: 25702, y: 432, w: 172, h: 108, isStone: true, isSnow: true, isSmall: true },
+                // 48th Object: Заснеженная гранитная скала 26 (Средний валун)
+                { id: 'snow_s26', x: 26765, y: 359, w: 210, h: 181, isStone: true, isSnow: true },
+                // 50th Object: Скалистая арка 27 с лазом под ней (требует подкат)
+                { id: 'snow_s27', x: 27834, y: -200, w: 235, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 51st Object: Заснеженный валун 28 (Низкий камень-препятствие)
+                { id: 'snow_s28', x: 28433, y: 435, w: 153, h: 105, isStone: true, isSnow: true, isSmall: true },
+                // 52nd Object: Заснеженный валун 29 (Низкий камень-препятствие)
+                { id: 'snow_s29', x: 28950, y: 433, w: 169, h: 107, isStone: true, isSnow: true, isSmall: true },
+                // 53rd Object: Скалистая арка 30 с лазом под ней (требует подкат)
+                { id: 'snow_s30', x: 29497, y: -200, w: 232, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 54th Object: Заснеженная гранитная скала 31 (Средний валун)
+                { id: 'snow_s31', x: 30093, y: 325, w: 182, h: 215, isStone: true, isSnow: true },
+                // 55th Object: Заснеженный валун 32 (Низкий камень-препятствие)
+                { id: 'snow_s32', x: 30632, y: 439, w: 160, h: 101, isStone: true, isSnow: true, isSmall: true },
+                // 56th Object: Заснеженная гранитная скала 33 (Средний валун)
+                { id: 'snow_s33', x: 31162, y: 352, w: 191, h: 188, isStone: true, isSnow: true },
+                // 57th Object: Вершинная скала 34 с флагом победы!
+                { id: 'snow_s34', x: 31730, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 3rd Object: Сухое дерево 1 с веткой над пропастью (y: 149)
+                { id: 'snow_t1', x: 1746, y: 149, length: 90, trunkX: 1701, isTree: true, isBareTree: true },
+                // 6th Object: Сухое дерево 2 с веткой над пропастью (y: 122)
+                { id: 'snow_t2', x: 3397, y: 122, length: 90, trunkX: 3352, isTree: true, isBareTree: true },
+                // 8th Object: Сухое дерево 3 с веткой над пропастью (y: 118)
+                { id: 'snow_t3', x: 4448, y: 118, length: 90, trunkX: 4403, isTree: true, isBareTree: true },
+                // 11th Object: Сухое дерево 4 с веткой над пропастью (y: 124)
+                { id: 'snow_t4', x: 6085, y: 124, length: 90, trunkX: 6040, isTree: true, isBareTree: true },
+                // 13th Object: Сухое дерево 5 с веткой над пропастью (y: 128)
+                { id: 'snow_t5', x: 7163, y: 128, length: 90, trunkX: 7118, isTree: true, isBareTree: true },
+                // 17th Object: Сухое дерево 6 с веткой над пропастью (y: 150)
+                { id: 'snow_t6', x: 9312, y: 150, length: 90, trunkX: 9267, isTree: true, isBareTree: true },
+                // 19th Object: Сухое дерево 7 с веткой над пропастью (y: 127)
+                { id: 'snow_t7', x: 10393, y: 127, length: 90, trunkX: 10348, isTree: true, isBareTree: true },
+                // 22nd Object: Сухое дерево 8 с веткой над пропастью (y: 139)
+                { id: 'snow_t8', x: 12178, y: 139, length: 90, trunkX: 12133, isTree: true, isBareTree: true },
+                // 24th Object: Сухое дерево 9 с веткой над пропастью (y: 125)
+                { id: 'snow_t9', x: 13288, y: 125, length: 90, trunkX: 13243, isTree: true, isBareTree: true },
+                // 36th Object: Сухое дерево 10 с веткой над пропастью (y: 142)
+                { id: 'snow_t10', x: 20449, y: 142, length: 90, trunkX: 20404, isTree: true, isBareTree: true },
+                // 39th Object: Сухое дерево 11 с веткой над пропастью (y: 141)
+                { id: 'snow_t11', x: 22046, y: 141, length: 90, trunkX: 22001, isTree: true, isBareTree: true },
+                // 42nd Object: Сухое дерево 12 с веткой над пропастью (y: 135)
+                { id: 'snow_t12', x: 23643, y: 135, length: 90, trunkX: 23598, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 5th Object: Сухая свисающая ветка 1 над пропастью (ветка y: -116)
+                { id: 'snow_r1', x: 2888, anchorY: -116, length: 276, trunkX: 2798, isVine: true, isDryHangingBranch: true },
+                // 14th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -92)
+                { id: 'snow_r2', x: 7671, anchorY: -92, length: 272, trunkX: 7581, isVine: true, isDryHangingBranch: true },
+                // 16th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -130)
+                { id: 'snow_r3', x: 8806, anchorY: -130, length: 272, trunkX: 8716, isVine: true, isDryHangingBranch: true },
+                // 25th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -123)
+                { id: 'snow_r4', x: 13781, anchorY: -123, length: 272, trunkX: 13691, isVine: true, isDryHangingBranch: true },
+                // 27th Object: Сухая свисающая ветка 5 над пропастью (ветка y: -95)
+                { id: 'snow_r5', x: 14877, anchorY: -95, length: 276, trunkX: 14787, isVine: true, isDryHangingBranch: true },
+                // 30th Object: Сухая свисающая ветка 6 над пропастью (ветка y: -120)
+                { id: 'snow_r6', x: 17201, anchorY: -120, length: 274, trunkX: 17111, isVine: true, isDryHangingBranch: true },
+                // 32nd Object: Сухая свисающая ветка 7 над пропастью (ветка y: -104)
+                { id: 'snow_r7', x: 18285, anchorY: -104, length: 277, trunkX: 18195, isVine: true, isDryHangingBranch: true },
+                // 40th Object: Сухая свисающая ветка 8 над пропастью (ветка y: -130)
+                { id: 'snow_r8', x: 22566, anchorY: -130, length: 273, trunkX: 22476, isVine: true, isDryHangingBranch: true },
+                // 44th Object: Сухая свисающая ветка 9 над пропастью (ветка y: -110)
+                { id: 'snow_r9', x: 24664, anchorY: -110, length: 278, trunkX: 24574, isVine: true, isDryHangingBranch: true },
+                // 47th Object: Сухая свисающая ветка 10 над пропастью (ветка y: -94)
+                { id: 'snow_r10', x: 26242, anchorY: -94, length: 274, trunkX: 26152, isVine: true, isDryHangingBranch: true },
+                // 49th Object: Сухая свисающая ветка 11 над пропастью (ветка y: -117)
+                { id: 'snow_r11', x: 27337, anchorY: -117, length: 273, trunkX: 27247, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 4th Object: Лестница из сухих веток на монолите 3
+                { x: 2276, topY: 57, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 21st Object: Лестница из сухих веток на монолите 11
+                { x: 11554, topY: 61, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 23rd Object: Лестница из сухих веток на монолите 12
+                { x: 12696, topY: 72, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 57th Object: Лестница из сухих веток на вершинной скале 34
+                { x: 31750, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 15711,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 15971,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 31930, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        58: {
+            id: 58,
+            title: "Уровень 58",
+            theme: "snow",
+            worldWidth: 33498,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1422, h: 140, type: 'ground' },
+                { x: 2198, y: 540, w: 969, h: 140, type: 'ground' },
+                { x: 4441, y: 540, w: 323, h: 140, type: 'ground' },
+                { x: 5507, y: 540, w: 1516, h: 140, type: 'ground' },
+                { x: 7787, y: 540, w: 898, h: 140, type: 'ground' },
+                { x: 9462, y: 540, w: 325, h: 140, type: 'ground' },
+                { x: 11065, y: 540, w: 335, h: 140, type: 'ground' },
+                { x: 12673, y: 540, w: 762, h: 140, type: 'ground' },
+                { x: 14211, y: 540, w: 335, h: 140, type: 'ground' },
+                { x: 15793, y: 540, w: 1441, h: 140, type: 'ground' },
+                { x: 17999, y: 540, w: 321, h: 140, type: 'ground' },
+                { x: 19083, y: 540, w: 271, h: 140, type: 'ground' },
+                { x: 20606, y: 540, w: 915, h: 140, type: 'ground' },
+                { x: 22295, y: 540, w: 273, h: 140, type: 'ground' },
+                { x: 23325, y: 540, w: 1481, h: 140, type: 'ground' },
+                { x: 25560, y: 540, w: 806, h: 140, type: 'ground' },
+                { x: 27129, y: 540, w: 264, h: 140, type: 'ground' },
+                { x: 28136, y: 540, w: 4962, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1422, endX: 2198 },
+                { startX: 3167, endX: 4441 },
+                { startX: 4764, endX: 5507 },
+                { startX: 7023, endX: 7787 },
+                { startX: 8685, endX: 9462 },
+                { startX: 9787, endX: 11065 },
+                { startX: 11400, endX: 12673 },
+                { startX: 13435, endX: 14211 },
+                { startX: 14546, endX: 15793 },
+                { startX: 17234, endX: 17999 },
+                { startX: 18320, endX: 19083 },
+                { startX: 19354, endX: 20606 },
+                { startX: 21521, endX: 22295 },
+                { startX: 22568, endX: 23325 },
+                { startX: 24806, endX: 25560 },
+                { startX: 26366, endX: 27129 },
+                { startX: 27393, endX: 28136 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 439, w: 158, h: 101, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1153, y: 328, w: 209, h: 212, isStone: true, isSnow: true },
+                // 4th Object: Заснеженный монолит 3 с ветвяной лестницей для подъема
+                { id: 'snow_s3', x: 2238, y: 68, w: 269, h: 472, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 5th Object: Заснеженный монолит 4 с ветвяной лестницей для подъема
+                { id: 'snow_s4', x: 2847, y: 68, w: 260, h: 472, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 8th Object: Заснеженный утес 5 (Высокая скала-уступ)
+                { id: 'snow_s5', x: 4481, y: 250, w: 223, h: 290, isStone: true, isSnow: true },
+                // 10th Object: Заснеженный утес 6 (Высокая скала-уступ)
+                { id: 'snow_s6', x: 5547, y: 226, w: 240, h: 314, isStone: true, isSnow: true },
+                // 11th Object: Заснеженный монолит 7 с ветвяной лестницей для подъема
+                { id: 'snow_s7', x: 6131, y: 57, w: 271, h: 483, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 12th Object: Заснеженная гранитная скала 8 (Средний валун)
+                { id: 'snow_s8', x: 6751, y: 346, w: 212, h: 194, isStone: true, isSnow: true },
+                // 14th Object: Парящая заснеженная плита 9
+                { id: 'snow_s9', x: 7827, y: 219, w: 218, h: 65, isStone: true, isSnow: true },
+                // 15th Object: Скалистая арка 10 с лазом под ней (требует подкат)
+                { id: 'snow_s10', x: 8400, y: -200, w: 225, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 17th Object: Скалистая арка 11 с лазом под ней (требует подкат)
+                { id: 'snow_s11', x: 9502, y: -200, w: 225, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 20th Object: Скалистая арка 12 с лазом под ней (требует подкат)
+                { id: 'snow_s12', x: 11105, y: -200, w: 235, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 23rd Object: Заснеженный валун 13 (Низкий камень-препятствие)
+                { id: 'snow_s13', x: 12713, y: 438, w: 158, h: 102, isStone: true, isSnow: true, isSmall: true },
+                // 24th Object: Заснеженный валун 14 (Низкий камень-препятствие)
+                { id: 'snow_s14', x: 13218, y: 439, w: 157, h: 101, isStone: true, isSnow: true, isSmall: true },
+                // 26th Object: Скалистая арка 15 с лазом под ней (требует подкат)
+                { id: 'snow_s15', x: 14251, y: -200, w: 235, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 29th Object: Заснеженная гранитная скала 16 (Средний валун)
+                { id: 'snow_s16', x: 15833, y: 335, w: 211, h: 205, isStone: true, isSnow: true },
+                // 30th Object: Заснеженный валун 17 (Низкий камень-препятствие)
+                { id: 'snow_s17', x: 17016, y: 437, w: 158, h: 103, isStone: true, isSnow: true, isSmall: true },
+                // 32nd Object: Заснеженный утес 18 (Высокая скала-уступ)
+                { id: 'snow_s18', x: 18039, y: 230, w: 221, h: 310, isStone: true, isSnow: true },
+                // 34th Object: Заснеженный валун 19 (Низкий камень-препятствие)
+                { id: 'snow_s19', x: 19123, y: 432, w: 171, h: 108, isStone: true, isSnow: true, isSmall: true },
+                // 37th Object: Скалистая арка 20 с лазом под ней (требует подкат)
+                { id: 'snow_s20', x: 20646, y: -200, w: 225, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 38th Object: Парящая заснеженная плита 21
+                { id: 'snow_s21', x: 21229, y: 217, w: 232, h: 65, isStone: true, isSnow: true },
+                // 40th Object: Заснеженный валун 22 (Низкий камень-препятствие)
+                { id: 'snow_s22', x: 22335, y: 431, w: 173, h: 109, isStone: true, isSnow: true, isSmall: true },
+                // 42nd Object: Заснеженный валун 23 (Низкий камень-препятствие)
+                { id: 'snow_s23', x: 23365, y: 442, w: 171, h: 98, isStone: true, isSnow: true, isSmall: true },
+                // 43rd Object: Заснеженный утес 24 (Высокая скала-уступ)
+                { id: 'snow_s24', x: 23891, y: 257, w: 252, h: 283, isStone: true, isSnow: true },
+                // 44th Object: Заснеженный утес 25 (Высокая скала-уступ)
+                { id: 'snow_s25', x: 24495, y: 234, w: 251, h: 306, isStone: true, isSnow: true },
+                // 46th Object: Заснеженный валун 26 (Низкий камень-препятствие)
+                { id: 'snow_s26', x: 25600, y: 430, w: 159, h: 110, isStone: true, isSnow: true, isSmall: true },
+                // 47th Object: Заснеженная гранитная скала 27 (Средний валун)
+                { id: 'snow_s27', x: 26102, y: 347, w: 204, h: 193, isStone: true, isSnow: true },
+                // 49th Object: Заснеженный валун 28 (Низкий камень-препятствие)
+                { id: 'snow_s28', x: 27169, y: 432, w: 164, h: 108, isStone: true, isSnow: true, isSmall: true },
+                // 51st Object: Заснеженная гранитная скала 29 (Средний валун)
+                { id: 'snow_s29', x: 28176, y: 350, w: 188, h: 190, isStone: true, isSnow: true },
+                // 52nd Object: Парящая заснеженная плита 30
+                { id: 'snow_s30', x: 28730, y: 227, w: 233, h: 65, isStone: true, isSnow: true },
+                // 53rd Object: Заснеженная гранитная скала 31 (Средний валун)
+                { id: 'snow_s31', x: 29325, y: 358, w: 214, h: 182, isStone: true, isSnow: true },
+                // 54th Object: Заснеженная гранитная скала 32 (Средний валун)
+                { id: 'snow_s32', x: 29896, y: 356, w: 191, h: 184, isStone: true, isSnow: true },
+                // 55th Object: Заснеженный валун 33 (Низкий камень-препятствие)
+                { id: 'snow_s33', x: 30455, y: 437, w: 154, h: 103, isStone: true, isSnow: true, isSmall: true },
+                // 56th Object: Заснеженный утес 34 (Высокая скала-уступ)
+                { id: 'snow_s34', x: 30979, y: 238, w: 254, h: 302, isStone: true, isSnow: true },
+                // 57th Object: Заснеженная гранитная скала 35 (Средний валун)
+                { id: 'snow_s35', x: 31575, y: 328, w: 184, h: 212, isStone: true, isSnow: true },
+                // 58th Object: Вершинная скала 36 с флагом победы!
+                { id: 'snow_s36', x: 32138, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 3rd Object: Сухое дерево 1 с веткой над пропастью (y: 118)
+                { id: 'snow_t1', x: 1726, y: 118, length: 90, trunkX: 1681, isTree: true, isBareTree: true },
+                // 7th Object: Сухое дерево 2 с веткой над пропастью (y: 141)
+                { id: 'snow_t2', x: 3961, y: 141, length: 90, trunkX: 3916, isTree: true, isBareTree: true },
+                // 9th Object: Сухое дерево 3 с веткой над пропастью (y: 121)
+                { id: 'snow_t3', x: 5047, y: 121, length: 90, trunkX: 5002, isTree: true, isBareTree: true },
+                // 16th Object: Сухое дерево 4 с веткой над пропастью (y: 142)
+                { id: 'snow_t4', x: 8978, y: 142, length: 90, trunkX: 8933, isTree: true, isBareTree: true },
+                // 18th Object: Сухое дерево 5 с веткой над пропастью (y: 141)
+                { id: 'snow_t5', x: 10085, y: 141, length: 90, trunkX: 10040, isTree: true, isBareTree: true },
+                // 22nd Object: Сухое дерево 6 с веткой над пропастью (y: 124)
+                { id: 'snow_t6', x: 12209, y: 124, length: 90, trunkX: 12164, isTree: true, isBareTree: true },
+                // 25th Object: Сухое дерево 7 с веткой над пропастью (y: 146)
+                { id: 'snow_t7', x: 13744, y: 146, length: 90, trunkX: 13699, isTree: true, isBareTree: true },
+                // 28th Object: Сухое дерево 8 с веткой над пропастью (y: 140)
+                { id: 'snow_t8', x: 15341, y: 140, length: 90, trunkX: 15296, isTree: true, isBareTree: true },
+                // 31st Object: Сухое дерево 9 с веткой над пропастью (y: 133)
+                { id: 'snow_t9', x: 17531, y: 133, length: 90, trunkX: 17486, isTree: true, isBareTree: true },
+                // 33rd Object: Сухое дерево 10 с веткой над пропастью (y: 128)
+                { id: 'snow_t10', x: 18605, y: 128, length: 90, trunkX: 18560, isTree: true, isBareTree: true },
+                // 36th Object: Сухое дерево 11 с веткой над пропастью (y: 118)
+                { id: 'snow_t11', x: 20151, y: 118, length: 90, trunkX: 20106, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 6th Object: Сухая свисающая ветка 1 над пропастью (ветка y: -110)
+                { id: 'snow_r1', x: 3462, anchorY: -110, length: 270, trunkX: 3372, isVine: true, isDryHangingBranch: true },
+                // 13th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -119)
+                { id: 'snow_r2', x: 7304, anchorY: -119, length: 278, trunkX: 7214, isVine: true, isDryHangingBranch: true },
+                // 19th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -91)
+                { id: 'snow_r3', x: 10604, anchorY: -91, length: 270, trunkX: 10514, isVine: true, isDryHangingBranch: true },
+                // 21st Object: Сухая свисающая ветка 4 над пропастью (ветка y: -92)
+                { id: 'snow_r4', x: 11707, anchorY: -92, length: 274, trunkX: 11617, isVine: true, isDryHangingBranch: true },
+                // 27th Object: Сухая свисающая ветка 5 над пропастью (ветка y: -105)
+                { id: 'snow_r5', x: 14847, anchorY: -105, length: 277, trunkX: 14757, isVine: true, isDryHangingBranch: true },
+                // 35th Object: Сухая свисающая ветка 6 над пропастью (ветка y: -135)
+                { id: 'snow_r6', x: 19660, anchorY: -135, length: 266, trunkX: 19570, isVine: true, isDryHangingBranch: true },
+                // 39th Object: Сухая свисающая ветка 7 над пропастью (ветка y: -98)
+                { id: 'snow_r7', x: 21819, anchorY: -98, length: 276, trunkX: 21729, isVine: true, isDryHangingBranch: true },
+                // 41st Object: Сухая свисающая ветка 8 над пропастью (ветка y: -105)
+                { id: 'snow_r8', x: 22866, anchorY: -105, length: 274, trunkX: 22776, isVine: true, isDryHangingBranch: true },
+                // 45th Object: Сухая свисающая ветка 9 над пропастью (ветка y: -101)
+                { id: 'snow_r9', x: 25102, anchorY: -101, length: 273, trunkX: 25012, isVine: true, isDryHangingBranch: true },
+                // 48th Object: Сухая свисающая ветка 10 над пропастью (ветка y: -118)
+                { id: 'snow_r10', x: 26659, anchorY: -118, length: 268, trunkX: 26569, isVine: true, isDryHangingBranch: true },
+                // 50th Object: Сухая свисающая ветка 11 над пропастью (ветка y: -134)
+                { id: 'snow_r11', x: 27676, anchorY: -134, length: 276, trunkX: 27586, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 4th Object: Лестница из сухих веток на монолите 3
+                { x: 2258, topY: 68, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 5th Object: Лестница из сухих веток на монолите 4
+                { x: 2867, topY: 68, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 11th Object: Лестница из сухих веток на монолите 7
+                { x: 6151, topY: 57, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 58th Object: Лестница из сухих веток на вершинной скале 36
+                { x: 32158, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 16144,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 16404,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 32338, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        59: {
+            id: 59,
+            title: "Уровень 59",
+            theme: "snow",
+            worldWidth: 34334,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1420, h: 140, type: 'ground' },
+                { x: 2193, y: 540, w: 311, h: 140, type: 'ground' },
+                { x: 3790, y: 540, w: 965, h: 140, type: 'ground' },
+                { x: 5533, y: 540, w: 325, h: 140, type: 'ground' },
+                { x: 7144, y: 540, w: 309, h: 140, type: 'ground' },
+                { x: 8734, y: 540, w: 313, h: 140, type: 'ground' },
+                { x: 9802, y: 540, w: 330, h: 140, type: 'ground' },
+                { x: 10894, y: 540, w: 908, h: 140, type: 'ground' },
+                { x: 12583, y: 540, w: 333, h: 140, type: 'ground' },
+                { x: 14161, y: 540, w: 353, h: 140, type: 'ground' },
+                { x: 15281, y: 540, w: 1514, h: 140, type: 'ground' },
+                { x: 17581, y: 540, w: 280, h: 140, type: 'ground' },
+                { x: 19156, y: 540, w: 324, h: 140, type: 'ground' },
+                { x: 20788, y: 540, w: 292, h: 140, type: 'ground' },
+                { x: 21857, y: 540, w: 296, h: 140, type: 'ground' },
+                { x: 23418, y: 540, w: 325, h: 140, type: 'ground' },
+                { x: 24506, y: 540, w: 9428, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1420, endX: 2193 },
+                { startX: 2504, endX: 3790 },
+                { startX: 4755, endX: 5533 },
+                { startX: 5858, endX: 7144 },
+                { startX: 7453, endX: 8734 },
+                { startX: 9047, endX: 9802 },
+                { startX: 10132, endX: 10894 },
+                { startX: 11802, endX: 12583 },
+                { startX: 12916, endX: 14161 },
+                { startX: 14514, endX: 15281 },
+                { startX: 16795, endX: 17581 },
+                { startX: 17861, endX: 19156 },
+                { startX: 19480, endX: 20788 },
+                { startX: 21080, endX: 21857 },
+                { startX: 22153, endX: 23418 },
+                { startX: 23743, endX: 24506 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow_s1', x: 650, y: 434, w: 161, h: 106, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow_s2', x: 1152, y: 330, w: 208, h: 210, isStone: true, isSnow: true },
+                // 4th Object: Заснеженная гранитная скала 3 (Средний валун)
+                { id: 'snow_s3', x: 2233, y: 330, w: 211, h: 210, isStone: true, isSnow: true },
+                // 7th Object: Заснеженный монолит 4 с ветвяной лестницей для подъема
+                { id: 'snow_s4', x: 3830, y: 62, w: 278, h: 478, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 8th Object: Скалистая арка 5 с лазом под ней (требует подкат)
+                { id: 'snow_s5', x: 4467, y: -200, w: 228, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 10th Object: Парящая заснеженная плита 6
+                { id: 'snow_s6', x: 5573, y: 196, w: 225, h: 65, isStone: true, isSnow: true },
+                // 13th Object: Заснеженная гранитная скала 7 (Средний валун)
+                { id: 'snow_s7', x: 7184, y: 349, w: 209, h: 191, isStone: true, isSnow: true },
+                // 16th Object: Заснеженная гранитная скала 8 (Средний валун)
+                { id: 'snow_s8', x: 8774, y: 327, w: 213, h: 213, isStone: true, isSnow: true },
+                // 18th Object: Заснеженный утес 9 (Высокая скала-уступ)
+                { id: 'snow_s9', x: 9842, y: 241, w: 230, h: 299, isStone: true, isSnow: true },
+                // 20th Object: Скалистая арка 10 с лазом под ней (требует подкат)
+                { id: 'snow_s10', x: 10934, y: -200, w: 223, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 21st Object: Парящая заснеженная плита 11
+                { id: 'snow_s11', x: 11506, y: 204, w: 236, h: 65, isStone: true, isSnow: true },
+                // 23rd Object: Заснеженный утес 12 (Высокая скала-уступ)
+                { id: 'snow_s12', x: 12623, y: 240, w: 233, h: 300, isStone: true, isSnow: true },
+                // 26th Object: Заснеженный монолит 13 с ветвяной лестницей для подъема
+                { id: 'snow_s13', x: 14201, y: 76, w: 253, h: 464, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 28th Object: Заснеженный монолит 14 с ветвяной лестницей для подъема
+                { id: 'snow_s14', x: 15321, y: 77, w: 259, h: 463, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 29th Object: Заснеженный валун 15 (Низкий камень-препятствие)
+                { id: 'snow_s15', x: 16579, y: 433, w: 156, h: 107, isStone: true, isSnow: true, isSmall: true },
+                // 31st Object: Заснеженная гранитная скала 16 (Средний валун)
+                { id: 'snow_s16', x: 17621, y: 347, w: 180, h: 193, isStone: true, isSnow: true },
+                // 34th Object: Скалистая арка 17 с лазом под ней (требует подкат)
+                { id: 'snow_s17', x: 19196, y: -200, w: 224, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 37th Object: Заснеженная гранитная скала 18 (Средний валун)
+                { id: 'snow_s18', x: 20828, y: 357, w: 192, h: 183, isStone: true, isSnow: true },
+                // 39th Object: Заснеженная гранитная скала 19 (Средний валун)
+                { id: 'snow_s19', x: 21897, y: 326, w: 196, h: 214, isStone: true, isSnow: true },
+                // 42nd Object: Парящая заснеженная плита 20
+                { id: 'snow_s20', x: 23458, y: 214, w: 225, h: 65, isStone: true, isSnow: true },
+                // 44th Object: Заснеженный утес 21 (Высокая скала-уступ)
+                { id: 'snow_s21', x: 24546, y: 256, w: 232, h: 284, isStone: true, isSnow: true },
+                // 45th Object: Заснеженный валун 22 (Низкий камень-препятствие)
+                { id: 'snow_s22', x: 25121, y: 431, w: 154, h: 109, isStone: true, isSnow: true, isSmall: true },
+                // 46th Object: Заснеженный валун 23 (Низкий камень-препятствие)
+                { id: 'snow_s23', x: 25623, y: 444, w: 152, h: 96, isStone: true, isSnow: true, isSmall: true },
+                // 47th Object: Заснеженный утес 24 (Высокая скала-уступ)
+                { id: 'snow_s24', x: 26132, y: 230, w: 240, h: 310, isStone: true, isSnow: true },
+                // 48th Object: Заснеженная гранитная скала 25 (Средний валун)
+                { id: 'snow_s25', x: 26718, y: 333, w: 182, h: 207, isStone: true, isSnow: true },
+                // 49th Object: Парящая заснеженная плита 26
+                { id: 'snow_s26', x: 27271, y: 199, w: 237, h: 65, isStone: true, isSnow: true },
+                // 50th Object: Заснеженный валун 27 (Низкий камень-препятствие)
+                { id: 'snow_s27', x: 27878, y: 436, w: 164, h: 104, isStone: true, isSnow: true, isSmall: true },
+                // 51st Object: Скалистая арка 28 с лазом под ней (требует подкат)
+                { id: 'snow_s28', x: 28401, y: -200, w: 228, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 52nd Object: Скалистая арка 29 с лазом под ней (требует подкат)
+                { id: 'snow_s29', x: 28983, y: -200, w: 227, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 53rd Object: Парящая заснеженная плита 30
+                { id: 'snow_s30', x: 29587, y: 222, w: 236, h: 65, isStone: true, isSnow: true },
+                // 54th Object: Заснеженный валун 31 (Низкий камень-препятствие)
+                { id: 'snow_s31', x: 30182, y: 441, w: 164, h: 99, isStone: true, isSnow: true, isSmall: true },
+                // 55th Object: Заснеженная гранитная скала 32 (Средний валун)
+                { id: 'snow_s32', x: 30706, y: 355, w: 211, h: 185, isStone: true, isSnow: true },
+                // 56th Object: Парящая заснеженная плита 33
+                { id: 'snow_s33', x: 31274, y: 223, w: 217, h: 65, isStone: true, isSnow: true },
+                // 57th Object: Заснеженный утес 34 (Высокая скала-уступ)
+                { id: 'snow_s34', x: 31857, y: 232, w: 220, h: 308, isStone: true, isSnow: true },
+                // 58th Object: Заснеженный валун 35 (Низкий камень-препятствие)
+                { id: 'snow_s35', x: 32441, y: 439, w: 166, h: 101, isStone: true, isSnow: true, isSmall: true },
+                // 59th Object: Вершинная скала 36 с флагом победы!
+                { id: 'snow_s36', x: 32974, y: 80, w: 360, h: 460, isStone: true, isSnow: true }
+            ],
+            turniks: [
+                // 3rd Object: Сухое дерево 1 с веткой над пропастью (y: 131)
+                { id: 'snow_t1', x: 1729, y: 131, length: 90, trunkX: 1684, isTree: true, isBareTree: true },
+                // 5th Object: Сухое дерево 2 с веткой над пропастью (y: 128)
+                { id: 'snow_t2', x: 2813, y: 128, length: 90, trunkX: 2768, isTree: true, isBareTree: true },
+                // 9th Object: Сухое дерево 3 с веткой над пропастью (y: 147)
+                { id: 'snow_t3', x: 5068, y: 147, length: 90, trunkX: 5023, isTree: true, isBareTree: true },
+                // 11th Object: Сухое дерево 4 с веткой над пропастью (y: 136)
+                { id: 'snow_t4', x: 6152, y: 136, length: 90, trunkX: 6107, isTree: true, isBareTree: true },
+                // 14th Object: Сухое дерево 5 с веткой над пропастью (y: 127)
+                { id: 'snow_t5', x: 7762, y: 127, length: 90, trunkX: 7717, isTree: true, isBareTree: true },
+                // 22nd Object: Сухое дерево 6 с веткой над пропастью (y: 135)
+                { id: 'snow_t6', x: 12101, y: 135, length: 90, trunkX: 12056, isTree: true, isBareTree: true },
+                // 25th Object: Сухое дерево 7 с веткой над пропастью (y: 124)
+                { id: 'snow_t7', x: 13701, y: 124, length: 90, trunkX: 13656, isTree: true, isBareTree: true },
+                // 27th Object: Сухое дерево 8 с веткой над пропастью (y: 129)
+                { id: 'snow_t8', x: 14822, y: 129, length: 90, trunkX: 14777, isTree: true, isBareTree: true },
+                // 33rd Object: Сухое дерево 9 с веткой над пропастью (y: 130)
+                { id: 'snow_t9', x: 18687, y: 130, length: 90, trunkX: 18642, isTree: true, isBareTree: true },
+                // 36th Object: Сухое дерево 10 с веткой над пропастью (y: 135)
+                { id: 'snow_t10', x: 20304, y: 135, length: 90, trunkX: 20259, isTree: true, isBareTree: true },
+                // 38th Object: Сухое дерево 11 с веткой над пропастью (y: 135)
+                { id: 'snow_t11', x: 21379, y: 135, length: 90, trunkX: 21334, isTree: true, isBareTree: true },
+                // 40th Object: Сухое дерево 12 с веткой над пропастью (y: 149)
+                { id: 'snow_t12', x: 22439, y: 149, length: 90, trunkX: 22394, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 6th Object: Сухая свисающая ветка 1 над пропастью (ветка y: -114)
+                { id: 'snow_r1', x: 3325, anchorY: -114, length: 271, trunkX: 3235, isVine: true, isDryHangingBranch: true },
+                // 12th Object: Сухая свисающая ветка 2 над пропастью (ветка y: -123)
+                { id: 'snow_r2', x: 6670, anchorY: -123, length: 269, trunkX: 6580, isVine: true, isDryHangingBranch: true },
+                // 15th Object: Сухая свисающая ветка 3 над пропастью (ветка y: -110)
+                { id: 'snow_r3', x: 8256, anchorY: -110, length: 265, trunkX: 8166, isVine: true, isDryHangingBranch: true },
+                // 17th Object: Сухая свисающая ветка 4 над пропастью (ветка y: -124)
+                { id: 'snow_r4', x: 9330, anchorY: -124, length: 270, trunkX: 9240, isVine: true, isDryHangingBranch: true },
+                // 19th Object: Сухая свисающая ветка 5 над пропастью (ветка y: -132)
+                { id: 'snow_r5', x: 10441, anchorY: -132, length: 266, trunkX: 10351, isVine: true, isDryHangingBranch: true },
+                // 24th Object: Сухая свисающая ветка 6 над пропастью (ветка y: -106)
+                { id: 'snow_r6', x: 13206, anchorY: -106, length: 278, trunkX: 13116, isVine: true, isDryHangingBranch: true },
+                // 30th Object: Сухая свисающая ветка 7 над пропастью (ветка y: -90)
+                { id: 'snow_r7', x: 17100, anchorY: -90, length: 276, trunkX: 17010, isVine: true, isDryHangingBranch: true },
+                // 32nd Object: Сухая свисающая ветка 8 над пропастью (ветка y: -98)
+                { id: 'snow_r8', x: 18173, anchorY: -98, length: 268, trunkX: 18083, isVine: true, isDryHangingBranch: true },
+                // 35th Object: Сухая свисающая ветка 9 над пропастью (ветка y: -105)
+                { id: 'snow_r9', x: 19784, anchorY: -105, length: 278, trunkX: 19694, isVine: true, isDryHangingBranch: true },
+                // 41st Object: Сухая свисающая ветка 10 над пропастью (ветка y: -117)
+                { id: 'snow_r10', x: 22935, anchorY: -117, length: 266, trunkX: 22845, isVine: true, isDryHangingBranch: true },
+                // 43rd Object: Сухая свисающая ветка 11 над пропастью (ветка y: -102)
+                { id: 'snow_r11', x: 24035, anchorY: -102, length: 267, trunkX: 23945, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // 7th Object: Лестница из сухих веток на монолите 4
+                { x: 3850, topY: 62, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 26th Object: Лестница из сухих веток на монолите 13
+                { x: 14221, topY: 76, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 28th Object: Лестница из сухих веток на монолите 14
+                { x: 15341, topY: 77, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // 59th Object: Лестница из сухих веток на вершинной скале 36
+                { x: 32994, topY: 80, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            cave: {
+                x: 15680,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 15940,
+                fireY: 540,
+                isLit: false
+            },
+            flag: { x: 33174, y: 80, poleHeight: 110, bannerW: 45, bannerH: 30, isSnowFlag: true }
+        },
+        60: {
+            id: 60,
+            title: "Уровень 60: Снежный Йети",
+            theme: "snow",
+            worldWidth: 20600,
+            groundY: 540,
+            playerStartX: 320,
+            platforms: [
+                { x: 0, y: 540, w: 1450, h: 140, type: 'ground' },
+                { x: 2200, y: 540, w: 1700, h: 140, type: 'ground' },
+                { x: 4650, y: 540, w: 1600, h: 140, type: 'ground' },
+                { x: 7000, y: 540, w: 4300, h: 140, type: 'ground' },
+                { x: 12050, y: 540, w: 1700, h: 140, type: 'ground' },
+                { x: 14500, y: 540, w: 6100, h: 140, type: 'ground' }
+            ],
+            chasms: [
+                { startX: 1450, endX: 2200 },
+                { startX: 3900, endX: 4650 },
+                { startX: 6250, endX: 7000 },
+                { startX: 11300, endX: 12050 },
+                { startX: 13750, endX: 14500 }
+            ],
+            boxes: [
+                // 1st Object: Заснеженный валун 1 (Низкий камень-препятствие)
+                { id: 'snow60_s1', x: 650, y: 440, w: 160, h: 100, isStone: true, isSnow: true, isSmall: true },
+                // 2nd Object: Заснеженная гранитная скала 2 (Средний валун)
+                { id: 'snow60_s2', x: 1180, y: 340, w: 190, h: 200, isStone: true, isSnow: true },
+                // 5th Object: Заснеженный монолит 1 с ветвяной лестницей для подъема
+                { id: 'snow60_s3', x: 2900, y: 70, w: 260, h: 470, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 6th Object: Скалистая арка 1 с лазом под ней (требует подкат)
+                { id: 'snow60_s4', x: 3550, y: -200, w: 230, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 9th Object: Парящая заснеженная плита 1
+                { id: 'snow60_s5', x: 5350, y: 210, w: 220, h: 65, isStone: true, isSnow: true },
+                // 10th Object: Заснеженная гранитная скала 3 (Средний валун)
+                { id: 'snow60_s6', x: 5900, y: 340, w: 190, h: 200, isStone: true, isSnow: true },
+                // 12th Object: Заснеженный утес 1 (Высокая скала-уступ)
+                { id: 'snow60_s7', x: 7150, y: 240, w: 230, h: 300, isStone: true, isSnow: true },
+                // 14th Object: Скалистая арка 2 с лазом под ней (требует подкат)
+                { id: 'snow60_s8', x: 8300, y: -200, w: 230, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 15th Object: Заснеженный валун 2 (Низкий камень-препятствие)
+                { id: 'snow60_s9', x: 8900, y: 440, w: 160, h: 100, isStone: true, isSnow: true, isSmall: true },
+                // 17th Object: Заснеженный монолит 2 с ветвяной лестницей для подъема
+                { id: 'snow60_s10', x: 10300, y: 70, w: 260, h: 470, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 18th Object: Парящая заснеженная плита 2
+                { id: 'snow60_s11', x: 10950, y: 210, w: 220, h: 65, isStone: true, isSnow: true },
+                // 21st Object: Скалистая арка 3 с лазом под ней (требует подкат)
+                { id: 'snow60_s12', x: 12800, y: -200, w: 230, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 22nd Object: Заснеженная гранитная скала 4 (Средний валун)
+                { id: 'snow60_s13', x: 13400, y: 340, w: 190, h: 200, isStone: true, isSnow: true },
+                // 25th Object: Парящая заснеженная плита 3
+                { id: 'snow60_s14', x: 15200, y: 210, w: 220, h: 65, isStone: true, isSnow: true },
+                // 26th Object: Заснеженный утес 2 (Высокая скала-уступ)
+                { id: 'snow60_s15', x: 15750, y: 240, w: 230, h: 300, isStone: true, isSnow: true },
+                // 27th Object: Скалистая арка 4 с лазом под ней (требует подкат)
+                { id: 'snow60_s16', x: 16300, y: -200, w: 230, h: 690, isStone: true, isSnow: true, noLedgeGrab: true },
+                // 28th Object: Заснеженный валун 3 (Низкий камень-препятствие)
+                { id: 'snow60_s17', x: 16800, y: 440, w: 160, h: 100, isStone: true, isSnow: true, isSmall: true },
+                // 29th Object: Заснеженный монолит 3 с ветвяной лестницей для подъема
+                { id: 'snow60_s18', x: 17300, y: 70, w: 260, h: 470, isStone: true, isSnow: true, noLedgeGrab: true }
+            ],
+            turniks: [
+                // 4th Object: Сухое дерево 1 с веткой над землей (y: 135)
+                { id: 'snow60_t1', x: 2350, y: 135, length: 90, trunkX: 2305, isTree: true, isBareTree: true },
+                // 8th Object: Сухое дерево 2 с веткой-турником (y: 130)
+                { id: 'snow60_t2', x: 4800, y: 130, length: 90, trunkX: 4755, isTree: true, isBareTree: true },
+                // 13th Object: Сухое дерево 3 с веткой-турником (y: 135)
+                { id: 'snow60_t3', x: 7750, y: 135, length: 90, trunkX: 7705, isTree: true, isBareTree: true },
+                // 20th Object: Сухое дерево 4 с веткой-турником (y: 130)
+                { id: 'snow60_t4', x: 12250, y: 130, length: 90, trunkX: 12205, isTree: true, isBareTree: true },
+                // 24th Object: Сухое дерево 5 с веткой-турником (y: 135)
+                { id: 'snow60_t5', x: 14650, y: 135, length: 90, trunkX: 14605, isTree: true, isBareTree: true }
+            ],
+            ropes: [
+                // 3rd Object: Сухая свисающая ветка 1 над пропастью
+                { id: 'snow60_r1', x: 1750, anchorY: -110, length: 270, trunkX: 1660, isVine: true, isDryHangingBranch: true },
+                // 7th Object: Сухая свисающая ветка 2 над пропастью
+                { id: 'snow60_r2', x: 4200, anchorY: -110, length: 270, trunkX: 4110, isVine: true, isDryHangingBranch: true },
+                // 11th Object: Сухая свисающая ветка 3 над пропастью
+                { id: 'snow60_r3', x: 6550, anchorY: -115, length: 275, trunkX: 6460, isVine: true, isDryHangingBranch: true },
+                // 19th Object: Сухая свисающая ветка 4 над пропастью
+                { id: 'snow60_r4', x: 11600, anchorY: -110, length: 270, trunkX: 11510, isVine: true, isDryHangingBranch: true },
+                // 23rd Object: Сухая свисающая ветка 5 над пропастью
+                { id: 'snow60_r5', x: 14050, anchorY: -115, length: 275, trunkX: 13960, isVine: true, isDryHangingBranch: true }
+            ],
+            ladders: [
+                // Лестница на монолите 1 (5th Object)
+                { x: 2920, topY: 70, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // Лестница на монолите 2 (17th Object)
+                { x: 10320, topY: 70, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true },
+                // Лестница на монолите 3 (29th Object)
+                { x: 17320, topY: 70, bottomY: 540, w: 42, isWoodLadder: true, isSnowBranchLadder: true }
+            ],
+            // 16th Object: Пещера для согрева с костром (можно зажечь зажигалкой и согреться!)
+            cave: {
+                x: 9400,
+                y: 180,
+                w: 520,
+                h: 360,
+                fireX: 9660,
+                fireY: 540,
+                isLit: false
+            },
+            // 30th Object: Ледяная пещера Йети (Логово Босса)
+            yetiCave: {
+                x: 19000,
+                y: 120,
+                w: 640,
+                h: 420
+            },
+            flag: null
         }
     };
 
-        let currentLevelData = levelsData[1];
+    let currentLevelData = levelsData[1];
 
     function loadLevel(levelNum) {
         currentLevelIndex = levelNum;
         currentLevelData = levelsData[levelNum] || levelsData[1];
 
         // Dynamic HUD control descriptions
-        const isNature = currentLevelData.theme === 'nature' || currentLevelIndex >= 21;
+        const isSnow = currentLevelData.theme === 'snow' || currentLevelIndex >= 41;
+        const isNature = !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
+
         if (ctrlTurnik) {
-            ctrlTurnik.innerHTML = isNature
-                ? '<span>ВЕТКА</span> Дерево (раскачка)'
-                : '<span>ТУРНИК</span> A/D раскачка, Пробел рывок';
+            if (isSnow) {
+                ctrlTurnik.innerHTML = '<span>СУХАЯ ВЕТКА</span> Раскачка A/D, рывок Пробел';
+            } else if (isNature) {
+                ctrlTurnik.innerHTML = '<span>ВЕТКА</span> Дерево (раскачка)';
+            } else {
+                ctrlTurnik.innerHTML = '<span>ТУРНИК</span> A/D раскачка, Пробел рывок';
+            }
         }
         if (ctrlRope) {
-            ctrlRope.innerHTML = isNature
-                ? '<span>ЛИАНА</span> Раскачка A/D, рывок Пробел'
-                : '<span>КАНАТ</span> A/D раскачка, Пробел рывок';
+            if (isSnow) {
+                ctrlRope.innerHTML = '<span>СВИСАЮЩАЯ ВЕТКА</span> Раскачка A/D, рывок Пробел';
+            } else if (isNature) {
+                ctrlRope.innerHTML = '<span>ЛИАНА</span> Раскачка A/D, рывок Пробел';
+            } else {
+                ctrlRope.innerHTML = '<span>КАНАТ</span> A/D раскачка, Пробел рывок';
+            }
         }
         if (ctrlLadder) {
-            ctrlLadder.innerHTML = isNature
-                ? '<span>ЛИАНЫ</span> E залезть на камень'
-                : '<span>E</span> Лестница';
+            if (isSnow) {
+                ctrlLadder.innerHTML = '<span>ВЕТВЯНАЯ ЛЕСТНИЦА</span> E залезть';
+            } else if (isNature) {
+                ctrlLadder.innerHTML = '<span>ЛИАНЫ</span> E залезть на камень';
+            } else {
+                ctrlLadder.innerHTML = '<span>E</span> Лестница';
+            }
+        }
+
+        if (inventoryHud) {
+            if (isSnow && player.hasLighter) {
+                inventoryHud.classList.remove('hidden');
+            } else {
+                inventoryHud.classList.add('hidden');
+            }
+        }
+
+        if (coldHud) {
+            if (isSnow && currentState === STATES.PLAYING) {
+                coldHud.classList.remove('hidden');
+                updateColdHud();
+            } else {
+                coldHud.classList.add('hidden');
+            }
         }
     }
 
-    // Generate 20 Level Tiles in Grid (Page 1: 1-20, Page 2: 21-40)
+    function updateColdHud() {
+        if (!coldHud) return;
+        const coldVal = Math.max(0, Math.min(100, player.cold || 0));
+        const roundCold = Math.round(coldVal);
+        const warmthPercent = Math.max(0, 100 - roundCold);
+
+        if (coldPercent) {
+            coldPercent.textContent = `${roundCold}%`;
+        }
+        if (coldBarFill) {
+            coldBarFill.style.width = `${warmthPercent}%`;
+        }
+
+        if (player.isWarming) {
+            coldHud.className = 'cold-hud warming';
+            if (coldBarFill) coldBarFill.className = 'cold-bar-fill warming';
+            if (coldIcon) coldIcon.textContent = '🔥';
+            if (coldTitle) coldTitle.textContent = 'СОГРЕВАНИЕ';
+            if (coldStatusText) coldStatusText.textContent = 'Тепло костра согревает вас (+тепло)';
+        } else if (coldVal >= 75) {
+            coldHud.className = 'cold-hud warning';
+            if (coldBarFill) coldBarFill.className = 'cold-bar-fill warning';
+            if (coldIcon) coldIcon.textContent = '🥶';
+            if (coldTitle) coldTitle.textContent = 'ОБМОРОЖЕНИЕ';
+            if (coldStatusText) coldStatusText.textContent = '75%: замедление и сильная дрожь!';
+        } else if (coldVal >= 50) {
+            coldHud.className = 'cold-hud';
+            if (coldBarFill) coldBarFill.className = 'cold-bar-fill';
+            if (coldIcon) coldIcon.textContent = '❄️';
+            if (coldTitle) coldTitle.textContent = 'СИЛЬНЫЙ МОРОЗ';
+            if (coldStatusText) coldStatusText.textContent = '50%: персонаж греет себя руками';
+        } else if (coldVal >= 25) {
+            coldHud.className = 'cold-hud';
+            if (coldBarFill) coldBarFill.className = 'cold-bar-fill';
+            if (coldIcon) coldIcon.textContent = '❄️';
+            if (coldTitle) coldTitle.textContent = 'МОРОЗ';
+            if (coldStatusText) coldStatusText.textContent = '25%: легкая дрожь';
+        } else {
+            coldHud.className = 'cold-hud';
+            if (coldBarFill) coldBarFill.className = 'cold-bar-fill';
+            if (coldIcon) coldIcon.textContent = '❄️';
+            if (coldTitle) coldTitle.textContent = 'ХОЛОД';
+            if (coldStatusText) coldStatusText.textContent = '0%: температура в норме';
+        }
+    }
+
+    // Generate 20 Level Tiles in Grid (Page 1: 1-20, Page 2: 21-40, Page 3: 41-60)
     function generateLevelsGrid() {
         if (!levelsGrid) return;
         levelsGrid.innerHTML = '';
@@ -3462,11 +6953,13 @@
             }
             if (dotPage1) {
                 dotPage1.classList.add('active');
-                dotPage1.classList.remove('nature');
+                dotPage1.classList.remove('nature', 'snow');
             }
             if (dotPage2) {
-                dotPage2.classList.remove('active');
-                dotPage2.classList.remove('nature');
+                dotPage2.classList.remove('active', 'nature', 'snow');
+            }
+            if (dotPage3) {
+                dotPage3.classList.remove('active', 'nature', 'snow');
             }
 
             for (let i = 1; i <= 20; i++) {
@@ -3490,7 +6983,7 @@
                 }
                 levelsGrid.appendChild(tile);
             }
-        } else {
+        } else if (currentSelectPage === 2) {
             if (levelPageBadge) {
                 levelPageBadge.textContent = '2 страница - Дикая Природа';
                 levelPageBadge.className = 'level-page-badge page-nature';
@@ -3500,17 +6993,19 @@
                 btnPrevPage.classList.remove('disabled');
             }
             if (btnNextPage) {
-                btnNextPage.disabled = true;
-                btnNextPage.classList.add('disabled');
-                btnNextPage.classList.remove('pulse-hint');
+                btnNextPage.disabled = false;
+                btnNextPage.classList.remove('disabled');
+                btnNextPage.classList.add('pulse-hint');
             }
             if (dotPage1) {
-                dotPage1.classList.remove('active');
-                dotPage1.classList.remove('nature');
+                dotPage1.classList.remove('active', 'nature', 'snow');
             }
             if (dotPage2) {
-                dotPage2.classList.add('active');
-                dotPage2.classList.add('nature');
+                dotPage2.classList.add('active', 'nature');
+                dotPage2.classList.remove('snow');
+            }
+            if (dotPage3) {
+                dotPage3.classList.remove('active', 'nature', 'snow');
             }
 
             for (let i = 21; i <= 40; i++) {
@@ -3534,14 +7029,63 @@
                 }
                 levelsGrid.appendChild(tile);
             }
+        } else {
+            // Page 3: Вечный холод (Levels 41-60)
+            if (levelPageBadge) {
+                levelPageBadge.textContent = '3 страница - Вечный холод';
+                levelPageBadge.className = 'level-page-badge page-snow';
+            }
+            if (btnPrevPage) {
+                btnPrevPage.disabled = false;
+                btnPrevPage.classList.remove('disabled');
+            }
+            if (btnNextPage) {
+                btnNextPage.disabled = true;
+                btnNextPage.classList.add('disabled');
+                btnNextPage.classList.remove('pulse-hint');
+            }
+            if (dotPage1) {
+                dotPage1.classList.remove('active', 'nature', 'snow');
+            }
+            if (dotPage2) {
+                dotPage2.classList.remove('active', 'nature', 'snow');
+            }
+            if (dotPage3) {
+                dotPage3.classList.add('active', 'snow');
+                dotPage3.classList.remove('nature');
+            }
+
+            for (let i = 41; i <= 60; i++) {
+                const tile = document.createElement('div');
+                if (i <= unlockedPage3Levels && levelsData[i]) {
+                    tile.className = (i === 60) ? 'level-tile unlocked snow boss-level-60' : 'level-tile unlocked snow';
+                    tile.innerHTML = (i === 60)
+                        ? `<span>60</span><span style="font-size: 0.65rem; display: block; font-weight: 700; letter-spacing: 0.5px;">❄️ ЙЕТИ</span>`
+                        : `<span>${i}</span><span style="font-size: 0.65rem; display: block; font-weight: 700; letter-spacing: 0.5px;">❄️ СНЕГ</span>`;
+                    const levelNum = i;
+                    tile.addEventListener('click', () => {
+                        startLevelWithFade(levelNum);
+                    });
+                } else {
+                    tile.className = (i === 60) ? 'level-tile locked snow boss-level-60' : 'level-tile locked snow';
+                    tile.innerHTML = (i === 60)
+                        ? `<span>60 ❄️</span><span class="lock-icon">🔒</span>`
+                        : `<span>${i}</span><span class="lock-icon">🔒</span>`;
+                }
+                levelsGrid.appendChild(tile);
+            }
         }
     }
 
     if (btnNextPage) {
         btnNextPage.addEventListener('click', () => {
             initAudio();
-            if (currentSelectPage !== 2) {
+            if (currentSelectPage === 1) {
                 currentSelectPage = 2;
+                playSound('jump');
+                generateLevelsGrid();
+            } else if (currentSelectPage === 2) {
+                currentSelectPage = 3;
                 playSound('jump');
                 generateLevelsGrid();
             }
@@ -3551,7 +7095,11 @@
     if (btnPrevPage) {
         btnPrevPage.addEventListener('click', () => {
             initAudio();
-            if (currentSelectPage !== 1) {
+            if (currentSelectPage === 3) {
+                currentSelectPage = 2;
+                playSound('jump');
+                generateLevelsGrid();
+            } else if (currentSelectPage === 2) {
                 currentSelectPage = 1;
                 playSound('jump');
                 generateLevelsGrid();
@@ -3581,6 +7129,17 @@
         });
     }
 
+    if (dotPage3) {
+        dotPage3.addEventListener('click', () => {
+            if (currentSelectPage !== 3) {
+                initAudio();
+                currentSelectPage = 3;
+                playSound('jump');
+                generateLevelsGrid();
+            }
+        });
+    }
+
     generateLevelsGrid();
 
     // Smooth Fade Transition Handler
@@ -3604,8 +7163,17 @@
             player.reset();
             if (levelNum === 21 && !forceSkipCutscene) {
                 startLevel21IntroCutscene();
+            } else if (levelNum === 41 && !forceSkipCutscene) {
+                startLevel41IntroCutscene();
             } else {
                 hudOverlay.classList.remove('hidden');
+                if (inventoryHud && (currentLevelData.theme === 'snow' || currentLevelIndex >= 41)) {
+                    inventoryHud.classList.remove('hidden');
+                }
+                if (coldHud && (currentLevelData.theme === 'snow' || currentLevelIndex >= 41)) {
+                    coldHud.classList.remove('hidden');
+                    updateColdHud();
+                }
                 currentState = STATES.PLAYING;
             }
         });
@@ -3844,11 +7412,14 @@
         boss.debris = [];
         screenShake = 0;
 
-        if (currentLevelIndex === 20 || currentLevelIndex === 40) {
+        if (currentLevelIndex === 20 || currentLevelIndex === 40 || currentLevelIndex === 60) {
             currentLevelData.flag = null;
         }
         if (typeof resetGolem === 'function') {
             resetGolem();
+        }
+        if (typeof resetYeti === 'function') {
+            resetYeti();
         }
         if (bossHud) {
             bossHud.classList.add('hidden');
@@ -3925,7 +7496,17 @@
             const isNature = currentLevelData.theme === 'nature' || currentLevelIndex >= 21;
             const defeatSubtextEl = defeatScreen.querySelector('.defeat-subtext');
             if (defeatSubtextEl) {
-                if (currentLevelIndex === 40 && typeof golem !== 'undefined' && golem.active) {
+                if (currentLevelIndex === 60 && typeof yeti !== 'undefined' && (yeti.active || (typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene.active))) {
+                    if (yeti.lastDefeatReason === 'BOULDER') {
+                        defeatSubtextEl.textContent = 'Вас сокрушила гигантская глыба льда Йети! Следите за красной зоной удара и отбегайте вовремя!';
+                    } else if (yeti.lastDefeatReason === 'AVALANCHE') {
+                        defeatSubtextEl.textContent = 'Вас смела лавина Йети! Присядьте [Ctrl / C / Подкат], чтобы укрыться от волны снега!';
+                    } else if (yeti.lastDefeatReason === 'SNOWBALL') {
+                        defeatSubtextEl.textContent = 'Огромный снежок сбил вас с ног! Перепрыгивайте катящиеся снежки!';
+                    } else {
+                        defeatSubtextEl.textContent = 'Снежный Йети сокрушил вас! Лепите снежки [E / Клик] и собирайте выпавшие камни!';
+                    }
+                } else if (currentLevelIndex === 40 && typeof golem !== 'undefined' && golem.active) {
                     defeatSubtextEl.textContent = (golem.state === 'RAGE_BEAM')
                         ? 'Луч Голема сокрушил вас! Пригнитесь [Ctrl / C / Подкат], чтобы избежать луча!'
                         : 'Древний Голем сокрушил вас! Собирайте камни и уворачивайтесь от атак!';
@@ -3937,10 +7518,46 @@
             }
             const defeatTitleEl = defeatScreen.querySelector('.defeat-title');
             if (defeatTitleEl) {
-                defeatTitleEl.textContent = (currentLevelIndex === 40 && typeof golem !== 'undefined' && golem.active)
-                    ? 'Сокрушение Голема'
-                    : ((isNature || isAbyss) ? 'Падение в пропасть' : 'Поражение');
+                defeatTitleEl.textContent = (currentLevelIndex === 60 && typeof yeti !== 'undefined' && yeti.active)
+                    ? 'Сокрушение Йети'
+                    : ((currentLevelIndex === 40 && typeof golem !== 'undefined' && golem.active)
+                        ? 'Сокрушение Голема'
+                        : ((isNature || isAbyss) ? 'Падение в пропасть' : 'Поражение'));
             }
+        }
+    }
+
+    function triggerFreezeDefeat() {
+        if (player.state === 'FREEZE' || player.state === 'DEFEAT' || player.state === 'VICTORY' || currentState === STATES.CUTSCENE) return;
+        player.state = 'FREEZE';
+        player.freezeTimer = 0;
+        player.vx = 0;
+        player.vy = 0;
+        player.cold = 100;
+
+        if (cutsceneTimeoutId) {
+            clearTimeout(cutsceneTimeoutId);
+            cutsceneTimeoutId = null;
+        }
+        if (victoryFadeInterval) {
+            clearInterval(victoryFadeInterval);
+            victoryFadeInterval = null;
+        }
+
+        playSound('freeze');
+
+        // Burst of crystalline ice sparks
+        for (let i = 0; i < 24; i++) {
+            particles.push({
+                x: player.x + (Math.random() - 0.5) * 35,
+                y: player.y - 30 + (Math.random() - 0.5) * 45,
+                vx: (Math.random() - 0.5) * 4,
+                vy: -(Math.random() * 4.5),
+                size: 3 + Math.random() * 4.5,
+                color: Math.random() < 0.6 ? '#38bdf8' : '#e0f2fe',
+                life: 1.0,
+                decay: 0.02
+            });
         }
     }
 
@@ -3977,6 +7594,12 @@
         if (currentLevelIndex === 40) {
             if (typeof updateGolem === 'function') {
                 updateGolem();
+            }
+            return;
+        }
+        if (currentLevelIndex === 60) {
+            if (typeof updateYeti === 'function') {
+                updateYeti();
             }
             return;
         }
@@ -5686,6 +9309,9 @@
         currentState = STATES.CUTSCENE;
         golem.state = 'DEFEATED';
         golem.active = false;
+        golem.isFallen = false;
+        golem.fallAngle = 0;
+        screenShake = 0; // Clear any previous combat shake
         golemCutscene.active = true;
         golemCutscene.phase = 'FALL';
         golemCutscene.timer = 0;
@@ -5713,6 +9339,8 @@
         player.vx = 0;
         player.vy = 0;
         player.facing = 1;
+        player.grounded = true;
+        player.y = currentLevelData.groundY;
 
         playSound('victory');
     }
@@ -5720,38 +9348,88 @@
     function updateGolemDefeatCutscene() {
         golemCutscene.timer += 0.016;
 
+        // Screen shake decay during cutscene so it never lingers indefinitely
+        if (screenShake > 0) {
+            screenShake *= 0.88;
+            if (screenShake < 0.2) screenShake = 0;
+        }
+
         if (golemCutscene.phase === 'FALL') {
-            const prog = Math.min(1, golemCutscene.timer / 2.0);
-            golem.fallAngle = -(Math.PI * 0.48) * prog;
-            golem.y = golem.baseY + 28 * prog;
+            // Phase 1A (0.0s - 0.4s): Fatal shudder, trembling stone cracks & dust crumbling off
+            if (golemCutscene.timer < 0.4) {
+                const stagger = Math.sin(golemCutscene.timer * 45) * 0.04;
+                golem.fallAngle = stagger;
+                golem.eyeGlow = 0.7 + Math.sin(golemCutscene.timer * 35) * 0.3; // flickering eyes
 
-            // Green eyes dim and extinguish
-            golem.eyeGlow = Math.max(0, 1.0 - prog * 1.15);
+                if (Math.random() < 0.45) {
+                    particles.push({
+                        x: golem.x + (Math.random() - 0.5) * 80,
+                        y: golem.y - 40 + (Math.random() - 0.5) * 60,
+                        vx: (Math.random() - 0.5) * 3,
+                        vy: Math.random() * 3 + 1,
+                        size: 3 + Math.random() * 4,
+                        color: Math.random() < 0.5 ? '#64748b' : '#475569',
+                        life: 0.6,
+                        decay: 0.04
+                    });
+                }
+            } else {
+                // Phase 1B (0.4s - 2.0s): Heavy stone collapse with gravity acceleration!
+                const fallProgress = Math.min(1.0, (golemCutscene.timer - 0.4) / 1.6);
+                const easeFall = fallProgress * fallProgress; // accelerating fall (gravity)
+                golem.fallAngle = -(Math.PI * 0.48) * easeFall;
+                golem.y = golem.baseY + 28 * easeFall;
 
-            if (prog >= 1.0 && !golem.isFallen) {
-                golem.isFallen = true;
-                golem.eyeGlow = 0; // Completely dark
-                screenShake = 18;
-                playSound('slam');
-                spawnDust(golem.x, currentLevelData.groundY);
-                if (cutsceneText) cutsceneText.textContent = 'Голем падает на спину, и его пылающие зелёные глаза навсегда угасают...';
+                // Green eyes dim and extinguish
+                golem.eyeGlow = Math.max(0, 1.0 - fallProgress * 1.3);
+
+                if (fallProgress >= 1.0 && !golem.isFallen) {
+                    golem.isFallen = true;
+                    golem.eyeGlow = 0; // Completely dark
+                    screenShake = 16;
+                    playSound('slam');
+                    playSound('crack');
+                    spawnDust(golem.x - 45, currentLevelData.groundY);
+                    spawnDust(golem.x + 45, currentLevelData.groundY);
+
+                    // Debris explosion on ground impact
+                    for (let k = 0; k < 18; k++) {
+                        particles.push({
+                            x: golem.x + (Math.random() - 0.5) * 80,
+                            y: currentLevelData.groundY - 10,
+                            vx: (Math.random() - 0.5) * 8,
+                            vy: -(Math.random() * 6 + 2),
+                            size: 3 + Math.random() * 4,
+                            color: Math.random() < 0.5 ? '#64748b' : '#334155',
+                            life: 0.7,
+                            decay: 0.04
+                        });
+                    }
+                    if (cutsceneText) cutsceneText.textContent = 'Голем падает на спину, и его пылающие зелёные глаза навсегда угасают...';
+                }
             }
 
             if (golemCutscene.timer >= 3.2) {
                 golemCutscene.phase = 'WALK_TO_SNOW';
                 golemCutscene.timer = 0;
+                screenShake = 0; // Strictly ensure NO lingering shake before walking
                 player.state = 'WALK';
-                player.vx = 3.2;
+                player.vx = 2.6;
                 player.facing = 1;
+                player.grounded = true;
+                player.y = currentLevelData.groundY;
                 if (cutsceneChapter) cutsceneChapter.textContent = '❄️ ГЛАВА 3: СНЕЖНЫЙ БИОМ';
                 if (cutsceneText) cutsceneText.textContent = 'Стикмен продолжает свой путь в неизведанный холодный мир...';
             }
         } else if (golemCutscene.phase === 'WALK_TO_SNOW') {
-            player.animTime += 0.15;
+            screenShake = 0;
+            player.animTime += 0.08;
             player.x += player.vx;
             player.state = 'WALK';
+            player.grounded = true;
+            player.y = currentLevelData.groundY;
 
-            // Camera tracks player
+            // Camera smoothly tracks player
             const targetCamX = player.x - 320;
             cameraX += (targetCamX - cameraX) * 0.08;
 
@@ -5761,13 +9439,17 @@
                 player.state = 'COLD_SHIVER';
                 golemCutscene.phase = 'COLD_SHIVER';
                 golemCutscene.timer = 0;
+                screenShake = 0; // Strictly zero screen shake
                 playSound('coldWind');
                 if (cutsceneText) cutsceneText.textContent = 'Бр-р-р... Невероятный холод! Стикмен дрожит от леденящего ветра...';
             }
         } else if (golemCutscene.phase === 'COLD_SHIVER') {
             player.vx = 0;
             player.state = 'COLD_SHIVER';
+            player.grounded = true;
+            player.y = currentLevelData.groundY;
             player.animTime += 0.25;
+            screenShake = 0; // Strictly NO screen shake during shivering!
 
             // Breath vapor puffs emitting from mouth
             if (Math.random() < 0.15) {
@@ -5801,6 +9483,7 @@
     function finishGolemDefeatCutscene() {
         if (!golemCutscene.active) return;
         golemCutscene.active = false;
+        screenShake = 0; // Strictly ensure NO screen shake on victory screen!
         if (cutsceneOverlay) cutsceneOverlay.classList.add('hidden');
 
         currentState = STATES.VICTORY;
@@ -5809,7 +9492,11 @@
         if (victoryTitle) victoryTitle.textContent = 'Уровень 40 пройден! Победа над Големом!';
         if (victorySubtext) victorySubtext.textContent = 'Древний страж повержен! Вы открыли путь в неизведанный Снежный Биом!';
 
-        if (btnNextLevel) btnNextLevel.classList.add('hidden');
+        unlockedPage3Levels = Math.max(unlockedPage3Levels, 41);
+        if (btnNextLevel) {
+            btnNextLevel.classList.remove('hidden');
+            btnNextLevel.innerHTML = '<span class="btn-icon">❄️</span> Вечный холод: Уровень 41';
+        }
         if (btnReplay) btnReplay.innerHTML = '<span class="btn-icon">🔄</span> Пройти снова';
         if (btnToMenu) btnToMenu.innerHTML = '<span class="btn-icon">📋</span> В меню уровней';
 
@@ -5866,7 +9553,9 @@
     // ==========================================
     function drawGolem() {
         if (currentLevelIndex !== 40) return;
-        if (!golem.active && !golem.isFallen && !(typeof golemIntroCutscene !== 'undefined' && golemIntroCutscene && golemIntroCutscene.active && golemIntroCutscene.phase !== 'EARTHQUAKE')) return;
+        if (!golem.active && !golem.isFallen && 
+            !(typeof golemIntroCutscene !== 'undefined' && golemIntroCutscene && golemIntroCutscene.active && golemIntroCutscene.phase !== 'EARTHQUAKE') &&
+            !(typeof golemCutscene !== 'undefined' && golemCutscene && golemCutscene.active)) return;
 
         const scale = canvas.height / 675;
         const gX = (golem.x - cameraX) * scale;
@@ -6819,40 +10508,84 @@
         if (currentLevelIndex !== 40) return;
         if (!scale) scale = canvas.height / 675;
 
-        const snowStartX = 7850; // Snowy biome begins right behind the Golem (x = 7600)
-        const screenSnowStart = (snowStartX - cameraX) * scale;
+        const snowWorldStart = 7850;
+        const snowWorldEnd = (currentLevelData && currentLevelData.worldWidth) ? currentLevelData.worldWidth : 10500;
+        const screenSnowStart = (snowWorldStart - cameraX) * scale;
+        const screenSnowEnd = (snowWorldEnd - cameraX) * scale;
 
-        // If player or camera is nearing snow biome or during cutscene
-        if (screenSnowStart < canvas.width || (typeof golemCutscene !== 'undefined' && (golemCutscene.phase === 'WALK_TO_SNOW' || golemCutscene.phase === 'COLD_SHIVER'))) {
-            const snowW = Math.max(0, canvas.width - Math.max(0, screenSnowStart));
-
-            // Snowy ground cap (white snowy surface)
+        // Draw snowy biome ground when in view or during defeat cutscene
+        if (screenSnowEnd > 0 && screenSnowStart < canvas.width) {
             ctx.save();
             const gY = (currentLevelData.groundY - cameraY) * scale;
-            const snowGrad = ctx.createLinearGradient(0, gY, 0, gY + 45 * scale);
-            snowGrad.addColorStop(0, '#ffffff');
-            snowGrad.addColorStop(0.5, '#e0f2fe');
-            snowGrad.addColorStop(1, '#94a3b8');
 
-            const startX = Math.max(0, screenSnowStart);
-            ctx.fillStyle = snowGrad;
-            ctx.fillRect(startX, gY - 4 * scale, snowW, 36 * scale);
+            const drawStartX = Math.max(0, screenSnowStart);
+            const drawEndX = Math.min(canvas.width, screenSnowEnd);
+            const snowW = drawEndX - drawStartX;
 
-            // Frosted Snow Drifts
-            ctx.fillStyle = '#ffffff';
-            for (let bx = startX; bx < canvas.width; bx += 65 * scale) {
-                ctx.beginPath();
-                ctx.arc(bx + 32 * scale, gY - 4 * scale, 30 * scale, Math.PI, 0);
-                ctx.fill();
-            }
+            if (snowW > 0) {
+                // 1. Frozen Stone Platform foundation
+                const rockGrad = ctx.createLinearGradient(0, gY, 0, gY + 140 * scale);
+                rockGrad.addColorStop(0, '#334155');
+                rockGrad.addColorStop(0.35, '#1e293b');
+                rockGrad.addColorStop(1, '#0f172a');
+                ctx.fillStyle = rockGrad;
+                ctx.fillRect(drawStartX, gY, snowW, 140 * scale);
 
-            // Frost crystal patch at border transition (7800 to 7850)
-            const borderX = (7800 - cameraX) * scale;
-            if (borderX < canvas.width && borderX + 60 * scale > 0) {
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
-                ctx.beginPath();
-                ctx.ellipse(borderX + 25 * scale, gY - 2 * scale, 30 * scale, 8 * scale, 0, 0, Math.PI * 2);
-                ctx.fill();
+                // 2. Thick Fluffy Snow Blanket on ground surface
+                const snowGrad = ctx.createLinearGradient(0, gY - 4 * scale, 0, gY + 28 * scale);
+                snowGrad.addColorStop(0, '#ffffff');
+                snowGrad.addColorStop(0.5, '#e0f2fe');
+                snowGrad.addColorStop(1, '#cbd5e1');
+                ctx.fillStyle = snowGrad;
+                ctx.fillRect(drawStartX, gY - 4 * scale, snowW, 28 * scale);
+
+                // 3. Frosted Snow Mounds strictly anchored to WORLD coordinates wx
+                // This guarantees the ground never slides with the player!
+                ctx.fillStyle = '#ffffff';
+                const driftStep = 60; // World coordinate step
+                const minWx = Math.max(snowWorldStart, Math.floor((cameraX - 60) / driftStep) * driftStep);
+                const maxWx = Math.min(snowWorldEnd, Math.ceil((cameraX + canvas.width / scale + 60) / driftStep) * driftStep);
+
+                for (let wx = minWx; wx <= maxWx; wx += driftStep) {
+                    const screenMx = (wx - cameraX) * scale;
+                    const seed = Math.sin(wx * 0.17);
+                    const moundW = (28 + Math.abs(seed) * 8) * scale;
+                    const moundH = (12 + Math.abs(seed) * 6) * scale;
+
+                    ctx.beginPath();
+                    ctx.ellipse(screenMx, gY - 2 * scale, moundW, moundH, 0, Math.PI, 0);
+                    ctx.fill();
+                }
+
+                // 4. Soft bluish snow shadow rim
+                ctx.fillStyle = '#bae6fd';
+                ctx.fillRect(drawStartX, gY + 18 * scale, snowW, 3 * scale);
+
+                // 5. Hanging icicles along bottom edge of snow blanket
+                ctx.fillStyle = '#bae6fd';
+                const icicleStep = 36;
+                const minIcicleWx = Math.max(snowWorldStart + 20, Math.floor((cameraX - 40) / icicleStep) * icicleStep);
+                const maxIcicleWx = Math.min(snowWorldEnd - 20, Math.ceil((cameraX + canvas.width / scale + 40) / icicleStep) * icicleStep);
+
+                for (let wx = minIcicleWx; wx <= maxIcicleWx; wx += icicleStep) {
+                    const ix = (wx - cameraX) * scale;
+                    const seed = Math.sin(wx * 0.31);
+                    const icicleH = (6 + Math.abs(seed) * 9) * scale;
+                    ctx.beginPath();
+                    ctx.moveTo(ix - 3 * scale, gY + 21 * scale);
+                    ctx.lineTo(ix, gY + 21 * scale + icicleH);
+                    ctx.lineTo(ix + 3 * scale, gY + 21 * scale);
+                    ctx.fill();
+                }
+
+                // 6. Frost crystal patch at border transition (7800 to 7850)
+                const borderX = (7800 - cameraX) * scale;
+                if (borderX < canvas.width && borderX + 60 * scale > 0) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                    ctx.beginPath();
+                    ctx.ellipse(borderX + 25 * scale, gY - 2 * scale, 30 * scale, 8 * scale, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
             }
             ctx.restore();
 
@@ -7173,16 +10906,2628 @@
         playSound('natureStart');
     }
 
+    // --- LEVEL 41 INTRO CUTSCENE SYSTEM (LIGHTER IN SNOW) ---
+    const cutsceneIntro41 = {
+        active: false,
+        phase: 'WALK', // 'WALK' -> 'PICKUP' -> 'INSPECT' -> 'FLICK' -> 'POCKET'
+        timer: 0,
+        lighterX: 430,
+        lighterY: 540,
+        flameTimer: 0,
+        sparks: [],
+        breathPuffs: []
+    };
+
+    function startLevel41IntroCutscene() {
+        currentState = STATES.CUTSCENE;
+        cutsceneIntro41.active = true;
+        cutsceneIntro41.phase = 'WALK';
+        cutsceneIntro41.timer = 0;
+        cutsceneIntro41.sparks = [];
+        cutsceneIntro41.breathPuffs = [];
+
+        if (hudOverlay) hudOverlay.classList.add('hidden');
+        if (inventoryHud) inventoryHud.classList.add('hidden');
+        if (coldHud) coldHud.classList.add('hidden');
+        if (cutsceneOverlay) cutsceneOverlay.classList.remove('hidden');
+        player.cold = 0;
+
+        player.x = 150;
+        player.y = currentLevelData.groundY;
+        player.vx = 2.0;
+        player.vy = 0;
+        player.facing = 1;
+        player.grounded = true;
+        player.state = 'WALK';
+        player.isBossMode = false;
+        player.isCrouching = false;
+        player.height = 76;
+        player.hasLighter = false;
+
+        cameraX = 0;
+        cameraY = 0;
+
+        playSound('coldWind');
+        if (cutsceneChapter) cutsceneChapter.textContent = '❄️ СТРАНИЦА 3: ВЕЧНЫЙ ХОЛОД';
+        if (cutsceneText) cutsceneText.textContent = 'Стикмен бредёт сквозь леденящий мороз... Что-то блестит в сугробе впереди!';
+    }
+
+    function updateCutsceneIntro41() {
+        cutsceneIntro41.timer += 0.016;
+
+        // Breath puffs emitting into cold air
+        if (Math.random() < 0.12) {
+            cutsceneIntro41.breathPuffs.push({
+                x: player.x + player.facing * 12,
+                y: player.y - 66,
+                vx: player.facing * (1.1 + Math.random() * 1.4),
+                vy: -(0.8 + Math.random() * 1.0),
+                size: 3 + Math.random() * 3.5,
+                alpha: 0.7,
+                life: 0.9
+            });
+        }
+
+        if (cutsceneIntro41.phase === 'WALK') {
+            player.animTime += 0.14;
+            player.x += player.vx;
+            player.facing = 1;
+            player.state = 'WALK';
+
+            // Snow dust kicked up by footsteps
+            if (Math.random() < 0.25) {
+                particles.push({
+                    x: player.x + (Math.random() - 0.5) * 8,
+                    y: player.y,
+                    vx: -player.facing * (0.8 + Math.random() * 1.2),
+                    vy: -Math.random() * 1.5,
+                    size: 2 + Math.random() * 3,
+                    color: '#f8fafc',
+                    life: 0.5,
+                    decay: 0.03
+                });
+            }
+
+            if (player.x >= 390) {
+                player.x = 390;
+                player.vx = 0;
+                player.state = 'PICKUP_LIGHTER';
+                cutsceneIntro41.phase = 'PICKUP';
+                cutsceneIntro41.timer = 0;
+                playSound('rustle');
+
+                if (cutsceneText) cutsceneText.textContent = 'Стикмен наклоняется и находит на снегу металлическую зажигалку!';
+            }
+        } else if (cutsceneIntro41.phase === 'PICKUP') {
+            player.state = 'PICKUP_LIGHTER';
+            player.vx = 0;
+
+            if (cutsceneIntro41.timer >= 1.8) {
+                player.state = 'INSPECT_LIGHTER';
+                cutsceneIntro41.phase = 'INSPECT';
+                cutsceneIntro41.timer = 0;
+
+                if (cutsceneText) cutsceneText.textContent = 'Она замёрзла в снегу, но механизм цел. Стикмен пробует проверить, работает ли она...';
+            }
+        } else if (cutsceneIntro41.phase === 'INSPECT') {
+            player.state = 'INSPECT_LIGHTER';
+            player.vx = 0;
+
+            if (cutsceneIntro41.timer >= 1.8) {
+                player.state = 'CLICK_LIGHTER';
+                cutsceneIntro41.phase = 'FLICK';
+                cutsceneIntro41.timer = 0;
+                cutsceneIntro41.flameTimer = 0;
+
+                playSound('lighterClick');
+
+                // Burst of flint sparks!
+                for (let s = 0; s < 14; s++) {
+                    cutsceneIntro41.sparks.push({
+                        x: player.x + player.facing * 16,
+                        y: player.y - 54,
+                        vx: (Math.random() - 0.3) * player.facing * 4,
+                        vy: -Math.random() * 5 - 1,
+                        size: 2 + Math.random() * 2.5,
+                        color: Math.random() < 0.6 ? '#facc15' : '#f97316',
+                        alpha: 1,
+                        life: 0.5
+                    });
+                }
+
+                setTimeout(() => {
+                    playSound('lighterFlame');
+                }, 120);
+
+                if (cutsceneText) cutsceneText.textContent = 'Щёлк! Яркое пламя вырывается наружу! Зажигалка отлично работает!';
+            }
+        } else if (cutsceneIntro41.phase === 'FLICK') {
+            player.state = 'CLICK_LIGHTER';
+            player.vx = 0;
+            cutsceneIntro41.flameTimer += 0.016;
+
+            // Occasional tiny flame spark
+            if (Math.random() < 0.2) {
+                cutsceneIntro41.sparks.push({
+                    x: player.x + player.facing * 16 + (Math.random() - 0.5) * 4,
+                    y: player.y - 62,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: -Math.random() * 3 - 1,
+                    size: 1.5 + Math.random() * 2,
+                    color: Math.random() < 0.5 ? '#fde047' : '#ea580c',
+                    alpha: 0.9,
+                    life: 0.4
+                });
+            }
+
+            if (cutsceneIntro41.timer >= 3.2) {
+                cutsceneIntro41.phase = 'POCKET';
+                cutsceneIntro41.timer = 0;
+                player.state = 'IDLE';
+                player.hasLighter = true;
+
+                if (cutsceneText) cutsceneText.textContent = 'Зажигалка надёжно убрана в карман. Теперь можно исследовать Вечный холод!';
+            }
+        } else if (cutsceneIntro41.phase === 'POCKET') {
+            player.state = 'IDLE';
+            player.vx = 0;
+
+            if (cutsceneIntro41.timer >= 1.6) {
+                finishLevel41IntroCutscene();
+            }
+        }
+
+        // Update sparks
+        for (let i = cutsceneIntro41.sparks.length - 1; i >= 0; i--) {
+            const sp = cutsceneIntro41.sparks[i];
+            sp.x += sp.vx;
+            sp.y += sp.vy;
+            sp.vy += 0.12;
+            sp.alpha -= 0.025;
+            if (sp.alpha <= 0) cutsceneIntro41.sparks.splice(i, 1);
+        }
+
+        // Update breath puffs
+        for (let i = cutsceneIntro41.breathPuffs.length - 1; i >= 0; i--) {
+            const p = cutsceneIntro41.breathPuffs[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.size += 0.16;
+            p.alpha -= 0.018;
+            if (p.alpha <= 0) cutsceneIntro41.breathPuffs.splice(i, 1);
+        }
+    }
+
+    function finishLevel41IntroCutscene() {
+        if (!cutsceneIntro41.active) return;
+        cutsceneIntro41.active = false;
+
+        if (cutsceneOverlay) cutsceneOverlay.classList.add('hidden');
+        if (hudOverlay) hudOverlay.classList.remove('hidden');
+
+        player.state = 'IDLE';
+        player.x = 440;
+        player.y = currentLevelData.groundY;
+        player.vx = 0;
+        player.vy = 0;
+        player.facing = 1;
+        player.grounded = true;
+        player.hasLighter = true;
+
+        if (inventoryHud) {
+            inventoryHud.classList.remove('hidden');
+        }
+        if (coldHud) {
+            coldHud.classList.remove('hidden');
+            updateColdHud();
+        }
+
+        cameraX = 0;
+        cameraY = 0;
+
+        currentState = STATES.PLAYING;
+        playSound('natureStart');
+    }
+
+    // Helper: Draw lighter resting on the snow during WALK phase of cutscene
+    function drawCutsceneLighter(scale) {
+        if (!cutsceneIntro41.active) return;
+
+        // Draw breath vapor puffs
+        cutsceneIntro41.breathPuffs.forEach(p => {
+            const px = (p.x - cameraX) * scale;
+            const py = (p.y - cameraY) * scale;
+            ctx.save();
+            ctx.fillStyle = `rgba(241, 245, 249, ${p.alpha * 0.75})`;
+            ctx.beginPath();
+            ctx.arc(px, py, p.size * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        });
+
+        // Draw sparks
+        cutsceneIntro41.sparks.forEach(sp => {
+            const sx = (sp.x - cameraX) * scale;
+            const sy = (sp.y - cameraY) * scale;
+            ctx.save();
+            ctx.shadowColor = sp.color;
+            ctx.shadowBlur = 8 * scale;
+            ctx.fillStyle = sp.color;
+            ctx.beginPath();
+            ctx.arc(sx, sy, sp.size * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        });
+
+        // If lighter still on the snow
+        if (cutsceneIntro41.phase === 'WALK') {
+            const lx = (cutsceneIntro41.lighterX - cameraX) * scale;
+            const ly = (cutsceneIntro41.lighterY - cameraY) * scale;
+
+            ctx.save();
+            // Lighter shadow in snow
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.4)';
+            ctx.beginPath();
+            ctx.ellipse(lx + 4 * scale, ly + 2 * scale, 8 * scale, 3 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Shiny chrome body
+            const bodyGrad = ctx.createLinearGradient(lx - 4 * scale, ly - 8 * scale, lx + 6 * scale, ly);
+            bodyGrad.addColorStop(0, '#e2e8f0');
+            bodyGrad.addColorStop(0.5, '#94a3b8');
+            bodyGrad.addColorStop(1, '#475569');
+            ctx.fillStyle = bodyGrad;
+            ctx.fillRect(lx - 5 * scale, ly - 8 * scale, 10 * scale, 8 * scale);
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 1.5 * scale;
+            ctx.strokeRect(lx - 5 * scale, ly - 8 * scale, 10 * scale, 8 * scale);
+
+            // Brass wheel / flint cap
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect(lx + 1 * scale, ly - 11 * scale, 4 * scale, 3 * scale);
+
+            // Sparkling twinkle glint every 0.6s
+            const twinkle = Math.sin(Date.now() * 0.008);
+            if (twinkle > 0.4) {
+                const alpha = (twinkle - 0.4) * 1.6;
+                ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+                ctx.lineWidth = 1.8 * scale;
+                ctx.beginPath();
+                ctx.moveTo(lx, ly - 14 * scale);
+                ctx.lineTo(lx, ly - 4 * scale);
+                ctx.moveTo(lx - 5 * scale, ly - 9 * scale);
+                ctx.lineTo(lx + 5 * scale, ly - 9 * scale);
+                ctx.stroke();
+
+                ctx.fillStyle = `rgba(254, 240, 138, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(lx, ly - 9 * scale, 2.5 * scale, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+    }
+
+    // ==========================================
+    // --- LEVEL 60: BOSS YETI SYSTEM ---
+    // ==========================================
+    const yeti = {
+        active: false,
+        health: 250,
+        maxHealth: 250,
+        x: 19000,
+        y: 440,
+        baseY: 440,
+        w: 130,
+        h: 150,
+        state: 'INACTIVE', // 'INTRO', 'IDLE', 'ICE_BOULDER_FORM', 'ICE_BOULDER_THROW', 'AVALANCHE_WINDUP', 'AVALANCHE_SURGE', 'GIANT_SNOWBALLS_PREP', 'GIANT_SNOWBALLS_ROLL', 'DEFEATED'
+        timer: 0,
+        attackIndex: 0,
+        attackList: ['ICE_BOULDER', 'AVALANCHE', 'GIANT_SNOWBALLS'],
+        hitFlashTimer: 0,
+        eyeGlow: 1.0,
+        isFallen: false,
+        fallAngle: 0,
+        arenaLeft: 17620,
+        arenaRight: 19550,
+        introPlayed: false,
+        shoveTimer: 0,
+        roarArms: 0,
+        mouthOpen: 0,
+        roarShockwaves: [],
+        lastDefeatReason: '', // 'BOULDER', 'AVALANCHE', 'SNOWBALL'
+
+        // Attack 1: Ice Boulder
+        iceBoulderFormProg: 0,
+        iceBoulderTarget: null, // { x, y, timer: 1.0, radius: 110 }
+        iceBoulderBomb: null,   // { thrown, x, y, startX, startY, targetX, targetY, progress, radius, rot }
+
+        // Attack 2: Avalanche
+        avalancheWave: null,    // { x, y, w, h, vx, progress, active, sweptPlayer }
+
+        // Attack 3: Giant Snowballs
+        giantSnowballs: [],     // [{ x, y, radius, vx, rot, active, clearedPlayer }]
+        giantSnowballQueue: 0,
+        giantSnowballTimer: 0,
+
+        // Win Mechanic: Snowballs & Dropped Stones
+        arenaStones: [],        // [{ id, x, y, bobTimer }]
+        playerSnowballs: []     // [{ x, y, startX, startY, targetX, targetY, t, rot, isStone, damage }]
+    };
+
+    const yetiIntroCutscene = {
+        active: false,
+        phase: 'NONE', // 'APPROACH', 'EYES', 'EMERGE', 'ROAR'
+        timer: 0,
+        rumbleInterval: 0,
+        eyeAlpha: 0
+    };
+
+    const yetiDefeatCutscene = {
+        active: false,
+        phase: 'NONE',
+        timer: 0,
+        confetti: []
+    };
+
+    function startYetiIntroCutscene() {
+        if (yeti.introPlayed || yetiIntroCutscene.active || yeti.active || yeti.isFallen) return;
+        currentState = STATES.CUTSCENE;
+        yetiIntroCutscene.active = true;
+        yetiIntroCutscene.phase = 'APPROACH';
+        yetiIntroCutscene.timer = 0;
+        yetiIntroCutscene.rumbleInterval = 0;
+        yetiIntroCutscene.eyeAlpha = 0;
+
+        // Cold bar is completely removed and cold ceases to affect the player
+        if (coldHud) coldHud.classList.add('hidden');
+        player.cold = 0;
+
+        yeti.x = 19300; // Deep inside the dark cave interior
+        yeti.y = currentLevelData.groundY - 75;
+        yeti.baseY = currentLevelData.groundY - 75;
+        yeti.shoveTimer = 0;
+        yeti.roarArms = 0;
+        yeti.mouthOpen = 0;
+        yeti.roarShockwaves = [];
+        yeti.eyeGlow = 0;
+        yeti.state = 'INACTIVE';
+
+        player.state = 'RUN';
+        player.facing = 1;
+        player.grounded = true;
+        player.y = currentLevelData.groundY;
+        player.vy = 0;
+        player.vx = 3.6;
+
+        if (bossHud) bossHud.classList.add('hidden');
+        if (cutsceneOverlay) cutsceneOverlay.classList.remove('hidden');
+        if (cutsceneChapter) cutsceneChapter.textContent = '❄️ УРОВЕНЬ 60: ТАИНСТВЕННАЯ ЛЕДЯНАЯ ПЕЩЕРА';
+        if (cutsceneText) cutsceneText.textContent = 'Стикмен подходит ближе к древней заснеженной пещере...';
+
+        playSound('coldWind');
+    }
+
+    function updateYetiIntroCutscene() {
+        yetiIntroCutscene.timer += 0.016;
+
+        // Update roar shockwaves
+        for (let i = yeti.roarShockwaves.length - 1; i >= 0; i--) {
+            const sw = yeti.roarShockwaves[i];
+            sw.radius += 16;
+            sw.alpha -= 0.022;
+            if (sw.alpha <= 0 || sw.radius >= sw.maxRadius) {
+                yeti.roarShockwaves.splice(i, 1);
+            }
+        }
+
+        if (yetiIntroCutscene.phase === 'APPROACH') {
+            player.x += player.vx;
+            player.y = currentLevelData.groundY;
+            player.grounded = true;
+            const targetCamX = Math.min(yeti.arenaLeft + 80, player.x - 260);
+            cameraX += (targetCamX - cameraX) * 0.08;
+
+            if (player.x >= 18650) {
+                player.vx = 0;
+                player.state = 'IDLE';
+                yetiIntroCutscene.phase = 'EYES';
+                yetiIntroCutscene.timer = 0;
+                if (cutsceneChapter) cutsceneChapter.textContent = '❄️ ЛЕДЯНАЯ ПЕЩЕРА: СИЯЮЩИЕ ГЛАЗА';
+                if (cutsceneText) cutsceneText.textContent = 'В непроглядной тьме пещеры загораются зловещие синие глаза!';
+                playSound('freeze');
+                screenShake = 6;
+            }
+        } else if (yetiIntroCutscene.phase === 'EYES') {
+            player.y = currentLevelData.groundY;
+            player.grounded = true;
+            const targetCamX = 18450;
+            cameraX += (targetCamX - cameraX) * 0.05;
+
+            yetiIntroCutscene.eyeAlpha = Math.min(1.0, yetiIntroCutscene.timer / 0.8);
+            yeti.eyeGlow = yetiIntroCutscene.eyeAlpha;
+
+            if (Math.random() < 0.6) {
+                particles.push({
+                    x: yeti.x + (Math.random() - 0.5) * 50,
+                    y: yeti.y - 45 + (Math.random() - 0.5) * 35,
+                    vx: -(2 + Math.random() * 4),
+                    vy: (Math.random() - 0.5) * 2,
+                    size: 4 + Math.random() * 7,
+                    color: Math.random() < 0.6 ? '#38bdf8' : '#e0f2fe',
+                    life: 0.8,
+                    decay: 0.03
+                });
+            }
+
+            if (yetiIntroCutscene.timer >= 2.2) {
+                yetiIntroCutscene.phase = 'EMERGE';
+                yetiIntroCutscene.timer = 0;
+                if (cutsceneChapter) cutsceneChapter.textContent = '❄️ ПРОБУЖДЕНИЕ: ВЫХОД ЙЕТИ';
+                if (cutsceneText) cutsceneText.textContent = 'Из глубин пещеры величественно выходит исполинский Снежный Йети!';
+                playSound('slam');
+                screenShake = 14;
+            }
+        } else if (yetiIntroCutscene.phase === 'EMERGE') {
+            player.y = currentLevelData.groundY;
+            player.grounded = true;
+            const emergeProgress = Math.min(1.0, yetiIntroCutscene.timer / 2.0);
+            yeti.x = 19300 - emergeProgress * 300;
+            yeti.eyeGlow = 1.0;
+
+            const targetCamX = 18480;
+            cameraX += (targetCamX - cameraX) * 0.05;
+
+            if (Math.random() < 0.4) {
+                spawnDust(yeti.x, currentLevelData.groundY);
+            }
+
+            if (yetiIntroCutscene.timer >= 2.0) {
+                yetiIntroCutscene.phase = 'ROAR';
+                yetiIntroCutscene.timer = 0;
+                yeti.x = 19000;
+                if (cutsceneChapter) cutsceneChapter.textContent = '❄️ МОГУЧИЙ РЁВ ЙЕТИ';
+                if (cutsceneText) cutsceneText.textContent = 'Йети издает оглушительный морозный рёв! Начинается битва!';
+                playSound('yetiRoar');
+                playSound('slam');
+                screenShake = 26;
+
+                yeti.roarShockwaves.push({
+                    x: yeti.x,
+                    y: yeti.y - 45,
+                    radius: 20,
+                    maxRadius: 420,
+                    alpha: 0.95
+                });
+            }
+        } else if (yetiIntroCutscene.phase === 'ROAR') {
+            yeti.roarArms = Math.min(1.0, yeti.roarArms + 0.08);
+            yeti.mouthOpen = Math.min(1.0, yeti.mouthOpen + 0.09);
+            screenShake = Math.max(screenShake, 16);
+
+            if (yetiIntroCutscene.timer > 0.4 && yeti.roarShockwaves.length < 3) {
+                yeti.roarShockwaves.push({
+                    x: yeti.x,
+                    y: yeti.y - 45,
+                    radius: 20,
+                    maxRadius: 420,
+                    alpha: 0.9
+                });
+            }
+
+            for (let k = 0; k < 3; k++) {
+                particles.push({
+                    x: yeti.x - 30,
+                    y: yeti.y - 50 + (Math.random() - 0.5) * 30,
+                    vx: -(7 + Math.random() * 9),
+                    vy: (Math.random() - 0.5) * 6,
+                    size: 3 + Math.random() * 5,
+                    color: Math.random() < 0.5 ? '#ffffff' : '#38bdf8',
+                    life: 0.9,
+                    decay: 0.03
+                });
+            }
+
+            if (yetiIntroCutscene.timer >= 2.2) {
+                finishYetiIntroCutscene();
+            }
+        }
+    }
+
+    function finishYetiIntroCutscene() {
+        if (!yetiIntroCutscene.active) return;
+        yetiIntroCutscene.active = false;
+        yeti.introPlayed = true;
+        yeti.x = 19000;
+        yeti.roarArms = 0;
+        yeti.mouthOpen = 0;
+        yeti.eyeGlow = 1.0;
+
+        player.state = 'IDLE';
+        player.vx = 0;
+        player.vy = 0;
+        player.facing = 1;
+        player.grounded = true;
+        player.y = currentLevelData.groundY;
+        player.cold = 0;
+
+        if (cutsceneOverlay) cutsceneOverlay.classList.add('hidden');
+        if (hudOverlay) hudOverlay.classList.remove('hidden');
+        if (coldHud) coldHud.classList.add('hidden');
+
+        currentState = STATES.PLAYING;
+        startYetiFight();
+    }
+
+    function startYetiFight() {
+        if (yeti.active) return;
+        yeti.active = true;
+        yeti.health = 250;
+        yeti.maxHealth = 250;
+        yeti.x = 19000;
+        yeti.y = currentLevelData.groundY - 75;
+        yeti.baseY = currentLevelData.groundY - 75;
+        yeti.state = 'IDLE';
+        yeti.timer = 0;
+        yeti.attackIndex = 0;
+        yeti.hitFlashTimer = 0;
+        yeti.eyeGlow = 1.0;
+        yeti.isFallen = false;
+        yeti.fallAngle = 0;
+        yeti.mouthOpen = 0;
+        yeti.roarArms = 0;
+        yeti.shoveTimer = 0;
+        yeti.lastDefeatReason = '';
+        yeti.iceBoulderTarget = null;
+        yeti.iceBoulderBomb = null;
+        yeti.avalancheWave = null;
+        yeti.giantSnowballs = [];
+        yeti.arenaStones = [];
+        yeti.playerSnowballs = [];
+
+        player.isBossMode = false;
+        player.cold = 0;
+        player.hasStone = false;
+        player.snowballCooldown = 0;
+
+        if (coldHud) coldHud.classList.add('hidden');
+
+        if (bossHud) {
+            bossHud.classList.remove('hidden');
+        }
+        if (bossName) {
+            bossName.textContent = '❄️ ДРЕВНИЙ СНЕЖНЫЙ ЙЕТИ';
+        }
+        if (bossHealthBar) {
+            bossHealthBar.style.width = '100%';
+            bossHealthBar.style.background = 'linear-gradient(90deg, #0284c7 0%, #38bdf8 50%, #e0f2fe 100%)';
+        }
+        if (bossPhaseText) {
+            bossPhaseText.textContent = 'БОСС: 250 / 250 | [E / Клик] Слепить снежок!';
+        }
+
+        playSound('slam');
+        screenShake = 16;
+        spawnDust(yeti.x, currentLevelData.groundY);
+    }
+
+    function resetYeti() {
+        yeti.active = false;
+        yeti.health = 250;
+        yeti.state = 'INACTIVE';
+        yeti.timer = 0;
+        yeti.attackIndex = 0;
+        yeti.hitFlashTimer = 0;
+        yeti.eyeGlow = 1.0;
+        yeti.isFallen = false;
+        yeti.fallAngle = 0;
+        yeti.mouthOpen = 0;
+        yeti.roarArms = 0;
+        yeti.shoveTimer = 0;
+        yeti.introPlayed = false;
+        yeti.lastDefeatReason = '';
+        yeti.iceBoulderTarget = null;
+        yeti.iceBoulderBomb = null;
+        yeti.avalancheWave = null;
+        yeti.giantSnowballs = [];
+        yeti.arenaStones = [];
+        yeti.playerSnowballs = [];
+        yetiIntroCutscene.active = false;
+        yetiIntroCutscene.phase = 'NONE';
+        yetiDefeatCutscene.active = false;
+        yetiDefeatCutscene.phase = 'NONE';
+
+        player.hasStone = false;
+        player.snowballCooldown = 0;
+
+        if (currentLevelIndex === 60 && bossHud) {
+            bossHud.classList.add('hidden');
+        }
+    }
+
+    function playerThrowSnowball() {
+        if (!yeti.active || yeti.health <= 0 || player.state === 'DEFEAT') return;
+        if (player.snowballCooldown && player.snowballCooldown > 0) return;
+
+        player.snowballCooldown = 0.38;
+        const hasStone = !!player.hasStone;
+        player.hasStone = false;
+
+        const dmg = hasStone ? 10 : 5;
+        const startX = player.facing >= 0 ? player.x + 16 : player.x - 16;
+        const startY = player.y - 38;
+
+        yeti.playerSnowballs.push({
+            x: startX,
+            y: startY,
+            startX: startX,
+            startY: startY,
+            targetX: yeti.x + (Math.random() - 0.5) * 30,
+            targetY: yeti.y - 45 + (Math.random() - 0.5) * 30,
+            t: 0,
+            rot: 0,
+            isStone: hasStone,
+            damage: dmg
+        });
+
+        playSound('snowCraft');
+        playSound('airBoost');
+
+        for (let k = 0; k < 6; k++) {
+            particles.push({
+                x: startX + (Math.random() - 0.5) * 12,
+                y: currentLevelData.groundY - 5,
+                vx: (Math.random() - 0.5) * 3,
+                vy: -Math.random() * 3.5 - 1,
+                size: 2.5 + Math.random() * 3,
+                color: hasStone ? '#64748b' : '#ffffff',
+                life: 0.5,
+                decay: 0.05
+            });
+        }
+    }
+
+    function updateYeti() {
+        if (!yeti.active) return;
+        if (player.state === 'DEFEAT') return;
+
+        // Keep player strictly bounded within Yeti arena
+        if (player.x < yeti.arenaLeft + 30) {
+            player.x = yeti.arenaLeft + 30;
+            if (player.vx < 0) player.vx = 0;
+        }
+        if (player.x > yeti.arenaRight - 30) {
+            player.x = yeti.arenaRight - 30;
+            if (player.vx > 0) player.vx = 0;
+        }
+
+        yeti.timer += 0.016;
+        if (yeti.hitFlashTimer > 0) yeti.hitFlashTimer -= 0.016;
+        if (yeti.shoveTimer > 0) yeti.shoveTimer -= 0.016;
+        if (player.snowballCooldown > 0) player.snowballCooldown -= 0.016;
+
+        // Screen shake decay
+        if (screenShake > 0) {
+            screenShake *= 0.88;
+            if (screenShake < 0.2) screenShake = 0;
+        }
+
+        // 1. Arena Stones Collection (dropped from ice boulder)
+        for (let i = yeti.arenaStones.length - 1; i >= 0; i--) {
+            const st = yeti.arenaStones[i];
+            st.bobTimer += 0.05;
+            if (Math.abs(player.x - st.x) < 40 && player.y >= currentLevelData.groundY - 45) {
+                player.hasStone = true;
+                yeti.arenaStones.splice(i, 1);
+                playSound('warmUp');
+                playSound('land');
+                spawnDust(st.x, currentLevelData.groundY);
+
+                if (bossPhaseText) {
+                    bossPhaseText.textContent = `БОСС: ${yeti.health} / 250 | 🪨 Снежок с камнем готов! (10 урона)`;
+                }
+            }
+        }
+
+        // 2. Update Thrown Player Snowballs
+        for (let i = yeti.playerSnowballs.length - 1; i >= 0; i--) {
+            const pb = yeti.playerSnowballs[i];
+            pb.t += 0.062;
+            pb.rot += 0.25;
+            pb.x = pb.startX + (pb.targetX - pb.startX) * pb.t;
+            pb.y = pb.startY + (pb.targetY - pb.startY) * pb.t - Math.sin(pb.t * Math.PI) * 75;
+
+            // Trail particles
+            if (Math.random() < 0.5) {
+                particles.push({
+                    x: pb.x,
+                    y: pb.y,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: (Math.random() - 0.5) * 1.5,
+                    size: 2 + Math.random() * 2.5,
+                    color: pb.isStone ? '#94a3b8' : '#ffffff',
+                    life: 0.35,
+                    decay: 0.07
+                });
+            }
+
+            if (pb.t >= 1.0) {
+                // Impact on Yeti!
+                yeti.playerSnowballs.splice(i, 1);
+                yeti.health = Math.max(0, yeti.health - pb.damage);
+                yeti.hitFlashTimer = 0.22;
+                screenShake = pb.isStone ? 8 : 4;
+                playSound(pb.isStone ? 'rockHit' : 'snowHit');
+
+                // Burst particles at impact spot
+                for (let k = 0; k < (pb.isStone ? 12 : 8); k++) {
+                    particles.push({
+                        x: yeti.x + (Math.random() - 0.5) * 40,
+                        y: yeti.y - 40 + (Math.random() - 0.5) * 40,
+                        vx: (Math.random() - 0.5) * 7,
+                        vy: (Math.random() - 0.5) * 7,
+                        size: 3 + Math.random() * 4,
+                        color: pb.isStone ? (Math.random() < 0.5 ? '#64748b' : '#e0f2fe') : '#ffffff',
+                        life: 0.7,
+                        decay: 0.04
+                    });
+                }
+
+                if (bossHealthBar) {
+                    bossHealthBar.style.width = Math.max(0, (yeti.health / yeti.maxHealth) * 100) + '%';
+                }
+                if (bossPhaseText) {
+                    bossPhaseText.textContent = `БОСС: ${yeti.health} / 250 | ` + (player.hasStone ? '🪨 Снежок с камнем (10 урона)' : '❄️ Снежок (5 урона) [E/Клик]');
+                }
+
+                if (yeti.health <= 0) {
+                    startYetiDefeatCutscene();
+                    return;
+                }
+            }
+        }
+
+        // 3. Attack State Machine
+        if (yeti.state === 'IDLE') {
+            yeti.y = yeti.baseY + Math.sin(Date.now() * 0.003) * 4;
+            if (yeti.timer >= 1.15) {
+                const nextAttack = yeti.attackList[yeti.attackIndex % yeti.attackList.length];
+                yeti.timer = 0;
+
+                if (nextAttack === 'ICE_BOULDER') {
+                    yeti.state = 'ICE_BOULDER_FORM';
+                    const targetX = Math.max(yeti.arenaLeft + 80, Math.min(yeti.arenaRight - 150, player.x));
+                    yeti.iceBoulderTarget = { x: targetX, y: currentLevelData.groundY, timer: 1.0, radius: 110 };
+                    playSound('warning');
+                } else if (nextAttack === 'AVALANCHE') {
+                    yeti.state = 'AVALANCHE_WINDUP';
+                    playSound('coldWind');
+                    screenShake = 6;
+                } else if (nextAttack === 'GIANT_SNOWBALLS') {
+                    yeti.state = 'GIANT_SNOWBALLS_PREP';
+                    yeti.giantSnowballQueue = 3;
+                    yeti.giantSnowballTimer = 0;
+                    playSound('warning');
+                }
+            }
+            return;
+        }
+
+        // --- ATTACK 1: ICE BOULDER (Глыбы льда из рук) ---
+        if (yeti.state === 'ICE_BOULDER_FORM') {
+            yeti.iceBoulderFormProg = Math.min(1.0, yeti.timer / 1.0);
+            if (yeti.timer >= 1.0) {
+                yeti.state = 'ICE_BOULDER_THROW';
+                yeti.timer = 0;
+                yeti.iceBoulderBomb = {
+                    thrown: true,
+                    x: yeti.x - 35,
+                    y: yeti.y - 70,
+                    startX: yeti.x - 35,
+                    startY: yeti.y - 70,
+                    targetX: yeti.iceBoulderTarget ? yeti.iceBoulderTarget.x : player.x,
+                    targetY: currentLevelData.groundY - 15,
+                    progress: 0,
+                    radius: 36,
+                    rot: 0
+                };
+                playSound('airBoost');
+            }
+            return;
+        }
+
+        if (yeti.state === 'ICE_BOULDER_THROW') {
+            if (!yeti.iceBoulderBomb) {
+                yeti.state = 'IDLE';
+                yeti.timer = 0;
+                return;
+            }
+            const bomb = yeti.iceBoulderBomb;
+            bomb.progress += 0.016 / 0.58; // flight time
+            const p = Math.min(1.0, bomb.progress);
+            bomb.x = bomb.startX + (bomb.targetX - bomb.startX) * p;
+            bomb.y = bomb.startY + (bomb.targetY - bomb.startY) * p - Math.sin(p * Math.PI) * 140;
+            bomb.rot += 0.12;
+
+            if (Math.abs(player.x - bomb.x) < 36 && Math.abs(player.y - bomb.y) < 36) {
+                yeti.lastDefeatReason = 'BOULDER';
+                triggerDefeat();
+                return;
+            }
+
+            if (bomb.progress >= 1.0) {
+                const hitX = bomb.targetX;
+                bomb.x = hitX;
+                bomb.y = currentLevelData.groundY - 15;
+
+                // Ground damage check within large warning radius (110px)
+                if (Math.abs(player.x - hitX) < 110 && player.y >= currentLevelData.groundY - 45) {
+                    yeti.lastDefeatReason = 'BOULDER';
+                    triggerDefeat();
+                }
+
+                playSound('slam');
+                playSound('crack');
+                screenShake = 22;
+                spawnDust(hitX, currentLevelData.groundY);
+
+                // Ice shards explosion
+                for (let k = 0; k < 22; k++) {
+                    particles.push({
+                        x: hitX + (Math.random() - 0.5) * 35,
+                        y: currentLevelData.groundY - 10,
+                        vx: (Math.random() - 0.5) * 14,
+                        vy: -(3 + Math.random() * 9),
+                        size: 4 + Math.random() * 6,
+                        color: Math.random() < 0.5 ? '#38bdf8' : '#e0f2fe',
+                        life: 0.8,
+                        decay: 0.03
+                    });
+                }
+
+                // Shatters and drops 1 to 2 pickable stones on the ground
+                const dropCount = Math.random() < 0.6 ? 2 : 1;
+                for (let s = 0; s < dropCount; s++) {
+                    const offset = (s === 0 ? -1 : 1) * (70 + Math.random() * 80);
+                    const stoneX = Math.max(yeti.arenaLeft + 70, Math.min(yeti.x - 100, hitX + offset));
+                    yeti.arenaStones.push({
+                        id: Math.random(),
+                        x: stoneX,
+                        y: currentLevelData.groundY,
+                        bobTimer: Math.random() * Math.PI * 2
+                    });
+                }
+
+                yeti.iceBoulderBomb = null;
+                yeti.iceBoulderTarget = null;
+                yeti.attackIndex++;
+                yeti.state = 'IDLE';
+                yeti.timer = 0;
+            }
+            return;
+        }
+
+        // --- ATTACK 2: AVALANCHE (Лавина - волна снега) ---
+        if (yeti.state === 'AVALANCHE_WINDUP') {
+            screenShake = Math.max(screenShake, 5);
+            if (yeti.timer >= 0.8) {
+                yeti.state = 'AVALANCHE_SURGE';
+                yeti.timer = 0;
+                yeti.avalancheWave = {
+                    x: yeti.x - 45,
+                    y: currentLevelData.groundY - 65,
+                    w: 160,
+                    h: 70,
+                    vx: -14,
+                    active: true,
+                    sweptPlayer: false
+                };
+                playSound('yetiRoar');
+                playSound('coldWind');
+                screenShake = 16;
+            }
+            return;
+        }
+
+        if (yeti.state === 'AVALANCHE_SURGE') {
+            if (!yeti.avalancheWave) {
+                yeti.state = 'IDLE';
+                yeti.timer = 0;
+                return;
+            }
+            const wave = yeti.avalancheWave;
+            wave.x += wave.vx;
+            screenShake = Math.max(screenShake, 4);
+
+            // Spray blizzard particles from surging wave
+            if (Math.random() < 0.7) {
+                particles.push({
+                    x: wave.x + (Math.random() - 0.5) * 40,
+                    y: currentLevelData.groundY - 20 - Math.random() * 45,
+                    vx: -(4 + Math.random() * 8),
+                    vy: -(1 + Math.random() * 4),
+                    size: 3 + Math.random() * 5,
+                    color: Math.random() < 0.5 ? '#ffffff' : '#bae6fd',
+                    life: 0.5,
+                    decay: 0.05
+                });
+            }
+
+            // Dodge check: Player must crouch or slide to avoid the avalanche!
+            if (Math.abs(player.x - wave.x) < 55 && !wave.sweptPlayer) {
+                const isDucking = player.isCrouching || player.state === 'ROLL';
+                if (!isDucking) {
+                    wave.sweptPlayer = true;
+                    yeti.lastDefeatReason = 'AVALANCHE';
+                    triggerDefeat();
+                    return;
+                } else {
+                    // Harmless snow spray over ducking player
+                    for (let s = 0; s < 4; s++) {
+                        particles.push({
+                            x: player.x + (Math.random() - 0.5) * 20,
+                            y: player.y - 30,
+                            vx: -(3 + Math.random() * 4),
+                            vy: -(2 + Math.random() * 3),
+                            size: 2.5 + Math.random() * 3,
+                            color: '#e0f2fe',
+                            life: 0.4,
+                            decay: 0.06
+                        });
+                    }
+                }
+            }
+
+            if (wave.x <= yeti.arenaLeft - 50) {
+                yeti.avalancheWave = null;
+                yeti.attackIndex++;
+                yeti.state = 'IDLE';
+                yeti.timer = 0;
+            }
+            return;
+        }
+
+        // --- ATTACK 3: GIANT SNOWBALLS (Огромные снежки) ---
+        if (yeti.state === 'GIANT_SNOWBALLS_PREP') {
+            yeti.giantSnowballTimer += 0.016;
+
+            if (yeti.giantSnowballQueue > 0 && yeti.giantSnowballTimer >= 1.05) {
+                yeti.giantSnowballTimer = 0;
+                yeti.giantSnowballQueue--;
+                yeti.giantSnowballs.push({
+                    x: yeti.x - 45,
+                    y: currentLevelData.groundY - 34,
+                    radius: 34,
+                    vx: -8.8,
+                    rot: 0,
+                    active: true,
+                    clearedPlayer: false
+                });
+                playSound('slam');
+                playSound('airBoost');
+                screenShake = 9;
+            }
+
+            // Update active rolling giant snowballs
+            for (let i = yeti.giantSnowballs.length - 1; i >= 0; i--) {
+                const sb = yeti.giantSnowballs[i];
+                sb.x += sb.vx;
+                sb.rot += sb.vx * 0.035;
+
+                // Snow dust trail
+                if (Math.random() < 0.45) {
+                    particles.push({
+                        x: sb.x + 20,
+                        y: currentLevelData.groundY - 5,
+                        vx: 1 + Math.random() * 3,
+                        vy: -Math.random() * 3,
+                        size: 3 + Math.random() * 3,
+                        color: '#f8fafc',
+                        life: 0.45,
+                        decay: 0.06
+                    });
+                }
+
+                // Dodge check: Player must jump over them!
+                if (Math.abs(player.x - sb.x) < 32 && sb.active) {
+                    const isJumpedOver = (player.y < currentLevelData.groundY - 48);
+                    if (!isJumpedOver) {
+                        yeti.lastDefeatReason = 'SNOWBALL';
+                        triggerDefeat();
+                        return;
+                    } else {
+                        sb.clearedPlayer = true;
+                    }
+                }
+
+                if (sb.x <= yeti.arenaLeft - 20) {
+                    playSound('snowHit');
+                    for (let k = 0; k < 12; k++) {
+                        particles.push({
+                            x: yeti.arenaLeft,
+                            y: currentLevelData.groundY - 20 + (Math.random() - 0.5) * 30,
+                            vx: 2 + Math.random() * 5,
+                            vy: -(2 + Math.random() * 5),
+                            size: 3 + Math.random() * 4,
+                            color: '#ffffff',
+                            life: 0.6,
+                            decay: 0.04
+                        });
+                    }
+                    yeti.giantSnowballs.splice(i, 1);
+                }
+            }
+
+            if (yeti.giantSnowballQueue <= 0 && yeti.giantSnowballs.length === 0) {
+                yeti.attackIndex++;
+                yeti.state = 'IDLE';
+                yeti.timer = 0;
+            }
+            return;
+        }
+    }
+
+    // ==========================================
+    // --- YETI DEFEAT CUTSCENE & VICTORY ---
+    // ==========================================
+    function startYetiDefeatCutscene() {
+        if (yetiDefeatCutscene.active || yeti.isFallen) return;
+        currentState = STATES.CUTSCENE;
+        yetiDefeatCutscene.active = true;
+        yetiDefeatCutscene.phase = 'ROAR_FALL';
+        yetiDefeatCutscene.timer = 0;
+
+        yeti.state = 'DEFEATED';
+        yeti.isFallen = true;
+        yeti.fallAngle = 0;
+        yeti.shoveTimer = 0;
+        yeti.iceBoulderTarget = null;
+        yeti.iceBoulderBomb = null;
+        yeti.avalancheWave = null;
+        yeti.giantSnowballs = [];
+
+        player.state = 'IDLE';
+        player.vx = 0;
+        player.vy = 0;
+
+        if (bossHud) bossHud.classList.add('hidden');
+        if (cutsceneOverlay) cutsceneOverlay.classList.remove('hidden');
+        if (cutsceneChapter) cutsceneChapter.textContent = '🏆 ПОБЕДА: СОКРУШЕНИЕ ВЕЛИКОГО ЙЕТИ';
+        if (cutsceneText) cutsceneText.textContent = 'Могучий Йети повержен снежками и падает в мягкий снег!';
+
+        playSound('yetiRoar');
+        playSound('victoryFanfare');
+        screenShake = 20;
+
+        // Sparkling celebratory snow particles
+        for (let i = 0; i < 60; i++) {
+            yetiDefeatCutscene.confetti.push({
+                x: yeti.x + (Math.random() - 0.5) * 120,
+                y: yeti.y - 60 + (Math.random() - 0.5) * 80,
+                vx: (Math.random() - 0.5) * 8,
+                vy: -(3 + Math.random() * 8),
+                size: 3 + Math.random() * 5,
+                color: ['#38bdf8', '#0284c7', '#ffffff', '#fbbf24', '#facc15'][Math.floor(Math.random() * 5)],
+                rot: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - 0.5) * 0.2
+            });
+        }
+    }
+
+    function updateYetiDefeatCutscene() {
+        yetiDefeatCutscene.timer += 0.016;
+
+        const targetCamX = yeti.x - 380;
+        cameraX += (targetCamX - cameraX) * 0.06;
+
+        yetiDefeatCutscene.confetti.forEach(c => {
+            c.x += c.vx;
+            c.y += c.vy;
+            c.vy += 0.15;
+            c.rot += c.rotSpeed;
+        });
+
+        if (yetiDefeatCutscene.phase === 'ROAR_FALL') {
+            yeti.fallAngle = Math.min(Math.PI * 0.45, yeti.fallAngle + 0.035);
+            if (yeti.fallAngle >= Math.PI * 0.45 && yetiDefeatCutscene.timer >= 1.6) {
+                yetiDefeatCutscene.phase = 'COLLAPSE';
+                playSound('slam');
+                screenShake = 16;
+                spawnDust(yeti.x, currentLevelData.groundY);
+            }
+        } else if (yetiDefeatCutscene.phase === 'COLLAPSE') {
+            if (yetiDefeatCutscene.timer >= 2.6) {
+                finishYetiDefeatCutscene();
+            }
+        }
+    }
+
+    function finishYetiDefeatCutscene() {
+        if (!yetiDefeatCutscene.active) return;
+        yetiDefeatCutscene.active = false;
+
+        if (cutsceneOverlay) cutsceneOverlay.classList.add('hidden');
+        currentState = STATES.VICTORY;
+
+        if (victoryTitle) victoryTitle.textContent = 'Уровень 60 пройден!';
+        if (victorySubtext) victorySubtext.textContent = 'ВЕЛИКИЙ ЙЕТИ ПОБЕЖДЁН! Вы покорили Вечный Холод и прошли все 60 уровней Вселенной Паркура!';
+
+        if (btnNextLevel) {
+            btnNextLevel.classList.add('hidden');
+        }
+        if (btnReplay) btnReplay.innerHTML = '<span class="btn-icon">🔄</span> Пройти снова';
+        if (btnToMenu) btnToMenu.innerHTML = '<span class="btn-icon">🏠</span> В меню уровней';
+
+        victoryScreen.classList.remove('hidden');
+        victoryScreen.classList.add('screen-active');
+        player.state = 'VICTORY_IDLE';
+    }
+
+    // ==========================================
+    // --- DRAW YETI, CAVE & HAZARDS ---
+    // ==========================================
+    function drawYetiCave(scale) {
+        if (currentLevelIndex !== 60) return;
+        const caveX = (currentLevelData && currentLevelData.yetiCave) ? currentLevelData.yetiCave.x : 19000;
+        const caveY = (currentLevelData && currentLevelData.yetiCave) ? currentLevelData.yetiCave.y : 120;
+        const caveW = (currentLevelData && currentLevelData.yetiCave) ? currentLevelData.yetiCave.w : 640;
+        const caveH = (currentLevelData && currentLevelData.yetiCave) ? currentLevelData.yetiCave.h : 420;
+
+        const drawX = (caveX - cameraX) * scale;
+        const drawY = (caveY - cameraY) * scale;
+        const drawW = caveW * scale;
+        const drawH = caveH * scale;
+
+        if (drawX < -drawW - 100 || drawX > canvas.width + 100) return;
+
+        ctx.save();
+
+        // 1. Massive Glacial Mountain Arch
+        ctx.beginPath();
+        ctx.moveTo(drawX - 60 * scale, drawY + drawH);
+        ctx.lineTo(drawX - 20 * scale, drawY - 40 * scale);
+        ctx.lineTo(drawX + drawW * 0.5, drawY - 90 * scale);
+        ctx.lineTo(drawX + drawW + 60 * scale, drawY - 30 * scale);
+        ctx.lineTo(drawX + drawW + 90 * scale, drawY + drawH);
+        ctx.closePath();
+
+        const mountainGrad = ctx.createLinearGradient(0, drawY - 90 * scale, 0, drawY + drawH);
+        mountainGrad.addColorStop(0, '#e2e8f0');
+        mountainGrad.addColorStop(0.3, '#94a3b8');
+        mountainGrad.addColorStop(1, '#334155');
+        ctx.fillStyle = mountainGrad;
+        ctx.fill();
+
+        // 2. Dark Cavern Rock Interior
+        ctx.beginPath();
+        ctx.moveTo(drawX, drawY + drawH);
+        ctx.quadraticCurveTo(drawX + 20 * scale, drawY + 30 * scale, drawX + drawW * 0.5, drawY + 20 * scale);
+        ctx.quadraticCurveTo(drawX + drawW - 20 * scale, drawY + 30 * scale, drawX + drawW, drawY + drawH);
+        ctx.closePath();
+
+        const caveGrad = ctx.createLinearGradient(0, drawY + 20 * scale, 0, drawY + drawH);
+        caveGrad.addColorStop(0, '#020617');
+        caveGrad.addColorStop(0.7, '#070f20');
+        caveGrad.addColorStop(1, '#0f172a');
+        ctx.fillStyle = caveGrad;
+        ctx.fill();
+
+        // 3. Huge Hanging Icicles along the cave mouth
+        const iciclePts = [
+            { rx: 0.12, len: 48 },
+            { rx: 0.25, len: 75 },
+            { rx: 0.38, len: 52 },
+            { rx: 0.52, len: 85 },
+            { rx: 0.65, len: 60 },
+            { rx: 0.78, len: 78 },
+            { rx: 0.90, len: 42 }
+        ];
+        iciclePts.forEach(ic => {
+            const ix = drawX + drawW * ic.rx;
+            const archY = drawY + 25 * scale + Math.pow(Math.abs(ic.rx - 0.5) * 2, 2) * (drawH * 0.15);
+            const iLen = ic.len * scale;
+
+            ctx.fillStyle = 'rgba(224, 242, 254, 0.92)';
+            ctx.beginPath();
+            ctx.moveTo(ix - 7 * scale, archY);
+            ctx.lineTo(ix, archY + iLen);
+            ctx.lineTo(ix + 7 * scale, archY);
+            ctx.closePath();
+            ctx.fill();
+        });
+
+        // 4. Glowing Blue Eyes inside the dark cave during cutscene (before Yeti emerges!)
+        if (typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene && yetiIntroCutscene.active && yetiIntroCutscene.phase === 'EYES') {
+            const eyeAlpha = yetiIntroCutscene.eyeAlpha;
+            const eyeY = (yeti.y - 45 - cameraY) * scale;
+            const eyeX1 = (yeti.x - 14 - cameraX) * scale;
+            const eyeX2 = (yeti.x + 14 - cameraX) * scale;
+
+            ctx.save();
+            ctx.shadowColor = '#00f0ff';
+            ctx.shadowBlur = 28 * eyeAlpha * scale;
+
+            // Cyan eye glow rings & piercing pupil
+            [eyeX1, eyeX2].forEach(ex => {
+                const eyeGlow = ctx.createRadialGradient(ex, eyeY, 1.5 * scale, ex, eyeY, 20 * scale);
+                eyeGlow.addColorStop(0, `rgba(255, 255, 255, ${eyeAlpha})`);
+                eyeGlow.addColorStop(0.35, `rgba(0, 240, 255, ${eyeAlpha * 0.95})`);
+                eyeGlow.addColorStop(0.7, `rgba(56, 189, 248, ${eyeAlpha * 0.4})`);
+                eyeGlow.addColorStop(1, 'rgba(0, 240, 255, 0)');
+                ctx.fillStyle = eyeGlow;
+                ctx.beginPath();
+                ctx.arc(ex, eyeY, 20 * scale, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Piercing sharp pupil
+                ctx.fillStyle = `rgba(255, 255, 255, ${eyeAlpha})`;
+                ctx.beginPath();
+                ctx.ellipse(ex, eyeY, 3.5 * scale, 7 * scale, 0, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.restore();
+        }
+
+        ctx.restore();
+    }
+
+    function drawYetiHazards() {
+        if (currentLevelIndex !== 60) return;
+        const scale = canvas.height / 675;
+
+        // 1. Ice Boulder Warning Zone on Ground
+        if (yeti.iceBoulderTarget) {
+            const tgX = (yeti.iceBoulderTarget.x - cameraX) * scale;
+            const tgY = (yeti.iceBoulderTarget.y - cameraY) * scale;
+            const tgR = yeti.iceBoulderTarget.radius * scale;
+
+            ctx.save();
+            // Pulsing red-cyan aura
+            const pulse = (Math.sin(Date.now() * 0.015) + 1) * 0.5;
+            const grad = ctx.createRadialGradient(tgX, tgY, 0, tgX, tgY, tgR);
+            grad.addColorStop(0, `rgba(239, 68, 68, ${0.45 + pulse * 0.25})`);
+            grad.addColorStop(0.7, `rgba(239, 68, 68, ${0.2 + pulse * 0.15})`);
+            grad.addColorStop(1, 'rgba(56, 189, 248, 0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.ellipse(tgX, tgY, tgR, 20 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Dashed outer ring
+            ctx.strokeStyle = `rgba(239, 68, 68, ${0.8 + pulse * 0.2})`;
+            ctx.lineWidth = 3 * scale;
+            ctx.setLineDash([8 * scale, 5 * scale]);
+            ctx.beginPath();
+            ctx.ellipse(tgX, tgY, tgR, 20 * scale, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Warning text label
+            ctx.font = `bold ${12 * scale}px Outfit, sans-serif`;
+            ctx.fillStyle = '#fee2e2';
+            ctx.textAlign = 'center';
+            ctx.fillText('⚠️ ЗОНА ПАДЕНИЯ ЛЕДЯНОЙ ГЛЫБЫ! ⚠️', tgX, tgY - 26 * scale);
+            ctx.restore();
+        }
+
+        // 2. Flying Ice Boulder Bomb
+        if (yeti.iceBoulderBomb) {
+            const bomb = yeti.iceBoulderBomb;
+            const bX = (bomb.x - cameraX) * scale;
+            const bY = (bomb.y - cameraY) * scale;
+            const bR = bomb.radius * scale;
+
+            ctx.save();
+            ctx.translate(bX, bY);
+            ctx.rotate(bomb.rot);
+
+            ctx.shadowColor = '#38bdf8';
+            ctx.shadowBlur = 18 * scale;
+
+            // Jagged multifaceted crystalline ice boulder
+            ctx.beginPath();
+            const numSides = 7;
+            for (let i = 0; i < numSides; i++) {
+                const angle = (i / numSides) * Math.PI * 2;
+                const r = bR * (0.8 + 0.35 * Math.sin(i * 2.5));
+                const px = Math.cos(angle) * r;
+                const py = Math.sin(angle) * r;
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+
+            const iceGrad = ctx.createLinearGradient(-bR, -bR, bR, bR);
+            iceGrad.addColorStop(0, '#ffffff');
+            iceGrad.addColorStop(0.4, '#bae6fd');
+            iceGrad.addColorStop(0.8, '#38bdf8');
+            iceGrad.addColorStop(1, '#0284c7');
+            ctx.fillStyle = iceGrad;
+            ctx.fill();
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2.5 * scale;
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // 3. Avalanche Surge Wave
+        if (yeti.avalancheWave) {
+            const wave = yeti.avalancheWave;
+            const wX = (wave.x - cameraX) * scale;
+            const wY = (wave.y - cameraY) * scale;
+            const wW = wave.w * scale;
+            const wH = wave.h * scale;
+
+            ctx.save();
+            // Wave crest & rolling wall
+            ctx.beginPath();
+            ctx.moveTo(wX + wW, wY + wH);
+            ctx.lineTo(wX, wY + wH);
+            ctx.quadraticCurveTo(wX - 25 * scale, wY + wH * 0.4, wX + 15 * scale, wY);
+            ctx.quadraticCurveTo(wX + wW * 0.5, wY - 10 * scale, wX + wW, wY + wH);
+            ctx.closePath();
+
+            const avGrad = ctx.createLinearGradient(0, wY, 0, wY + wH);
+            avGrad.addColorStop(0, '#ffffff');
+            avGrad.addColorStop(0.3, '#e0f2fe');
+            avGrad.addColorStop(0.7, '#7dd3fc');
+            avGrad.addColorStop(1, '#0284c7');
+            ctx.fillStyle = avGrad;
+            ctx.fill();
+
+            // Frothy foam crest
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 5 * scale;
+            ctx.stroke();
+
+            // Avalanche warning banner
+            ctx.font = `bold ${13 * scale}px Outfit, sans-serif`;
+            ctx.fillStyle = '#fef08a';
+            ctx.textAlign = 'center';
+            ctx.fillText('⚠️ ЛАВИНА! ПРИСЯДЬТЕ [CTRL / C / ПОДКАТ] ⚠️', wX + wW * 0.5, wY - 22 * scale);
+
+            ctx.restore();
+        }
+
+        // 4. Giant Rolling Snowballs
+        yeti.giantSnowballs.forEach(sb => {
+            const sX = (sb.x - cameraX) * scale;
+            const sY = (sb.y - cameraY) * scale;
+            const sR = sb.radius * scale;
+
+            ctx.save();
+            ctx.translate(sX, sY);
+            ctx.rotate(sb.rot);
+
+            ctx.shadowColor = '#bae6fd';
+            ctx.shadowBlur = 12 * scale;
+
+            // Snowball sphere
+            ctx.beginPath();
+            ctx.arc(0, 0, sR, 0, Math.PI * 2);
+            const ballGrad = ctx.createRadialGradient(-sR * 0.35, -sR * 0.35, sR * 0.1, 0, 0, sR);
+            ballGrad.addColorStop(0, '#ffffff');
+            ballGrad.addColorStop(0.65, '#e2e8f0');
+            ballGrad.addColorStop(1, '#94a3b8');
+            ctx.fillStyle = ballGrad;
+            ctx.fill();
+
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 2 * scale;
+            ctx.stroke();
+
+            // Inner surface snow clumps
+            ctx.fillStyle = '#cbd5e1';
+            ctx.beginPath();
+            ctx.arc(-sR * 0.3, sR * 0.2, sR * 0.22, 0, Math.PI * 2);
+            ctx.arc(sR * 0.35, -sR * 0.25, sR * 0.18, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+
+            // Warning hint above snowball
+            ctx.save();
+            ctx.font = `bold ${11 * scale}px Outfit, sans-serif`;
+            ctx.fillStyle = '#38bdf8';
+            ctx.textAlign = 'center';
+            ctx.fillText('❄️ ПЕРЕПРЫГИВАЙТЕ! [ПРОБЕЛ]', sX, sY - sR - 12 * scale);
+            ctx.restore();
+        });
+
+        // 5. Arena Pickable Stones
+        yeti.arenaStones.forEach(st => {
+            const stX = (st.x - cameraX) * scale;
+            const stY = (st.y - cameraY) * scale;
+            const bob = Math.sin(st.bobTimer) * 5 * scale;
+
+            ctx.save();
+            // Magical blue pedestal glow
+            const glow = ctx.createRadialGradient(stX, stY, 0, stX, stY, 26 * scale);
+            glow.addColorStop(0, 'rgba(56, 189, 248, 0.65)');
+            glow.addColorStop(1, 'rgba(56, 189, 248, 0)');
+            ctx.fillStyle = glow;
+            ctx.beginPath();
+            ctx.ellipse(stX, stY, 26 * scale, 8 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Faceted Solid Stone
+            ctx.fillStyle = '#475569';
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 2 * scale;
+            ctx.beginPath();
+            ctx.moveTo(stX - 12 * scale, stY - 4 * scale + bob);
+            ctx.lineTo(stX - 6 * scale, stY - 22 * scale + bob);
+            ctx.lineTo(stX + 8 * scale, stY - 20 * scale + bob);
+            ctx.lineTo(stX + 14 * scale, stY - 5 * scale + bob);
+            ctx.lineTo(stX, stY + 2 * scale + bob);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Floating indicator prompt
+            ctx.font = `bold ${10 * scale}px Outfit, sans-serif`;
+            ctx.fillStyle = '#f8fafc';
+            ctx.textAlign = 'center';
+            ctx.fillText('🪨 [E] Камень', stX, stY - 28 * scale + bob);
+
+            ctx.restore();
+        });
+
+        // 6. Thrown Player Snowballs
+        yeti.playerSnowballs.forEach(pb => {
+            const pbX = (pb.x - cameraX) * scale;
+            const pbY = (pb.y - cameraY) * scale;
+            const pbR = (pb.isStone ? 11 : 8) * scale;
+
+            ctx.save();
+            ctx.translate(pbX, pbY);
+            ctx.rotate(pb.rot);
+
+            ctx.shadowColor = pb.isStone ? '#64748b' : '#38bdf8';
+            ctx.shadowBlur = 10 * scale;
+
+            ctx.beginPath();
+            ctx.arc(0, 0, pbR, 0, Math.PI * 2);
+            const sGrad = ctx.createRadialGradient(-pbR * 0.3, -pbR * 0.3, pbR * 0.1, 0, 0, pbR);
+            if (pb.isStone) {
+                sGrad.addColorStop(0, '#f1f5f9');
+                sGrad.addColorStop(0.5, '#94a3b8');
+                sGrad.addColorStop(1, '#334155');
+            } else {
+                sGrad.addColorStop(0, '#ffffff');
+                sGrad.addColorStop(0.7, '#e2e8f0');
+                sGrad.addColorStop(1, '#bae6fd');
+            }
+            ctx.fillStyle = sGrad;
+            ctx.fill();
+
+            ctx.strokeStyle = pb.isStone ? '#cbd5e1' : '#ffffff';
+            ctx.lineWidth = 1.8 * scale;
+            ctx.stroke();
+
+            ctx.restore();
+        });
+
+        // 7. Yeti Defeat Confetti Sparkles
+        if (typeof yetiDefeatCutscene !== 'undefined' && yetiDefeatCutscene.active) {
+            yetiDefeatCutscene.confetti.forEach(c => {
+                const cx = (c.x - cameraX) * scale;
+                const cy = (c.y - cameraY) * scale;
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(c.rot);
+                ctx.fillStyle = c.color;
+                ctx.fillRect(-c.size * scale * 0.5, -c.size * scale * 0.5, c.size * scale, c.size * scale);
+                ctx.restore();
+            });
+        }
+    }
+
+    function drawYeti() {
+        if (currentLevelIndex !== 60) return;
+        const scale = canvas.height / 675;
+
+        // Draw Yeti Cave in background
+        drawYetiCave(scale);
+
+        if (!yeti.active && !yeti.isFallen) {
+            if (!yetiIntroCutscene.active) return;
+            // During intro cutscene: Yeti body is completely HIDDEN during APPROACH and EYES!
+            // First his glowing blue eyes appear in the cave, and ONLY in EMERGE does Yeti step out!
+            if (yetiIntroCutscene.phase === 'APPROACH' || yetiIntroCutscene.phase === 'EYES') {
+                return;
+            }
+        }
+
+        const drawX = (yeti.x - cameraX) * scale;
+        const drawY = (yeti.y - cameraY) * scale;
+
+        ctx.save();
+        ctx.translate(drawX, drawY);
+
+        // Smooth transition: Yeti emerges from dark cave shadows into the light
+        if (yetiIntroCutscene.active && yetiIntroCutscene.phase === 'EMERGE') {
+            const emergeProg = Math.min(1.0, yetiIntroCutscene.timer / 2.0);
+            ctx.globalAlpha = Math.min(1.0, 0.2 + emergeProg * 0.8);
+        }
+
+        if (yeti.isFallen) {
+            ctx.rotate(yeti.fallAngle);
+        }
+
+        const isFlashing = yeti.hitFlashTimer > 0;
+        const furWhite = isFlashing ? '#ffffff' : '#f8fafc';
+        const furShadow = isFlashing ? '#e0f2fe' : '#cbd5e1';
+        const furDark = isFlashing ? '#bae6fd' : '#94a3b8';
+        const iceBlue = isFlashing ? '#ffffff' : '#38bdf8';
+        const deepNavy = isFlashing ? '#ffffff' : '#0f172a';
+
+        // 1. Yeti Legs & Huge Paws
+        ctx.fillStyle = furShadow;
+        // Left Leg
+        ctx.beginPath();
+        ctx.ellipse(-26 * scale, 55 * scale, 18 * scale, 28 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Right Leg
+        ctx.beginPath();
+        ctx.ellipse(26 * scale, 55 * scale, 18 * scale, 28 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Left Paw
+        ctx.fillStyle = furDark;
+        ctx.beginPath();
+        ctx.ellipse(-28 * scale, 75 * scale, 24 * scale, 12 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Right Paw
+        ctx.beginPath();
+        ctx.ellipse(28 * scale, 75 * scale, 24 * scale, 12 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 2. Colossal Muscular Torso with Thick Fur
+        ctx.fillStyle = furShadow;
+        ctx.beginPath();
+        ctx.ellipse(0, 5 * scale, 48 * scale, 55 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Fluffy Chest Plate
+        ctx.fillStyle = furWhite;
+        ctx.beginPath();
+        ctx.ellipse(0, -6 * scale, 34 * scale, 40 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Shaggy fur tufts on shoulders and torso
+        ctx.fillStyle = furWhite;
+        [-38, -20, 0, 20, 38].forEach(fx => {
+            ctx.beginPath();
+            ctx.moveTo(fx * scale, -28 * scale);
+            ctx.lineTo((fx - 7) * scale, -8 * scale);
+            ctx.lineTo((fx + 7) * scale, -8 * scale);
+            ctx.closePath();
+            ctx.fill();
+        });
+
+        // 3. Yeti Arms
+        let lArmRot = 0;
+        let rArmRot = 0;
+        if (yeti.roarArms > 0) {
+            lArmRot = -Math.PI * 0.7 * yeti.roarArms;
+            rArmRot = Math.PI * 0.7 * yeti.roarArms;
+        } else if (yeti.state === 'ICE_BOULDER_FORM') {
+            lArmRot = -Math.PI * 0.65 * yeti.iceBoulderFormProg;
+            rArmRot = Math.PI * 0.65 * yeti.iceBoulderFormProg;
+        } else if (yeti.state === 'AVALANCHE_WINDUP') {
+            lArmRot = -Math.PI * 0.35;
+            rArmRot = Math.PI * 0.35;
+        } else if (yeti.shoveTimer > 0) {
+            lArmRot = -Math.PI * 0.45;
+        }
+
+        // Left Arm
+        ctx.save();
+        ctx.translate(-42 * scale, -18 * scale);
+        ctx.rotate(lArmRot);
+        ctx.fillStyle = furShadow;
+        ctx.beginPath();
+        ctx.ellipse(0, 30 * scale, 16 * scale, 36 * scale, 0.15, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Left Paw & Claws
+        ctx.fillStyle = furDark;
+        ctx.beginPath();
+        ctx.ellipse(-4 * scale, 62 * scale, 18 * scale, 15 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = iceBlue;
+        for (let c = -2; c <= 2; c++) {
+            ctx.beginPath();
+            ctx.moveTo((-4 + c * 6) * scale, 70 * scale);
+            ctx.lineTo((-4 + c * 6) * scale, 82 * scale);
+            ctx.lineTo((-1 + c * 6) * scale, 70 * scale);
+            ctx.closePath();
+            ctx.fill();
+        }
+        ctx.restore();
+
+        // Right Arm
+        ctx.save();
+        ctx.translate(42 * scale, -18 * scale);
+        ctx.rotate(rArmRot);
+        ctx.fillStyle = furShadow;
+        ctx.beginPath();
+        ctx.ellipse(0, 30 * scale, 16 * scale, 36 * scale, -0.15, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Right Paw & Claws
+        ctx.fillStyle = furDark;
+        ctx.beginPath();
+        ctx.ellipse(4 * scale, 62 * scale, 18 * scale, 15 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = iceBlue;
+        for (let c = -2; c <= 2; c++) {
+            ctx.beginPath();
+            ctx.moveTo((4 + c * 6) * scale, 70 * scale);
+            ctx.lineTo((4 + c * 6) * scale, 82 * scale);
+            ctx.lineTo((7 + c * 6) * scale, 70 * scale);
+            ctx.closePath();
+            ctx.fill();
+        }
+        ctx.restore();
+
+        // Forming Ice Boulder in Hands
+        if (yeti.state === 'ICE_BOULDER_FORM') {
+            const bR = 38 * yeti.iceBoulderFormProg * scale;
+            ctx.save();
+            ctx.translate(0, -95 * scale);
+            ctx.shadowColor = '#00f0ff';
+            ctx.shadowBlur = 24 * scale;
+
+            ctx.beginPath();
+            ctx.arc(0, 0, bR, 0, Math.PI * 2);
+            const bGrad = ctx.createRadialGradient(-bR * 0.3, -bR * 0.3, bR * 0.1, 0, 0, bR);
+            bGrad.addColorStop(0, '#ffffff');
+            bGrad.addColorStop(0.4, '#bae6fd');
+            bGrad.addColorStop(0.8, '#38bdf8');
+            bGrad.addColorStop(1, '#0284c7');
+            ctx.fillStyle = bGrad;
+            ctx.fill();
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 3 * scale;
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // 4. Yeti Head
+        ctx.fillStyle = furWhite;
+        ctx.beginPath();
+        ctx.ellipse(0, -48 * scale, 32 * scale, 28 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Curved Icy Horns
+        ctx.fillStyle = iceBlue;
+        ctx.strokeStyle = '#bae6fd';
+        ctx.lineWidth = 2 * scale;
+        // Left Horn
+        ctx.beginPath();
+        ctx.moveTo(-24 * scale, -58 * scale);
+        ctx.quadraticCurveTo(-46 * scale, -80 * scale, -52 * scale, -52 * scale);
+        ctx.quadraticCurveTo(-38 * scale, -60 * scale, -18 * scale, -52 * scale);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        // Right Horn
+        ctx.beginPath();
+        ctx.moveTo(24 * scale, -58 * scale);
+        ctx.quadraticCurveTo(46 * scale, -80 * scale, 52 * scale, -52 * scale);
+        ctx.quadraticCurveTo(38 * scale, -60 * scale, 18 * scale, -52 * scale);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Menacing Furry Brow Ridge
+        ctx.fillStyle = furDark;
+        ctx.beginPath();
+        ctx.moveTo(-24 * scale, -54 * scale);
+        ctx.lineTo(0, -48 * scale);
+        ctx.lineTo(24 * scale, -54 * scale);
+        ctx.lineTo(16 * scale, -42 * scale);
+        ctx.lineTo(-16 * scale, -42 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // 5. Piercing Glowing Blue Eyes
+        const eyeColor = isFlashing ? '#ffffff' : '#00f0ff';
+        [-12, 12].forEach(ex => {
+            ctx.save();
+            ctx.shadowColor = '#00f0ff';
+            ctx.shadowBlur = 16 * yeti.eyeGlow * scale;
+
+            ctx.fillStyle = eyeColor;
+            ctx.beginPath();
+            ctx.arc(ex * scale, -45 * scale, 5.5 * scale, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Pupil
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(ex * scale, -45 * scale, 2 * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        });
+
+        // 6. Mouth & Sharp Fangs
+        const mouthH = (8 + yeti.mouthOpen * 24) * scale;
+        ctx.fillStyle = deepNavy;
+        ctx.beginPath();
+        ctx.ellipse(0, -32 * scale + (yeti.mouthOpen * 6) * scale, 16 * scale, mouthH, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // White Fangs
+        ctx.fillStyle = '#ffffff';
+        // Upper fangs
+        ctx.beginPath();
+        ctx.moveTo(-9 * scale, -32 * scale);
+        ctx.lineTo(-6 * scale, -24 * scale);
+        ctx.lineTo(-3 * scale, -32 * scale);
+        ctx.moveTo(3 * scale, -32 * scale);
+        ctx.lineTo(6 * scale, -24 * scale);
+        ctx.lineTo(9 * scale, -32 * scale);
+        ctx.closePath();
+        ctx.fill();
+        // Lower fangs
+        ctx.beginPath();
+        ctx.moveTo(-7 * scale, -30 * scale + mouthH);
+        ctx.lineTo(-5 * scale, -38 * scale + mouthH);
+        ctx.lineTo(-3 * scale, -30 * scale + mouthH);
+        ctx.moveTo(3 * scale, -30 * scale + mouthH);
+        ctx.lineTo(5 * scale, -38 * scale + mouthH);
+        ctx.lineTo(7 * scale, -30 * scale + mouthH);
+        ctx.closePath();
+        ctx.fill();
+
+        // 7. Roar Shockwaves
+        yeti.roarShockwaves.forEach(sw => {
+            ctx.save();
+            ctx.strokeStyle = `rgba(56, 189, 248, ${sw.alpha})`;
+            ctx.lineWidth = 4 * scale;
+            ctx.beginPath();
+            ctx.arc(0, -40 * scale, sw.radius * scale, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        });
+
+        ctx.restore();
+    }
+
     if (btnSkipCutscene) {
         btnSkipCutscene.addEventListener('click', () => {
             if (cutsceneIntro21 && cutsceneIntro21.active) {
                 finishLevel21IntroCutscene();
+            } else if (cutsceneIntro41 && cutsceneIntro41.active) {
+                finishLevel41IntroCutscene();
             } else if (typeof golemCutscene !== 'undefined' && golemCutscene && golemCutscene.active) {
                 finishGolemDefeatCutscene();
             } else if (typeof golemIntroCutscene !== 'undefined' && golemIntroCutscene && golemIntroCutscene.active) {
                 finishGolemIntroCutscene();
+            } else if (typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene && yetiIntroCutscene.active) {
+                finishYetiIntroCutscene();
+            } else if (typeof yetiDefeatCutscene !== 'undefined' && yetiDefeatCutscene && yetiDefeatCutscene.active) {
+                finishYetiDefeatCutscene();
             }
         });
+    }
+
+    // --- AMBIENT SNOW PARTICLES (BLIZZARD FLAKES) ---
+    const ambientSnow = [];
+    for (let i = 0; i < 90; i++) {
+        ambientSnow.push({
+            x: Math.random() * 2600,
+            y: Math.random() * 700,
+            vx: -(1.4 + Math.random() * 1.8),
+            vy: 1.2 + Math.random() * 1.6,
+            size: 1.5 + Math.random() * 3.2,
+            alpha: 0.35 + Math.random() * 0.6,
+            sway: Math.random() * Math.PI * 2
+        });
+    }
+
+    function updateAmbientSnow() {
+        const scale = canvas.height / 675 || 1;
+        const viewW = canvas.width / scale;
+        ambientSnow.forEach(flake => {
+            flake.x += flake.vx;
+            flake.y += flake.vy + Math.sin(Date.now() * 0.003 + flake.sway) * 0.4;
+            if (flake.x < cameraX - 100) {
+                flake.x = cameraX + viewW + 100;
+                flake.y = Math.random() * 550;
+            }
+            if (flake.y > 600) {
+                flake.y = -20;
+                flake.x = cameraX + Math.random() * (viewW + 200);
+            }
+        });
+    }
+
+    function drawSnowfall(scale) {
+        ambientSnow.forEach(flake => {
+            const fx = (flake.x - cameraX) * scale;
+            const fy = (flake.y - cameraY) * scale;
+            if (fx < -30 || fx > canvas.width + 30) return;
+
+            ctx.save();
+            ctx.fillStyle = `rgba(248, 250, 252, ${flake.alpha})`;
+            ctx.beginPath();
+            ctx.arc(fx, fy, flake.size * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        });
+    }
+
+    // --- SNOW BIOME OBSTACLE DRAWING HELPERS (ВЕЧНЫЙ ХОЛОД) ---
+
+    // 1. Chasm Abyss between snow platforms
+    function drawSnowChasms(scale) {
+        if (!currentLevelData || !currentLevelData.chasms || currentLevelData.chasms.length === 0) return;
+        const groundDrawY = (currentLevelData.groundY - cameraY) * scale;
+        const chasmH = (canvas.height - groundDrawY) + 60 * scale;
+
+        currentLevelData.chasms.forEach(c => {
+            const startDrawX = (c.startX - cameraX) * scale;
+            const endDrawX = (c.endX - cameraX) * scale;
+            const chasmW = endDrawX - startDrawX;
+
+            if (endDrawX < -150 || startDrawX > canvas.width + 150) return;
+
+            ctx.save();
+
+            // Frozen Abyssal Void
+            const abyssGrad = ctx.createLinearGradient(0, groundDrawY, 0, groundDrawY + 320 * scale);
+            abyssGrad.addColorStop(0, '#020617');
+            abyssGrad.addColorStop(0.35, '#0f172a');
+            abyssGrad.addColorStop(0.75, '#1e293b');
+            abyssGrad.addColorStop(1, '#000000');
+            ctx.fillStyle = abyssGrad;
+            ctx.fillRect(startDrawX, groundDrawY, chasmW, chasmH);
+
+            // Cold Blue Glacial Mist rising from the depths
+            const mistGrad = ctx.createLinearGradient(0, groundDrawY + 40 * scale, 0, groundDrawY + 200 * scale);
+            mistGrad.addColorStop(0, 'rgba(56, 189, 248, 0)');
+            mistGrad.addColorStop(0.5, 'rgba(56, 189, 248, 0.12)');
+            mistGrad.addColorStop(1, 'rgba(14, 165, 233, 0.28)');
+            ctx.fillStyle = mistGrad;
+            ctx.fillRect(startDrawX, groundDrawY + 40 * scale, chasmW, 160 * scale);
+
+            // Left Ice Rim & Hanging Icicles
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 3.5 * scale;
+            ctx.beginPath();
+            ctx.moveTo(startDrawX, groundDrawY);
+            ctx.lineTo(startDrawX + 6 * scale, groundDrawY + 40 * scale);
+            ctx.lineTo(startDrawX - 3 * scale, groundDrawY + 90 * scale);
+            ctx.lineTo(startDrawX + 4 * scale, groundDrawY + 140 * scale);
+            ctx.stroke();
+
+            // Left Rim Snow Cap
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.ellipse(startDrawX - 4 * scale, groundDrawY + 3 * scale, 8 * scale, 4 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Icicles along left chasm wall
+            ctx.fillStyle = 'rgba(224, 242, 254, 0.85)';
+            ctx.beginPath();
+            ctx.moveTo(startDrawX + 2 * scale, groundDrawY + 6 * scale);
+            ctx.lineTo(startDrawX + 5 * scale, groundDrawY + 28 * scale);
+            ctx.lineTo(startDrawX + 8 * scale, groundDrawY + 6 * scale);
+            ctx.fill();
+
+            // Right Ice Rim & Hanging Icicles
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 3.5 * scale;
+            ctx.beginPath();
+            ctx.moveTo(endDrawX, groundDrawY);
+            ctx.lineTo(endDrawX - 6 * scale, groundDrawY + 40 * scale);
+            ctx.lineTo(endDrawX + 3 * scale, groundDrawY + 90 * scale);
+            ctx.lineTo(endDrawX - 4 * scale, groundDrawY + 140 * scale);
+            ctx.stroke();
+
+            // Right Rim Snow Cap
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.ellipse(endDrawX + 4 * scale, groundDrawY + 3 * scale, 8 * scale, 4 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Icicles along right chasm wall
+            ctx.fillStyle = 'rgba(224, 242, 254, 0.85)';
+            ctx.beginPath();
+            ctx.moveTo(endDrawX - 8 * scale, groundDrawY + 6 * scale);
+            ctx.lineTo(endDrawX - 5 * scale, groundDrawY + 32 * scale);
+            ctx.lineTo(endDrawX - 2 * scale, groundDrawY + 6 * scale);
+            ctx.fill();
+
+            ctx.restore();
+        });
+    }
+
+    // 2. Камни, покрытые снегом (Snow-covered rocks with snowdrifts & icicles)
+    function drawSnowRock(box, scale) {
+        const drawX = (box.x - cameraX) * scale;
+        const drawY = (box.y - cameraY) * scale;
+        const drawW = box.w * scale;
+        const drawH = box.h * scale;
+
+        const cornerR = Math.min(14 * scale, drawW * 0.15, drawH * 0.15);
+        ctx.save();
+
+        // Rock Silhouette
+        ctx.beginPath();
+        ctx.moveTo(drawX + cornerR, drawY);
+        ctx.lineTo(drawX + drawW - cornerR, drawY);
+        ctx.quadraticCurveTo(drawX + drawW, drawY, drawX + drawW, drawY + cornerR);
+        ctx.lineTo(drawX + drawW, drawY + drawH);
+        ctx.lineTo(drawX, drawY + drawH);
+        ctx.lineTo(drawX, drawY + cornerR);
+        ctx.quadraticCurveTo(drawX, drawY, drawX + cornerR, drawY);
+        ctx.closePath();
+
+        // Dark Slate Granite Body
+        const rockGrad = ctx.createLinearGradient(drawX, drawY, drawX, drawY + drawH);
+        rockGrad.addColorStop(0, '#475569'); // frozen slate top
+        rockGrad.addColorStop(0.35, '#334155');
+        rockGrad.addColorStop(0.75, '#1e293b');
+        rockGrad.addColorStop(1, '#0f172a');
+        ctx.fillStyle = rockGrad;
+        ctx.fill();
+
+        // Edge contour
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3.5 * scale;
+        ctx.stroke();
+
+        // Frozen Fissures & Cracks
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(15, 23, 42, 0.6)';
+        ctx.lineWidth = 2 * scale;
+        ctx.moveTo(drawX + drawW * 0.3, drawY + drawH * 0.25);
+        ctx.lineTo(drawX + drawW * 0.42, drawY + drawH * 0.55);
+        ctx.lineTo(drawX + drawW * 0.36, drawY + drawH * 0.85);
+        ctx.moveTo(drawX + drawW * 0.68, drawY + drawH * 0.35);
+        ctx.lineTo(drawX + drawW * 0.62, drawY + drawH * 0.7);
+        ctx.stroke();
+
+        // Frost Specular Highlight on left edge
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(224, 242, 254, 0.28)';
+        ctx.lineWidth = 2 * scale;
+        ctx.moveTo(drawX + 4 * scale, drawY + cornerR);
+        ctx.lineTo(drawX + 4 * scale, drawY + drawH - 4 * scale);
+        ctx.stroke();
+
+        // --- SNOW BLANKET ON TOP (Пушистый снежный покров) ---
+        const snowH = 14 * scale;
+        ctx.fillStyle = '#f8fafc';
+        ctx.beginPath();
+        ctx.moveTo(drawX - 2 * scale, drawY);
+        // Soft puffy mounds of snow along top surface
+        const moundStep = 22 * scale;
+        for (let mx = drawX - 2 * scale; mx <= drawX + drawW + 2 * scale; mx += moundStep) {
+            const wave = Math.sin((mx + box.x) * 0.08) * 3.5 * scale;
+            ctx.lineTo(mx, drawY + snowH + wave);
+        }
+        ctx.lineTo(drawX + drawW + 2 * scale, drawY);
+        ctx.closePath();
+        ctx.fill();
+
+        // Pure white glittering top crest
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.moveTo(drawX - 2 * scale, drawY - 2 * scale);
+        ctx.lineTo(drawX + drawW + 2 * scale, drawY - 2 * scale);
+        ctx.lineTo(drawX + drawW + 2 * scale, drawY + 6 * scale);
+        ctx.lineTo(drawX - 2 * scale, drawY + 6 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // Cyan frost tint border
+        ctx.strokeStyle = 'rgba(186, 230, 253, 0.8)';
+        ctx.lineWidth = 2 * scale;
+        ctx.beginPath();
+        ctx.moveTo(drawX - 2 * scale, drawY - 2 * scale);
+        ctx.lineTo(drawX + drawW + 2 * scale, drawY - 2 * scale);
+        ctx.stroke();
+
+        // --- CRYSTALLINE ICICLES (Сосульки, свисающие со снега) ---
+        const icicleStep = 28 * scale;
+        ctx.fillStyle = 'rgba(224, 242, 254, 0.9)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.95)';
+        ctx.lineWidth = 1 * scale;
+
+        for (let ix = drawX + 12 * scale; ix < drawX + drawW - 8 * scale; ix += icicleStep) {
+            const seed = Math.sin(ix * 0.2 + box.x);
+            const icicleLen = (10 + Math.abs(seed) * 16) * scale;
+            const icicleW = (4.5 + Math.abs(seed) * 2) * scale;
+            const topY = drawY + snowH - 2 * scale;
+
+            ctx.beginPath();
+            ctx.moveTo(ix - icicleW / 2, topY);
+            ctx.lineTo(ix, topY + icicleLen);
+            ctx.lineTo(ix + icicleW / 2, topY);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        // Ledge-grab indicator nodes (Sparkling Ice Crystals)
+        if (!box.noLedgeGrab) {
+            ctx.fillStyle = '#38bdf8';
+            ctx.shadowColor = '#38bdf8';
+            ctx.shadowBlur = 6 * scale;
+            ctx.beginPath();
+            ctx.arc(drawX + 4 * scale, drawY + 2 * scale, 3.5 * scale, 0, Math.PI * 2);
+            ctx.arc(drawX + drawW - 4 * scale, drawY + 2 * scale, 3.5 * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+
+        ctx.restore();
+    }
+
+    // 3. Турник — обычная ветка дерева без листьев (которая не свисает)
+    function drawSnowDryBranchTurnik(tur, scale) {
+        const drawX = (tur.x - cameraX) * scale;
+        const drawY = (tur.y - cameraY) * scale;
+        const barLen = (tur.length || 90) * scale;
+        const trunkWorldX = tur.trunkX || (tur.x - (tur.length || 90) / 2);
+        const drawTrunkX = (trunkWorldX - cameraX) * scale;
+        const groundScreenY = (currentLevelData.groundY - cameraY) * scale;
+
+        ctx.save();
+
+        // 1. Dry Winter Tree Trunk (Сухое дерево без листьев)
+        const trunkW = 32 * scale;
+        const trunkTopY = Math.min(drawY - 80 * scale, -200 * scale);
+
+        const trunkGrad = ctx.createLinearGradient(drawTrunkX - trunkW / 2, 0, drawTrunkX + trunkW / 2, 0);
+        trunkGrad.addColorStop(0, '#3b1a08');
+        trunkGrad.addColorStop(0.35, '#592c10');
+        trunkGrad.addColorStop(0.7, '#451a03');
+        trunkGrad.addColorStop(1, '#271003');
+        ctx.fillStyle = trunkGrad;
+
+        ctx.beginPath();
+        ctx.moveTo(drawTrunkX - trunkW * 0.45, trunkTopY);
+        ctx.lineTo(drawTrunkX + trunkW * 0.45, trunkTopY);
+        ctx.lineTo(drawTrunkX + trunkW * 0.55, groundScreenY);
+        ctx.quadraticCurveTo(drawTrunkX + trunkW * 0.9, groundScreenY, drawTrunkX + trunkW * 1.1, groundScreenY + 20 * scale);
+        ctx.lineTo(drawTrunkX - trunkW * 1.1, groundScreenY + 20 * scale);
+        ctx.quadraticCurveTo(drawTrunkX - trunkW * 0.9, groundScreenY, drawTrunkX - trunkW * 0.55, groundScreenY);
+        ctx.closePath();
+        ctx.fill();
+
+        // Bark grooves
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.lineWidth = 2 * scale;
+        ctx.beginPath();
+        ctx.moveTo(drawTrunkX - 4 * scale, trunkTopY + 30 * scale);
+        ctx.lineTo(drawTrunkX - 4 * scale, groundScreenY - 10 * scale);
+        ctx.moveTo(drawTrunkX + 6 * scale, trunkTopY + 50 * scale);
+        ctx.lineTo(drawTrunkX + 6 * scale, groundScreenY - 20 * scale);
+        ctx.stroke();
+
+        // Bare Crooked Branches in Upper Canopy (БЕЗ листьев, с пятнами снега)
+        ctx.strokeStyle = '#592c10';
+        ctx.lineWidth = 7 * scale;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        // Upper left bare branch
+        ctx.moveTo(drawTrunkX, drawY - 40 * scale);
+        ctx.lineTo(drawTrunkX - 35 * scale, drawY - 75 * scale);
+        ctx.lineTo(drawTrunkX - 55 * scale, drawY - 95 * scale);
+        // Upper right bare branch
+        ctx.moveTo(drawTrunkX, drawY - 50 * scale);
+        ctx.lineTo(drawTrunkX + 30 * scale, drawY - 80 * scale);
+        ctx.lineTo(drawTrunkX + 45 * scale, drawY - 110 * scale);
+        ctx.stroke();
+
+        // Snow patches on upper bare branches
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2.5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(drawTrunkX - 5 * scale, drawY - 43 * scale);
+        ctx.lineTo(drawTrunkX - 35 * scale, drawY - 78 * scale);
+        ctx.moveTo(drawTrunkX + 5 * scale, drawY - 53 * scale);
+        ctx.lineTo(drawTrunkX + 30 * scale, drawY - 83 * scale);
+        ctx.stroke();
+
+        // 2. Horizontal Bare Sturdy Branch (ТУРНИК: горизонтальная ветка дерева без листьев)
+        const branchStartX = drawTrunkX;
+        const branchEndX = drawX + barLen / 2 + 15 * scale;
+
+        const branchGrad = ctx.createLinearGradient(0, drawY - 6 * scale, 0, drawY + 6 * scale);
+        branchGrad.addColorStop(0, '#78350f');
+        branchGrad.addColorStop(0.5, '#592c10');
+        branchGrad.addColorStop(1, '#3b1a08');
+
+        ctx.strokeStyle = branchGrad;
+        ctx.lineWidth = 10 * scale;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(branchStartX, drawY);
+        ctx.lineTo(branchEndX, drawY);
+        ctx.stroke();
+
+        // Smooth Wood Highlight on the grab section (где хватается стикмен)
+        ctx.strokeStyle = '#b45309';
+        ctx.lineWidth = 3 * scale;
+        ctx.beginPath();
+        ctx.moveTo(drawX - barLen / 2 + 5 * scale, drawY - 2.5 * scale);
+        ctx.lineTo(drawX + barLen / 2 - 5 * scale, drawY - 2.5 * scale);
+        ctx.stroke();
+
+        // Subtle snow dusting on top of the branch
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+        ctx.lineWidth = 2 * scale;
+        ctx.beginPath();
+        ctx.moveTo(branchStartX + 4 * scale, drawY - 5 * scale);
+        ctx.lineTo(drawX - barLen / 2, drawY - 5 * scale);
+        ctx.moveTo(drawX + barLen / 2, drawY - 5 * scale);
+        ctx.lineTo(branchEndX - 4 * scale, drawY - 5 * scale);
+        ctx.stroke();
+
+        // Small dead twigs branching off at tip (БЕЗ листьев!)
+        ctx.strokeStyle = '#451a03';
+        ctx.lineWidth = 3.5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(branchEndX - 4 * scale, drawY);
+        ctx.lineTo(branchEndX + 8 * scale, drawY - 8 * scale);
+        ctx.moveTo(branchEndX - 2 * scale, drawY);
+        ctx.lineTo(branchEndX + 10 * scale, drawY + 7 * scale);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    // 4. Вместо лиан — сухая свисающая ветка дерева без листьев
+    function drawSnowDryHangingBranch(rope, scale) {
+        const drawAnchorX = (rope.x - cameraX) * scale;
+        const drawAnchorY = (rope.anchorY - cameraY) * scale;
+        const branchLen = (rope.length || 280) * scale;
+
+        const trunkWorldX = rope.trunkX || (rope.x - 90);
+        const drawTrunkX = (trunkWorldX - cameraX) * scale;
+        const groundScreenY = (currentLevelData.groundY - cameraY) * scale;
+
+        if (drawAnchorX < -250 * scale || drawTrunkX > canvas.width + 250 * scale) return;
+
+        let angle = 0;
+        if (player.state === 'ROPE' && player.activeRope && player.activeRope.id === rope.id) {
+            angle = player.ropeAngle;
+        } else {
+            angle = Math.sin(Date.now() * 0.002 + rope.x) * 0.05;
+        }
+
+        const endX = drawAnchorX + Math.sin(angle) * branchLen;
+        const endY = drawAnchorY + Math.cos(angle) * branchLen;
+
+        ctx.save();
+
+        // 1. Tall Bare Tree Rooted in Ground
+        const trunkW = 36 * scale;
+        const trunkTopY = drawAnchorY - 60 * scale;
+
+        const trunkGrad = ctx.createLinearGradient(drawTrunkX - trunkW, 0, drawTrunkX + trunkW, 0);
+        trunkGrad.addColorStop(0, '#271003');
+        trunkGrad.addColorStop(0.35, '#451a03');
+        trunkGrad.addColorStop(0.7, '#592c10');
+        trunkGrad.addColorStop(1, '#3b1a08');
+        ctx.fillStyle = trunkGrad;
+
+        ctx.beginPath();
+        ctx.moveTo(drawTrunkX - trunkW * 0.45, trunkTopY);
+        ctx.lineTo(drawTrunkX + trunkW * 0.45, trunkTopY);
+        ctx.lineTo(drawTrunkX + trunkW * 0.55, groundScreenY);
+        ctx.quadraticCurveTo(drawTrunkX + trunkW * 0.9, groundScreenY, drawTrunkX + trunkW * 1.35, groundScreenY + 18 * scale);
+        ctx.lineTo(drawTrunkX - trunkW * 1.35, groundScreenY + 18 * scale);
+        ctx.quadraticCurveTo(drawTrunkX - trunkW * 0.9, groundScreenY, drawTrunkX - trunkW * 0.55, groundScreenY);
+        ctx.closePath();
+        ctx.fill();
+
+        // Overhead bare thick branch extending across to anchor
+        ctx.strokeStyle = '#451a03';
+        ctx.lineWidth = 14 * scale;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(drawTrunkX, drawAnchorY + 10 * scale);
+        ctx.quadraticCurveTo(drawTrunkX + (drawAnchorX - drawTrunkX) * 0.5, drawAnchorY - 15 * scale, drawAnchorX + 15 * scale, drawAnchorY);
+        ctx.stroke();
+
+        // Snow on overhead branch
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3.5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(drawTrunkX + 10 * scale, drawAnchorY);
+        ctx.quadraticCurveTo(drawTrunkX + (drawAnchorX - drawTrunkX) * 0.5, drawAnchorY - 22 * scale, drawAnchorX + 12 * scale, drawAnchorY - 7 * scale);
+        ctx.stroke();
+
+        // 2. Hanging Dry Leafless Branch (СУХАЯ СВИСАЮЩАЯ ВЕТКА ДЕРЕВА БЕЗ ЛИСТЬЕВ)
+        ctx.strokeStyle = '#592c10';
+        ctx.lineWidth = 6 * scale;
+        ctx.lineCap = 'round';
+
+        // Organic slightly crooked hanging line
+        ctx.beginPath();
+        ctx.moveTo(drawAnchorX, drawAnchorY);
+        const midRatio = 0.5;
+        const midX = drawAnchorX + Math.sin(angle) * branchLen * midRatio + Math.cos(angle) * 4 * scale;
+        const midY = drawAnchorY + Math.cos(angle) * branchLen * midRatio - Math.sin(angle) * 4 * scale;
+        ctx.quadraticCurveTo(midX, midY, endX, endY);
+        ctx.stroke();
+
+        // Wood highlight
+        ctx.strokeStyle = '#78350f';
+        ctx.lineWidth = 2.5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(drawAnchorX, drawAnchorY);
+        ctx.quadraticCurveTo(midX, midY, endX, endY);
+        ctx.stroke();
+
+        // Dry Crooked Twigs branching off (БЕЗ ЛИСТЬЕВ!)
+        const twigCount = 5;
+        for (let t = 1; t <= twigCount; t++) {
+            const ratio = t / (twigCount + 1);
+            const tx = drawAnchorX + Math.sin(angle) * branchLen * ratio;
+            const ty = drawAnchorY + Math.cos(angle) * branchLen * ratio;
+            const dir = (t % 2 === 0) ? 1 : -1;
+
+            ctx.strokeStyle = '#451a03';
+            ctx.lineWidth = 3 * scale;
+            ctx.beginPath();
+            ctx.moveTo(tx, ty);
+            const twigEndX = tx + Math.cos(angle) * dir * 14 * scale;
+            const twigEndY = ty - Math.sin(angle) * dir * 14 * scale;
+            ctx.lineTo(twigEndX, twigEndY);
+            ctx.stroke();
+
+            // Tiny snow touch on twig
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.lineWidth = 1.5 * scale;
+            ctx.beginPath();
+            ctx.moveTo(tx, ty - 1 * scale);
+            ctx.lineTo(twigEndX, twigEndY - 1 * scale);
+            ctx.stroke();
+        }
+
+        // Bottom Wooden Knob / Grip Swell (где держится игрок)
+        ctx.fillStyle = '#451a03';
+        ctx.beginPath();
+        ctx.arc(endX, endY, 6 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#78350f';
+        ctx.beginPath();
+        ctx.arc(endX, endY, 3.5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    // 5. Лестница из сухих веток, покрытая снегом (Snow-covered dry branch ladder)
+    function drawSnowDryBranchLadder(lad, scale) {
+        const drawX = (lad.x - cameraX) * scale;
+        const drawTopY = (lad.topY - cameraY) * scale;
+        const drawBotY = (lad.bottomY - cameraY) * scale;
+        const drawW = (lad.w || 42) * scale;
+
+        const leftX = drawX - drawW / 2;
+        const rightX = drawX + drawW / 2;
+
+        if (drawX < -100 * scale || drawX > canvas.width + 100 * scale) return;
+
+        ctx.save();
+
+        // 1. Rock Shadow Crevice Behind Ladder with frosty tone
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.5)';
+        ctx.fillRect(leftX - 6 * scale, drawTopY, drawW + 12 * scale, drawBotY - drawTopY);
+
+        // 2. Vertical Rails (Два сухих ствола/шеста)
+        ctx.strokeStyle = '#592c10';
+        ctx.lineWidth = 5.5 * scale;
+        ctx.lineCap = 'round';
+
+        // Left rail (slightly organic curve)
+        ctx.beginPath();
+        ctx.moveTo(leftX, drawTopY);
+        ctx.quadraticCurveTo(leftX + 2 * scale, (drawTopY + drawBotY) / 2, leftX, drawBotY);
+        ctx.stroke();
+
+        // Right rail
+        ctx.beginPath();
+        ctx.moveTo(rightX, drawTopY);
+        ctx.quadraticCurveTo(rightX - 2 * scale, (drawTopY + drawBotY) / 2, rightX, drawBotY);
+        ctx.stroke();
+
+        // Wood highlight on poles
+        ctx.strokeStyle = '#78350f';
+        ctx.lineWidth = 2 * scale;
+        ctx.beginPath();
+        ctx.moveTo(leftX - 1 * scale, drawTopY);
+        ctx.lineTo(leftX - 1 * scale, drawBotY);
+        ctx.moveTo(rightX - 1 * scale, drawTopY);
+        ctx.lineTo(rightX - 1 * scale, drawBotY);
+        ctx.stroke();
+
+        // 3. Horizontal Rungs made of dry twigs with SNOW on top!
+        const step = 22;
+        for (let rY = lad.topY + 12; rY <= lad.bottomY - 8; rY += step) {
+            const rungY = (rY - cameraY) * scale;
+
+            // Twig rung
+            ctx.strokeStyle = '#78350f';
+            ctx.lineWidth = 4.5 * scale;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(leftX - 3 * scale, rungY);
+            ctx.lineTo(rightX + 3 * scale, rungY);
+            ctx.stroke();
+
+            // Rope lashings at the joints (верёвочные узлы)
+            ctx.fillStyle = '#a16207';
+            ctx.beginPath();
+            ctx.arc(leftX, rungY, 4.2 * scale, 0, Math.PI * 2);
+            ctx.arc(rightX, rungY, 4.2 * scale, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Snow cap on top of the twig rung (ПОКРЫТА СНЕГОМ!)
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.ellipse(drawX, rungY - 2.5 * scale, drawW * 0.45, 2.5 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Tiny icicles below rung
+            ctx.fillStyle = 'rgba(224, 242, 254, 0.85)';
+            ctx.beginPath();
+            ctx.moveTo(leftX + 8 * scale, rungY + 2 * scale);
+            ctx.lineTo(leftX + 10 * scale, rungY + 7 * scale);
+            ctx.lineTo(leftX + 12 * scale, rungY + 2 * scale);
+            ctx.fill();
+        }
+
+        // 4. Snow Cap on Top Ledge of Ladder
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(drawX, drawTopY - 3 * scale, 12 * scale, 0, Math.PI * 2);
+        ctx.arc(leftX, drawTopY - 4 * scale, 8 * scale, 0, Math.PI * 2);
+        ctx.arc(rightX, drawTopY - 4 * scale, 8 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    // 6. Пещера с дровами, которые можно поджечь зажигалкой
+    function drawSnowCave(cave, scale) {
+        if (!cave) return;
+        const drawX = (cave.x - cameraX) * scale;
+        const drawY = (cave.y - cameraY) * scale;
+        const drawW = cave.w * scale;
+        const drawH = cave.h * scale;
+
+        if (drawX < -drawW - 100 || drawX > canvas.width + 100) return;
+
+        ctx.save();
+
+        // 1. Dark Cavern Rock Interior (Внутри пещеры)
+        ctx.beginPath();
+        ctx.moveTo(drawX, drawY + drawH);
+        ctx.quadraticCurveTo(drawX, drawY, drawX + drawW * 0.5, drawY);
+        ctx.quadraticCurveTo(drawX + drawW, drawY, drawX + drawW, drawY + drawH);
+        ctx.closePath();
+
+        const caveGrad = ctx.createLinearGradient(0, drawY, 0, drawY + drawH);
+        caveGrad.addColorStop(0, '#020617');
+        caveGrad.addColorStop(0.7, '#0f172a');
+        caveGrad.addColorStop(1, '#1e293b');
+        ctx.fillStyle = caveGrad;
+        ctx.fill();
+
+        // 2. Heavy Snow & Icicles Draped Over the Cave Entrance Arch
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 14 * scale;
+        ctx.stroke();
+
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 8 * scale;
+        ctx.stroke();
+
+        // Giant hanging icicles along the cave mouth
+        const iciclePoints = [
+            { rx: 0.15, len: 32 },
+            { rx: 0.3, len: 48 },
+            { rx: 0.45, len: 36 },
+            { rx: 0.6, len: 52 },
+            { rx: 0.75, len: 38 },
+            { rx: 0.88, len: 26 }
+        ];
+        iciclePoints.forEach(ic => {
+            const ix = drawX + drawW * ic.rx;
+            const archY = drawY + Math.pow(Math.abs(ic.rx - 0.5) * 2, 2) * (drawH * 0.3);
+            const iLen = ic.len * scale;
+
+            ctx.fillStyle = 'rgba(224, 242, 254, 0.9)';
+            ctx.beginPath();
+            ctx.moveTo(ix - 5 * scale, archY);
+            ctx.lineTo(ix, archY + iLen);
+            ctx.lineTo(ix + 5 * scale, archY);
+            ctx.closePath();
+            ctx.fill();
+        });
+
+        // 3. Firewood Pit (Дрова внутри пещеры)
+        const drawFireX = (cave.fireX - cameraX) * scale;
+        const drawFireY = (cave.fireY - cameraY) * scale;
+
+        // Hearth stones circle
+        ctx.fillStyle = '#475569';
+        for (let s = -3; s <= 3; s++) {
+            ctx.beginPath();
+            ctx.ellipse(drawFireX + s * 9 * scale, drawFireY - 3 * scale, 5 * scale, 3 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Firewood Logs (Дрова - рубленые поленья крест-накрест)
+        ctx.strokeStyle = '#451a03';
+        ctx.lineWidth = 7 * scale;
+        ctx.lineCap = 'round';
+
+        // Bottom crossed logs
+        ctx.beginPath();
+        ctx.moveTo(drawFireX - 22 * scale, drawFireY - 5 * scale);
+        ctx.lineTo(drawFireX + 18 * scale, drawFireY - 9 * scale);
+        ctx.moveTo(drawFireX - 18 * scale, drawFireY - 9 * scale);
+        ctx.lineTo(drawFireX + 22 * scale, drawFireY - 5 * scale);
+        ctx.stroke();
+
+        // Upper logs
+        ctx.strokeStyle = '#78350f';
+        ctx.lineWidth = 6 * scale;
+        ctx.beginPath();
+        ctx.moveTo(drawFireX - 14 * scale, drawFireY - 12 * scale);
+        ctx.lineTo(drawFireX + 14 * scale, drawFireY - 12 * scale);
+        ctx.moveTo(drawFireX - 8 * scale, drawFireY - 16 * scale);
+        ctx.lineTo(drawFireX + 8 * scale, drawFireY - 16 * scale);
+        ctx.stroke();
+
+        // 4. FIRE! If the firewood is lit by lighter
+        if (cave.isLit) {
+            // Radiant warm campfire glow lighting up the cave interior
+            const fireGlow = ctx.createRadialGradient(drawFireX, drawFireY - 25 * scale, 8 * scale, drawFireX, drawFireY - 25 * scale, 220 * scale);
+            fireGlow.addColorStop(0, 'rgba(251, 146, 60, 0.65)');
+            fireGlow.addColorStop(0.35, 'rgba(245, 158, 11, 0.35)');
+            fireGlow.addColorStop(0.7, 'rgba(234, 88, 12, 0.12)');
+            fireGlow.addColorStop(1, 'rgba(234, 88, 12, 0)');
+            ctx.fillStyle = fireGlow;
+            ctx.beginPath();
+            ctx.arc(drawFireX, drawFireY - 25 * scale, 220 * scale, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Multi-layered Dancing Campfire Flames
+            const flicker = Math.sin(Date.now() * 0.02) * 4 * scale;
+            const flicker2 = Math.cos(Date.now() * 0.027) * 3 * scale;
+
+            // Outer Orange Flame
+            ctx.fillStyle = '#ea580c';
+            ctx.beginPath();
+            ctx.moveTo(drawFireX - 18 * scale, drawFireY - 12 * scale);
+            ctx.quadraticCurveTo(drawFireX - 22 * scale, drawFireY - 35 * scale + flicker, drawFireX - 8 * scale, drawFireY - 48 * scale + flicker);
+            ctx.quadraticCurveTo(drawFireX, drawFireY - 60 * scale + flicker2, drawFireX + 8 * scale, drawFireY - 48 * scale + flicker2);
+            ctx.quadraticCurveTo(drawFireX + 22 * scale, drawFireY - 35 * scale + flicker2, drawFireX + 18 * scale, drawFireY - 12 * scale);
+            ctx.closePath();
+            ctx.fill();
+
+            // Middle Golden-Yellow Flame
+            ctx.fillStyle = '#facc15';
+            ctx.beginPath();
+            ctx.moveTo(drawFireX - 12 * scale, drawFireY - 14 * scale);
+            ctx.quadraticCurveTo(drawFireX - 14 * scale, drawFireY - 32 * scale + flicker2, drawFireX, drawFireY - 45 * scale + flicker);
+            ctx.quadraticCurveTo(drawFireX + 14 * scale, drawFireY - 32 * scale + flicker, drawFireX + 12 * scale, drawFireY - 14 * scale);
+            ctx.closePath();
+            ctx.fill();
+
+            // Inner Bright White Core
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.moveTo(drawFireX - 6 * scale, drawFireY - 15 * scale);
+            ctx.quadraticCurveTo(drawFireX, drawFireY - 32 * scale + flicker, drawFireX + 6 * scale, drawFireY - 15 * scale);
+            ctx.closePath();
+            ctx.fill();
+
+            // Rising Embers and Sparks
+            for (let e = 0; e < 6; e++) {
+                const emSeed = (Date.now() * 0.003 + e * 1.5) % 3;
+                const emX = drawFireX + Math.sin(Date.now() * 0.005 + e) * 16 * scale;
+                const emY = drawFireY - 20 * scale - emSeed * 30 * scale;
+                const emAlpha = 1 - emSeed / 3;
+
+                ctx.fillStyle = `rgba(254, 240, 138, ${emAlpha})`;
+                ctx.beginPath();
+                ctx.arc(emX, emY, (1.8 - emSeed * 0.4) * scale, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        } else {
+            // Unlit logs: Small prompt sparkle
+            const pulse = 0.5 + 0.5 * Math.sin(Date.now() * 0.006);
+            ctx.fillStyle = `rgba(251, 191, 36, ${pulse * 0.8})`;
+            ctx.beginPath();
+            ctx.arc(drawFireX, drawFireY - 22 * scale, 3 * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.restore();
+    }
+
+    // 7. Finish Flag for Snow Biome
+    function drawSnowFlag(flag, scale) {
+        const flagX = (flag.x - cameraX) * scale;
+        const flagY = (flag.y - cameraY) * scale;
+
+        ctx.save();
+
+        // Weathered Staff
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 5 * scale;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(flagX, flagY);
+        ctx.lineTo(flagX, flagY - flag.poleHeight * scale);
+        ctx.stroke();
+
+        // Snow and ice base
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.ellipse(flagX, flagY, 14 * scale, 6 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Ice Crystal Spire Tip
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.moveTo(flagX, flagY - flag.poleHeight * scale - 12 * scale);
+        ctx.lineTo(flagX - 4 * scale, flagY - flag.poleHeight * scale);
+        ctx.lineTo(flagX + 4 * scale, flagY - flag.poleHeight * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // Frost Waving Banner
+        const wave = Math.sin(Date.now() * 0.006) * 6 * scale;
+        const bannerTopY = flagY - flag.poleHeight * scale + 4 * scale;
+        const bannerW = flag.bannerW * scale;
+        const bannerH = flag.bannerH * scale;
+
+        const flagGrad = ctx.createLinearGradient(flagX, bannerTopY, flagX + bannerW, bannerTopY);
+        flagGrad.addColorStop(0, '#0284c7');
+        flagGrad.addColorStop(0.5, '#38bdf8');
+        flagGrad.addColorStop(1, '#bae6fd');
+        ctx.fillStyle = flagGrad;
+
+        ctx.beginPath();
+        ctx.moveTo(flagX, bannerTopY);
+        ctx.quadraticCurveTo(flagX + bannerW * 0.5, bannerTopY + wave, flagX + bannerW, bannerTopY + wave * 0.5);
+        ctx.lineTo(flagX + bannerW, bannerTopY + bannerH + wave * 0.5);
+        ctx.quadraticCurveTo(flagX + bannerW * 0.5, bannerTopY + bannerH + wave, flagX, bannerTopY + bannerH);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = '#e0f2fe';
+        ctx.lineWidth = 1.5 * scale;
+        ctx.stroke();
+
+        // Snowflake icon on flag
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `bold ${14 * scale}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('❄', flagX + bannerW * 0.45, bannerTopY + bannerH * 0.5 + wave * 0.5);
+
+        ctx.restore();
     }
 
     // --- AMBIENT NATURE PARTICLES (LEAVES) ---
@@ -8139,6 +14484,10 @@
         rollCooldown: 0,
         shoveCooldown: 0,
 
+        hasLighter: false,
+        cold: 0,
+        freezeTimer: 0,
+        isWarming: false,
         animTime: 0,
         victoryTimer: 0,
         victoryLandY: null,
@@ -8180,8 +14529,25 @@
             this.dashCooldown = 0;
             this.rollTimer = 0;
             this.rollCooldown = 0;
+            this.hasLighter = (currentLevelIndex >= 41);
+            this.cold = 0;
+            this.freezeTimer = 0;
+            this.isWarming = false;
             cameraX = 0;
             cameraY = 0;
+
+            if (currentLevelData && currentLevelData.cave) {
+                currentLevelData.cave.isLit = false;
+            }
+
+            if (coldHud) {
+                if (currentLevelData && (currentLevelData.theme === 'snow' || currentLevelIndex >= 41) && currentState === STATES.PLAYING) {
+                    coldHud.classList.remove('hidden');
+                    updateColdHud();
+                } else {
+                    coldHud.classList.add('hidden');
+                }
+            }
 
             resetBoss();
             cutscene.active = false;
@@ -8192,6 +14558,9 @@
 
             if (cutsceneIntro21) {
                 cutsceneIntro21.active = false;
+            }
+            if (typeof cutsceneIntro41 !== 'undefined') {
+                cutsceneIntro41.active = false;
             }
             if (cutsceneOverlay) {
                 cutsceneOverlay.classList.add('hidden');
@@ -8254,6 +14623,108 @@
                 } else if (!golem.active) {
                     startGolemFight();
                 }
+            }
+        }
+
+        // Check boss arena intro trigger on Level 60 (reaches Object 30 / Yeti cave arena)
+        // Player descends from the high monolith to the snowy ground, walks forward, and then triggers the cutscene
+        if (currentLevelIndex === 60 && !yeti.active && !yeti.isFallen && player.state !== 'DEFEAT') {
+            if ((player.x >= 18350 && player.grounded && player.y >= currentLevelData.groundY - 15) || player.x >= 18550) {
+                if (coldHud) coldHud.classList.add('hidden');
+                player.cold = 0;
+                if (!yeti.introPlayed && (!yetiIntroCutscene || !yetiIntroCutscene.active)) {
+                    startYetiIntroCutscene();
+                    return;
+                } else if (!yeti.active && yeti.introPlayed) {
+                    startYetiFight();
+                }
+            }
+        }
+
+        // --- FREEZE STATE (100% ХОЛОДА: АНИМАЦИЯ ЗАМЕРЗАНИЯ И ПРОИГРЫШ) ---
+        if (player.state === 'FREEZE') {
+            player.freezeTimer += 0.016;
+            player.vx = 0;
+            if (player.vy < 0 || !player.grounded) {
+                player.vy += 0.5;
+                player.y += player.vy;
+                const landY = getSolidFloorY(player.x, player.y);
+                if (player.y >= landY) {
+                    player.y = landY;
+                    player.vy = 0;
+                    player.grounded = true;
+                }
+            }
+
+            // Defeat screen appears after 2.0s
+            if (player.freezeTimer > 2.0) {
+                if (defeatScreen && !defeatScreen.classList.contains('screen-active')) {
+                    const defeatTitleEl = defeatScreen.querySelector('.defeat-title');
+                    if (defeatTitleEl) defeatTitleEl.textContent = '❄️ Вы замерзли насмерть!';
+                    const defeatSubtextEl = defeatScreen.querySelector('.defeat-subtext');
+                    if (defeatSubtextEl) defeatSubtextEl.textContent = 'Вечный холод сковал ваше тело! Найдите пещеру и согрейтесь у костра с помощью зажигалки.';
+                    defeatScreen.classList.remove('hidden');
+                    defeatScreen.classList.add('screen-active');
+                }
+            }
+            return;
+        }
+
+        // --- COLD ACCUMULATION & WARMING (SNOW BIOME) ---
+        const isSnowLevel = (currentLevelData.theme === 'snow' || currentLevelIndex >= 41);
+        const isYetiArena = (currentLevelIndex === 60 && (player.x >= 17620 || (typeof yeti !== 'undefined' && yeti.active) || (typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene.active) || (typeof yeti !== 'undefined' && yeti.isFallen)));
+        if (isYetiArena) {
+            if (coldHud) coldHud.classList.add('hidden');
+            player.cold = 0;
+        }
+        if (isSnowLevel && !isYetiArena && currentState === STATES.PLAYING && player.state !== 'VICTORY' && player.state !== 'VICTORY_IDLE' && player.state !== 'DEFEAT' && player.state !== 'FREEZE') {
+            const nearLitFire = currentLevelData.cave && currentLevelData.cave.isLit && Math.abs(player.x - currentLevelData.cave.fireX) < 220;
+            const inUnlitCave = currentLevelData.cave && !currentLevelData.cave.isLit && player.x >= currentLevelData.cave.x && player.x <= (currentLevelData.cave.x + currentLevelData.cave.w);
+
+            if (nearLitFire) {
+                player.isWarming = true;
+                // Rapid warm-up: decreases cold by 25% per second (recovering to 0 in ~4s)
+                player.cold = Math.max(0, player.cold - 25 * 0.016);
+                if (Math.random() < 0.22) {
+                    particles.push({
+                        x: player.x + (Math.random() - 0.5) * 20,
+                        y: player.y - 35 + (Math.random() - 0.5) * 30,
+                        vx: (Math.random() - 0.5) * 1.5,
+                        vy: -(1.2 + Math.random() * 2),
+                        size: 2 + Math.random() * 3,
+                        color: Math.random() < 0.6 ? '#f59e0b' : '#fbbf24',
+                        life: 0.8,
+                        decay: 0.02
+                    });
+                }
+            } else {
+                player.isWarming = false;
+                // Freezing rate outside (+1.3% per second => ~77s to reach 100%)
+                // In unlit cave: sheltered from wind (+0.35% per sec)
+                const coldRate = inUnlitCave ? 0.35 : 1.3;
+                player.cold = Math.min(100, player.cold + coldRate * 0.016);
+
+                // Cold breath vapor puff occasionally
+                if (player.cold >= 25 && Math.random() < (player.cold >= 75 ? 0.08 : 0.03)) {
+                    particles.push({
+                        x: player.x + player.facing * 10,
+                        y: player.y - 65,
+                        vx: player.facing * (0.8 + Math.random() * 1.2),
+                        vy: -(0.5 + Math.random() * 0.8),
+                        size: 2.5 + Math.random() * 3,
+                        color: 'rgba(224, 242, 254, 0.65)',
+                        life: 0.7,
+                        decay: 0.02
+                    });
+                }
+            }
+
+            updateColdHud();
+
+            // 100% холода: замерзание
+            if (player.cold >= 100) {
+                triggerFreezeDefeat();
+                return;
             }
         }
 
@@ -8330,7 +14801,17 @@
                 if (victorySubtext) victorySubtext.textContent = `Отличный паркур и результаты на Уровне ${currentLevelIndex}!`;
 
                 const nextLevelNum = currentLevelIndex + 1;
-                if (currentLevelIndex >= 21) {
+                if (currentLevelIndex >= 41) {
+                    unlockedPage3Levels = Math.max(unlockedPage3Levels, Math.min(60, nextLevelNum));
+                    generateLevelsGrid();
+                    if (currentLevelIndex === 60) {
+                        if (victorySubtext) victorySubtext.textContent = 'ВЕЛИКИЙ ЙЕТИ ПОБЕЖДЁН! Вы покорили Вечный Холод и прошли все 60 уровней!';
+                    } else if (nextLevelNum === 60) {
+                        if (victorySubtext) victorySubtext.textContent = 'Впереди финальное испытание — Логово Древнего Йети на 60 уровне!';
+                    } else {
+                        if (victorySubtext) victorySubtext.textContent = `Отличный паркур! Снежный уровень ${currentLevelIndex} пройден!`;
+                    }
+                } else if (currentLevelIndex >= 21) {
                     if (nextLevelNum <= 40) {
                         unlockedPage2Levels = Math.max(unlockedPage2Levels, nextLevelNum);
                     }
@@ -8340,11 +14821,15 @@
                     generateLevelsGrid();
                 }
 
-                if (levelsData[nextLevelNum] && nextLevelNum <= 40) {
+                if (levelsData[nextLevelNum] && nextLevelNum <= 60) {
                     btnNextLevel.classList.remove('hidden');
                     btnNextLevel.innerHTML = (nextLevelNum === 40)
                         ? '<span class="btn-icon">🗿</span> К БОССУ: Уровень 40'
-                        : '<span class="btn-icon">➡️</span> Следующий уровень';
+                        : (nextLevelNum === 41)
+                            ? '<span class="btn-icon">❄️</span> Вечный холод: Уровень 41'
+                            : (nextLevelNum === 60)
+                                ? '<span class="btn-icon">❄️</span> К БОССУ: ЙЕТИ (Уровень 60)'
+                                : '<span class="btn-icon">➡️</span> Следующий уровень';
                 } else {
                     btnNextLevel.classList.add('hidden');
                 }
@@ -8591,6 +15076,38 @@
                     playSound('grab');
                     return;
                 }
+            } else if (currentLevelData && currentLevelData.cave && player.hasLighter && !currentLevelData.cave.isLit && Math.abs(player.x - currentLevelData.cave.fireX) < 75) {
+                ledgeHint.innerHTML = '<span class="hint-key">E</span> Зажечь дрова зажигалкой!';
+                ledgeHint.classList.remove('hidden');
+
+                if (keys.interactPressedThisFrame) {
+                    currentLevelData.cave.isLit = true;
+                    keys.interactPressedThisFrame = false;
+
+                    playSound('lighterClick');
+                    setTimeout(() => playSound('lighterFlame'), 110);
+                    setTimeout(() => playSound('fireCrackling'), 260);
+
+                    // Burst of flame sparks from firewood
+                    for (let p = 0; p < 25; p++) {
+                        particles.push({
+                            x: currentLevelData.cave.fireX + (Math.random() - 0.5) * 30,
+                            y: currentLevelData.cave.fireY - 15,
+                            vx: (Math.random() - 0.5) * 4,
+                            vy: -(1.5 + Math.random() * 4.5),
+                            size: 3 + Math.random() * 4,
+                            color: Math.random() < 0.6 ? '#f97316' : '#facc15',
+                            life: 1.0,
+                            decay: 0.02
+                        });
+                    }
+
+                    ledgeHint.innerHTML = '🔥 Костёр зажжён! Приятное тепло согревает в пещере!';
+                    setTimeout(() => {
+                        if (ledgeHint) ledgeHint.classList.add('hidden');
+                    }, 2400);
+                    return;
+                }
             } else if (player.state !== 'HANG' && player.state !== 'CLIMB') {
                 ledgeHint.classList.add('hidden');
             }
@@ -8715,8 +15232,9 @@
         }
 
         // --- MOVEMENT PHYSICS & STATES ---
-        const moveAccel = 0.8;
-        const maxSpeed = player.isCrouching ? 3.5 : 6.5;
+        const speedPenalty = (player.cold >= 75) ? 0.7 : 1.0;
+        const moveAccel = (player.cold >= 75) ? 0.55 : 0.8;
+        const maxSpeed = (player.isCrouching ? 3.5 : 6.5) * speedPenalty;
         const friction = 0.82;
         const gravity = 0.65;
 
@@ -9020,6 +15538,60 @@
             }
         }
 
+        // Level 60: Yeti Living Wall & Non-Lethal Pushback
+        if (currentLevelIndex === 60 && typeof yeti !== 'undefined' && (yeti.active || (typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene && yetiIntroCutscene.active)) && !yeti.isFallen) {
+            const yLeft = yeti.x - 70;
+            const yRight = yeti.x + 70;
+            const yTop = yeti.y - 130;
+            const yBottom = currentLevelData.groundY + 30;
+
+            // 1. Solid Living Wall: Player CANNOT pass through the Yeti
+            if (nextY > yTop && nextY - player.height < yBottom) {
+                if (player.x <= yeti.x && nextX + 16 > yLeft) {
+                    nextX = yLeft - 16;
+                    if (player.vx > 0) player.vx = 0;
+                } else if (player.x > yeti.x && nextX - 16 < yRight) {
+                    nextX = yRight + 16;
+                    if (player.vx < 0) player.vx = 0;
+                }
+            }
+
+            // 2. Proximity Shove: If player approaches Yeti too closely, Yeti shoves them away (non-lethal!)
+            if (player.shoveCooldown <= 0 && yeti.active && yeti.state !== 'DEFEATED' && !yeti.isFallen && player.state !== 'DEFEAT') {
+                const distToYeti = Math.abs(nextX - yeti.x);
+                if (distToYeti < 130 && nextY > yTop && nextY <= currentLevelData.groundY + 15) {
+                    player.shoveCooldown = 45; // ~0.75s cooldown
+                    yeti.shoveTimer = 0.35; // Yeti thrusts massive icy paw forward
+
+                    const shoveDir = (nextX <= yeti.x) ? -1 : 1;
+                    player.vx = shoveDir * 18;
+                    player.vy = -7.0;
+                    player.grounded = false;
+                    player.state = 'JUMP';
+                    nextX += shoveDir * 25;
+
+                    playSound('slam');
+                    playSound('airBoost');
+                    screenShake = 12;
+                    spawnDust(nextX, currentLevelData.groundY);
+
+                    // Snowy icy shockwave particles
+                    for (let sp = 0; sp < 15; sp++) {
+                        particles.push({
+                            x: yeti.x + shoveDir * 60,
+                            y: yeti.y - 20 + (Math.random() - 0.5) * 50,
+                            vx: shoveDir * (5 + Math.random() * 10),
+                            vy: (Math.random() - 0.5) * 6,
+                            size: 4 + Math.random() * 7,
+                            color: Math.random() < 0.6 ? '#38bdf8' : '#f8fafc',
+                            life: 0.6,
+                            decay: 0.04
+                        });
+                    }
+                }
+            }
+        }
+
         // Ground platform collision & Chasm check
         if (nextY >= currentLevelData.groundY) {
             if (isOverChasm(nextX)) {
@@ -9053,22 +15625,23 @@
         }
 
         if (keys.jumpPressedThisFrame) {
+            const jumpForce = (player.cold >= 75) ? -12.5 : -14.5;
             if (player.grounded) {
-                player.vy = -14.5;
+                player.vy = jumpForce;
                 player.grounded = false;
                 playSound('jump');
                 spawnDust(player.x, player.y);
             } else if (player.canDoubleJump && (player.state === 'JUMP' || !player.grounded)) {
                 // Double Jump / Air Push ("Оттолкнуться от воздуха только вверх")
                 player.canDoubleJump = false;
-                player.vy = -14.5;              // Pure vertical upward jump force
+                player.vy = jumpForce;              // Pure vertical upward jump force
                 playSound('airBoost');
                 spawnAirPushEffect(player.x, player.y, player.facing, 'vertical');
             }
         }
 
-        // State update guard: NEVER overwrite DEFEAT, VICTORY, or CUTSCENE states!
-        if (player.state === 'DEFEAT' || player.state === 'VICTORY' || player.state === 'VICTORY_IDLE' || player.state === 'COLD_SHIVER' || player.state === 'WALK' || player.state === 'CUTSCENE_REACH' || player.state === 'EXAMINE_EARTH') {
+        // State update guard: NEVER overwrite DEFEAT, FREEZE, VICTORY, or CUTSCENE states!
+        if (player.state === 'DEFEAT' || player.state === 'FREEZE' || player.state === 'VICTORY' || player.state === 'VICTORY_IDLE' || player.state === 'COLD_SHIVER' || player.state === 'WALK' || player.state === 'CUTSCENE_REACH' || player.state === 'EXAMINE_EARTH' || player.state === 'PICKUP_LIGHTER' || player.state === 'INSPECT_LIGHTER' || player.state === 'CLICK_LIGHTER') {
             return;
         }
 
@@ -9111,9 +15684,19 @@
             cameraY = 0;
         } else {
             // Horizontal camera tracking
-            const targetCamX = player.x - screenW * 0.35;
-            cameraX += (targetCamX - cameraX) * 0.1;
-            cameraX = Math.max(0, Math.min(currentLevelData.worldWidth - screenW, cameraX));
+            if (currentLevelIndex === 60 && typeof yeti !== 'undefined' && (yeti.active || yeti.isFallen)) {
+                // Boss Yeti arena camera: smoothly frame player and Yeti
+                const targetMidX = (player.x + yeti.x) * 0.5;
+                const targetCamX = targetMidX - screenW * 0.5;
+                cameraX += (targetCamX - cameraX) * 0.08;
+                const minCam = Math.max(0, yeti.arenaLeft - 40);
+                const maxCam = Math.max(minCam, yeti.arenaRight + 40 - screenW);
+                cameraX = Math.max(minCam, Math.min(maxCam, cameraX));
+            } else {
+                const targetCamX = player.x - screenW * 0.35;
+                cameraX += (targetCamX - cameraX) * 0.1;
+                cameraX = Math.max(0, Math.min(currentLevelData.worldWidth - screenW, cameraX));
+            }
 
             // Vertical camera tracking
             const targetCamY = (player.y - 40) - screenH * 0.5;
@@ -9121,8 +15704,14 @@
             cameraY = Math.max(-600, Math.min(60, cameraY));
 
             if (screenShake > 0) {
-                cameraX += (Math.random() - 0.5) * screenShake;
-                cameraY += (Math.random() - 0.5) * screenShake;
+                if (currentState === STATES.VICTORY) {
+                    screenShake = 0;
+                } else {
+                    cameraX += (Math.random() - 0.5) * screenShake;
+                    cameraY += (Math.random() - 0.5) * screenShake;
+                    screenShake *= 0.88;
+                    if (screenShake < 0.2) screenShake = 0;
+                }
             }
         }
     }
@@ -9238,9 +15827,82 @@
             return;
 
         } else {
-            const isNature = currentLevelData.theme === 'nature' || currentLevelIndex >= 21;
+            const isSnow = currentLevelData.theme === 'snow' || currentLevelIndex >= 41;
+            const isNature = !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
 
-            if (isNature) {
+            if (isSnow) {
+                // ==========================================
+                // SNOW THEME: WINTER TWILIGHT SKY & BLIZZARD
+                // ==========================================
+                const winterSky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                winterSky.addColorStop(0, '#0b1329');
+                winterSky.addColorStop(0.35, '#1e293b');
+                winterSky.addColorStop(0.7, '#334155');
+                winterSky.addColorStop(1, '#64748b');
+                ctx.fillStyle = winterSky;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Pale Cold Winter Sun with Ice Halo
+                const sunX = canvas.width - 240 * scale;
+                const sunY = 110 * scale;
+                const sunR = 40 * scale;
+                const sunGrad = ctx.createRadialGradient(sunX, sunY, 4 * scale, sunX, sunY, sunR * 2.5);
+                sunGrad.addColorStop(0, '#ffffff');
+                sunGrad.addColorStop(0.35, 'rgba(224, 242, 254, 0.7)');
+                sunGrad.addColorStop(0.7, 'rgba(186, 230, 253, 0.2)');
+                sunGrad.addColorStop(1, 'rgba(186, 230, 253, 0)');
+                ctx.fillStyle = sunGrad;
+                ctx.beginPath();
+                ctx.arc(sunX, sunY, sunR * 2.5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Distant Jagged Snowy Mountains (Parallax 1)
+                ctx.save();
+                ctx.fillStyle = '#334155';
+                ctx.beginPath();
+                ctx.moveTo(0, canvas.height);
+                const smStep = 260 * scale;
+                const smOffset = -(cameraX * 0.05 * scale) % smStep;
+                for (let sx = smOffset - smStep; sx < canvas.width + smStep * 2; sx += smStep) {
+                    ctx.lineTo(sx, 320 * scale);
+                    ctx.lineTo(sx + smStep * 0.45, 180 * scale);
+                    ctx.lineTo(sx + smStep, 320 * scale);
+                }
+                ctx.lineTo(canvas.width, canvas.height);
+                ctx.closePath();
+                ctx.fill();
+
+                // Snowcaps on Distant Mountains
+                ctx.fillStyle = '#f8fafc';
+                for (let sx = smOffset - smStep; sx < canvas.width + smStep * 2; sx += smStep) {
+                    ctx.beginPath();
+                    ctx.moveTo(sx + smStep * 0.45, 180 * scale);
+                    ctx.lineTo(sx + smStep * 0.35, 230 * scale);
+                    ctx.lineTo(sx + smStep * 0.55, 230 * scale);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                ctx.restore();
+
+                // Closer Darker Glacial Ridges (Parallax 2)
+                ctx.save();
+                ctx.fillStyle = '#1e293b';
+                ctx.beginPath();
+                ctx.moveTo(0, canvas.height);
+                const hStep = 320 * scale;
+                const hOffset = -(cameraX * 0.11 * scale) % hStep;
+                for (let hx = hOffset - hStep; hx < canvas.width + hStep * 2; hx += hStep) {
+                    ctx.quadraticCurveTo(hx + hStep * 0.5, 340 * scale, hx + hStep, 410 * scale);
+                }
+                ctx.lineTo(canvas.width, canvas.height);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+
+                // Ambient Blizzard Snowfall
+                drawSnowfall(scale);
+
+            } else if (isNature) {
                 // ==========================================
                 // NATURE THEME: RADIANT SUNNY SKY & LANDSCAPE
                 // ==========================================
@@ -9370,10 +16032,13 @@
             }
         }
 
-        const isNature = currentLevelData.theme === 'nature' || currentLevelIndex >= 21;
+        const isSnow = currentLevelData.theme === 'snow' || currentLevelIndex >= 41;
+        const isNature = !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
 
         // --- RENDER LEVEL PLATFORMS & OBSTACLES ---
-        if (isNature && currentLevelData.chasms) {
+        if (isSnow && currentLevelData.chasms) {
+            drawSnowChasms(scale);
+        } else if (isNature && currentLevelData.chasms) {
             drawNatureChasms(scale);
         }
         // Ground Platform
@@ -9383,7 +16048,46 @@
             const drawW = plat.w * scale;
             const drawH = plat.h * scale;
 
-            if (isNature) {
+            if (isSnow) {
+                // Frozen Rock Ground Platform with thick snow blanket & hanging icicles
+                const rockGrad = ctx.createLinearGradient(0, drawY, 0, drawY + drawH);
+                rockGrad.addColorStop(0, '#334155');
+                rockGrad.addColorStop(0.35, '#1e293b');
+                rockGrad.addColorStop(1, '#0f172a');
+                ctx.fillStyle = rockGrad;
+                ctx.fillRect(drawX, drawY, drawW, drawH);
+
+                // Thick fluffy snow blanket on platform surface
+                ctx.fillStyle = '#f8fafc';
+                ctx.beginPath();
+                ctx.moveTo(drawX, drawY + 14 * scale);
+                ctx.lineTo(drawX, drawY + 4 * scale);
+                const moundStep = 24 * scale;
+                for (let sx = drawX; sx <= drawX + drawW; sx += moundStep) {
+                    const moundH = Math.sin((sx + cameraX * scale) * 0.05) * 4 * scale;
+                    ctx.lineTo(sx, drawY - 2 * scale + moundH);
+                }
+                ctx.lineTo(drawX + drawW, drawY + 14 * scale);
+                ctx.closePath();
+                ctx.fill();
+
+                // Soft bluish snow shadow rim
+                ctx.fillStyle = '#e2e8f0';
+                ctx.fillRect(drawX, drawY + 10 * scale, drawW, 3 * scale);
+
+                // Hanging icicles along bottom edge of snow blanket
+                ctx.fillStyle = '#bae6fd';
+                const icicleStep = 32 * scale;
+                for (let ix = drawX + 12 * scale; ix < drawX + drawW - 12 * scale; ix += icicleStep) {
+                    const seed = Math.sin((ix + cameraX) * 0.2);
+                    const icicleH = (7 + Math.abs(seed) * 11) * scale;
+                    ctx.beginPath();
+                    ctx.moveTo(ix - 3 * scale, drawY + 13 * scale);
+                    ctx.lineTo(ix, drawY + 13 * scale + icicleH);
+                    ctx.lineTo(ix + 3 * scale, drawY + 13 * scale);
+                    ctx.fill();
+                }
+            } else if (isNature) {
                 // Nature Earth Ground Platform
                 const soilGrad = ctx.createLinearGradient(0, drawY, 0, drawY + drawH);
                 soilGrad.addColorStop(0, '#78350f'); // rich brown top soil
@@ -9461,7 +16165,9 @@
 
         // Box / Stone Obstacles
         currentLevelData.boxes.forEach(box => {
-            if (isNature || box.isStone) {
+            if (isSnow || box.isSnow) {
+                drawSnowRock(box, scale);
+            } else if (isNature || box.isStone) {
                 drawNatureRock(box, scale);
             } else {
                 const drawX = (box.x - cameraX) * scale;
@@ -9499,7 +16205,9 @@
         // Render Ladders
         if (currentLevelData.ladders) {
             currentLevelData.ladders.forEach(lad => {
-                if (isNature || lad.isWoodLadder) {
+                if (isSnow || lad.isSnowBranchLadder) {
+                    drawSnowDryBranchLadder(lad, scale);
+                } else if (isNature || lad.isWoodLadder) {
                     drawNatureLadder(lad, scale);
                 } else {
                     const drawX = (lad.x - cameraX) * scale;
@@ -9542,10 +16250,12 @@
             });
         }
 
-        // Render Turniks / Trees
+        // Render Turniks / Trees / Bare Branches
         if (currentLevelData.turniks) {
             currentLevelData.turniks.forEach(tur => {
-                if (isNature || tur.isTree) {
+                if (isSnow || tur.isBareTree) {
+                    drawSnowDryBranchTurnik(tur, scale);
+                } else if (isNature || tur.isTree) {
                     drawNatureTree(tur, scale);
                 } else {
                     const drawX = (tur.x - cameraX) * scale;
@@ -9586,10 +16296,12 @@
             });
         }
 
-        // Render Ropes / Vines
+        // Render Ropes / Vines / Dry Hanging Branches
         if (currentLevelData.ropes) {
             currentLevelData.ropes.forEach(rope => {
-                if (isNature || rope.isVine) {
+                if (isSnow || rope.isDryHangingBranch) {
+                    drawSnowDryHangingBranch(rope, scale);
+                } else if (isNature || rope.isVine) {
                     drawNatureVine(rope, scale);
                 } else {
                     const drawAnchorX = (rope.x - cameraX) * scale;
@@ -9659,9 +16371,16 @@
             });
         }
 
+        // Render Rare Snow Biome Cave with Firewood
+        if (currentLevelData.cave) {
+            drawSnowCave(currentLevelData.cave, scale);
+        }
+
         // Finish Flag
         if (currentLevelData.flag) {
-            if (isNature || currentLevelData.flag.isNatureFlag) {
+            if (isSnow || currentLevelData.flag.isSnowFlag) {
+                drawSnowFlag(currentLevelData.flag, scale);
+            } else if (isNature || currentLevelData.flag.isNatureFlag) {
                 drawNatureFlag(currentLevelData.flag, scale);
             } else {
                 const flag = currentLevelData.flag;
@@ -9704,12 +16423,16 @@
             }
         }
 
+        // Draw Cutscene Lighter in Snow (Level 41 intro)
+        drawCutsceneLighter(scale);
+
         // Draw Cutscene Door & Light (behind stickman)
         drawCutsceneDoor();
 
         // Draw Boss Hazards (Chasms, Spikes, Boulders, Ground Debris)
         drawBossHazards();
         drawGolemHazards();
+        drawYetiHazards();
 
         // Render Particles
         drawParticles();
@@ -9723,8 +16446,26 @@
         // Draw Ancient Stone Golem
         drawGolem();
 
+        // Draw Snow Yeti
+        drawYeti();
+
         // Draw Snowy Biome & Cold Breath
         drawSnowyBiome(scale);
+
+        // Screen Frost Vignette as cold increases (обледенение экрана по краям)
+        if ((currentLevelData.theme === 'snow' || currentLevelIndex >= 41) && player.cold > 15 && currentState === STATES.PLAYING) {
+            ctx.save();
+            const frostIntensity = Math.min(1, (player.cold - 15) / 85);
+            const maxRadius = Math.max(canvas.width, canvas.height) * 0.75;
+            const innerRadius = maxRadius * (1 - frostIntensity * 0.55);
+            const vigGrad = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, innerRadius, canvas.width / 2, canvas.height / 2, maxRadius);
+            vigGrad.addColorStop(0, 'rgba(186, 230, 253, 0)');
+            vigGrad.addColorStop(0.7, `rgba(186, 230, 253, ${0.18 * frostIntensity})`);
+            vigGrad.addColorStop(1, `rgba(125, 211, 252, ${0.48 * frostIntensity})`);
+            ctx.fillStyle = vigGrad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.restore();
+        }
 
         // Fullscreen White Light Washout (Экран засветляется)
         if (cutscene.whiteAlpha > 0) {
@@ -9744,8 +16485,23 @@
         ctx.save();
         ctx.translate(screenX, screenY);
 
-        ctx.strokeStyle = '#020617';
-        ctx.fillStyle = '#020617';
+        const facing = player.facing;
+        const time = player.animTime;
+        const cold = player.cold || 0;
+
+        // Frozen color shift in FREEZE state
+        let stickColor = '#020617';
+        if (player.state === 'FREEZE') {
+            const fTime = player.freezeTimer || 0;
+            if (fTime > 0.8) {
+                stickColor = '#7dd3fc'; // Frost cyan
+            } else if (fTime > 0.3) {
+                stickColor = '#0284c7'; // Chilled blue
+            }
+        }
+
+        ctx.strokeStyle = stickColor;
+        ctx.fillStyle = stickColor;
         ctx.lineWidth = 4.5 * scale;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -9761,10 +16517,82 @@
         let leftFoot = { x: -12, y: 0 };
         let rightFoot = { x: 12, y: 0 };
 
-        const facing = player.facing;
-        const time = player.animTime;
+        // Cold Shiver Calculations
+        let shiverX = 0;
+        let shiverY = 0;
+        let shiverKnee = 0;
 
-        if (player.state === 'TURNIK' || player.state === 'TURNIK_SWING') {
+        if (player.state !== 'FREEZE') {
+            if (cold >= 75) {
+                // 75% холода: игрок сильнее дрожит
+                const shivTime = Date.now() * 0.055;
+                shiverX = Math.sin(shivTime * 1.35) * 2.8;
+                shiverY = Math.cos(shivTime * 1.1) * 1.5;
+                shiverKnee = Math.sin(shivTime * 1.5) * 2.2 * facing;
+            } else if (cold >= 50) {
+                // 50% холода: средняя дрожь
+                const shivTime = Date.now() * 0.042;
+                shiverX = Math.sin(shivTime * 1.2) * 1.6;
+                shiverY = Math.cos(shivTime * 0.95) * 0.9;
+                shiverKnee = Math.sin(shivTime * 1.2) * 1.2 * facing;
+            } else if (cold >= 25) {
+                // 25% холода: игрок немного дрожит
+                const shivTime = Date.now() * 0.032;
+                shiverX = Math.sin(shivTime) * 0.9;
+                shiverY = Math.cos(shivTime * 0.8) * 0.5;
+                shiverKnee = Math.sin(shivTime) * 0.6 * facing;
+            }
+        }
+
+        if (player.state === 'FREEZE') {
+            const fTime = player.freezeTimer || 0;
+            if (fTime < 0.6) {
+                // Фаза 1 (0-0.6s): Ноги подкашиваются от мороза, опускается на колени в снег и сильно дрожит
+                const t = Math.min(1, fTime / 0.6);
+                const shiv = Math.sin(fTime * 65) * (1 - t * 0.4) * 2.8;
+
+                hip = { x: shiv, y: -38 + t * 22 };
+                shoulder = { x: facing * 2 + shiv, y: -54 + t * 24 };
+                head = { x: facing * 5 + shiv, y: -68 + t * 26 };
+
+                leftHand = { x: facing * 6, y: shoulder.y + 6 };
+                rightHand = { x: -facing * 4, y: shoulder.y + 8 };
+
+                leftKnee = { x: -facing * 8, y: -4 };
+                rightKnee = { x: facing * 5, y: -4 };
+                leftFoot = { x: -facing * 14, y: 0 };
+                rightFoot = { x: -facing * 2, y: 0 };
+            } else if (fTime < 1.1) {
+                // Фаза 2 (0.6-1.1s): Силы иссякают, персонаж падает вперед на снег
+                const t2 = Math.min(1, (fTime - 0.6) / 0.5);
+                const shiv = (1 - t2) * Math.sin(fTime * 40) * 1.5;
+
+                hip = { x: -facing * (8 + t2 * 6) + shiv, y: -16 + t2 * 10 };
+                shoulder = { x: facing * (2 + t2 * 8) + shiv, y: -30 + t2 * 24 };
+                head = { x: facing * (5 + t2 * 19) + shiv, y: -42 + t2 * 36 };
+
+                leftHand = { x: facing * (6 + t2 * 10), y: -4 };
+                rightHand = { x: -facing * (4 - t2 * 2), y: -4 };
+
+                leftKnee = { x: -facing * (8 + t2 * 14), y: -4 };
+                rightKnee = { x: -facing * (4 + t2 * 14), y: -4 };
+                leftFoot = { x: -facing * (14 + t2 * 18), y: -2 };
+                rightFoot = { x: -facing * (2 + t2 * 22), y: -2 };
+            } else {
+                // Фаза 3 (1.1-2.0s): Полностью неподвижно лежит на снегу, замерзнув насмерть
+                hip = { x: -facing * 14, y: -6 };
+                shoulder = { x: facing * 10, y: -6 };
+                head = { x: facing * 24, y: -6 };
+
+                leftHand = { x: facing * 16, y: -4 };
+                rightHand = { x: -facing * 2, y: -4 };
+
+                leftKnee = { x: -facing * 22, y: -4 };
+                rightKnee = { x: -facing * 18, y: -4 };
+                leftFoot = { x: -facing * 32, y: -2 };
+                rightFoot = { x: -facing * 24, y: -2 };
+            }
+        } else if (player.state === 'TURNIK' || player.state === 'TURNIK_SWING') {
             let swingAngle = 0;
             if (player.state === 'TURNIK_SWING') {
                 const progress = Math.min(1, player.turnikTimer / 0.3);
@@ -9962,18 +16790,80 @@
             leftHand = { x: -facing * 2, y: -24 };
             rightHand = { x: facing * 16, y: -3 }; // Right hand touching the earth!
 
+        } else if (player.state === 'PICKUP_LIGHTER') {
+            // Kneeling down, right hand reaching down to pick up lighter from snow
+            hip = { x: 0, y: -24 };
+            shoulder = { x: facing * 6, y: -38 };
+            head = { x: facing * 10, y: -48 };
+
+            leftKnee = { x: -facing * 12, y: -12 };
+            leftFoot = { x: -facing * 14, y: 0 };
+            rightKnee = { x: facing * 12, y: -10 };
+            rightFoot = { x: facing * 14, y: 0 };
+
+            leftHand = { x: -facing * 2, y: -24 };
+            rightHand = { x: facing * 16, y: -4 };
+
+        } else if (player.state === 'INSPECT_LIGHTER') {
+            // Standing upright, holding lighter in front of chest/chin inspecting it
+            hip = { x: 0, y: -38 };
+            shoulder = { x: facing * 3, y: -54 };
+            head = { x: facing * 5, y: -68 };
+
+            leftFoot = { x: -8 * facing, y: 0 };
+            rightFoot = { x: 8 * facing, y: 0 };
+            leftKnee = { x: -10 * facing, y: -18 };
+            rightKnee = { x: 6 * facing, y: -18 };
+
+            leftHand = { x: -facing * 8, y: -36 };
+            rightHand = { x: facing * 14, y: -46 };
+
+        } else if (player.state === 'CLICK_LIGHTER') {
+            // Clicking lighter: thumb pressing flint wheel, vibrant flame erupting!
+            hip = { x: 0, y: -38 };
+            shoulder = { x: facing * 4, y: -54 };
+            head = { x: facing * 7, y: -68 };
+
+            leftFoot = { x: -8 * facing, y: 0 };
+            rightFoot = { x: 8 * facing, y: 0 };
+            leftKnee = { x: -10 * facing, y: -18 };
+            rightKnee = { x: 6 * facing, y: -18 };
+
+            leftHand = { x: -facing * 6, y: -38 };
+            rightHand = { x: facing * 16, y: -48 };
+
         } else if (player.state === 'IDLE') {
             const breath = Math.sin(time * 0.8) * 1.5;
             head.y += breath;
             shoulder.y += breath * 0.8;
             hip.y += breath * 0.5;
 
-            leftHand = { x: -12 * facing, y: -38 + breath };
-            rightHand = { x: 12 * facing, y: -38 + breath };
-            leftFoot = { x: -8 * facing, y: 0 };
-            rightFoot = { x: 8 * facing, y: 0 };
-            leftKnee = { x: -10 * facing, y: -18 };
-            rightKnee = { x: 6 * facing, y: -18 };
+            if (cold >= 50) {
+                // 50% и 75% холода: игрок берётся руками что бы согреть себя
+                const rubSpeed = (cold >= 75) ? 0.022 : 0.015;
+                const rubOffset = Math.sin(Date.now() * rubSpeed) * 3.2;
+
+                // Сгорбленная от холода поза
+                shoulder.y += 2.5;
+                head.y += 4;
+                head.x = facing * 3;
+
+                // Руки скрещены на груди: обнимают противоположные плечи и растирают их
+                leftHand = { x: facing * 7, y: -48 + rubOffset };
+                rightHand = { x: -facing * 6, y: -46 - rubOffset };
+
+                leftFoot = { x: -8 * facing, y: 0 };
+                rightFoot = { x: 8 * facing, y: 0 };
+                leftKnee = { x: -7 * facing + shiverKnee, y: -17 };
+                rightKnee = { x: 5 * facing - shiverKnee, y: -17 };
+            } else {
+                leftHand = { x: -12 * facing, y: -38 + breath };
+                rightHand = { x: 12 * facing, y: -38 + breath };
+                leftFoot = { x: -8 * facing, y: 0 };
+                rightFoot = { x: 8 * facing, y: 0 };
+                leftKnee = { x: -10 * facing, y: -18 };
+                rightKnee = { x: 6 * facing, y: -18 };
+            }
 
         } else if (player.state === 'RUN') {
             if (player.isBossMode) {
@@ -10016,8 +16906,44 @@
                 leftKnee = { x: (leftFoot.x + hip.x) / 2 + facing * 4, y: -20 };
                 rightKnee = { x: (rightFoot.x + hip.x) / 2 - facing * 4, y: -20 };
 
-                leftHand = { x: armSwing * 16 * facing, y: -42 + armSwing * 6 };
-                rightHand = { x: -armSwing * 16 * facing, y: -42 - armSwing * 6 };
+                if (cold >= 50) {
+                    // При 50% и 75% холода бежит с прижатыми к груди руками, согревая себя
+                    const rubRun = Math.sin(Date.now() * 0.016) * 2;
+                    leftHand = { x: facing * 6 + legSwing * 2, y: -46 + rubRun };
+                    rightHand = { x: -facing * 4 - legSwing * 2, y: -45 - rubRun };
+                } else {
+                    leftHand = { x: armSwing * 16 * facing, y: -42 + armSwing * 6 };
+                    rightHand = { x: -armSwing * 16 * facing, y: -42 - armSwing * 6 };
+                }
+            }
+
+        } else if (player.state === 'WALK') {
+            const walkCycle = time * 2.2;
+            const legSwing = Math.sin(walkCycle);
+            const armSwing = Math.cos(walkCycle);
+            const bob = Math.abs(Math.sin(walkCycle)) * 2.2;
+
+            hip.y = -38 + bob;
+            shoulder.y = -54 + bob * 0.8;
+            head.y = shoulder.y - 14;
+
+            shoulder.x = facing * 2;
+            head.x = facing * 3;
+            hip.x = 0;
+
+            leftFoot = { x: legSwing * 13 * facing, y: Math.max(0, -legSwing * 6) };
+            rightFoot = { x: -legSwing * 13 * facing, y: Math.max(0, legSwing * 6) };
+
+            leftKnee = { x: (leftFoot.x + hip.x) / 2 + facing * 2, y: -19 - (legSwing > 0 ? 3 : 0) };
+            rightKnee = { x: (rightFoot.x + hip.x) / 2 - facing * 2, y: -19 - (legSwing < 0 ? 3 : 0) };
+
+            if (cold >= 50) {
+                const rubWalk = Math.sin(Date.now() * 0.016) * 2;
+                leftHand = { x: facing * 5 + legSwing * 2, y: -46 + rubWalk };
+                rightHand = { x: -facing * 3 - legSwing * 2, y: -45 - rubWalk };
+            } else {
+                leftHand = { x: armSwing * 11 * facing, y: -40 + armSwing * 4 };
+                rightHand = { x: -armSwing * 11 * facing, y: -40 - armSwing * 4 };
             }
 
         } else if (player.state === 'JUMP') {
@@ -10026,8 +16952,13 @@
             head.y = -66;
             head.x = facing * 3;
 
-            rightHand = { x: facing * 16, y: -46 };
-            leftHand = { x: -facing * 16, y: -42 };
+            if (cold >= 50) {
+                leftHand = { x: facing * 5, y: -48 };
+                rightHand = { x: -facing * 4, y: -46 };
+            } else {
+                rightHand = { x: facing * 16, y: -46 };
+                leftHand = { x: -facing * 16, y: -42 };
+            }
 
             leftFoot = { x: -facing * 10, y: -12 };
             leftKnee = { x: -facing * 16, y: -28 };
@@ -10128,6 +17059,20 @@
             rightKnee = { x: 4 * facing - Math.sin(time * 30) * 1.5, y: -18 };
             leftFoot = { x: -8 * facing, y: 0 };
             rightFoot = { x: 8 * facing, y: 0 };
+        }
+
+        // Apply cold shivering offsets to joints across animations (25%, 50%, 75%)
+        if (player.state !== 'FREEZE' && (shiverX !== 0 || shiverY !== 0)) {
+            hip.x += shiverX * 0.5;
+            hip.y += shiverY * 0.4;
+            shoulder.x += shiverX * 0.8;
+            shoulder.y += shiverY * 0.6;
+            head.x += shiverX * 1.1;
+            head.y += shiverY * 0.9;
+            leftHand.x += shiverX;
+            leftHand.y += shiverY;
+            rightHand.x += shiverX;
+            rightHand.y += shiverY;
         }
 
         // Draw Skeleton Lines
@@ -10235,11 +17180,136 @@
             });
         } else {
             // Default hands
-            ctx.fillStyle = '#020617';
+            ctx.fillStyle = stickColor;
             ctx.beginPath();
             ctx.arc(leftHand.x * scale, leftHand.y * scale, 3 * scale, 0, Math.PI * 2);
             ctx.arc(rightHand.x * scale, rightHand.y * scale, 3 * scale, 0, Math.PI * 2);
             ctx.fill();
+        }
+
+        // Draw lighter held in hand during inspection & flick cutscene
+        if (player.state === 'INSPECT_LIGHTER' || player.state === 'CLICK_LIGHTER') {
+            const lx = rightHand.x * scale;
+            const ly = rightHand.y * scale;
+
+            ctx.save();
+            // Lighter metallic body
+            const bodyGrad = ctx.createLinearGradient(lx - 4 * scale, ly - 6 * scale, lx + 5 * scale, ly + 6 * scale);
+            bodyGrad.addColorStop(0, '#f8fafc');
+            bodyGrad.addColorStop(0.5, '#94a3b8');
+            bodyGrad.addColorStop(1, '#475569');
+            ctx.fillStyle = bodyGrad;
+            ctx.fillRect(lx - 4 * scale, ly - 6 * scale, 9 * scale, 12 * scale);
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 1.2 * scale;
+            ctx.strokeRect(lx - 4 * scale, ly - 6 * scale, 9 * scale, 12 * scale);
+
+            // Brass spark wheel & wick
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect(lx + 1 * scale, ly - 9 * scale, 3 * scale, 3 * scale);
+
+            // If clicked: Dynamic dancing flame shooting up!
+            if (player.state === 'CLICK_LIGHTER') {
+                const flameH = (16 + Math.sin(Date.now() * 0.02) * 4) * scale;
+                const flameW = 6 * scale;
+                const flameBaseY = ly - 9 * scale;
+
+                // Radial warm flame glow on stickman's body & face
+                const glow = ctx.createRadialGradient(lx + 2 * scale, flameBaseY - flameH * 0.5, 3 * scale, lx + 2 * scale, flameBaseY - flameH * 0.5, 55 * scale);
+                glow.addColorStop(0, 'rgba(251, 146, 60, 0.7)');
+                glow.addColorStop(0.4, 'rgba(245, 158, 11, 0.35)');
+                glow.addColorStop(1, 'rgba(245, 158, 11, 0)');
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(lx + 2 * scale, flameBaseY - flameH * 0.5, 55 * scale, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Outer Orange Flame
+                ctx.fillStyle = '#ea580c';
+                ctx.beginPath();
+                ctx.moveTo(lx - flameW * 0.5 + 2 * scale, flameBaseY);
+                ctx.quadraticCurveTo(lx - flameW + 2 * scale, flameBaseY - flameH * 0.6, lx + 2 * scale, flameBaseY - flameH);
+                ctx.quadraticCurveTo(lx + flameW + 2 * scale, flameBaseY - flameH * 0.6, lx + flameW * 0.5 + 2 * scale, flameBaseY);
+                ctx.closePath();
+                ctx.fill();
+
+                // Inner Yellow Flame
+                ctx.fillStyle = '#facc15';
+                ctx.beginPath();
+                ctx.moveTo(lx - flameW * 0.3 + 2 * scale, flameBaseY);
+                ctx.quadraticCurveTo(lx - flameW * 0.5 + 2 * scale, flameBaseY - flameH * 0.5, lx + 2 * scale, flameBaseY - flameH * 0.85);
+                ctx.quadraticCurveTo(lx + flameW * 0.5 + 2 * scale, flameBaseY - flameH * 0.5, lx + flameW * 0.3 + 2 * scale, flameBaseY);
+                ctx.closePath();
+                ctx.fill();
+
+                // Blue/White Core at base
+                ctx.fillStyle = '#38bdf8';
+                ctx.beginPath();
+                ctx.arc(lx + 2 * scale, flameBaseY - 2 * scale, 2.5 * scale, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        // Draw Crystalline Ice Encasement when frozen solid (100% холода)
+        if (player.state === 'FREEZE' && (player.freezeTimer || 0) >= 0.6) {
+            const fTime = player.freezeTimer;
+            const iceProg = Math.min(1, (fTime - 0.6) / 0.5);
+            ctx.save();
+
+            const iceX = (facing >= 0 ? -24 : -44) * scale;
+            const iceY = -36 * scale * iceProg;
+            const iceW = 72 * scale;
+            const iceH = 40 * scale * iceProg;
+
+            // Ice translucent fill with gradient
+            const iceGrad = ctx.createLinearGradient(iceX, iceY, iceX + iceW, iceY + iceH);
+            iceGrad.addColorStop(0, 'rgba(224, 242, 254, 0.75)');
+            iceGrad.addColorStop(0.4, 'rgba(125, 211, 252, 0.65)');
+            iceGrad.addColorStop(1, 'rgba(14, 116, 144, 0.7)');
+
+            ctx.fillStyle = iceGrad;
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.95)';
+            ctx.lineWidth = 2.2 * scale;
+
+            // Sharp faceted crystal block geometry
+            ctx.beginPath();
+            ctx.moveTo(iceX + 12 * scale, iceY);
+            ctx.lineTo(iceX + iceW - 14 * scale, iceY - 4 * scale);
+            ctx.lineTo(iceX + iceW + 6 * scale, iceY + 14 * scale);
+            ctx.lineTo(iceX + iceW - 4 * scale, iceY + iceH);
+            ctx.lineTo(iceX - 6 * scale, iceY + iceH);
+            ctx.lineTo(iceX - 10 * scale, iceY + 16 * scale);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Inner crystal facet ridges
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+            ctx.lineWidth = 1.2 * scale;
+            ctx.beginPath();
+            ctx.moveTo(iceX + 12 * scale, iceY);
+            ctx.lineTo(iceX + 32 * scale, iceY + 18 * scale);
+            ctx.lineTo(iceX + iceW - 14 * scale, iceY - 4 * scale);
+            ctx.moveTo(iceX + 32 * scale, iceY + 18 * scale);
+            ctx.lineTo(iceX + 28 * scale, iceY + iceH);
+            ctx.stroke();
+
+            // Sparkling diamond glints
+            const sparkles = [
+                { x: iceX + 14 * scale, y: iceY + 5 * scale, phase: 0 },
+                { x: iceX + iceW - 10 * scale, y: iceY + 9 * scale, phase: 2.1 },
+                { x: iceX + 34 * scale, y: iceY + 14 * scale, phase: 4.2 }
+            ];
+            sparkles.forEach(sp => {
+                const spScale = (Math.sin(Date.now() * 0.012 + sp.phase) * 0.4 + 0.6) * scale * iceProg;
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(sp.x, sp.y, 2.8 * spScale, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            ctx.restore();
         }
 
         ctx.restore();
@@ -10247,8 +17317,11 @@
 
     // Game loop
     function gameLoop() {
-        const isNature = currentLevelData.theme === 'nature' || currentLevelIndex >= 21;
-        if (isNature) {
+        const isSnow = currentLevelData.theme === 'snow' || currentLevelIndex >= 41;
+        const isNature = !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
+        if (isSnow) {
+            updateAmbientSnow();
+        } else if (isNature) {
             updateAmbientLeaves();
         }
 
@@ -10258,17 +17331,28 @@
             updateParticles();
             updateCamera();
         } else if (currentState === STATES.CUTSCENE) {
-            if (cutsceneIntro21.active) {
+            if (cutsceneIntro21 && cutsceneIntro21.active) {
                 updateCutsceneIntro21();
+            } else if (cutsceneIntro41 && cutsceneIntro41.active) {
+                updateCutsceneIntro41();
             } else if (typeof golemCutscene !== 'undefined' && golemCutscene && golemCutscene.active) {
                 updateGolemDefeatCutscene();
             } else if (typeof golemIntroCutscene !== 'undefined' && golemIntroCutscene && golemIntroCutscene.active) {
                 updateGolemIntroCutscene();
+            } else if (typeof yetiDefeatCutscene !== 'undefined' && yetiDefeatCutscene && yetiDefeatCutscene.active) {
+                updateYetiDefeatCutscene();
+            } else if (typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene && yetiIntroCutscene.active) {
+                updateYetiIntroCutscene();
             } else {
                 updateCutscene();
             }
             updateParticles();
-            updateCamera();
+            if (!((typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene && yetiIntroCutscene.active) || 
+                  (typeof yetiDefeatCutscene !== 'undefined' && yetiDefeatCutscene && yetiDefeatCutscene.active) ||
+                  (typeof golemIntroCutscene !== 'undefined' && golemIntroCutscene && golemIntroCutscene.active) ||
+                  (typeof golemCutscene !== 'undefined' && golemCutscene && golemCutscene.active))) {
+                updateCamera();
+            }
         } else if (currentState === STATES.MENU || currentState === STATES.LEVEL_SELECT) {
             updateCamera();
             player.animTime += 0.05;
@@ -10335,7 +17419,10 @@
         victoryScreen.classList.add('hidden');
 
         const nextLevelNum = currentLevelIndex + 1;
-        if (nextLevelNum > 20 && currentSelectPage === 1) {
+        if (nextLevelNum > 40) {
+            currentSelectPage = 3;
+            generateLevelsGrid();
+        } else if (nextLevelNum > 20 && currentSelectPage === 1) {
             currentSelectPage = 2;
             generateLevelsGrid();
         }
@@ -10381,7 +17468,13 @@
 
         triggerFadeTransition(() => {
             player.reset();
-            if (currentLevelIndex >= 20) {
+            if (currentLevelIndex >= 41) {
+                currentSelectPage = 3;
+                generateLevelsGrid();
+                levelSelectScreen.classList.remove('hidden');
+                levelSelectScreen.classList.add('screen-active');
+                currentState = STATES.LEVEL_SELECT;
+            } else if (currentLevelIndex >= 20) {
                 if (currentLevelIndex >= 21) {
                     currentSelectPage = 2;
                 }
@@ -10426,6 +17519,14 @@
 
             triggerFadeTransition(() => {
                 player.reset();
+                if (currentLevelIndex >= 41) {
+                    currentSelectPage = 3;
+                } else if (currentLevelIndex >= 21) {
+                    currentSelectPage = 2;
+                } else {
+                    currentSelectPage = 1;
+                }
+                generateLevelsGrid();
                 levelSelectScreen.classList.remove('hidden');
                 levelSelectScreen.classList.add('screen-active');
                 currentState = STATES.LEVEL_SELECT;
@@ -10455,6 +17556,14 @@
 
             triggerFadeTransition(() => {
                 player.reset();
+                if (currentLevelIndex >= 41) {
+                    currentSelectPage = 3;
+                } else if (currentLevelIndex >= 21) {
+                    currentSelectPage = 2;
+                } else {
+                    currentSelectPage = 1;
+                }
+                generateLevelsGrid();
                 levelSelectScreen.classList.remove('hidden');
                 levelSelectScreen.classList.add('screen-active');
                 currentState = STATES.LEVEL_SELECT;

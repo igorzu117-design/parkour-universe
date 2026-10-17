@@ -90,11 +90,12 @@
                 <div class="level-pagination-indicator" id="levelPaginationIndicator">
                     <span class="indicator-dot active" id="dotPage1" title="1 Страница: Здание"></span>
                     <span class="indicator-dot" id="dotPage2" title="2 Страница: Природа"></span>
+                    <span class="indicator-dot" id="dotPage3" title="3 Страница: Вечный холод"></span>
                 </div>
             </div>
         </div>
 
-        <!-- Cutscene Cinematic Overlay (Level 21 Intro) -->
+        <!-- Cutscene Cinematic Overlay (Level 21 & 41 Intro) -->
         <div id="cutsceneOverlay" class="overlay cutscene-overlay hidden">
             <button id="btnSkipCutscene" class="btn-skip-cutscene">Пропустить ⏩</button>
             <div class="cutscene-banner animate-slide-up">
@@ -106,6 +107,39 @@
 
         <!-- HUD overlay (during gameplay) -->
         <div id="hud" class="overlay hud-overlay hidden">
+            <!-- Left HUD Panel: Controls Hint Window, then Lighter & Cold Gauges below it -->
+            <div class="hud-left-panel">
+                <div class="controls-overlay" id="controlsOverlay">
+                    <div><span>A/D</span> Движение</div>
+                    <div><span>SHIFT</span> Рывок</div>
+                    <div><span>CTRL+SHIFT</span> Кувырок</div>
+                    <div><span>ПРОБЕЛ</span> Прыжок / Залезть</div>
+                    <div id="ctrlLadder"><span>E</span> Лестница</div>
+                    <div id="ctrlTurnik"><span>ТУРНИК</span> A/D раскачка, Пробел рывок</div>
+                    <div id="ctrlRope"><span>КАНАТ</span> A/D раскачка, Пробел рывок</div>
+                    <div><span>ESC</span> Пауза</div>
+                </div>
+
+                <!-- Inventory Badge (Lighter in Snow Biome) -->
+                <div class="inventory-hud hidden" id="inventoryHud">
+                    <span class="inv-icon">🔥</span>
+                    <span class="inv-name" id="invItemName">Зажигалка</span>
+                </div>
+
+                <!-- Cold Meter Gauge HUD (Snow Biome) -->
+                <div class="cold-hud hidden" id="coldHud">
+                    <div class="cold-hud-header">
+                        <span class="cold-icon" id="coldIcon">❄️</span>
+                        <span class="cold-title" id="coldTitle">ХОЛОД</span>
+                        <span class="cold-val" id="coldPercent">0%</span>
+                    </div>
+                    <div class="cold-bar-track">
+                        <div class="cold-bar-fill" id="coldBarFill"></div>
+                    </div>
+                    <div class="cold-status-text" id="coldStatusText">Температура в норме</div>
+                </div>
+            </div>
+
             <div class="hint-banner hidden" id="ledgeHint">
                 <span class="hint-key">ПРОБЕЛ</span> Нажмите, чтобы залезть на край!
             </div>
@@ -118,16 +152,6 @@
                 <div class="boss-health-track">
                     <div class="boss-health-fill" id="bossHealthBar"></div>
                 </div>
-            </div>
-            <div class="controls-overlay" id="controlsOverlay">
-                <div><span>A/D</span> Движение</div>
-                <div><span>SHIFT</span> Рывок</div>
-                <div><span>CTRL+SHIFT</span> Кувырок</div>
-                <div><span>ПРОБЕЛ</span> Прыжок / Залезть</div>
-                <div id="ctrlLadder"><span>E</span> Лестница</div>
-                <div id="ctrlTurnik"><span>ТУРНИК</span> A/D раскачка, Пробел рывок</div>
-                <div id="ctrlRope"><span>КАНАТ</span> A/D раскачка, Пробел рывок</div>
-                <div><span>ESC</span> Пауза</div>
             </div>
             <button id="btnPause" class="btn-pause">
                 <span>⏸️</span> Пауза
@@ -194,6 +218,6 @@
         </div>
     </div>
 
-    <script src="game.js?v=rope_turnik_anim_fix"></script>
+    <script src="game.js?v=eternal_cold_page3_fixed"></script>
 </body>
 </html>
