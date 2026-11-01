@@ -70,7 +70,7 @@
                 <p class="level-subtext" id="levelSubtext">Выберите доступный уровень для старта</p>
                 
                 <div class="level-browser-wrapper">
-                    <button id="btnPrevPage" class="level-page-arrow prev" title="Предыдущая страница (Здание)" aria-label="Предыдущая страница">
+                    <button id="btnPrevPage" class="level-page-arrow prev disabled" disabled title="Предыдущая страница отсутствует" aria-label="Предыдущая страница отсутствует">
                         <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="15 18 9 12 15 6"></polyline>
                         </svg>
@@ -80,7 +80,7 @@
                         <!-- 20 Level tiles generated via JS -->
                     </div>
 
-                    <button id="btnNextPage" class="level-page-arrow next" title="Следующая страница (Природа)" aria-label="Следующая страница">
+                    <button id="btnNextPage" class="level-page-arrow next theme-nature pulse-hint" title="Следующая страница: Дикая Природа" aria-label="Следующая страница: Дикая Природа">
                         <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
@@ -91,6 +91,7 @@
                     <span class="indicator-dot active" id="dotPage1" title="1 Страница: Здание"></span>
                     <span class="indicator-dot" id="dotPage2" title="2 Страница: Природа"></span>
                     <span class="indicator-dot" id="dotPage3" title="3 Страница: Вечный холод"></span>
+                    <span class="indicator-dot" id="dotPage4" title="4 Страница: Исохшая земля"></span>
                 </div>
             </div>
         </div>
@@ -138,10 +139,39 @@
                     </div>
                     <div class="cold-status-text" id="coldStatusText">Температура в норме</div>
                 </div>
+
+                <!-- Player Health Bar HUD (Desert Biome / Page 4) -->
+                <div class="health-hud hidden" id="healthHud">
+                    <div class="health-hud-header">
+                        <span class="health-icon" id="healthIcon">❤️</span>
+                        <span class="health-title" id="healthTitle">ЗДОРОВЬЕ</span>
+                        <span class="health-val" id="healthPercent">100 / 100</span>
+                    </div>
+                    <div class="health-bar-track">
+                        <div class="health-bar-fill" id="healthBarFill"></div>
+                    </div>
+                    <div class="health-status-text" id="healthStatusText">100%: отличное самочувствие</div>
+                </div>
+
+                <!-- Player Thirst Bar HUD (Desert Biome / Level 62+) -->
+                <div class="thirst-hud hidden" id="thirstHud">
+                    <div class="thirst-hud-header">
+                        <span class="thirst-icon" id="thirstIcon">💧</span>
+                        <span class="thirst-title" id="thirstTitle">ЖАЖДА</span>
+                        <span class="thirst-val" id="thirstPercent">100%</span>
+                    </div>
+                    <div class="thirst-bar-track">
+                        <div class="thirst-bar-fill" id="thirstBarFill"></div>
+                    </div>
+                    <div class="thirst-status-text" id="thirstStatusText">Водный баланс в норме</div>
+                </div>
             </div>
 
             <div class="hint-banner hidden" id="ledgeHint">
                 <span class="hint-key">ПРОБЕЛ</span> Нажмите, чтобы залезть на край!
+            </div>
+            <div class="hint-banner hidden" id="wellHint">
+                <span class="hint-key">E</span> Нажмите, чтобы напиться воды из колодца!
             </div>
             <!-- Boss Health Bar HUD -->
             <div class="boss-hud hidden" id="bossHud">

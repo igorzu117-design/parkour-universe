@@ -46,6 +46,7 @@
     const dotPage1 = document.getElementById('dotPage1');
     const dotPage2 = document.getElementById('dotPage2');
     const dotPage3 = document.getElementById('dotPage3');
+    const dotPage4 = document.getElementById('dotPage4');
     const levelPageBadge = document.getElementById('levelPageBadge');
     const cutsceneOverlay = document.getElementById('cutsceneOverlay');
     const cutsceneChapter = document.getElementById('cutsceneChapter');
@@ -61,6 +62,19 @@
     const coldPercent = document.getElementById('coldPercent');
     const coldBarFill = document.getElementById('coldBarFill');
     const coldStatusText = document.getElementById('coldStatusText');
+    const healthHud = document.getElementById('healthHud');
+    const healthIcon = document.getElementById('healthIcon');
+    const healthTitle = document.getElementById('healthTitle');
+    const healthPercent = document.getElementById('healthPercent');
+    const healthBarFill = document.getElementById('healthBarFill');
+    const healthStatusText = document.getElementById('healthStatusText');
+    const thirstHud = document.getElementById('thirstHud');
+    const thirstIcon = document.getElementById('thirstIcon');
+    const thirstTitle = document.getElementById('thirstTitle');
+    const thirstPercent = document.getElementById('thirstPercent');
+    const thirstBarFill = document.getElementById('thirstBarFill');
+    const thirstStatusText = document.getElementById('thirstStatusText');
+    const wellHint = document.getElementById('wellHint');
 
     // Sound Engine (Web Audio API)
     let audioCtx = null;
@@ -505,6 +519,155 @@
                 gain.connect(audioCtx.destination);
                 osc.start(now);
                 osc.stop(now + 0.22);
+            } else if (type === 'cactusPrick') {
+                // Sharp thorn puncture prick & thud
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(840, now);
+                osc.frequency.exponentialRampToValueAtTime(120, now + 0.14);
+                gain.gain.setValueAtTime(0.35, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.14);
+            } else if (type === 'steamWarm') {
+                // Warm thawing steam whoosh
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(240, now);
+                osc.frequency.exponentialRampToValueAtTime(540, now + 0.38);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.38);
+            } else if (type === 'waterDrink') {
+                // Refreshing drinking gulps and bubbling
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(420, now);
+                osc.frequency.exponentialRampToValueAtTime(620, now + 0.12);
+                osc.frequency.exponentialRampToValueAtTime(360, now + 0.26);
+                gain.gain.setValueAtTime(0.28, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.28);
+            } else if (type === 'waterSplash') {
+                // Crisp cool water splash
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(880, now);
+                osc.frequency.exponentialRampToValueAtTime(320, now + 0.18);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            } else if (type === 'mummyRoar') {
+                // Ancient deep rumbling pharaoh moan / roar
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.type = 'sawtooth';
+                osc1.frequency.setValueAtTime(45, now);
+                osc1.frequency.exponentialRampToValueAtTime(110, now + 0.35);
+                osc1.frequency.exponentialRampToValueAtTime(35, now + 1.6);
+                gain1.gain.setValueAtTime(0.65, now);
+                gain1.gain.exponentialRampToValueAtTime(0.01, now + 1.6);
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.start(now);
+                osc1.stop(now + 1.6);
+
+                const osc2 = audioCtx.createOscillator();
+                const gain2 = audioCtx.createGain();
+                osc2.type = 'square';
+                osc2.frequency.setValueAtTime(65, now);
+                osc2.frequency.exponentialRampToValueAtTime(130, now + 0.45);
+                osc2.frequency.exponentialRampToValueAtTime(28, now + 1.7);
+                gain2.gain.setValueAtTime(0.35, now);
+                gain2.gain.exponentialRampToValueAtTime(0.01, now + 1.7);
+                osc2.connect(gain2);
+                gain2.connect(audioCtx.destination);
+                osc2.start(now);
+                osc2.stop(now + 1.7);
+            } else if (type === 'punch') {
+                // Fast athletic punch whoosh
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(260, now);
+                osc.frequency.exponentialRampToValueAtTime(80, now + 0.12);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.12);
+            } else if (type === 'mummyHit') {
+                // Punch impact thud + dry sand crumbling
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.exponentialRampToValueAtTime(50, now + 0.14);
+                gain.gain.setValueAtTime(0.45, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.14);
+            } else if (type === 'pyramidCollect') {
+                // Radiant golden crystal chime arpeggio
+                const notes = [659.25, 830.61, 987.77, 1318.51]; // E5, G#5, B5, E6
+                notes.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    const nTime = now + idx * 0.08;
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, nTime);
+                    gain.gain.setValueAtTime(0.32, nTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, nTime + 0.45);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(nTime);
+                    osc.stop(nTime + 0.45);
+                });
+            } else if (type === 'anubisSlam') {
+                // Subterranean ground slam boom
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(120, now);
+                osc.frequency.exponentialRampToValueAtTime(30, now + 0.4);
+                gain.gain.setValueAtTime(0.55, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === 'sandTornado') {
+                // Deep howling wind vortex
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(75, now);
+                osc.frequency.exponentialRampToValueAtTime(160, now + 0.5);
+                osc.frequency.exponentialRampToValueAtTime(60, now + 1.2);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 1.2);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 1.2);
             }
         } catch (e) {
             console.error(e);
@@ -592,6 +755,11 @@
                     finishLevel41IntroCutscene();
                     return;
                 }
+            } else if (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) {
+                if (e.code === 'Space' || e.code === 'Escape' || e.code === 'Enter') {
+                    finishLevel61IntroCutscene();
+                    return;
+                }
             } else if (typeof golemCutscene !== 'undefined' && golemCutscene && golemCutscene.active) {
                 if (e.code === 'Space' || e.code === 'Escape' || e.code === 'Enter') {
                     finishGolemDefeatCutscene();
@@ -612,6 +780,16 @@
                     finishYetiDefeatCutscene();
                     return;
                 }
+            } else if (typeof mummyIntroCutscene !== 'undefined' && mummyIntroCutscene && mummyIntroCutscene.active) {
+                if (e.code === 'Space' || e.code === 'Escape' || e.code === 'Enter') {
+                    finishMummyIntroCutscene();
+                    return;
+                }
+            } else if (typeof mummyDefeatCutscene !== 'undefined' && mummyDefeatCutscene && mummyDefeatCutscene.active) {
+                if (e.code === 'Space' || e.code === 'Escape' || e.code === 'Enter') {
+                    finishMummyDefeatCutscene();
+                    return;
+                }
             }
         }
 
@@ -627,9 +805,19 @@
                     playSound('jump');
                     generateLevelsGrid();
                     return;
+                } else if (currentSelectPage === 3) {
+                    currentSelectPage = 4;
+                    playSound('jump');
+                    generateLevelsGrid();
+                    return;
                 }
             } else if (e.code === 'ArrowLeft') {
-                if (currentSelectPage === 3) {
+                if (currentSelectPage === 4) {
+                    currentSelectPage = 3;
+                    playSound('jump');
+                    generateLevelsGrid();
+                    return;
+                } else if (currentSelectPage === 3) {
                     currentSelectPage = 2;
                     playSound('jump');
                     generateLevelsGrid();
@@ -664,18 +852,37 @@
             keys.interact = true;
             if (currentState === STATES.PLAYING && currentLevelIndex === 60 && typeof yeti !== 'undefined' && yeti.active && player.state !== 'DEFEAT') {
                 playerThrowSnowball();
+            } else if (currentState === STATES.PLAYING && currentLevelIndex === 80 && typeof mummy !== 'undefined' && mummy.active && player.state !== 'DEFEAT') {
+                if (mummy.qteActive) {
+                    handleMummyQteClick();
+                } else {
+                    playerPunch();
+                }
             }
         }
         if (e.code === 'Space') {
             if (!keys.jump) keys.jumpPressedThisFrame = true;
             keys.jump = true;
+            if (currentState === STATES.PLAYING && currentLevelIndex === 80 && typeof mummy !== 'undefined' && mummy.active && mummy.qteActive && player.state !== 'DEFEAT') {
+                handleMummyQteClick();
+            }
         }
     });
 
     canvas.addEventListener('pointerdown', () => {
         initAudio();
-        if (currentState === STATES.PLAYING && currentLevelIndex === 60 && typeof yeti !== 'undefined' && yeti.active && player.state !== 'DEFEAT') {
-            playerThrowSnowball();
+        if (currentState === STATES.PLAYING && player.state !== 'DEFEAT') {
+            if (currentLevelIndex === 60 && typeof yeti !== 'undefined' && yeti.active) {
+                playerThrowSnowball();
+            } else if (currentLevelIndex === 80 && typeof mummy !== 'undefined' && mummy.active) {
+                if (mummy.qteActive) {
+                    handleMummyQteClick();
+                } else {
+                    playerPunch();
+                }
+            } else {
+                playerPunch();
+            }
         }
     });
 
@@ -705,7 +912,8 @@
     let unlockedPage1Levels = 20; // 1st Page: all 20 levels unlocked
     let unlockedPage2Levels = 40; // 2nd Page: levels 21 to 40 unlocked!
     let unlockedPage3Levels = 60; // 3rd Page (Вечный холод): levels 41 to 60 unlocked!
-    let currentSelectPage = 1;    // 1: Building (1-20), 2: Nature (21-40), 3: Eternal Cold (41-60)
+    let unlockedPage4Levels = 80; // 4th Page (Исохшая земля): levels 61-80 unlocked (Boss Level 80)!
+    let currentSelectPage = 1;    // 1: Building (1-20), 2: Nature (21-40), 3: Eternal Cold (41-60), 4: Dried Earth (61-80)
     let currentLevelIndex = 1;
 
     const levelsData = {
@@ -6827,6 +7035,10326 @@
                 h: 420
             },
             flag: null
+        },
+        61: {
+            id: 61,
+            title: "Уровень 61: Исохшая земля",
+            theme: "desert",
+            worldWidth: 13600,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+                { x: 0, y: 540, w: 13600, h: 140, type: 'ground' }
+            ],
+            chasms: [],
+            boxes: [
+                // 2nd Object: Низкая каменная постройка-блокпост (Building 1)
+                { id: 'd61_b1', x: 520, y: 440, w: 200, h: 100, isDesertBuilding: true },
+                // 4th Object: Двухэтажное песчаное здание (Building 2)
+                { id: 'd61_b2', x: 1000, y: 320, w: 240, h: 220, isDesertBuilding: true },
+                // 7th Object: Высокая арка из песчаника с лазом (Building 3, требует подкат)
+                { id: 'd61_b3', x: 1540, y: -200, w: 220, h: 690, isDesertBuilding: true, noLedgeGrab: true },
+                // 9th Object: Сторожевая башня из песчаника (Building 4)
+                { id: 'd61_b4', x: 2060, y: 160, w: 260, h: 380, isDesertBuilding: true, noLedgeGrab: true },
+                // 12th Object: Подвесной каменный мост-карниз (Building 5)
+                { id: 'd61_b5', x: 2480, y: 220, w: 180, h: 60, isDesertBuilding: true },
+                // 14th Object: Песчаный храмовый блок 1 (Building 6)
+                { id: 'd61_b6', x: 2980, y: 280, w: 220, h: 260, isDesertBuilding: true },
+                // 18th Object: Глиняное хранилище (Building 7)
+                { id: 'd61_b7', x: 3500, y: 450, w: 160, h: 90, isDesertBuilding: true },
+                // 20th Object: Высокий каменный бастион 1 (Building 8)
+                { id: 'd61_b8', x: 3940, y: 120, w: 250, h: 420, isDesertBuilding: true, noLedgeGrab: true },
+                // 23rd Object: Навесной песчаный балкон (Building 9)
+                { id: 'd61_b9', x: 4450, y: 240, w: 200, h: 60, isDesertBuilding: true },
+                // 25th Object: Арка ворот из песчаника 2 (Building 10, требует подкат)
+                { id: 'd61_b10', x: 4940, y: -200, w: 220, h: 690, isDesertBuilding: true, noLedgeGrab: true },
+                // 27th Object: Дом торговца из самана (Building 11)
+                { id: 'd61_b11', x: 5460, y: 340, w: 250, h: 200, isDesertBuilding: true },
+                // 31st Object: Наблюдательный форпост (Building 12)
+                { id: 'd61_b12', x: 6000, y: 180, w: 240, h: 360, isDesertBuilding: true, noLedgeGrab: true },
+                // 34th Object: Парящая плита из песчаника 1 (Building 13)
+                { id: 'd61_b13', x: 6520, y: 260, w: 190, h: 55, isDesertBuilding: true },
+                // 36th Object: Ступенчатое здание-терраса (Building 14)
+                { id: 'd61_b14', x: 6980, y: 300, w: 260, h: 240, isDesertBuilding: true },
+                // 40th Object: Древний песчаный монумент (Building 15)
+                { id: 'd61_b15', x: 7550, y: 140, w: 270, h: 400, isDesertBuilding: true, noLedgeGrab: true },
+                // 43rd Object: Арка ворот из песчаника 3 (Building 16, требует подкат)
+                { id: 'd61_b16', x: 8150, y: -200, w: 220, h: 690, isDesertBuilding: true, noLedgeGrab: true },
+                // 45th Object: Низкое песчаное укрытие (Building 17)
+                { id: 'd61_b17', x: 8680, y: 430, w: 180, h: 110, isDesertBuilding: true },
+                // 47th Object: Башня цитадели из камня (Building 18)
+                { id: 'd61_b18', x: 9160, y: 100, w: 260, h: 440, isDesertBuilding: true, noLedgeGrab: true },
+                // 50th Object: Парящая плита из песчаника 2 (Building 19)
+                { id: 'd61_b19', x: 9680, y: 200, w: 200, h: 60, isDesertBuilding: true },
+                // 52nd Object: Здание пустынного гарнизона (Building 20)
+                { id: 'd61_b20', x: 10200, y: 280, w: 270, h: 260, isDesertBuilding: true },
+                // 55th Object: Высокий каменный бастион 2 (Building 21)
+                { id: 'd61_b21', x: 10750, y: 120, w: 250, h: 420, isDesertBuilding: true, noLedgeGrab: true },
+                // 57th Object: Арка ворот из песчаника 4 (Building 22, требует подкат)
+                { id: 'd61_b22', x: 11300, y: -200, w: 220, h: 690, isDesertBuilding: true, noLedgeGrab: true },
+                // 58th Object: Терраса святилища солнца (Building 23)
+                { id: 'd61_b23', x: 11800, y: 260, w: 300, h: 280, isDesertBuilding: true },
+                // 59th Object: Финальный песчаный дворец-пирамида (Building 24)
+                { id: 'd61_b24', x: 12400, y: 120, w: 380, h: 420, isDesertBuilding: true, noLedgeGrab: true }
+            ],
+            turniks: [],
+            ropes: [],
+            ladders: [
+                // 5th Object: Лестница на здании 2
+                { id: 'd61_l1', x: 1025, topY: 320, bottomY: 540, w: 38, isDesertLadder: true },
+                // 10th Object: Лестница на сторожевой башне (Building 4)
+                { id: 'd61_l2', x: 2085, topY: 160, bottomY: 540, w: 38, isDesertLadder: true },
+                // 15th Object: Лестница на храмовом блоке (Building 6)
+                { id: 'd61_l3', x: 3005, topY: 280, bottomY: 540, w: 38, isDesertLadder: true },
+                // 21st Object: Лестница на бастионе 1 (Building 8)
+                { id: 'd61_l4', x: 3965, topY: 120, bottomY: 540, w: 38, isDesertLadder: true },
+                // 28th Object: Лестница на доме торговца (Building 11)
+                { id: 'd61_l5', x: 5485, topY: 340, bottomY: 540, w: 38, isDesertLadder: true },
+                // 32nd Object: Лестница на форпосте (Building 12)
+                { id: 'd61_l6', x: 6025, topY: 180, bottomY: 540, w: 38, isDesertLadder: true },
+                // 37th Object: Лестница на ступенчатом здании (Building 14)
+                { id: 'd61_l7', x: 7005, topY: 300, bottomY: 540, w: 38, isDesertLadder: true },
+                // 41st Object: Лестница на древнем монументе (Building 15)
+                { id: 'd61_l8', x: 7575, topY: 140, bottomY: 540, w: 38, isDesertLadder: true },
+                // 48th Object: Лестница на башне цитадели (Building 18)
+                { id: 'd61_l9', x: 9185, topY: 100, bottomY: 540, w: 38, isDesertLadder: true },
+                // 53rd Object: Лестница на здании гарнизона (Building 20)
+                { id: 'd61_l10', x: 10225, topY: 280, bottomY: 540, w: 38, isDesertLadder: true },
+                // 56th Object: Лестница на бастионе 2 (Building 21)
+                { id: 'd61_l11', x: 10775, topY: 120, bottomY: 540, w: 38, isDesertLadder: true },
+                // 60th Object: Лестница на финальном дворце (Building 24)
+                { id: 'd61_l12', x: 12430, topY: 120, bottomY: 540, w: 42, isDesertLadder: true }
+            ],
+            cacti: [
+                // 1st Object: Кактус сагуаро перед блокпостом
+                { id: 'd61_c1', x: 380, y: 540, w: 34, h: 70, type: 'saguaro', hasFlower: true },
+                // 3rd Object: Куст колючих кактусов за блокпостом
+                { id: 'd61_c2', x: 820, y: 540, w: 42, h: 55, type: 'cluster' },
+                // 6th Object: Высокий кактус перед первой аркой
+                { id: 'd61_c3', x: 1370, y: 540, w: 36, h: 90, type: 'tall', hasFlower: true },
+                // 8th Object: Кактус за первой аркой
+                { id: 'd61_c4', x: 1880, y: 540, w: 34, h: 70, type: 'saguaro' },
+                // 11th Object: Кактус на крыше сторожевой башни
+                { id: 'd61_c5', x: 2250, y: 160, w: 32, h: 60, type: 'saguaro' },
+                // 13th Object: Кактус в песчаной низине
+                { id: 'd61_c6', x: 2790, y: 540, w: 38, h: 75, type: 'saguaro', hasFlower: true },
+                // 16th Object: Кактус на краю храмового блока
+                { id: 'd61_c7', x: 3140, y: 280, w: 32, h: 60, type: 'saguaro' },
+                // 17th Object: Кактус перед глиняным хранилищем
+                { id: 'd61_c8', x: 3350, y: 540, w: 36, h: 70, type: 'saguaro' },
+                // 19th Object: Колючий кластер за хранилищем
+                { id: 'd61_c9', x: 3760, y: 540, w: 45, h: 55, type: 'cluster' },
+                // 22nd Object: Высокий кактус под балконом
+                { id: 'd61_c10', x: 4280, y: 540, w: 36, h: 90, type: 'tall', hasFlower: true },
+                // 24th Object: Кактус перед второй аркой
+                { id: 'd61_c11', x: 4760, y: 540, w: 38, h: 70, type: 'saguaro' },
+                // 26th Object: Кактус за второй аркой
+                { id: 'd61_c12', x: 5280, y: 540, w: 36, h: 75, type: 'saguaro' },
+                // 29th Object: Кактус на крыше дома торговца
+                { id: 'd61_c13', x: 5640, y: 340, w: 32, h: 60, type: 'saguaro' },
+                // 30th Object: Кактус в проходе к форпосту
+                { id: 'd61_c14', x: 5840, y: 540, w: 38, h: 70, type: 'saguaro', hasFlower: true },
+                // 33rd Object: Кактус под наблюдательным форпостом
+                { id: 'd61_c15', x: 6340, y: 540, w: 40, h: 80, type: 'tall' },
+                // 35th Object: Колючий кактус под парящей плитой 1
+                { id: 'd61_c16', x: 6760, y: 540, w: 42, h: 60, type: 'cluster' },
+                // 38th Object: Кактус на крыше ступенчатого здания
+                { id: 'd61_c17', x: 7170, y: 300, w: 32, h: 60, type: 'saguaro' },
+                // 39th Object: Кактус перед древним монументом
+                { id: 'd61_c18', x: 7370, y: 540, w: 38, h: 70, type: 'saguaro', hasFlower: true },
+                // 42nd Object: Гигантский ветвистый кактус за монументом
+                { id: 'd61_c19', x: 7940, y: 540, w: 40, h: 95, type: 'tall', hasFlower: true },
+                // 44th Object: Кактус перед песчаным укрытием
+                { id: 'd61_c20', x: 8490, y: 540, w: 36, h: 70, type: 'saguaro' },
+                // 46th Object: Колючий кластер кактусов за укрытием
+                { id: 'd61_c21', x: 8960, y: 540, w: 44, h: 55, type: 'cluster' },
+                // 49th Object: Кактус на верхнем карнизе цитадели
+                { id: 'd61_c22', x: 9350, y: 100, w: 32, h: 60, type: 'saguaro' },
+                // 51st Object: Кактус под парящей плитой 2
+                { id: 'd61_c23', x: 9980, y: 540, w: 40, h: 80, type: 'tall', hasFlower: true },
+                // 54th Object: Кактус на крыше гарнизона
+                { id: 'd61_c24', x: 10400, y: 280, w: 32, h: 60, type: 'saguaro' }
+            ],
+            // 61st Object: Золотое знамя солнца (Флаг завершения уровня)
+            flag: { x: 12650, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        62: {
+            id: 62,
+            title: "Уровень 62 - Пустынный колодец",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 13200,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+                { x: 0, y: 540, w: 13200, h: 200 },
+                // Sky Walkways / Sandstone Bridges between high towers
+                { x: 1960, y: 360, w: 220, h: 32 },
+                { x: 4420, y: 320, w: 240, h: 32 },
+                { x: 7460, y: 300, w: 260, h: 32 },
+                { x: 10460, y: 310, w: 250, h: 32 }
+            ],
+            boxes: [
+                // 1. Входной блокпост
+                { id: 'd62_b1', x: 480, y: 440, w: 200, h: 100, isDesertBuilding: true, isSmall: true },
+                // 2. Дозорная башня 1
+                { id: 'd62_b2', x: 920, y: 260, w: 180, h: 280, isDesertBuilding: true },
+                // 3. Низкий жилой блок
+                { id: 'd62_b3', x: 1380, y: 420, w: 220, h: 120, isDesertBuilding: true, isSmall: true },
+                // 4. Первая арка с парапетом
+                { id: 'd62_b4', x: 1720, y: 300, w: 240, h: 240, isDesertBuilding: true },
+                // 5. Сторожевой пилон
+                { id: 'd62_b5', x: 2180, y: 180, w: 200, h: 360, isDesertBuilding: true },
+                // 6. Хранилище у первого колодца
+                { id: 'd62_b6', x: 2950, y: 380, w: 230, h: 160, isDesertBuilding: true, isSmall: true },
+                // 7. Ступенчатый жилой дом
+                { id: 'd62_b7', x: 3350, y: 280, w: 260, h: 260, isDesertBuilding: true },
+                // 8. Высокий бастион 1
+                { id: 'd62_b8', x: 3880, y: 120, w: 220, h: 420, isDesertBuilding: true },
+                // 9. Навесной переход
+                { id: 'd62_b9', x: 4180, y: 220, w: 240, h: 320, isDesertBuilding: true },
+                // 10. Восточные ворота
+                { id: 'd62_b10', x: 4660, y: 300, w: 250, h: 240, isDesertBuilding: true },
+                // 11. Дом караванщика
+                { id: 'd62_b11', x: 5180, y: 380, w: 210, h: 160, isDesertBuilding: true, isSmall: true },
+                // 12. Центральная башня оазиса
+                { id: 'd62_b12', x: 5640, y: 160, w: 240, h: 380, isDesertBuilding: true },
+                // 13. Защитное укрытие перед 2-м колодцем
+                { id: 'd62_b13', x: 6020, y: 400, w: 180, h: 140, isDesertBuilding: true, isSmall: true },
+                // 14. Здание травника у оазиса
+                { id: 'd62_b14', x: 6700, y: 340, w: 230, h: 200, isDesertBuilding: true, isSmall: true },
+                // 15. Храмовый пилон
+                { id: 'd62_b15', x: 7080, y: 140, w: 220, h: 400, isDesertBuilding: true },
+                // 16. Большой ступенчатый зиккурат
+                { id: 'd62_b16', x: 7720, y: 240, w: 280, h: 300, isDesertBuilding: true },
+                // 17. Дозорная вышка цитадели
+                { id: 'd62_b17', x: 8250, y: 140, w: 200, h: 400, isDesertBuilding: true },
+                // 18. Арсенал крепости
+                { id: 'd62_b18', x: 8700, y: 320, w: 240, h: 220, isDesertBuilding: true },
+                // 19. Цитадель пустыни
+                { id: 'd62_b19', x: 9180, y: 100, w: 260, h: 440, isDesertBuilding: true },
+                // 20. Песчаный форпост перед 3-м колодцем
+                { id: 'd62_b20', x: 9550, y: 380, w: 180, h: 160, isDesertBuilding: true, isSmall: true },
+                // 21. Казарма гарнизона
+                { id: 'd62_b21', x: 10200, y: 280, w: 250, h: 260, isDesertBuilding: true },
+                // 22. Великий бастион
+                { id: 'd62_b22', x: 10710, y: 120, w: 230, h: 420, isDesertBuilding: true },
+                // 23. Триумфальные золотые ворота
+                { id: 'd62_b23', x: 11200, y: 260, w: 260, h: 280, isDesertBuilding: true },
+                // 24. Внешний дворец
+                { id: 'd62_b24', x: 11700, y: 200, w: 240, h: 340, isDesertBuilding: true },
+                // 25. Зал правителя
+                { id: 'd62_b25', x: 12150, y: 160, w: 260, h: 380, isDesertBuilding: true },
+                // 26. Финальный царский дворец с флагом
+                { id: 'd62_b26', x: 12600, y: 120, w: 280, h: 420, isDesertBuilding: true }
+            ],
+            ladders: [
+                // Лестница на дозорной башне 1
+                { id: 'd62_l1', x: 935, topY: 260, bottomY: 540, w: 38, isDesertLadder: true },
+                // Лестница на арке 1
+                { id: 'd62_l2', x: 1735, topY: 300, bottomY: 540, w: 38, isDesertLadder: true },
+                // Лестница на сторожевом пилоне
+                { id: 'd62_l3', x: 2195, topY: 180, bottomY: 540, w: 38, isDesertLadder: true },
+                // Лестница на доме у колодца 1
+                { id: 'd62_l4', x: 2965, topY: 380, bottomY: 540, w: 38, isDesertLadder: true },
+                // Лестница на высоком бастионе 1
+                { id: 'd62_l5', x: 3895, topY: 120, bottomY: 540, w: 38, isDesertLadder: true },
+                // Лестница на восточных воротах
+                { id: 'd62_l6', x: 4675, topY: 300, bottomY: 540, w: 38, isDesertLadder: true },
+                // Лестница на башне оазиса
+                { id: 'd62_l7', x: 5655, topY: 160, bottomY: 540, w: 38, isDesertLadder: true },
+                // Лестница на храмовом пилоне
+                { id: 'd62_l8', x: 7095, topY: 140, bottomY: 540, w: 38, isDesertLadder: true },
+                // Лестница на зиккурате
+                { id: 'd62_l9', x: 7735, topY: 240, bottomY: 540, w: 38, isDesertLadder: true },
+                // Лестница на вышке цитадели
+                { id: 'd62_l10', x: 8265, topY: 140, bottomY: 540, w: 38, isDesertLadder: true },
+                // Лестница на цитадели
+                { id: 'd62_l11', x: 9195, topY: 100, bottomY: 540, w: 38, isDesertLadder: true },
+                // Лестница на казарме
+                { id: 'd62_l12', x: 10215, topY: 280, bottomY: 540, w: 38, isDesertLadder: true },
+                // Лестница на великом бастионе
+                { id: 'd62_l13', x: 10725, topY: 120, bottomY: 540, w: 38, isDesertLadder: true },
+                // Лестница на финальном царском дворце
+                { id: 'd62_l14', x: 12615, topY: 120, bottomY: 540, w: 42, isDesertLadder: true }
+            ],
+            cacti: [
+                { id: 'd62_c1', x: 360, y: 540, w: 34, h: 70, type: 'saguaro', hasFlower: true },
+                { id: 'd62_c2', x: 760, y: 540, w: 42, h: 55, type: 'cluster' },
+                { id: 'd62_c3', x: 1240, y: 540, w: 36, h: 85, type: 'tall', hasFlower: true },
+                { id: 'd62_c4', x: 1650, y: 540, w: 34, h: 70, type: 'saguaro' },
+                { id: 'd62_c5', x: 2260, y: 180, w: 32, h: 60, type: 'saguaro' },
+                { id: 'd62_c6', x: 2480, y: 540, w: 38, h: 75, type: 'saguaro', hasFlower: true },
+                // Кактус за 1-м колодцем
+                { id: 'd62_c7', x: 2890, y: 540, w: 40, h: 70, type: 'saguaro' },
+                { id: 'd62_c8', x: 3240, y: 540, w: 42, h: 55, type: 'cluster' },
+                { id: 'd62_c9', x: 3720, y: 540, w: 36, h: 85, type: 'tall', hasFlower: true },
+                { id: 'd62_c10', x: 4500, y: 540, w: 36, h: 70, type: 'saguaro' },
+                { id: 'd62_c11', x: 5020, y: 540, w: 38, h: 75, type: 'saguaro' },
+                { id: 'd62_c12', x: 5520, y: 540, w: 44, h: 60, type: 'cluster' },
+                { id: 'd62_c13', x: 5960, y: 540, w: 36, h: 80, type: 'tall', hasFlower: true },
+                // Кактус за 2-м колодцем
+                { id: 'd62_c14', x: 6980, y: 540, w: 38, h: 70, type: 'saguaro' },
+                { id: 'd62_c15', x: 6940, y: 540, w: 42, h: 55, type: 'cluster' },
+                { id: 'd62_c16', x: 7580, y: 540, w: 36, h: 85, type: 'tall', hasFlower: true },
+                { id: 'd62_c17', x: 8100, y: 540, w: 38, h: 70, type: 'saguaro' },
+                { id: 'd62_c18', x: 8560, y: 540, w: 44, h: 60, type: 'cluster' },
+                { id: 'd62_c19', x: 9060, y: 540, w: 36, h: 85, type: 'tall', hasFlower: true },
+                { id: 'd62_c20', x: 9320, y: 100, w: 32, h: 60, type: 'saguaro' },
+                { id: 'd62_c21', x: 9540, y: 540, w: 38, h: 70, type: 'saguaro' },
+                // Кактус за 3-м колодцем
+                { id: 'd62_c22', x: 10160, y: 540, w: 38, h: 70, type: 'saguaro', hasFlower: true },
+                { id: 'd62_c23', x: 10580, y: 540, w: 42, h: 55, type: 'cluster' },
+                { id: 'd62_c24', x: 11060, y: 540, w: 36, h: 85, type: 'tall', hasFlower: true },
+                { id: 'd62_c25', x: 11560, y: 540, w: 38, h: 70, type: 'saguaro' },
+                { id: 'd62_c26', x: 12020, y: 540, w: 42, h: 60, type: 'cluster' }
+            ],
+            // 3 Пустынных колодца для утоления жажды и восстановления здоровья
+            wells: [
+                { id: 'd62_w1', x: 2680, y: 540, w: 96, h: 110 },
+                { id: 'd62_w2', x: 6450, y: 540, w: 96, h: 110 },
+                { id: 'd62_w3', x: 9960, y: 540, w: 96, h: 110 }
+            ],
+            // Золотое знамя солнца (Флаг завершения уровня)
+            flag: { x: 12720, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        63: {
+            id: 63,
+            title: "Уровень 63: Палящие дюны",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 12600,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 12600,
+                    "h": 200
+          },
+          {
+                    "x": 1510,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          },
+          {
+                    "x": 4875,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          },
+          {
+                    "x": 8285,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          },
+          {
+                    "x": 11660,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d63_b1",
+                    "x": 450,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d63_b2",
+                    "x": 850,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d63_b3",
+                    "x": 1280,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d63_b4",
+                    "x": 1770,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d63_b5",
+                    "x": 2235,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d63_b6",
+                    "x": 2585,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d63_b7",
+                    "x": 2985,
+                    "y": 415,
+                    "w": 235,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d63_b8",
+                    "x": 3780,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d63_b9",
+                    "x": 4200,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d63_b10",
+                    "x": 4630,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d63_b11",
+                    "x": 5155,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d63_b12",
+                    "x": 5635,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d63_b13",
+                    "x": 5985,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d63_b14",
+                    "x": 6825,
+                    "y": 400,
+                    "w": 220,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d63_b15",
+                    "x": 7215,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d63_b16",
+                    "x": 7595,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d63_b17",
+                    "x": 8025,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d63_b18",
+                    "x": 8585,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d63_b19",
+                    "x": 9035,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d63_b20",
+                    "x": 9385,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d63_b21",
+                    "x": 10225,
+                    "y": 430,
+                    "w": 205,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d63_b22",
+                    "x": 10600,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d63_b23",
+                    "x": 11000,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d63_b24",
+                    "x": 11430,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d63_b25",
+                    "x": 12070,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d63_l1",
+                    "x": 468,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d63_l2",
+                    "x": 1300,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d63_l3",
+                    "x": 1788,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d63_l4",
+                    "x": 3798,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d63_l5",
+                    "x": 4650,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d63_l6",
+                    "x": 5173,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d63_l7",
+                    "x": 7233,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d63_l8",
+                    "x": 8045,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d63_l9",
+                    "x": 8603,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d63_l10",
+                    "x": 10618,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d63_l11",
+                    "x": 11450,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d63_l12",
+                    "x": 12092,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d63_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d63_c2",
+                    "x": 1140,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d63_c3",
+                    "x": 2105,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d63_c4",
+                    "x": 2335,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d63_c5",
+                    "x": 4005,
+                    "y": 280,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d63_c6",
+                    "x": 4490,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d63_c7",
+                    "x": 5505,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d63_c8",
+                    "x": 5735,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d63_c9",
+                    "x": 7090,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d63_c10",
+                    "x": 7885,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d63_c11",
+                    "x": 8905,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d63_c12",
+                    "x": 9135,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d63_c13",
+                    "x": 10475,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d63_c14",
+                    "x": 10805,
+                    "y": 300,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d63_c15",
+                    "x": 11290,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          }
+],
+            wells: [
+          {
+                    "id": "d63_w1",
+                    "x": 3560,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d63_w2",
+                    "x": 6605,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d63_w3",
+                    "x": 10005,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 12230, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        64: {
+            id: 64,
+            title: "Уровень 64: Забытый караван",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 12820,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 12820,
+                    "h": 200
+          },
+          {
+                    "x": 1140,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          },
+          {
+                    "x": 4570,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          },
+          {
+                    "x": 7945,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          },
+          {
+                    "x": 11315,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d64_b1",
+                    "x": 450,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d64_b2",
+                    "x": 880,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d64_b3",
+                    "x": 1440,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d64_b4",
+                    "x": 1890,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d64_b5",
+                    "x": 2240,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d64_b6",
+                    "x": 2680,
+                    "y": 430,
+                    "w": 220,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d64_b7",
+                    "x": 3070,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d64_b8",
+                    "x": 3910,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d64_b9",
+                    "x": 4340,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d64_b10",
+                    "x": 4830,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d64_b11",
+                    "x": 5295,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d64_b12",
+                    "x": 5645,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d64_b13",
+                    "x": 6085,
+                    "y": 415,
+                    "w": 205,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d64_b14",
+                    "x": 6410,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d64_b15",
+                    "x": 7270,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d64_b16",
+                    "x": 7700,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d64_b17",
+                    "x": 8225,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d64_b18",
+                    "x": 8705,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d64_b19",
+                    "x": 9055,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d64_b20",
+                    "x": 9495,
+                    "y": 400,
+                    "w": 190,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d64_b21",
+                    "x": 10245,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d64_b22",
+                    "x": 10625,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d64_b23",
+                    "x": 11055,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d64_b24",
+                    "x": 11615,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d64_b25",
+                    "x": 12215,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d64_l1",
+                    "x": 900,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d64_l2",
+                    "x": 1458,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d64_l3",
+                    "x": 3088,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d64_l4",
+                    "x": 4360,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d64_l5",
+                    "x": 4848,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d64_l6",
+                    "x": 6428,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d64_l7",
+                    "x": 7720,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d64_l8",
+                    "x": 8243,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d64_l9",
+                    "x": 10263,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d64_l10",
+                    "x": 11075,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d64_l11",
+                    "x": 11633,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d64_l12",
+                    "x": 12237,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d64_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d64_c2",
+                    "x": 740,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d64_c3",
+                    "x": 1760,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d64_c4",
+                    "x": 1990,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d64_c5",
+                    "x": 2550,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d64_c6",
+                    "x": 2945,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d64_c7",
+                    "x": 4200,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d64_c8",
+                    "x": 5165,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d64_c9",
+                    "x": 5395,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d64_c10",
+                    "x": 5955,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d64_c11",
+                    "x": 6635,
+                    "y": 280,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d64_c12",
+                    "x": 7560,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d64_c13",
+                    "x": 8575,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d64_c14",
+                    "x": 8805,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d64_c15",
+                    "x": 9365,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d64_c16",
+                    "x": 10915,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d64_c17",
+                    "x": 11935,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          }
+],
+            wells: [
+          {
+                    "id": "d64_w1",
+                    "x": 3690,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d64_w2",
+                    "x": 7050,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d64_w3",
+                    "x": 10025,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 12375, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        65: {
+            id: 65,
+            title: "Уровень 65: Каменные арки",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 13040,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 13040,
+                    "h": 200
+          },
+          {
+                    "x": 695,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          },
+          {
+                    "x": 4080,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          },
+          {
+                    "x": 7430,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          },
+          {
+                    "x": 10835,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d65_b1",
+                    "x": 450,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d65_b2",
+                    "x": 975,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d65_b3",
+                    "x": 1455,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d65_b4",
+                    "x": 1805,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d65_b5",
+                    "x": 2245,
+                    "y": 400,
+                    "w": 205,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d65_b6",
+                    "x": 2620,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d65_b7",
+                    "x": 3000,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d65_b8",
+                    "x": 3820,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d65_b9",
+                    "x": 4380,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d65_b10",
+                    "x": 4830,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d65_b11",
+                    "x": 5180,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d65_b12",
+                    "x": 5620,
+                    "y": 430,
+                    "w": 190,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d65_b13",
+                    "x": 5980,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d65_b14",
+                    "x": 6380,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d65_b15",
+                    "x": 7200,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d65_b16",
+                    "x": 7690,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d65_b17",
+                    "x": 8155,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d65_b18",
+                    "x": 8505,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d65_b19",
+                    "x": 8945,
+                    "y": 415,
+                    "w": 235,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d65_b20",
+                    "x": 9350,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d65_b21",
+                    "x": 9770,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d65_b22",
+                    "x": 10590,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d65_b23",
+                    "x": 11115,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d65_b24",
+                    "x": 11595,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d65_b25",
+                    "x": 12390,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d65_l1",
+                    "x": 470,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d65_l2",
+                    "x": 993,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d65_l3",
+                    "x": 2638,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d65_l4",
+                    "x": 3840,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d65_l5",
+                    "x": 4398,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d65_l6",
+                    "x": 5998,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d65_l7",
+                    "x": 7220,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d65_l8",
+                    "x": 7708,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d65_l9",
+                    "x": 9368,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d65_l10",
+                    "x": 10610,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d65_l11",
+                    "x": 11133,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d65_l12",
+                    "x": 12412,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d65_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d65_c2",
+                    "x": 1325,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d65_c3",
+                    "x": 1555,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d65_c4",
+                    "x": 2115,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d65_c5",
+                    "x": 2495,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d65_c6",
+                    "x": 2805,
+                    "y": 320,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d65_c7",
+                    "x": 4700,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d65_c8",
+                    "x": 4930,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d65_c9",
+                    "x": 5490,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d65_c10",
+                    "x": 5855,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d65_c11",
+                    "x": 8025,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d65_c12",
+                    "x": 8255,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d65_c13",
+                    "x": 8815,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d65_c14",
+                    "x": 9225,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d65_c15",
+                    "x": 9575,
+                    "y": 280,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d65_c16",
+                    "x": 11465,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d65_c17",
+                    "x": 11695,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          }
+],
+            wells: [
+          {
+                    "id": "d65_w1",
+                    "x": 3600,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d65_w2",
+                    "x": 6980,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d65_w3",
+                    "x": 10370,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 12550, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        66: {
+            id: 66,
+            title: "Уровень 66: Оазис надежды",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 13260,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 13260,
+                    "h": 200
+          },
+          {
+                    "x": 9705,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d66_b1",
+                    "x": 450,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d66_b2",
+                    "x": 915,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d66_b3",
+                    "x": 1265,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d66_b4",
+                    "x": 1705,
+                    "y": 415,
+                    "w": 190,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d66_b5",
+                    "x": 2065,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d66_b6",
+                    "x": 2485,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d66_b7",
+                    "x": 2915,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d66_b8",
+                    "x": 3740,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d66_b9",
+                    "x": 4220,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d66_b10",
+                    "x": 4570,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d66_b11",
+                    "x": 5010,
+                    "y": 400,
+                    "w": 235,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d66_b12",
+                    "x": 5415,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d66_b13",
+                    "x": 5795,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d66_b14",
+                    "x": 6225,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d66_b15",
+                    "x": 6625,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d66_b16",
+                    "x": 7465,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d66_b17",
+                    "x": 7815,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d66_b18",
+                    "x": 8255,
+                    "y": 430,
+                    "w": 220,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d66_b19",
+                    "x": 8645,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d66_b20",
+                    "x": 9045,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d66_b21",
+                    "x": 9475,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d66_b22",
+                    "x": 10405,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d66_b23",
+                    "x": 10870,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d66_b24",
+                    "x": 11220,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d66_b25",
+                    "x": 11660,
+                    "y": 415,
+                    "w": 205,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d66_b26",
+                    "x": 12035,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d66_b27",
+                    "x": 12610,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d66_l1",
+                    "x": 468,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d66_l2",
+                    "x": 2083,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d66_l3",
+                    "x": 2935,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d66_l4",
+                    "x": 3758,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d66_l5",
+                    "x": 5433,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d66_l6",
+                    "x": 6245,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d66_l7",
+                    "x": 6643,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d66_l8",
+                    "x": 8663,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d66_l9",
+                    "x": 9495,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d66_l10",
+                    "x": 10423,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d66_l11",
+                    "x": 12053,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d66_l12",
+                    "x": 12632,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d66_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d66_c2",
+                    "x": 785,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d66_c3",
+                    "x": 1015,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d66_c4",
+                    "x": 1575,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d66_c5",
+                    "x": 1940,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d66_c6",
+                    "x": 2775,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d66_c7",
+                    "x": 4090,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d66_c8",
+                    "x": 4320,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d66_c9",
+                    "x": 4880,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d66_c10",
+                    "x": 5290,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d66_c11",
+                    "x": 5600,
+                    "y": 320,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d66_c12",
+                    "x": 6085,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d66_c13",
+                    "x": 7565,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d66_c14",
+                    "x": 8125,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d66_c15",
+                    "x": 8520,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d66_c16",
+                    "x": 9335,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d66_c17",
+                    "x": 10740,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d66_c18",
+                    "x": 10970,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d66_c19",
+                    "x": 11530,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d66_c20",
+                    "x": 11910,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d66_c21",
+                    "x": 12260,
+                    "y": 280,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          }
+],
+            wells: [
+          {
+                    "id": "d66_w1",
+                    "x": 3520,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d66_w2",
+                    "x": 7245,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d66_w3",
+                    "x": 10185,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 12770, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        67: {
+            id: 67,
+            title: "Уровень 67: Каньон ветров",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 13480,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 13480,
+                    "h": 200
+          },
+          {
+                    "x": 2705,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          },
+          {
+                    "x": 6095,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          },
+          {
+                    "x": 9480,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d67_b1",
+                    "x": 450,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d67_b2",
+                    "x": 800,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d67_b3",
+                    "x": 1240,
+                    "y": 430,
+                    "w": 235,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d67_b4",
+                    "x": 1645,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d67_b5",
+                    "x": 2045,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d67_b6",
+                    "x": 2475,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d67_b7",
+                    "x": 2965,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d67_b8",
+                    "x": 3820,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d67_b9",
+                    "x": 4170,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d67_b10",
+                    "x": 4610,
+                    "y": 415,
+                    "w": 220,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d67_b11",
+                    "x": 5000,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d67_b12",
+                    "x": 5420,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d67_b13",
+                    "x": 5850,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d67_b14",
+                    "x": 6375,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d67_b15",
+                    "x": 7245,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d67_b16",
+                    "x": 7595,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d67_b17",
+                    "x": 8035,
+                    "y": 400,
+                    "w": 205,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d67_b18",
+                    "x": 8410,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d67_b19",
+                    "x": 8790,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d67_b20",
+                    "x": 9220,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d67_b21",
+                    "x": 9780,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d67_b22",
+                    "x": 10620,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d67_b23",
+                    "x": 10970,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d67_b24",
+                    "x": 11410,
+                    "y": 430,
+                    "w": 190,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d67_b25",
+                    "x": 11770,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d67_b26",
+                    "x": 12170,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d67_b27",
+                    "x": 12830,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d67_l1",
+                    "x": 1663,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d67_l2",
+                    "x": 2495,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d67_l3",
+                    "x": 2983,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d67_l4",
+                    "x": 5018,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d67_l5",
+                    "x": 5870,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d67_l6",
+                    "x": 6393,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d67_l7",
+                    "x": 8428,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d67_l8",
+                    "x": 9240,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d67_l9",
+                    "x": 9798,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d67_l10",
+                    "x": 11788,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d67_l11",
+                    "x": 12852,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d67_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d67_c2",
+                    "x": 550,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d67_c3",
+                    "x": 1110,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d67_c4",
+                    "x": 1520,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d67_c5",
+                    "x": 1850,
+                    "y": 300,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d67_c6",
+                    "x": 2335,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d67_c7",
+                    "x": 3920,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d67_c8",
+                    "x": 4480,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d67_c9",
+                    "x": 4875,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d67_c10",
+                    "x": 5710,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d67_c11",
+                    "x": 7345,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d67_c12",
+                    "x": 7905,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d67_c13",
+                    "x": 8285,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d67_c14",
+                    "x": 8595,
+                    "y": 320,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d67_c15",
+                    "x": 9080,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d67_c16",
+                    "x": 10720,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d67_c17",
+                    "x": 11280,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d67_c18",
+                    "x": 11645,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d67_c19",
+                    "x": 12460,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          }
+],
+            wells: [
+          {
+                    "id": "d67_w1",
+                    "x": 3600,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d67_w2",
+                    "x": 7025,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d67_w3",
+                    "x": 10400,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 12990, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        68: {
+            id: 68,
+            title: "Уровень 68: Древний зиккурат",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 13700,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 13700,
+                    "h": 200
+          },
+          {
+                    "x": 2350,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          },
+          {
+                    "x": 5765,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          },
+          {
+                    "x": 9135,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          },
+          {
+                    "x": 12560,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d68_b1",
+                    "x": 450,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d68_b2",
+                    "x": 890,
+                    "y": 400,
+                    "w": 220,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d68_b3",
+                    "x": 1280,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d68_b4",
+                    "x": 1660,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d68_b5",
+                    "x": 2090,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d68_b6",
+                    "x": 2650,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d68_b7",
+                    "x": 3100,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d68_b8",
+                    "x": 3890,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d68_b9",
+                    "x": 4330,
+                    "y": 430,
+                    "w": 205,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d68_b10",
+                    "x": 4705,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d68_b11",
+                    "x": 5105,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d68_b12",
+                    "x": 5535,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d68_b13",
+                    "x": 6025,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d68_b14",
+                    "x": 6490,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d68_b15",
+                    "x": 6840,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d68_b16",
+                    "x": 7680,
+                    "y": 415,
+                    "w": 190,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d68_b17",
+                    "x": 8040,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d68_b18",
+                    "x": 8460,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d68_b19",
+                    "x": 8890,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d68_b20",
+                    "x": 9415,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d68_b21",
+                    "x": 9895,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d68_b22",
+                    "x": 10245,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d68_b23",
+                    "x": 11085,
+                    "y": 400,
+                    "w": 235,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d68_b24",
+                    "x": 11490,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d68_b25",
+                    "x": 11870,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d68_b26",
+                    "x": 12300,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d68_b27",
+                    "x": 13050,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d68_l1",
+                    "x": 1298,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d68_l2",
+                    "x": 2110,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d68_l3",
+                    "x": 2668,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d68_l4",
+                    "x": 4723,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d68_l5",
+                    "x": 5555,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d68_l6",
+                    "x": 6043,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d68_l7",
+                    "x": 8058,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d68_l8",
+                    "x": 8910,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d68_l9",
+                    "x": 9433,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d68_l10",
+                    "x": 11508,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d68_l11",
+                    "x": 12320,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d68_l12",
+                    "x": 13072,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d68_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d68_c2",
+                    "x": 760,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d68_c3",
+                    "x": 1155,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d68_c4",
+                    "x": 1950,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d68_c5",
+                    "x": 2970,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d68_c6",
+                    "x": 3200,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d68_c7",
+                    "x": 4200,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d68_c8",
+                    "x": 4580,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d68_c9",
+                    "x": 4910,
+                    "y": 300,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d68_c10",
+                    "x": 5395,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d68_c11",
+                    "x": 6360,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d68_c12",
+                    "x": 6590,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d68_c13",
+                    "x": 7915,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d68_c14",
+                    "x": 8750,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d68_c15",
+                    "x": 9765,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d68_c16",
+                    "x": 9995,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d68_c17",
+                    "x": 11365,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d68_c18",
+                    "x": 11675,
+                    "y": 320,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d68_c19",
+                    "x": 12160,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          }
+],
+            wells: [
+          {
+                    "id": "d68_w1",
+                    "x": 3670,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d68_w2",
+                    "x": 7460,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d68_w3",
+                    "x": 10865,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 13210, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        69: {
+            id: 69,
+            title: "Уровень 69: Солнечный бастион",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 13920,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 13920,
+                    "h": 200
+          },
+          {
+                    "x": 1920,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          },
+          {
+                    "x": 5300,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          },
+          {
+                    "x": 8695,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          },
+          {
+                    "x": 12085,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d69_b1",
+                    "x": 450,
+                    "y": 415,
+                    "w": 205,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d69_b2",
+                    "x": 825,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d69_b3",
+                    "x": 1245,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d69_b4",
+                    "x": 1675,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d69_b5",
+                    "x": 2200,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d69_b6",
+                    "x": 2680,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d69_b7",
+                    "x": 3030,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d69_b8",
+                    "x": 3870,
+                    "y": 400,
+                    "w": 190,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d69_b9",
+                    "x": 4230,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d69_b10",
+                    "x": 4610,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d69_b11",
+                    "x": 5040,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d69_b12",
+                    "x": 5600,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d69_b13",
+                    "x": 6050,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d69_b14",
+                    "x": 6400,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d69_b15",
+                    "x": 6840,
+                    "y": 430,
+                    "w": 235,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d69_b16",
+                    "x": 7635,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d69_b17",
+                    "x": 8035,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d69_b18",
+                    "x": 8465,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d69_b19",
+                    "x": 8955,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d69_b20",
+                    "x": 9420,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d69_b21",
+                    "x": 9770,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d69_b22",
+                    "x": 10210,
+                    "y": 415,
+                    "w": 220,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d69_b23",
+                    "x": 10990,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d69_b24",
+                    "x": 11410,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d69_b25",
+                    "x": 11840,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d69_b26",
+                    "x": 12365,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d69_b27",
+                    "x": 13270,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d69_l1",
+                    "x": 843,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d69_l2",
+                    "x": 1695,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d69_l3",
+                    "x": 2218,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d69_l4",
+                    "x": 4248,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d69_l5",
+                    "x": 5060,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d69_l6",
+                    "x": 5618,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d69_l7",
+                    "x": 7653,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d69_l8",
+                    "x": 8485,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d69_l9",
+                    "x": 8973,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d69_l10",
+                    "x": 11008,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d69_l11",
+                    "x": 11860,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d69_l12",
+                    "x": 12383,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d69_l13",
+                    "x": 13292,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d69_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d69_c2",
+                    "x": 700,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d69_c3",
+                    "x": 1050,
+                    "y": 280,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d69_c4",
+                    "x": 1535,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d69_c5",
+                    "x": 2550,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d69_c6",
+                    "x": 2780,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d69_c7",
+                    "x": 4105,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d69_c8",
+                    "x": 4900,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d69_c9",
+                    "x": 5920,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d69_c10",
+                    "x": 6150,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d69_c11",
+                    "x": 6710,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d69_c12",
+                    "x": 7840,
+                    "y": 300,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d69_c13",
+                    "x": 8325,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d69_c14",
+                    "x": 9290,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d69_c15",
+                    "x": 9520,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d69_c16",
+                    "x": 10080,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d69_c17",
+                    "x": 11700,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d69_c18",
+                    "x": 12715,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          }
+],
+            wells: [
+          {
+                    "id": "d69_w1",
+                    "x": 3650,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d69_w2",
+                    "x": 7415,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d69_w3",
+                    "x": 10770,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 13430, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        70: {
+            id: 70,
+            title: "Уровень 70: Песчаная буря",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 14140,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 14140,
+                    "h": 200
+          },
+          {
+                    "x": 1510,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          },
+          {
+                    "x": 4915,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          },
+          {
+                    "x": 8365,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          },
+          {
+                    "x": 11780,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d70_b1",
+                    "x": 450,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d70_b2",
+                    "x": 850,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d70_b3",
+                    "x": 1280,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d70_b4",
+                    "x": 1770,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d70_b5",
+                    "x": 2235,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d70_b6",
+                    "x": 2585,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d70_b7",
+                    "x": 3025,
+                    "y": 415,
+                    "w": 235,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d70_b8",
+                    "x": 3380,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d70_b9",
+                    "x": 4240,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d70_b10",
+                    "x": 4670,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d70_b11",
+                    "x": 5195,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d70_b12",
+                    "x": 5675,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d70_b13",
+                    "x": 6025,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d70_b14",
+                    "x": 6465,
+                    "y": 400,
+                    "w": 220,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d70_b15",
+                    "x": 6855,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d70_b16",
+                    "x": 7675,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d70_b17",
+                    "x": 8105,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d70_b18",
+                    "x": 8665,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d70_b19",
+                    "x": 9115,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d70_b20",
+                    "x": 9465,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d70_b21",
+                    "x": 9905,
+                    "y": 430,
+                    "w": 205,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d70_b22",
+                    "x": 10280,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d70_b23",
+                    "x": 11120,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d70_b24",
+                    "x": 11550,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d70_b25",
+                    "x": 12040,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d70_b26",
+                    "x": 12505,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d70_b27",
+                    "x": 12855,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d70_b28",
+                    "x": 13490,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d70_l1",
+                    "x": 468,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d70_l2",
+                    "x": 1300,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d70_l3",
+                    "x": 1788,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d70_l4",
+                    "x": 3398,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d70_l5",
+                    "x": 4690,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d70_l6",
+                    "x": 5213,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d70_l7",
+                    "x": 6873,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d70_l8",
+                    "x": 8125,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d70_l9",
+                    "x": 8683,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d70_l10",
+                    "x": 10298,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d70_l11",
+                    "x": 11570,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d70_l12",
+                    "x": 12058,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d70_l13",
+                    "x": 13512,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d70_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d70_c2",
+                    "x": 1140,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d70_c3",
+                    "x": 2105,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d70_c4",
+                    "x": 2335,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d70_c5",
+                    "x": 2895,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d70_c6",
+                    "x": 3605,
+                    "y": 280,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d70_c7",
+                    "x": 4530,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d70_c8",
+                    "x": 5545,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d70_c9",
+                    "x": 5775,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d70_c10",
+                    "x": 6335,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d70_c11",
+                    "x": 6730,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d70_c12",
+                    "x": 7965,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d70_c13",
+                    "x": 8985,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d70_c14",
+                    "x": 9215,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d70_c15",
+                    "x": 9775,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d70_c16",
+                    "x": 10155,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d70_c17",
+                    "x": 10485,
+                    "y": 300,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d70_c18",
+                    "x": 11410,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d70_c19",
+                    "x": 12375,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d70_c20",
+                    "x": 12605,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d70_c21",
+                    "x": 13165,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          }
+],
+            wells: [
+          {
+                    "id": "d70_w1",
+                    "x": 4020,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d70_w2",
+                    "x": 7455,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d70_w3",
+                    "x": 10900,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 13650, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        71: {
+            id: 71,
+            title: "Уровень 71: Лабиринт руин",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 14360,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 14360,
+                    "h": 200
+          },
+          {
+                    "x": 1140,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          },
+          {
+                    "x": 4520,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d71_b1",
+                    "x": 450,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d71_b2",
+                    "x": 880,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d71_b3",
+                    "x": 1440,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d71_b4",
+                    "x": 1890,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d71_b5",
+                    "x": 2240,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d71_b6",
+                    "x": 2680,
+                    "y": 430,
+                    "w": 220,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d71_b7",
+                    "x": 3070,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d71_b8",
+                    "x": 3470,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d71_b9",
+                    "x": 4290,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d71_b10",
+                    "x": 4780,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d71_b11",
+                    "x": 5245,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d71_b12",
+                    "x": 5595,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d71_b13",
+                    "x": 6035,
+                    "y": 415,
+                    "w": 205,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d71_b14",
+                    "x": 6410,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d71_b15",
+                    "x": 6830,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d71_b16",
+                    "x": 7210,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d71_b17",
+                    "x": 8035,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d71_b18",
+                    "x": 8515,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d71_b19",
+                    "x": 8865,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d71_b20",
+                    "x": 9305,
+                    "y": 400,
+                    "w": 190,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d71_b21",
+                    "x": 9665,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d71_b22",
+                    "x": 10045,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d71_b23",
+                    "x": 10475,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d71_b24",
+                    "x": 11315,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d71_b25",
+                    "x": 11765,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d71_b26",
+                    "x": 12115,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d71_b27",
+                    "x": 12555,
+                    "y": 430,
+                    "w": 235,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d71_b28",
+                    "x": 12960,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d71_b29",
+                    "x": 13710,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d71_l1",
+                    "x": 900,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d71_l2",
+                    "x": 1458,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d71_l3",
+                    "x": 3088,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d71_l4",
+                    "x": 4310,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d71_l5",
+                    "x": 4798,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d71_l6",
+                    "x": 6428,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d71_l7",
+                    "x": 7230,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d71_l8",
+                    "x": 8053,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d71_l9",
+                    "x": 9683,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d71_l10",
+                    "x": 10495,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d71_l11",
+                    "x": 11333,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d71_l12",
+                    "x": 12978,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d71_l13",
+                    "x": 13732,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d71_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d71_c2",
+                    "x": 740,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d71_c3",
+                    "x": 1760,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d71_c4",
+                    "x": 1990,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d71_c5",
+                    "x": 2550,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d71_c6",
+                    "x": 2945,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d71_c7",
+                    "x": 5115,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d71_c8",
+                    "x": 5345,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d71_c9",
+                    "x": 5905,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d71_c10",
+                    "x": 6285,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d71_c11",
+                    "x": 6635,
+                    "y": 280,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d71_c12",
+                    "x": 8385,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d71_c13",
+                    "x": 8615,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d71_c14",
+                    "x": 9175,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d71_c15",
+                    "x": 9540,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d71_c16",
+                    "x": 10335,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d71_c17",
+                    "x": 11635,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d71_c18",
+                    "x": 11865,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d71_c19",
+                    "x": 12425,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d71_c20",
+                    "x": 12835,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d71_c21",
+                    "x": 13165,
+                    "y": 300,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          }
+],
+            wells: [
+          {
+                    "id": "d71_w1",
+                    "x": 4070,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d71_w2",
+                    "x": 7815,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d71_w3",
+                    "x": 11095,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 13870, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        72: {
+            id: 72,
+            title: "Уровень 72: Сухой акведук",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 14580,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 14580,
+                    "h": 200
+          },
+          {
+                    "x": 695,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          },
+          {
+                    "x": 6930,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          },
+          {
+                    "x": 10335,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          },
+          {
+                    "x": 13735,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d72_b1",
+                    "x": 450,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d72_b2",
+                    "x": 975,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d72_b3",
+                    "x": 1455,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d72_b4",
+                    "x": 1805,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d72_b5",
+                    "x": 2245,
+                    "y": 400,
+                    "w": 205,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d72_b6",
+                    "x": 2620,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d72_b7",
+                    "x": 3000,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d72_b8",
+                    "x": 3430,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d72_b9",
+                    "x": 4270,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d72_b10",
+                    "x": 4720,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d72_b11",
+                    "x": 5070,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d72_b12",
+                    "x": 5510,
+                    "y": 430,
+                    "w": 190,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d72_b13",
+                    "x": 5870,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d72_b14",
+                    "x": 6270,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d72_b15",
+                    "x": 6700,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d72_b16",
+                    "x": 7190,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d72_b17",
+                    "x": 8045,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d72_b18",
+                    "x": 8395,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d72_b19",
+                    "x": 8835,
+                    "y": 415,
+                    "w": 235,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d72_b20",
+                    "x": 9240,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d72_b21",
+                    "x": 9660,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d72_b22",
+                    "x": 10090,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d72_b23",
+                    "x": 10615,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d72_b24",
+                    "x": 11485,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d72_b25",
+                    "x": 11835,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d72_b26",
+                    "x": 12275,
+                    "y": 400,
+                    "w": 220,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d72_b27",
+                    "x": 12665,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d72_b28",
+                    "x": 13045,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d72_b29",
+                    "x": 13475,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d72_b30",
+                    "x": 14185,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d72_l1",
+                    "x": 470,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d72_l2",
+                    "x": 993,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d72_l3",
+                    "x": 2638,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d72_l4",
+                    "x": 3450,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d72_l5",
+                    "x": 4288,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d72_l6",
+                    "x": 5888,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d72_l7",
+                    "x": 6720,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d72_l8",
+                    "x": 7208,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d72_l9",
+                    "x": 9258,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d72_l10",
+                    "x": 10110,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d72_l11",
+                    "x": 10633,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d72_l12",
+                    "x": 12683,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d72_l13",
+                    "x": 13495,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d72_l14",
+                    "x": 14207,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d72_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d72_c2",
+                    "x": 1325,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d72_c3",
+                    "x": 1555,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d72_c4",
+                    "x": 2115,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d72_c5",
+                    "x": 2495,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d72_c6",
+                    "x": 2805,
+                    "y": 320,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d72_c7",
+                    "x": 3290,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d72_c8",
+                    "x": 4590,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d72_c9",
+                    "x": 4820,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d72_c10",
+                    "x": 5380,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d72_c11",
+                    "x": 5745,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d72_c12",
+                    "x": 6560,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d72_c13",
+                    "x": 8145,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d72_c14",
+                    "x": 8705,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d72_c15",
+                    "x": 9115,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d72_c16",
+                    "x": 9465,
+                    "y": 280,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d72_c17",
+                    "x": 9950,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d72_c18",
+                    "x": 11585,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d72_c19",
+                    "x": 12145,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d72_c20",
+                    "x": 12540,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d72_c21",
+                    "x": 13335,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          }
+],
+            wells: [
+          {
+                    "id": "d72_w1",
+                    "x": 4050,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d72_w2",
+                    "x": 7825,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d72_w3",
+                    "x": 11265,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 14345, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        73: {
+            id: 73,
+            title: "Уровень 73: Гробница фараона",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 14800,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 14800,
+                    "h": 200
+          },
+          {
+                    "x": 3160,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          },
+          {
+                    "x": 6575,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          },
+          {
+                    "x": 10005,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          },
+          {
+                    "x": 13390,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d73_b1",
+                    "x": 450,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d73_b2",
+                    "x": 915,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d73_b3",
+                    "x": 1265,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d73_b4",
+                    "x": 1705,
+                    "y": 415,
+                    "w": 190,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d73_b5",
+                    "x": 2065,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d73_b6",
+                    "x": 2485,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d73_b7",
+                    "x": 2915,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d73_b8",
+                    "x": 3440,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d73_b9",
+                    "x": 4310,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d73_b10",
+                    "x": 4660,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d73_b11",
+                    "x": 5100,
+                    "y": 400,
+                    "w": 235,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d73_b12",
+                    "x": 5505,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d73_b13",
+                    "x": 5885,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d73_b14",
+                    "x": 6315,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d73_b15",
+                    "x": 6875,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d73_b16",
+                    "x": 7325,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d73_b17",
+                    "x": 8115,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d73_b18",
+                    "x": 8555,
+                    "y": 430,
+                    "w": 220,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d73_b19",
+                    "x": 8945,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d73_b20",
+                    "x": 9345,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d73_b21",
+                    "x": 9775,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d73_b22",
+                    "x": 10265,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d73_b23",
+                    "x": 10730,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d73_b24",
+                    "x": 11080,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d73_b25",
+                    "x": 11920,
+                    "y": 415,
+                    "w": 205,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d73_b26",
+                    "x": 12295,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d73_b27",
+                    "x": 12715,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d73_b28",
+                    "x": 13145,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d73_b29",
+                    "x": 13670,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d73_b30",
+                    "x": 14300,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d73_l1",
+                    "x": 468,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d73_l2",
+                    "x": 2083,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d73_l3",
+                    "x": 2935,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d73_l4",
+                    "x": 3458,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d73_l5",
+                    "x": 5523,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d73_l6",
+                    "x": 6335,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d73_l7",
+                    "x": 6893,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d73_l8",
+                    "x": 8963,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d73_l9",
+                    "x": 9795,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d73_l10",
+                    "x": 10283,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d73_l11",
+                    "x": 12313,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d73_l12",
+                    "x": 13165,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d73_l13",
+                    "x": 13688,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d73_l14",
+                    "x": 14322,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d73_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d73_c2",
+                    "x": 785,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d73_c3",
+                    "x": 1015,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d73_c4",
+                    "x": 1575,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d73_c5",
+                    "x": 1940,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d73_c6",
+                    "x": 2775,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d73_c7",
+                    "x": 4410,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d73_c8",
+                    "x": 4970,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d73_c9",
+                    "x": 5380,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d73_c10",
+                    "x": 5690,
+                    "y": 320,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d73_c11",
+                    "x": 6175,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d73_c12",
+                    "x": 7195,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d73_c13",
+                    "x": 7425,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d73_c14",
+                    "x": 8425,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d73_c15",
+                    "x": 8820,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d73_c16",
+                    "x": 9635,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d73_c17",
+                    "x": 10600,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d73_c18",
+                    "x": 10830,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d73_c19",
+                    "x": 12170,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d73_c20",
+                    "x": 12520,
+                    "y": 280,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d73_c21",
+                    "x": 13005,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d73_c22",
+                    "x": 14020,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          }
+],
+            wells: [
+          {
+                    "id": "d73_w1",
+                    "x": 4090,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d73_w2",
+                    "x": 7895,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d73_w3",
+                    "x": 11700,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 14460, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        74: {
+            id: 74,
+            title: "Уровень 74: Золотые врата",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 15020,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 15020,
+                    "h": 200
+          },
+          {
+                    "x": 2705,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          },
+          {
+                    "x": 6145,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          },
+          {
+                    "x": 9540,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          },
+          {
+                    "x": 12890,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d74_b1",
+                    "x": 450,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d74_b2",
+                    "x": 800,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d74_b3",
+                    "x": 1240,
+                    "y": 430,
+                    "w": 235,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d74_b4",
+                    "x": 1645,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d74_b5",
+                    "x": 2045,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d74_b6",
+                    "x": 2475,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d74_b7",
+                    "x": 2965,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d74_b8",
+                    "x": 3430,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d74_b9",
+                    "x": 4220,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d74_b10",
+                    "x": 4660,
+                    "y": 415,
+                    "w": 220,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d74_b11",
+                    "x": 5050,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d74_b12",
+                    "x": 5470,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d74_b13",
+                    "x": 5900,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d74_b14",
+                    "x": 6425,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d74_b15",
+                    "x": 6905,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d74_b16",
+                    "x": 7255,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d74_b17",
+                    "x": 8095,
+                    "y": 400,
+                    "w": 205,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d74_b18",
+                    "x": 8470,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d74_b19",
+                    "x": 8850,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d74_b20",
+                    "x": 9280,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d74_b21",
+                    "x": 9840,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d74_b22",
+                    "x": 10290,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d74_b23",
+                    "x": 10640,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d74_b24",
+                    "x": 11080,
+                    "y": 430,
+                    "w": 190,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d74_b25",
+                    "x": 11830,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d74_b26",
+                    "x": 12230,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d74_b27",
+                    "x": 12660,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d74_b28",
+                    "x": 13150,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d74_b29",
+                    "x": 13615,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d74_b30",
+                    "x": 14370,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d74_l1",
+                    "x": 1663,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d74_l2",
+                    "x": 2495,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d74_l3",
+                    "x": 2983,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d74_l4",
+                    "x": 5068,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d74_l5",
+                    "x": 5920,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d74_l6",
+                    "x": 6443,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d74_l7",
+                    "x": 8488,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d74_l8",
+                    "x": 9300,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d74_l9",
+                    "x": 9858,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d74_l10",
+                    "x": 11848,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d74_l11",
+                    "x": 12680,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d74_l12",
+                    "x": 13168,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d74_l13",
+                    "x": 14392,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d74_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d74_c2",
+                    "x": 550,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d74_c3",
+                    "x": 1110,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d74_c4",
+                    "x": 1520,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d74_c5",
+                    "x": 1850,
+                    "y": 300,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d74_c6",
+                    "x": 2335,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d74_c7",
+                    "x": 3300,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d74_c8",
+                    "x": 3530,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d74_c9",
+                    "x": 4530,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d74_c10",
+                    "x": 4925,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d74_c11",
+                    "x": 5760,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d74_c12",
+                    "x": 6775,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d74_c13",
+                    "x": 7005,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d74_c14",
+                    "x": 8345,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d74_c15",
+                    "x": 8655,
+                    "y": 320,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d74_c16",
+                    "x": 9140,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d74_c17",
+                    "x": 10160,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d74_c18",
+                    "x": 10390,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d74_c19",
+                    "x": 10950,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d74_c20",
+                    "x": 12520,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d74_c21",
+                    "x": 13485,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d74_c22",
+                    "x": 13715,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          }
+],
+            wells: [
+          {
+                    "id": "d74_w1",
+                    "x": 4000,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d74_w2",
+                    "x": 7875,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d74_w3",
+                    "x": 11610,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 14530, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        75: {
+            id: 75,
+            title: "Уровень 75: Башни солнца",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 15240,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 15240,
+                    "h": 200
+          },
+          {
+                    "x": 2350,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          },
+          {
+                    "x": 5715,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          },
+          {
+                    "x": 9125,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d75_b1",
+                    "x": 450,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d75_b2",
+                    "x": 890,
+                    "y": 400,
+                    "w": 220,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d75_b3",
+                    "x": 1280,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d75_b4",
+                    "x": 1660,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d75_b5",
+                    "x": 2090,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d75_b6",
+                    "x": 2650,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d75_b7",
+                    "x": 3050,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d75_b8",
+                    "x": 3840,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d75_b9",
+                    "x": 4280,
+                    "y": 430,
+                    "w": 205,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d75_b10",
+                    "x": 4655,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d75_b11",
+                    "x": 5055,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d75_b12",
+                    "x": 5485,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d75_b13",
+                    "x": 5975,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d75_b14",
+                    "x": 6440,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d75_b15",
+                    "x": 7230,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d75_b16",
+                    "x": 7670,
+                    "y": 415,
+                    "w": 190,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d75_b17",
+                    "x": 8030,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d75_b18",
+                    "x": 8450,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d75_b19",
+                    "x": 8880,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d75_b20",
+                    "x": 9405,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d75_b21",
+                    "x": 10275,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d75_b22",
+                    "x": 10625,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d75_b23",
+                    "x": 11065,
+                    "y": 400,
+                    "w": 235,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d75_b24",
+                    "x": 11470,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d75_b25",
+                    "x": 11850,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d75_b26",
+                    "x": 12280,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d75_b27",
+                    "x": 13120,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d75_b28",
+                    "x": 13570,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d75_b29",
+                    "x": 13920,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d75_b30",
+                    "x": 14590,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d75_l1",
+                    "x": 1298,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d75_l2",
+                    "x": 2110,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d75_l3",
+                    "x": 2668,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d75_l4",
+                    "x": 4673,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d75_l5",
+                    "x": 5505,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d75_l6",
+                    "x": 5993,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d75_l7",
+                    "x": 8048,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d75_l8",
+                    "x": 8900,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d75_l9",
+                    "x": 9423,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d75_l10",
+                    "x": 11488,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d75_l11",
+                    "x": 12300,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d75_l12",
+                    "x": 13138,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d75_l13",
+                    "x": 14612,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d75_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d75_c2",
+                    "x": 760,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d75_c3",
+                    "x": 1155,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d75_c4",
+                    "x": 1950,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d75_c5",
+                    "x": 4150,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d75_c6",
+                    "x": 4530,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d75_c7",
+                    "x": 4860,
+                    "y": 300,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d75_c8",
+                    "x": 5345,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d75_c9",
+                    "x": 6310,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d75_c10",
+                    "x": 7540,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d75_c11",
+                    "x": 7905,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d75_c12",
+                    "x": 8740,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d75_c13",
+                    "x": 10375,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d75_c14",
+                    "x": 10935,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d75_c15",
+                    "x": 11345,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d75_c16",
+                    "x": 11655,
+                    "y": 320,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d75_c17",
+                    "x": 12140,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d75_c18",
+                    "x": 13440,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d75_c19",
+                    "x": 13670,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d75_c20",
+                    "x": 14230,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          }
+],
+            wells: [
+          {
+                    "id": "d75_w1",
+                    "x": 3620,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d75_w2",
+                    "x": 7010,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d75_w3",
+                    "x": 10055,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d75_w4",
+                    "x": 12900,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 14750, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        76: {
+            id: 76,
+            title: "Уровень 76: Ущелье скорпионов",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 15460,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 15460,
+                    "h": 200
+          },
+          {
+                    "x": 1920,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          },
+          {
+                    "x": 5300,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          },
+          {
+                    "x": 8705,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          },
+          {
+                    "x": 12105,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d76_b1",
+                    "x": 450,
+                    "y": 415,
+                    "w": 205,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d76_b2",
+                    "x": 825,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d76_b3",
+                    "x": 1245,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d76_b4",
+                    "x": 1675,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d76_b5",
+                    "x": 2200,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d76_b6",
+                    "x": 2680,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d76_b7",
+                    "x": 3030,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d76_b8",
+                    "x": 3870,
+                    "y": 400,
+                    "w": 190,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d76_b9",
+                    "x": 4230,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d76_b10",
+                    "x": 4610,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d76_b11",
+                    "x": 5040,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d76_b12",
+                    "x": 5600,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d76_b13",
+                    "x": 6050,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d76_b14",
+                    "x": 6400,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d76_b15",
+                    "x": 7240,
+                    "y": 430,
+                    "w": 235,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d76_b16",
+                    "x": 7645,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d76_b17",
+                    "x": 8045,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d76_b18",
+                    "x": 8475,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d76_b19",
+                    "x": 8965,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d76_b20",
+                    "x": 9430,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d76_b21",
+                    "x": 9780,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d76_b22",
+                    "x": 10620,
+                    "y": 415,
+                    "w": 220,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d76_b23",
+                    "x": 11010,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d76_b24",
+                    "x": 11430,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d76_b25",
+                    "x": 11860,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d76_b26",
+                    "x": 12385,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d76_b27",
+                    "x": 13255,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d76_b28",
+                    "x": 13605,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d76_b29",
+                    "x": 14045,
+                    "y": 400,
+                    "w": 205,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d76_b30",
+                    "x": 14810,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d76_l1",
+                    "x": 843,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d76_l2",
+                    "x": 1695,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d76_l3",
+                    "x": 2218,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d76_l4",
+                    "x": 4248,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d76_l5",
+                    "x": 5060,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d76_l6",
+                    "x": 5618,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d76_l7",
+                    "x": 7663,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d76_l8",
+                    "x": 8495,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d76_l9",
+                    "x": 8983,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d76_l10",
+                    "x": 11028,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d76_l11",
+                    "x": 11880,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d76_l12",
+                    "x": 12403,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d76_l13",
+                    "x": 14832,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d76_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d76_c2",
+                    "x": 700,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d76_c3",
+                    "x": 1050,
+                    "y": 280,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d76_c4",
+                    "x": 1535,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d76_c5",
+                    "x": 2550,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d76_c6",
+                    "x": 2780,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d76_c7",
+                    "x": 4105,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d76_c8",
+                    "x": 4900,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d76_c9",
+                    "x": 5920,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d76_c10",
+                    "x": 6150,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d76_c11",
+                    "x": 7520,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d76_c12",
+                    "x": 7850,
+                    "y": 300,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d76_c13",
+                    "x": 8335,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d76_c14",
+                    "x": 9300,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d76_c15",
+                    "x": 9530,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d76_c16",
+                    "x": 10885,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d76_c17",
+                    "x": 11720,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d76_c18",
+                    "x": 13355,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d76_c19",
+                    "x": 13915,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d76_c20",
+                    "x": 14295,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          }
+],
+            wells: [
+          {
+                    "id": "d76_w1",
+                    "x": 3650,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d76_w2",
+                    "x": 7020,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d76_w3",
+                    "x": 10400,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d76_w4",
+                    "x": 13035,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 14970, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        77: {
+            id: 77,
+            title: "Уровень 77: Храм вечного пламени",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 15680,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 15680,
+                    "h": 200
+          },
+          {
+                    "x": 1510,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          },
+          {
+                    "x": 4915,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          },
+          {
+                    "x": 8315,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          },
+          {
+                    "x": 11680,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d77_b1",
+                    "x": 450,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d77_b2",
+                    "x": 850,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d77_b3",
+                    "x": 1280,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d77_b4",
+                    "x": 1770,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d77_b5",
+                    "x": 2235,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d77_b6",
+                    "x": 2585,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d77_b7",
+                    "x": 3025,
+                    "y": 415,
+                    "w": 235,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d77_b8",
+                    "x": 3820,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d77_b9",
+                    "x": 4240,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d77_b10",
+                    "x": 4670,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d77_b11",
+                    "x": 5195,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d77_b12",
+                    "x": 5675,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d77_b13",
+                    "x": 6025,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d77_b14",
+                    "x": 6465,
+                    "y": 400,
+                    "w": 220,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d77_b15",
+                    "x": 7245,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d77_b16",
+                    "x": 7625,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d77_b17",
+                    "x": 8055,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d77_b18",
+                    "x": 8615,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d77_b19",
+                    "x": 9065,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d77_b20",
+                    "x": 9415,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d77_b21",
+                    "x": 9855,
+                    "y": 430,
+                    "w": 205,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d77_b22",
+                    "x": 10620,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d77_b23",
+                    "x": 11020,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d77_b24",
+                    "x": 11450,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d77_b25",
+                    "x": 11940,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d77_b26",
+                    "x": 12405,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d77_b27",
+                    "x": 12755,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d77_b28",
+                    "x": 13595,
+                    "y": 415,
+                    "w": 190,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d77_b29",
+                    "x": 13955,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d77_b30",
+                    "x": 14375,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d77_b31",
+                    "x": 15030,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d77_l1",
+                    "x": 468,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d77_l2",
+                    "x": 1300,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d77_l3",
+                    "x": 1788,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d77_l4",
+                    "x": 3838,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d77_l5",
+                    "x": 4690,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d77_l6",
+                    "x": 5213,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d77_l7",
+                    "x": 7263,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d77_l8",
+                    "x": 8075,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d77_l9",
+                    "x": 8633,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d77_l10",
+                    "x": 10638,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d77_l11",
+                    "x": 11470,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d77_l12",
+                    "x": 11958,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d77_l13",
+                    "x": 13973,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d77_l14",
+                    "x": 15052,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d77_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d77_c2",
+                    "x": 1140,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d77_c3",
+                    "x": 2105,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d77_c4",
+                    "x": 2335,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d77_c5",
+                    "x": 2895,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d77_c6",
+                    "x": 4045,
+                    "y": 280,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d77_c7",
+                    "x": 4530,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d77_c8",
+                    "x": 5545,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d77_c9",
+                    "x": 5775,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d77_c10",
+                    "x": 6335,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d77_c11",
+                    "x": 7915,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d77_c12",
+                    "x": 8935,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d77_c13",
+                    "x": 9165,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d77_c14",
+                    "x": 9725,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d77_c15",
+                    "x": 10825,
+                    "y": 300,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d77_c16",
+                    "x": 11310,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d77_c17",
+                    "x": 12275,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d77_c18",
+                    "x": 12505,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d77_c19",
+                    "x": 13830,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d77_c20",
+                    "x": 14665,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          }
+],
+            wells: [
+          {
+                    "id": "d77_w1",
+                    "x": 3600,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d77_w2",
+                    "x": 7025,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d77_w3",
+                    "x": 10400,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d77_w4",
+                    "x": 13375,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 15190, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        78: {
+            id: 78,
+            title: "Уровень 78: Пустынная цитадель",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 15900,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 15900,
+                    "h": 200
+          },
+          {
+                    "x": 1140,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          },
+          {
+                    "x": 4570,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          },
+          {
+                    "x": 7995,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          },
+          {
+                    "x": 11415,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          },
+          {
+                    "x": 14810,
+                    "y": 220,
+                    "w": 200,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d78_b1",
+                    "x": 450,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d78_b2",
+                    "x": 880,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d78_b3",
+                    "x": 1440,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d78_b4",
+                    "x": 1890,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d78_b5",
+                    "x": 2240,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d78_b6",
+                    "x": 2680,
+                    "y": 430,
+                    "w": 220,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d78_b7",
+                    "x": 3070,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d78_b8",
+                    "x": 3910,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d78_b9",
+                    "x": 4340,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d78_b10",
+                    "x": 4830,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d78_b11",
+                    "x": 5295,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d78_b12",
+                    "x": 5645,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d78_b13",
+                    "x": 6085,
+                    "y": 415,
+                    "w": 205,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d78_b14",
+                    "x": 6460,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d78_b15",
+                    "x": 7320,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d78_b16",
+                    "x": 7750,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d78_b17",
+                    "x": 8275,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d78_b18",
+                    "x": 8755,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d78_b19",
+                    "x": 9105,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d78_b20",
+                    "x": 9545,
+                    "y": 400,
+                    "w": 190,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d78_b21",
+                    "x": 9905,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d78_b22",
+                    "x": 10725,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d78_b23",
+                    "x": 11155,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d78_b24",
+                    "x": 11715,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d78_b25",
+                    "x": 12165,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d78_b26",
+                    "x": 12515,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d78_b27",
+                    "x": 12955,
+                    "y": 430,
+                    "w": 235,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d78_b28",
+                    "x": 13750,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d78_b29",
+                    "x": 14150,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d78_b30",
+                    "x": 14580,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d78_b31",
+                    "x": 15250,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d78_l1",
+                    "x": 900,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d78_l2",
+                    "x": 1458,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d78_l3",
+                    "x": 3088,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d78_l4",
+                    "x": 4360,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d78_l5",
+                    "x": 4848,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d78_l6",
+                    "x": 6478,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d78_l7",
+                    "x": 7770,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d78_l8",
+                    "x": 8293,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d78_l9",
+                    "x": 9923,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d78_l10",
+                    "x": 11175,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d78_l11",
+                    "x": 11733,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d78_l12",
+                    "x": 13768,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d78_l13",
+                    "x": 14600,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d78_l14",
+                    "x": 15272,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d78_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d78_c2",
+                    "x": 740,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d78_c3",
+                    "x": 1760,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d78_c4",
+                    "x": 1990,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d78_c5",
+                    "x": 2550,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d78_c6",
+                    "x": 2945,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d78_c7",
+                    "x": 4200,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d78_c8",
+                    "x": 5165,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d78_c9",
+                    "x": 5395,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d78_c10",
+                    "x": 5955,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d78_c11",
+                    "x": 6335,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d78_c12",
+                    "x": 6685,
+                    "y": 280,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d78_c13",
+                    "x": 7610,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d78_c14",
+                    "x": 8625,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d78_c15",
+                    "x": 8855,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d78_c16",
+                    "x": 9415,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d78_c17",
+                    "x": 9780,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d78_c18",
+                    "x": 11015,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d78_c19",
+                    "x": 12035,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d78_c20",
+                    "x": 12265,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d78_c21",
+                    "x": 12825,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d78_c22",
+                    "x": 13955,
+                    "y": 300,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d78_c23",
+                    "x": 14440,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          }
+],
+            wells: [
+          {
+                    "id": "d78_w1",
+                    "x": 3690,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d78_w2",
+                    "x": 7100,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d78_w3",
+                    "x": 10505,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d78_w4",
+                    "x": 13530,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 15410, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        79: {
+            id: 79,
+            title: "Уровень 79: Путь к святилищу",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 16120,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+          {
+                    "x": 0,
+                    "y": 540,
+                    "w": 16120,
+                    "h": 200
+          },
+          {
+                    "x": 695,
+                    "y": 200,
+                    "w": 220,
+                    "h": 32
+          },
+          {
+                    "x": 4080,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          },
+          {
+                    "x": 14075,
+                    "y": 180,
+                    "w": 240,
+                    "h": 32
+          }
+],
+            boxes: [
+          {
+                    "id": "d79_b1",
+                    "x": 450,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d79_b2",
+                    "x": 975,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d79_b3",
+                    "x": 1455,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d79_b4",
+                    "x": 1805,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d79_b5",
+                    "x": 2245,
+                    "y": 400,
+                    "w": 205,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d79_b6",
+                    "x": 2620,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d79_b7",
+                    "x": 3000,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d79_b8",
+                    "x": 3820,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d79_b9",
+                    "x": 4380,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d79_b10",
+                    "x": 4830,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d79_b11",
+                    "x": 5180,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d79_b12",
+                    "x": 5620,
+                    "y": 430,
+                    "w": 190,
+                    "h": 110,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d79_b13",
+                    "x": 5980,
+                    "y": 300,
+                    "w": 240,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d79_b14",
+                    "x": 6380,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d79_b15",
+                    "x": 6810,
+                    "y": 160,
+                    "w": 230,
+                    "h": 380,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d79_b16",
+                    "x": 7620,
+                    "y": 300,
+                    "w": 265,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d79_b17",
+                    "x": 8085,
+                    "y": 280,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d79_b18",
+                    "x": 8435,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d79_b19",
+                    "x": 8875,
+                    "y": 415,
+                    "w": 235,
+                    "h": 125,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d79_b20",
+                    "x": 9280,
+                    "y": 280,
+                    "w": 260,
+                    "h": 260,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d79_b21",
+                    "x": 9700,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d79_b22",
+                    "x": 10130,
+                    "y": 140,
+                    "w": 245,
+                    "h": 400,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d79_b23",
+                    "x": 10955,
+                    "y": 300,
+                    "w": 280,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d79_b24",
+                    "x": 11435,
+                    "y": 240,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d79_b25",
+                    "x": 11785,
+                    "y": 370,
+                    "w": 230,
+                    "h": 170,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d79_b26",
+                    "x": 12225,
+                    "y": 400,
+                    "w": 220,
+                    "h": 140,
+                    "isDesertBuilding": true,
+                    "isSmall": true
+          },
+          {
+                    "id": "d79_b27",
+                    "x": 12615,
+                    "y": 320,
+                    "w": 220,
+                    "h": 220,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d79_b28",
+                    "x": 12995,
+                    "y": -200,
+                    "w": 220,
+                    "h": 690,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d79_b29",
+                    "x": 13815,
+                    "y": 120,
+                    "w": 260,
+                    "h": 420,
+                    "isDesertBuilding": true,
+                    "noLedgeGrab": true
+          },
+          {
+                    "id": "d79_b30",
+                    "x": 14375,
+                    "y": 300,
+                    "w": 250,
+                    "h": 240,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d79_b31",
+                    "x": 14825,
+                    "y": 260,
+                    "w": 200,
+                    "h": 55,
+                    "isDesertBuilding": true
+          },
+          {
+                    "id": "d79_b32",
+                    "x": 15470,
+                    "y": 120,
+                    "w": 320,
+                    "h": 420,
+                    "isDesertBuilding": true
+          }
+],
+            ladders: [
+          {
+                    "id": "d79_l1",
+                    "x": 470,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d79_l2",
+                    "x": 993,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d79_l3",
+                    "x": 2638,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d79_l4",
+                    "x": 3840,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d79_l5",
+                    "x": 4398,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d79_l6",
+                    "x": 5998,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d79_l7",
+                    "x": 6830,
+                    "topY": 160,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d79_l8",
+                    "x": 7638,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d79_l9",
+                    "x": 9298,
+                    "topY": 280,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d79_l10",
+                    "x": 10150,
+                    "topY": 140,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d79_l11",
+                    "x": 10973,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d79_l12",
+                    "x": 12633,
+                    "topY": 320,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d79_l13",
+                    "x": 13835,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d79_l14",
+                    "x": 14393,
+                    "topY": 300,
+                    "bottomY": 540,
+                    "w": 38,
+                    "isDesertLadder": true
+          },
+          {
+                    "id": "d79_l15",
+                    "x": 15492,
+                    "topY": 120,
+                    "bottomY": 540,
+                    "w": 42,
+                    "isDesertLadder": true
+          }
+],
+            cacti: [
+          {
+                    "id": "d79_c1",
+                    "x": 350,
+                    "y": 540,
+                    "w": 34,
+                    "h": 70,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d79_c2",
+                    "x": 1325,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d79_c3",
+                    "x": 1555,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d79_c4",
+                    "x": 2115,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d79_c5",
+                    "x": 2495,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d79_c6",
+                    "x": 2805,
+                    "y": 320,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d79_c7",
+                    "x": 4700,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d79_c8",
+                    "x": 4930,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d79_c9",
+                    "x": 5490,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d79_c10",
+                    "x": 5855,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d79_c11",
+                    "x": 6670,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d79_c12",
+                    "x": 7955,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d79_c13",
+                    "x": 8185,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d79_c14",
+                    "x": 8745,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d79_c15",
+                    "x": 9155,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d79_c16",
+                    "x": 9505,
+                    "y": 280,
+                    "w": 32,
+                    "h": 60,
+                    "type": "saguaro"
+          },
+          {
+                    "id": "d79_c17",
+                    "x": 9990,
+                    "y": 540,
+                    "w": 36,
+                    "h": 80,
+                    "type": "tall",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d79_c18",
+                    "x": 11305,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d79_c19",
+                    "x": 11535,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d79_c20",
+                    "x": 12095,
+                    "y": 540,
+                    "w": 36,
+                    "h": 85,
+                    "type": "tall"
+          },
+          {
+                    "id": "d79_c21",
+                    "x": 12490,
+                    "y": 540,
+                    "w": 42,
+                    "h": 55,
+                    "type": "cluster"
+          },
+          {
+                    "id": "d79_c22",
+                    "x": 14695,
+                    "y": 540,
+                    "w": 38,
+                    "h": 75,
+                    "type": "saguaro",
+                    "hasFlower": true
+          },
+          {
+                    "id": "d79_c23",
+                    "x": 14925,
+                    "y": 540,
+                    "w": 42,
+                    "h": 60,
+                    "type": "cluster"
+          }
+],
+            wells: [
+          {
+                    "id": "d79_w1",
+                    "x": 3600,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d79_w2",
+                    "x": 7400,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d79_w3",
+                    "x": 10735,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          },
+          {
+                    "id": "d79_w4",
+                    "x": 13595,
+                    "y": 540,
+                    "w": 96,
+                    "h": 110
+          }
+],
+            flag: { x: 15630, y: 120, poleHeight: 110, bannerW: 45, bannerH: 30, isDesertFlag: true }
+        },
+        80: {
+            id: 80,
+            title: "Уровень 80: Гробница Фараона — Босс Древняя Мумия",
+            theme: "desert",
+            hasThirst: true,
+            worldWidth: 16500,
+            groundY: 540,
+            playerStartX: 180,
+            platforms: [
+                { x: 0, y: 540, w: 16500, h: 200 },
+                { x: 1120, y: 220, w: 200, h: 32 },
+                { x: 2440, y: 140, w: 220, h: 32 },
+                { x: 4720, y: 180, w: 240, h: 32 },
+                { x: 5720, y: 140, w: 200, h: 32 },
+                { x: 7260, y: 120, w: 230, h: 32 },
+                { x: 10840, y: 70, w: 220, h: 32 }
+            ],
+            boxes: [
+                // Exactly 40 parkour objects leading to the boss arena!
+                { id: "d80_b1", x: 420, y: 360, w: 220, h: 180, isDesertBuilding: true },
+                { id: "d80_b2", x: 800, y: 280, w: 160, h: 260, isDesertBuilding: true },
+                { id: "d80_b3", x: 1120, y: 220, w: 200, h: 55, isDesertBuilding: true },
+                { id: "d80_b4", x: 1480, y: 340, w: 170, h: 200, isDesertBuilding: true, isSmall: true },
+                { id: "d80_b5", x: 1800, y: 260, w: 180, h: 280, isDesertBuilding: true },
+                { id: "d80_b6", x: 2120, y: 190, w: 190, h: 350, isDesertBuilding: true },
+                { id: "d80_b7", x: 2440, y: 140, w: 220, h: 45, isDesertBuilding: true },
+                { id: "d80_b8", x: 2800, y: 300, w: 220, h: 240, isDesertBuilding: true },
+                { id: "d80_b9", x: 3160, y: 240, w: 190, h: 55, isDesertBuilding: true },
+                { id: "d80_b10", x: 3480, y: 170, w: 160, h: 370, isDesertBuilding: true },
+                { id: "d80_b11", x: 3780, y: 240, w: 150, h: 300, isDesertBuilding: true },
+                { id: "d80_b12", x: 4050, y: 350, w: 240, h: 190, isDesertBuilding: true },
+                { id: "d80_b13", x: 4420, y: 270, w: 180, h: 270, isDesertBuilding: true },
+                { id: "d80_b14", x: 4720, y: 180, w: 240, h: 50, isDesertBuilding: true },
+                { id: "d80_b15", x: 5100, y: 310, w: 210, h: 230, isDesertBuilding: true },
+                { id: "d80_b16", x: 5420, y: 190, w: 180, h: 350, isDesertBuilding: true },
+                { id: "d80_b17", x: 5720, y: 140, w: 200, h: 45, isDesertBuilding: true },
+                { id: "d80_b18", x: 6040, y: 290, w: 150, h: 250, isDesertBuilding: true },
+                { id: "d80_b19", x: 6310, y: 220, w: 230, h: 320, isDesertBuilding: true },
+                { id: "d80_b20", x: 6660, y: 340, w: 190, h: 200, isDesertBuilding: true, isSmall: true },
+                { id: "d80_b21", x: 6970, y: 180, w: 170, h: 360, isDesertBuilding: true },
+                { id: "d80_b22", x: 7260, y: 120, w: 230, h: 45, isDesertBuilding: true },
+                { id: "d80_b23", x: 7600, y: 260, w: 160, h: 280, isDesertBuilding: true },
+                { id: "d80_b24", x: 7880, y: 180, w: 180, h: 360, isDesertBuilding: true },
+                { id: "d80_b25", x: 8180, y: 340, w: 240, h: 200, isDesertBuilding: true },
+                { id: "d80_b26", x: 8540, y: 280, w: 160, h: 260, isDesertBuilding: true },
+                { id: "d80_b27", x: 8820, y: 200, w: 170, h: 340, isDesertBuilding: true },
+                { id: "d80_b28", x: 9110, y: 130, w: 190, h: 410, isDesertBuilding: true },
+                { id: "d80_b29", x: 9420, y: 230, w: 230, h: 310, isDesertBuilding: true },
+                { id: "d80_b30", x: 9770, y: 420, w: 150, h: 120, isDesertBuilding: true, isSmall: true },
+                { id: "d80_b31", x: 9970, y: 340, w: 150, h: 200, isDesertBuilding: true },
+                { id: "d80_b32", x: 10170, y: 260, w: 150, h: 280, isDesertBuilding: true },
+                { id: "d80_b33", x: 10370, y: 180, w: 160, h: 360, isDesertBuilding: true },
+                { id: "d80_b34", x: 10620, y: 90, w: 170, h: 450, isDesertBuilding: true, noLedgeGrab: true },
+                { id: "d80_b35", x: 10840, y: 70, w: 220, h: 50, isDesertBuilding: true },
+                { id: "d80_b36", x: 11110, y: 90, w: 170, h: 450, isDesertBuilding: true, noLedgeGrab: true },
+                { id: "d80_b37", x: 11380, y: 360, w: 220, h: 180, isDesertBuilding: true },
+                { id: "d80_b38", x: 11700, y: 280, w: 180, h: 260, isDesertBuilding: true },
+                { id: "d80_b39", x: 12000, y: 210, w: 200, h: 330, isDesertBuilding: true },
+                { id: "d80_b40", x: 12300, y: 120, w: 260, h: 420, isDesertBuilding: true, isBossGate: true }
+            ],
+            ladders: [
+                { id: "d80_lad1", x: 805, topY: 280, bottomY: 540, w: 42 },
+                { id: "d80_lad2", x: 3485, topY: 170, bottomY: 540, w: 42 },
+                { id: "d80_lad3", x: 5425, topY: 190, bottomY: 540, w: 42 },
+                { id: "d80_lad4", x: 7885, topY: 180, bottomY: 540, w: 42 },
+                { id: "d80_lad5", x: 10375, topY: 180, bottomY: 540, w: 42 },
+                { id: "d80_lad6", x: 12305, topY: 120, bottomY: 540, w: 42 }
+            ],
+            cacti: [
+                { id: "d80_c1", x: 690, y: 540, w: 36, h: 75, type: "saguaro" },
+                { id: "d80_c2", x: 1350, y: 540, w: 42, h: 60, type: "cluster" },
+                { id: "d80_c3", x: 2320, y: 540, w: 36, h: 80, type: "tall", hasFlower: true },
+                { id: "d80_c4", x: 3040, y: 540, w: 38, h: 75, type: "saguaro" },
+                { id: "d80_c5", x: 3680, y: 540, w: 42, h: 60, type: "cluster" },
+                { id: "d80_c6", x: 4330, y: 540, w: 36, h: 80, type: "tall" },
+                { id: "d80_c7", x: 5000, y: 540, w: 38, h: 75, type: "saguaro" },
+                { id: "d80_c8", x: 5940, y: 540, w: 42, h: 60, type: "cluster" },
+                { id: "d80_c9", x: 6860, y: 540, w: 36, h: 80, type: "tall", hasFlower: true },
+                { id: "d80_c10", x: 7500, y: 540, w: 38, h: 75, type: "saguaro" },
+                { id: "d80_c11", x: 8440, y: 540, w: 42, h: 60, type: "cluster" },
+                { id: "d80_c12", x: 9020, y: 540, w: 36, h: 80, type: "tall" },
+                { id: "d80_c13", x: 9680, y: 540, w: 38, h: 75, type: "saguaro" },
+                { id: "d80_c14", x: 11280, y: 540, w: 42, h: 60, type: "cluster" },
+                { id: "d80_c15", x: 11900, y: 540, w: 36, h: 80, type: "tall", hasFlower: true }
+            ],
+            wells: [
+                { id: "d80_w1", x: 3970, y: 540, w: 96, h: 110 },
+                { id: "d80_w2", x: 8100, y: 540, w: 96, h: 110 },
+                { id: "d80_w3", x: 11300, y: 540, w: 96, h: 110 }
+            ],
+            flag: null
         }
     };
 
@@ -6837,29 +17365,42 @@
         currentLevelData = levelsData[levelNum] || levelsData[1];
 
         // Dynamic HUD control descriptions
-        const isSnow = currentLevelData.theme === 'snow' || currentLevelIndex >= 41;
-        const isNature = !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
+        const isDesert = currentLevelData.theme === 'desert' || currentLevelIndex >= 61;
+        const isSnow = !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
+        const isNature = !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
 
         if (ctrlTurnik) {
-            if (isSnow) {
-                ctrlTurnik.innerHTML = '<span>СУХАЯ ВЕТКА</span> Раскачка A/D, рывок Пробел';
-            } else if (isNature) {
-                ctrlTurnik.innerHTML = '<span>ВЕТКА</span> Дерево (раскачка)';
+            if (isDesert) {
+                ctrlTurnik.style.display = 'none';
             } else {
-                ctrlTurnik.innerHTML = '<span>ТУРНИК</span> A/D раскачка, Пробел рывок';
+                ctrlTurnik.style.display = 'block';
+                if (isSnow) {
+                    ctrlTurnik.innerHTML = '<span>СУХАЯ ВЕТКА</span> Раскачка A/D, рывок Пробел';
+                } else if (isNature) {
+                    ctrlTurnik.innerHTML = '<span>ВЕТКА</span> Дерево (раскачка)';
+                } else {
+                    ctrlTurnik.innerHTML = '<span>ТУРНИК</span> A/D раскачка, Пробел рывок';
+                }
             }
         }
         if (ctrlRope) {
-            if (isSnow) {
-                ctrlRope.innerHTML = '<span>СВИСАЮЩАЯ ВЕТКА</span> Раскачка A/D, рывок Пробел';
-            } else if (isNature) {
-                ctrlRope.innerHTML = '<span>ЛИАНА</span> Раскачка A/D, рывок Пробел';
+            if (isDesert) {
+                ctrlRope.style.display = 'none';
             } else {
-                ctrlRope.innerHTML = '<span>КАНАТ</span> A/D раскачка, Пробел рывок';
+                ctrlRope.style.display = 'block';
+                if (isSnow) {
+                    ctrlRope.innerHTML = '<span>СВИСАЮЩАЯ ВЕТКА</span> Раскачка A/D, рывок Пробел';
+                } else if (isNature) {
+                    ctrlRope.innerHTML = '<span>ЛИАНА</span> Раскачка A/D, рывок Пробел';
+                } else {
+                    ctrlRope.innerHTML = '<span>КАНАТ</span> A/D раскачка, Пробел рывок';
+                }
             }
         }
         if (ctrlLadder) {
-            if (isSnow) {
+            if (isDesert) {
+                ctrlLadder.innerHTML = '<span>E</span> Лестница на здании';
+            } else if (isSnow) {
                 ctrlLadder.innerHTML = '<span>ВЕТВЯНАЯ ЛЕСТНИЦА</span> E залезть';
             } else if (isNature) {
                 ctrlLadder.innerHTML = '<span>ЛИАНЫ</span> E залезть на камень';
@@ -6882,6 +17423,24 @@
                 updateColdHud();
             } else {
                 coldHud.classList.add('hidden');
+            }
+        }
+
+        if (healthHud) {
+            if (isDesert && currentState === STATES.PLAYING) {
+                healthHud.classList.remove('hidden');
+                updateHealthHud();
+            } else {
+                healthHud.classList.add('hidden');
+            }
+        }
+
+        if (thirstHud) {
+            if (isDesert && (currentLevelData.hasThirst || currentLevelIndex >= 62) && currentState === STATES.PLAYING) {
+                thirstHud.classList.remove('hidden');
+                updateThirstHud();
+            } else {
+                thirstHud.classList.add('hidden');
             }
         }
     }
@@ -6932,34 +17491,239 @@
         }
     }
 
-    // Generate 20 Level Tiles in Grid (Page 1: 1-20, Page 2: 21-40, Page 3: 41-60)
+    function updateHealthHud() {
+        if (!healthHud) return;
+        const hp = Math.max(0, Math.min(player.maxHealth || 100, player.health || 0));
+        const maxHp = player.maxHealth || 100;
+        const pct = Math.round((hp / maxHp) * 100);
+
+        if (healthPercent) {
+            healthPercent.textContent = `${hp} / ${maxHp}`;
+        }
+        if (healthBarFill) {
+            healthBarFill.style.width = `${pct}%`;
+            if (pct <= 30) {
+                healthBarFill.className = 'health-bar-fill critical';
+            } else if (pct <= 50) {
+                healthBarFill.className = 'health-bar-fill warning';
+            } else {
+                healthBarFill.className = 'health-bar-fill';
+            }
+        }
+
+        if (pct <= 30) {
+            healthHud.className = 'health-hud warning';
+            if (healthIcon) healthIcon.textContent = '💔';
+            if (healthStatusText) healthStatusText.textContent = `${pct}%: критическое здоровье!`;
+        } else if (pct <= 50) {
+            healthHud.className = 'health-hud';
+            if (healthIcon) healthIcon.textContent = '❤️‍🩹';
+            if (healthStatusText) healthStatusText.textContent = `${pct}%: Плоховатое самочуствие`;
+        } else {
+            healthHud.className = 'health-hud';
+            if (healthIcon) healthIcon.textContent = '❤️';
+            if (healthStatusText) healthStatusText.textContent = `${pct}%: отличное самочувствие`;
+        }
+    }
+
+    function updateThirstHud() {
+        if (!thirstHud) return;
+        if (currentLevelIndex === 80 && (mummy.active || (typeof mummyIntroCutscene !== 'undefined' && mummyIntroCutscene.active) || (typeof mummyDefeatCutscene !== 'undefined' && mummyDefeatCutscene.active) || player.x >= 13150)) {
+            thirstHud.classList.add('hidden');
+            return;
+        }
+        const thirst = Math.max(0, Math.min(100, Math.round(player.thirst || 0)));
+
+        if (thirstPercent) {
+            thirstPercent.textContent = `${thirst}%`;
+        }
+        if (thirstBarFill) {
+            thirstBarFill.style.width = `${thirst}%`;
+            if (thirst <= 20) {
+                thirstBarFill.className = 'thirst-bar-fill critical';
+            } else if (thirst <= 45) {
+                thirstBarFill.className = 'thirst-bar-fill warning';
+            } else {
+                thirstBarFill.className = 'thirst-bar-fill';
+            }
+        }
+
+        if (thirst <= 20) {
+            thirstHud.className = 'thirst-hud critical';
+            if (thirstIcon) thirstIcon.textContent = '🔥';
+            if (thirstStatusText) thirstStatusText.textContent = `${thirst}%: критическая жажда! Ищите колодец!`;
+        } else if (thirst <= 45) {
+            thirstHud.className = 'thirst-hud warning';
+            if (thirstIcon) thirstIcon.textContent = '☀️';
+            if (thirstStatusText) thirstStatusText.textContent = `${thirst}%: нарастает жажда...`;
+        } else {
+            thirstHud.className = 'thirst-hud';
+            if (thirstIcon) thirstIcon.textContent = '💧';
+            if (thirstStatusText) thirstStatusText.textContent = `${thirst}%: водный баланс в норме`;
+        }
+    }
+
+    function drinkFromWell(well) {
+        if (!well) return;
+        if (player.state === 'DEFEAT' || currentState !== STATES.PLAYING) return;
+
+        player.thirst = 100;
+        player.health = Math.min(player.maxHealth || 100, (player.health || 100) + 20);
+
+        playSound('waterDrink');
+        playSound('waterSplash');
+
+        // Spawn cool water splash particles around well and player
+        for (let i = 0; i < 28; i++) {
+            particles.push({
+                x: well.x + (Math.random() - 0.5) * (well.w * 0.6),
+                y: well.y - 30 + (Math.random() - 0.5) * 20,
+                vx: (Math.random() - 0.5) * 6,
+                vy: -Math.random() * 6 - 2,
+                size: 2.5 + Math.random() * 3.5,
+                color: Math.random() < 0.6 ? '#38bdf8' : (Math.random() < 0.5 ? '#bae6fd' : '#ffffff'),
+                life: 0.65,
+                decay: 0.025
+            });
+        }
+
+        if (thirstHud) {
+            thirstHud.classList.remove('quenching');
+            void thirstHud.offsetWidth;
+            thirstHud.classList.add('quenching');
+        }
+
+        updateThirstHud();
+        updateHealthHud();
+    }
+
+    function playerTakeDamage(amount, source = 'cactus') {
+        if (player.damageCooldown > 0 || player.state === 'DEFEAT' || player.state === 'VICTORY' || player.state === 'VICTORY_IDLE' || currentState !== STATES.PLAYING) return;
+
+        player.health = Math.max(0, (player.health || 100) - amount);
+        player.damageCooldown = 0.8; // 0.8s invulnerability frame
+
+        playSound('cactusPrick');
+
+        // Small knockback
+        player.vx = -player.facing * 3.5;
+        player.vy = -3.2;
+        player.grounded = false;
+
+        // Thorn needles & pain particles
+        for (let p = 0; p < 14; p++) {
+            particles.push({
+                x: player.x + (Math.random() - 0.5) * 18,
+                y: player.y - 36 + (Math.random() - 0.5) * 32,
+                vx: (Math.random() - 0.5) * 5,
+                vy: -Math.random() * 4 - 1,
+                size: 2 + Math.random() * 2.5,
+                color: Math.random() < 0.6 ? '#f59e0b' : '#ef4444',
+                life: 0.5,
+                decay: 0.03
+            });
+        }
+
+        if (healthHud) {
+            healthHud.classList.remove('damaged');
+            void healthHud.offsetWidth;
+            healthHud.classList.add('damaged');
+        }
+        updateHealthHud();
+
+        if (player.health <= 0) {
+            if (source === 'mummySpike' && typeof mummy !== 'undefined') mummy.lastDefeatReason = 'SPIKES';
+            else if (source === 'mummyMinion' && typeof mummy !== 'undefined') mummy.lastDefeatReason = 'MINIONS';
+            else if (source === 'anubisWave' && typeof mummy !== 'undefined') mummy.lastDefeatReason = 'ANUBIS';
+
+            triggerDefeat(false);
+
+            if (source === 'cactus') {
+                const defeatSubtextEl = defeatScreen ? defeatScreen.querySelector('.defeat-subtext') : null;
+                if (defeatSubtextEl) {
+                    defeatSubtextEl.textContent = 'Острые шипы кактусов нанесли вам смертельный урон! Перепрыгивайте кактусы и берегите здоровье!';
+                }
+                const defeatTitleEl = defeatScreen ? defeatScreen.querySelector('.defeat-title') : null;
+                if (defeatTitleEl) {
+                    defeatTitleEl.textContent = 'Укол кактуса';
+                }
+            }
+        }
+    }
+
+    // Location Navigation Config & Theming for Level Browser
+    const PAGE_NAV_THEMES = {
+        1: { name: 'Здание Препятствий', shortName: 'Здание', themeClass: 'theme-building' },
+        2: { name: 'Дикая Природа', shortName: 'Природа', themeClass: 'theme-nature' },
+        3: { name: 'Вечный холод', shortName: 'Вечный холод', themeClass: 'theme-snow' },
+        4: { name: 'Исохшая земля', shortName: 'Исохшая земля', themeClass: 'theme-desert' }
+    };
+
+    function updatePaginationArrows(page) {
+        const allThemes = ['theme-building', 'theme-nature', 'theme-snow', 'theme-desert'];
+
+        // Left / Previous Arrow (leads to page - 1)
+        if (btnPrevPage) {
+            btnPrevPage.classList.remove(...allThemes, 'pulse-hint');
+            const prevPage = page - 1;
+            if (prevPage >= 1 && PAGE_NAV_THEMES[prevPage]) {
+                const prevTheme = PAGE_NAV_THEMES[prevPage];
+                btnPrevPage.disabled = false;
+                btnPrevPage.classList.remove('disabled');
+                btnPrevPage.classList.add(prevTheme.themeClass);
+                btnPrevPage.title = `Предыдущая страница: ${prevTheme.name}`;
+                btnPrevPage.setAttribute('aria-label', `Предыдущая страница: ${prevTheme.name}`);
+            } else {
+                btnPrevPage.disabled = true;
+                btnPrevPage.classList.add('disabled');
+                btnPrevPage.title = 'Предыдущая страница отсутствует';
+                btnPrevPage.setAttribute('aria-label', 'Предыдущая страница отсутствует');
+            }
+        }
+
+        // Right / Next Arrow (leads to page + 1)
+        if (btnNextPage) {
+            btnNextPage.classList.remove(...allThemes, 'pulse-hint');
+            const nextPage = page + 1;
+            if (nextPage <= 4 && PAGE_NAV_THEMES[nextPage]) {
+                const nextTheme = PAGE_NAV_THEMES[nextPage];
+                btnNextPage.disabled = false;
+                btnNextPage.classList.remove('disabled');
+                btnNextPage.classList.add(nextTheme.themeClass, 'pulse-hint');
+                btnNextPage.title = `Следующая страница: ${nextTheme.name}`;
+                btnNextPage.setAttribute('aria-label', `Следующая страница: ${nextTheme.name}`);
+            } else {
+                btnNextPage.disabled = true;
+                btnNextPage.classList.add('disabled');
+                btnNextPage.title = 'Следующая страница отсутствует';
+                btnNextPage.setAttribute('aria-label', 'Следующая страница отсутствует');
+            }
+        }
+    }
+
+    // Generate 20 Level Tiles in Grid (Page 1: 1-20, Page 2: 21-40, Page 3: 41-60, Page 4: 61-80)
     function generateLevelsGrid() {
         if (!levelsGrid) return;
         levelsGrid.innerHTML = '';
+        updatePaginationArrows(currentSelectPage);
 
         if (currentSelectPage === 1) {
             if (levelPageBadge) {
                 levelPageBadge.textContent = '1 страница - Здание Препятствий';
                 levelPageBadge.className = 'level-page-badge page-building';
             }
-            if (btnPrevPage) {
-                btnPrevPage.disabled = true;
-                btnPrevPage.classList.add('disabled');
-            }
-            if (btnNextPage) {
-                btnNextPage.disabled = false;
-                btnNextPage.classList.remove('disabled');
-                btnNextPage.classList.add('pulse-hint');
-            }
             if (dotPage1) {
                 dotPage1.classList.add('active');
-                dotPage1.classList.remove('nature', 'snow');
+                dotPage1.classList.remove('nature', 'snow', 'desert');
             }
             if (dotPage2) {
-                dotPage2.classList.remove('active', 'nature', 'snow');
+                dotPage2.classList.remove('active', 'nature', 'snow', 'desert');
             }
             if (dotPage3) {
-                dotPage3.classList.remove('active', 'nature', 'snow');
+                dotPage3.classList.remove('active', 'nature', 'snow', 'desert');
+            }
+            if (dotPage4) {
+                dotPage4.classList.remove('active', 'nature', 'snow', 'desert');
             }
 
             for (let i = 1; i <= 20; i++) {
@@ -6988,24 +17752,18 @@
                 levelPageBadge.textContent = '2 страница - Дикая Природа';
                 levelPageBadge.className = 'level-page-badge page-nature';
             }
-            if (btnPrevPage) {
-                btnPrevPage.disabled = false;
-                btnPrevPage.classList.remove('disabled');
-            }
-            if (btnNextPage) {
-                btnNextPage.disabled = false;
-                btnNextPage.classList.remove('disabled');
-                btnNextPage.classList.add('pulse-hint');
-            }
             if (dotPage1) {
-                dotPage1.classList.remove('active', 'nature', 'snow');
+                dotPage1.classList.remove('active', 'nature', 'snow', 'desert');
             }
             if (dotPage2) {
                 dotPage2.classList.add('active', 'nature');
-                dotPage2.classList.remove('snow');
+                dotPage2.classList.remove('snow', 'desert');
             }
             if (dotPage3) {
-                dotPage3.classList.remove('active', 'nature', 'snow');
+                dotPage3.classList.remove('active', 'nature', 'snow', 'desert');
+            }
+            if (dotPage4) {
+                dotPage4.classList.remove('active', 'nature', 'snow', 'desert');
             }
 
             for (let i = 21; i <= 40; i++) {
@@ -7029,30 +17787,24 @@
                 }
                 levelsGrid.appendChild(tile);
             }
-        } else {
+        } else if (currentSelectPage === 3) {
             // Page 3: Вечный холод (Levels 41-60)
             if (levelPageBadge) {
                 levelPageBadge.textContent = '3 страница - Вечный холод';
                 levelPageBadge.className = 'level-page-badge page-snow';
             }
-            if (btnPrevPage) {
-                btnPrevPage.disabled = false;
-                btnPrevPage.classList.remove('disabled');
-            }
-            if (btnNextPage) {
-                btnNextPage.disabled = true;
-                btnNextPage.classList.add('disabled');
-                btnNextPage.classList.remove('pulse-hint');
-            }
             if (dotPage1) {
-                dotPage1.classList.remove('active', 'nature', 'snow');
+                dotPage1.classList.remove('active', 'nature', 'snow', 'desert');
             }
             if (dotPage2) {
-                dotPage2.classList.remove('active', 'nature', 'snow');
+                dotPage2.classList.remove('active', 'nature', 'snow', 'desert');
             }
             if (dotPage3) {
                 dotPage3.classList.add('active', 'snow');
-                dotPage3.classList.remove('nature');
+                dotPage3.classList.remove('nature', 'desert');
+            }
+            if (dotPage4) {
+                dotPage4.classList.remove('active', 'nature', 'snow', 'desert');
             }
 
             for (let i = 41; i <= 60; i++) {
@@ -7060,7 +17812,7 @@
                 if (i <= unlockedPage3Levels && levelsData[i]) {
                     tile.className = (i === 60) ? 'level-tile unlocked snow boss-level-60' : 'level-tile unlocked snow';
                     tile.innerHTML = (i === 60)
-                        ? `<span>60</span><span style="font-size: 0.65rem; display: block; font-weight: 700; letter-spacing: 0.5px;">❄️ ЙЕТИ</span>`
+                        ? `<span>60</span><span style="font-size: 0.65rem; display: block; font-weight: 700; letter-spacing: 0.5px;">❄️ БОСС</span>`
                         : `<span>${i}</span><span style="font-size: 0.65rem; display: block; font-weight: 700; letter-spacing: 0.5px;">❄️ СНЕГ</span>`;
                     const levelNum = i;
                     tile.addEventListener('click', () => {
@@ -7070,6 +17822,45 @@
                     tile.className = (i === 60) ? 'level-tile locked snow boss-level-60' : 'level-tile locked snow';
                     tile.innerHTML = (i === 60)
                         ? `<span>60 ❄️</span><span class="lock-icon">🔒</span>`
+                        : `<span>${i}</span><span class="lock-icon">🔒</span>`;
+                }
+                levelsGrid.appendChild(tile);
+            }
+        } else {
+            // Page 4: Исохшая земля (Levels 61-80)
+            if (levelPageBadge) {
+                levelPageBadge.textContent = '4 страница - Исохшая земля';
+                levelPageBadge.className = 'level-page-badge page-desert';
+            }
+            if (dotPage1) {
+                dotPage1.classList.remove('active', 'nature', 'snow', 'desert');
+            }
+            if (dotPage2) {
+                dotPage2.classList.remove('active', 'nature', 'snow', 'desert');
+            }
+            if (dotPage3) {
+                dotPage3.classList.remove('active', 'nature', 'snow', 'desert');
+            }
+            if (dotPage4) {
+                dotPage4.classList.add('active', 'desert');
+                dotPage4.classList.remove('nature', 'snow');
+            }
+
+            for (let i = 61; i <= 80; i++) {
+                const tile = document.createElement('div');
+                if (i <= unlockedPage4Levels && levelsData[i]) {
+                    tile.className = (i === 80) ? 'level-tile unlocked desert boss-level-80' : 'level-tile unlocked desert';
+                    tile.innerHTML = (i === 80)
+                        ? `<span>80</span><span style="font-size: 0.65rem; display: block; font-weight: 700; letter-spacing: 0.5px;">🏺 БОСС</span>`
+                        : `<span>${i}</span><span style="font-size: 0.65rem; display: block; font-weight: 700; letter-spacing: 0.5px;">🏜️ ПУСТЫНЯ</span>`;
+                    const levelNum = i;
+                    tile.addEventListener('click', () => {
+                        startLevelWithFade(levelNum);
+                    });
+                } else {
+                    tile.className = (i === 80) ? 'level-tile locked desert boss-level-80' : 'level-tile locked desert';
+                    tile.innerHTML = (i === 80)
+                        ? `<span>80 🏺</span><span class="lock-icon">🔒</span>`
                         : `<span>${i}</span><span class="lock-icon">🔒</span>`;
                 }
                 levelsGrid.appendChild(tile);
@@ -7088,6 +17879,10 @@
                 currentSelectPage = 3;
                 playSound('jump');
                 generateLevelsGrid();
+            } else if (currentSelectPage === 3) {
+                currentSelectPage = 4;
+                playSound('jump');
+                generateLevelsGrid();
             }
         });
     }
@@ -7095,7 +17890,11 @@
     if (btnPrevPage) {
         btnPrevPage.addEventListener('click', () => {
             initAudio();
-            if (currentSelectPage === 3) {
+            if (currentSelectPage === 4) {
+                currentSelectPage = 3;
+                playSound('jump');
+                generateLevelsGrid();
+            } else if (currentSelectPage === 3) {
                 currentSelectPage = 2;
                 playSound('jump');
                 generateLevelsGrid();
@@ -7140,6 +17939,17 @@
         });
     }
 
+    if (dotPage4) {
+        dotPage4.addEventListener('click', () => {
+            if (currentSelectPage !== 4) {
+                initAudio();
+                currentSelectPage = 4;
+                playSound('jump');
+                generateLevelsGrid();
+            }
+        });
+    }
+
     generateLevelsGrid();
 
     // Smooth Fade Transition Handler
@@ -7165,14 +17975,26 @@
                 startLevel21IntroCutscene();
             } else if (levelNum === 41 && !forceSkipCutscene) {
                 startLevel41IntroCutscene();
+            } else if (levelNum === 61 && !forceSkipCutscene) {
+                startLevel61IntroCutscene();
             } else {
                 hudOverlay.classList.remove('hidden');
-                if (inventoryHud && (currentLevelData.theme === 'snow' || currentLevelIndex >= 41)) {
+                const isDesert = (currentLevelData.theme === 'desert' || currentLevelIndex >= 61);
+                const isSnow = !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
+                if (inventoryHud && isSnow) {
                     inventoryHud.classList.remove('hidden');
                 }
-                if (coldHud && (currentLevelData.theme === 'snow' || currentLevelIndex >= 41)) {
+                if (coldHud && isSnow) {
                     coldHud.classList.remove('hidden');
                     updateColdHud();
+                }
+                if (healthHud && isDesert) {
+                    healthHud.classList.remove('hidden');
+                    updateHealthHud();
+                }
+                if (thirstHud && isDesert && (currentLevelData.hasThirst || currentLevelIndex >= 62)) {
+                    thirstHud.classList.remove('hidden');
+                    updateThirstHud();
                 }
                 currentState = STATES.PLAYING;
             }
@@ -7412,7 +18234,7 @@
         boss.debris = [];
         screenShake = 0;
 
-        if (currentLevelIndex === 20 || currentLevelIndex === 40 || currentLevelIndex === 60) {
+        if (currentLevelIndex === 20 || currentLevelIndex === 40 || currentLevelIndex === 60 || currentLevelIndex === 80) {
             currentLevelData.flag = null;
         }
         if (typeof resetGolem === 'function') {
@@ -7420,6 +18242,9 @@
         }
         if (typeof resetYeti === 'function') {
             resetYeti();
+        }
+        if (typeof resetMummy === 'function') {
+            resetMummy();
         }
         if (bossHud) {
             bossHud.classList.add('hidden');
@@ -7496,7 +18321,19 @@
             const isNature = currentLevelData.theme === 'nature' || currentLevelIndex >= 21;
             const defeatSubtextEl = defeatScreen.querySelector('.defeat-subtext');
             if (defeatSubtextEl) {
-                if (currentLevelIndex === 60 && typeof yeti !== 'undefined' && (yeti.active || (typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene.active))) {
+                if (currentLevelIndex === 80 && typeof mummy !== 'undefined' && (mummy.active || (typeof mummyIntroCutscene !== 'undefined' && mummyIntroCutscene.active))) {
+                    if (mummy.lastDefeatReason === 'TORNADO') {
+                        defeatSubtextEl.textContent = 'Вас затянуло в гигантский песчаный смерч! Удерживайте ползунок в зелёной зоне [Пробел / Клик], чтобы устоять перед бурей!';
+                    } else if (mummy.lastDefeatReason === 'ANUBIS') {
+                        defeatSubtextEl.textContent = 'Ударные волны Посоха Анубиса сокрушили вас! Вовремя перепрыгивайте золотые волны по земле [Пробел]!';
+                    } else if (mummy.lastDefeatReason === 'SPIKES') {
+                        defeatSubtextEl.textContent = 'Острые шипы из окаменевшего песка пронзили вас! Следите за красными линиями прицеливания и отбегайте!';
+                    } else if (mummy.lastDefeatReason === 'MINIONS') {
+                        defeatSubtextEl.textContent = 'Вас одолела орда маленьких мумий! Отбивайтесь ударами кулаков [ЛКМ / E], пока они не подошли близко!';
+                    } else {
+                        defeatSubtextEl.textContent = 'Великая Древняя Мумия одолела вас! Собирайте священные золотые пирамиды на полу, чтобы поразить босса!';
+                    }
+                } else if (currentLevelIndex === 60 && typeof yeti !== 'undefined' && (yeti.active || (typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene.active))) {
                     if (yeti.lastDefeatReason === 'BOULDER') {
                         defeatSubtextEl.textContent = 'Вас сокрушила гигантская глыба льда Йети! Следите за красной зоной удара и отбегайте вовремя!';
                     } else if (yeti.lastDefeatReason === 'AVALANCHE') {
@@ -7518,11 +18355,25 @@
             }
             const defeatTitleEl = defeatScreen.querySelector('.defeat-title');
             if (defeatTitleEl) {
-                defeatTitleEl.textContent = (currentLevelIndex === 60 && typeof yeti !== 'undefined' && yeti.active)
-                    ? 'Сокрушение Йети'
-                    : ((currentLevelIndex === 40 && typeof golem !== 'undefined' && golem.active)
-                        ? 'Сокрушение Голема'
-                        : ((isNature || isAbyss) ? 'Падение в пропасть' : 'Поражение'));
+                if (currentLevelIndex === 80 && typeof mummy !== 'undefined' && (mummy.active || (typeof mummyIntroCutscene !== 'undefined' && mummyIntroCutscene.active))) {
+                    if (mummy.lastDefeatReason === 'TORNADO') {
+                        defeatTitleEl.textContent = '🌪️ Песчаное торнадо';
+                    } else if (mummy.lastDefeatReason === 'ANUBIS') {
+                        defeatTitleEl.textContent = '⚡ Посох Анубиса';
+                    } else if (mummy.lastDefeatReason === 'SPIKES') {
+                        defeatTitleEl.textContent = '🌵 Песчаные шипы';
+                    } else if (mummy.lastDefeatReason === 'MINIONS') {
+                        defeatTitleEl.textContent = '👥 Орда мумий';
+                    } else {
+                        defeatTitleEl.textContent = '🏺 Проклятие Мумии';
+                    }
+                } else if (currentLevelIndex === 60 && typeof yeti !== 'undefined' && yeti.active) {
+                    defeatTitleEl.textContent = 'Сокрушение Йети';
+                } else if (currentLevelIndex === 40 && typeof golem !== 'undefined' && golem.active) {
+                    defeatTitleEl.textContent = 'Сокрушение Голема';
+                } else {
+                    defeatTitleEl.textContent = (isNature || isAbyss) ? 'Падение в пропасть' : 'Поражение';
+                }
             }
         }
     }
@@ -7600,6 +18451,12 @@
         if (currentLevelIndex === 60) {
             if (typeof updateYeti === 'function') {
                 updateYeti();
+            }
+            return;
+        }
+        if (currentLevelIndex === 80) {
+            if (typeof updateMummy === 'function') {
+                updateMummy();
             }
             return;
         }
@@ -11209,6 +22066,1132 @@
     }
 
     // ==========================================
+    // --- LEVEL 61: DESERT INTRO CUTSCENE ---
+    // ==========================================
+    const cutsceneIntro61 = {
+        active: false,
+        phase: 'WALK_COLD',
+        timer: 0,
+        steamPuffs: [],
+        breathPuffs: []
+    };
+
+    function startLevel61IntroCutscene() {
+        currentState = STATES.CUTSCENE;
+        cutsceneIntro61.active = true;
+        cutsceneIntro61.phase = 'WALK_COLD';
+        cutsceneIntro61.timer = 0;
+        cutsceneIntro61.steamPuffs = [];
+        cutsceneIntro61.breathPuffs = [];
+
+        if (hudOverlay) hudOverlay.classList.add('hidden');
+        if (inventoryHud) inventoryHud.classList.add('hidden');
+        if (coldHud) coldHud.classList.add('hidden');
+        if (healthHud) healthHud.classList.add('hidden');
+        if (cutsceneOverlay) cutsceneOverlay.classList.remove('hidden');
+
+        player.cold = 0;
+        player.health = 100;
+        player.maxHealth = 100;
+        player.damageCooldown = 0;
+
+        player.x = 100;
+        player.y = 540;
+        player.vx = 2.0;
+        player.vy = 0;
+        player.facing = 1;
+        player.grounded = true;
+        player.state = 'WALK';
+        player.isBossMode = false;
+        player.isCrouching = false;
+        player.height = 76;
+
+        cameraX = 0;
+        cameraY = 0;
+
+        playSound('coldWind');
+        if (cutsceneChapter) cutsceneChapter.textContent = '🏜️ СТРАНИЦА 4: ИСОХШАЯ ЗЕМЛЯ';
+        if (cutsceneText) cutsceneText.textContent = 'Стикмен оставляет позади морозные ледники... Прямо перед ним раскинулась знойная пустыня!';
+    }
+
+    function updateCutsceneIntro61() {
+        cutsceneIntro61.timer += 0.016;
+
+        if (cutsceneIntro61.phase === 'WALK_COLD') {
+            player.animTime += 0.14;
+            player.x += player.vx;
+            player.facing = 1;
+            player.state = 'WALK';
+
+            // Cold breath puff
+            if (Math.random() < 0.12) {
+                cutsceneIntro61.breathPuffs.push({
+                    x: player.x + player.facing * 12,
+                    y: player.y - 66,
+                    vx: player.facing * (1.1 + Math.random()),
+                    vy: -(0.7 + Math.random() * 0.8),
+                    size: 2.5 + Math.random() * 3,
+                    alpha: 0.75,
+                    life: 0.8
+                });
+            }
+
+            // Snow dust kicked up by footsteps
+            if (Math.random() < 0.25) {
+                particles.push({
+                    x: player.x + (Math.random() - 0.5) * 8,
+                    y: player.y,
+                    vx: -player.facing * (0.8 + Math.random()),
+                    vy: -Math.random() * 1.5,
+                    size: 2 + Math.random() * 2.5,
+                    color: '#f8fafc',
+                    life: 0.5,
+                    decay: 0.03
+                });
+            }
+
+            if (player.x >= 350) {
+                player.x = 350;
+                player.vx = 0;
+                player.state = 'IDLE';
+                cutsceneIntro61.phase = 'CONTEMPLATE';
+                cutsceneIntro61.timer = 0;
+                if (cutsceneText) cutsceneText.textContent = 'Перед ним две разные стороны: слева леденящий мороз, а справа — пылающий зной и пески!';
+            }
+        } else if (cutsceneIntro61.phase === 'CONTEMPLATE') {
+            player.state = 'IDLE';
+            player.vx = 0;
+
+            if (Math.random() < 0.08) {
+                cutsceneIntro61.breathPuffs.push({
+                    x: player.x + player.facing * 12,
+                    y: player.y - 66,
+                    vx: player.facing * 1.0,
+                    vy: -0.8,
+                    size: 3,
+                    alpha: 0.65,
+                    life: 0.8
+                });
+            }
+
+            if (cutsceneIntro61.timer >= 2.6) {
+                cutsceneIntro61.phase = 'STEP_DESERT';
+                cutsceneIntro61.timer = 0;
+                player.vx = 1.9;
+                player.state = 'WALK';
+                if (cutsceneText) cutsceneText.textContent = 'Стикмен делает шаг и ступает в пустыню... Приятное тепло мгновенно охватывает его!';
+            }
+        } else if (cutsceneIntro61.phase === 'STEP_DESERT') {
+            player.animTime += 0.13;
+            player.x += player.vx;
+            player.state = 'WALK';
+
+            // Sand dust under footsteps
+            if (Math.random() < 0.3) {
+                particles.push({
+                    x: player.x + (Math.random() - 0.5) * 8,
+                    y: player.y,
+                    vx: -player.facing * (0.8 + Math.random()),
+                    vy: -Math.random() * 1.5,
+                    size: 2 + Math.random() * 3,
+                    color: '#f59e0b',
+                    life: 0.5,
+                    decay: 0.03
+                });
+            }
+
+            if (player.x >= 490) {
+                player.x = 490;
+                player.vx = 0;
+                player.state = 'IDLE';
+                cutsceneIntro61.phase = 'THAW_STEAM';
+                cutsceneIntro61.timer = 0;
+                playSound('steamWarm');
+                if (cutsceneText) cutsceneText.textContent = 'От согревшегося тела поднимается лёгкий пар. Холод отступил! Добро пожаловать в Исохшую землю!';
+            }
+        } else if (cutsceneIntro61.phase === 'THAW_STEAM') {
+            player.state = 'IDLE';
+            player.vx = 0;
+
+            // Translucent rising steam puffs from body and arms
+            if (Math.random() < 0.45) {
+                cutsceneIntro61.steamPuffs.push({
+                    x: player.x + (Math.random() - 0.5) * 24,
+                    y: player.y - 15 - Math.random() * 55,
+                    vx: (Math.random() - 0.5) * 0.8 + 0.3,
+                    vy: -(1.3 + Math.random() * 1.4),
+                    size: 3.5 + Math.random() * 4,
+                    alpha: 0.85,
+                    life: 1.2
+                });
+            }
+
+            if (cutsceneIntro61.timer >= 3.2) {
+                finishLevel61IntroCutscene();
+            }
+        }
+
+        // Update steam puffs
+        for (let i = cutsceneIntro61.steamPuffs.length - 1; i >= 0; i--) {
+            const sp = cutsceneIntro61.steamPuffs[i];
+            sp.x += sp.vx;
+            sp.y += sp.vy;
+            sp.size += 0.18;
+            sp.alpha -= 0.016;
+            if (sp.alpha <= 0) cutsceneIntro61.steamPuffs.splice(i, 1);
+        }
+
+        // Update breath puffs
+        for (let i = cutsceneIntro61.breathPuffs.length - 1; i >= 0; i--) {
+            const p = cutsceneIntro61.breathPuffs[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.size += 0.15;
+            p.alpha -= 0.02;
+            if (p.alpha <= 0) cutsceneIntro61.breathPuffs.splice(i, 1);
+        }
+    }
+
+    function finishLevel61IntroCutscene() {
+        if (!cutsceneIntro61.active) return;
+        cutsceneIntro61.active = false;
+
+        if (cutsceneOverlay) cutsceneOverlay.classList.add('hidden');
+        if (hudOverlay) hudOverlay.classList.remove('hidden');
+
+        player.state = 'IDLE';
+        player.x = currentLevelData.playerStartX || 180;
+        player.y = currentLevelData.groundY;
+        player.vx = 0;
+        player.vy = 0;
+        player.facing = 1;
+        player.grounded = true;
+        player.health = 100;
+        player.maxHealth = 100;
+        player.damageCooldown = 0;
+
+        if (inventoryHud) inventoryHud.classList.add('hidden');
+        if (coldHud) coldHud.classList.add('hidden');
+        if (healthHud) {
+            healthHud.classList.remove('hidden');
+            updateHealthHud();
+        }
+
+        cameraX = 0;
+        cameraY = 0;
+
+        currentState = STATES.PLAYING;
+        playSound('natureStart');
+    }
+
+    function drawCutscene61Scene(scale) {
+        if (!cutsceneIntro61.active) return;
+
+        const borderWorldX = 420;
+        const splitX = (borderWorldX - cameraX) * scale;
+        const groundY = (540 - cameraY) * scale;
+
+        // 1. Left Side: Snow Biome (Cold side: x < splitX)
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, splitX, canvas.height);
+        ctx.clip();
+
+        // Dark Twilight Winter Sky
+        const winterSky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        winterSky.addColorStop(0, '#0b1329');
+        winterSky.addColorStop(0.4, '#1e293b');
+        winterSky.addColorStop(0.75, '#334155');
+        winterSky.addColorStop(1, '#64748b');
+        ctx.fillStyle = winterSky;
+        ctx.fillRect(0, 0, splitX, canvas.height);
+
+        // Cold Winter Sun
+        const coldSunX = 140 * scale;
+        const coldSunY = 110 * scale;
+        const cSunR = 36 * scale;
+        const cSunGrad = ctx.createRadialGradient(coldSunX, coldSunY, 4 * scale, coldSunX, coldSunY, cSunR * 2.2);
+        cSunGrad.addColorStop(0, '#ffffff');
+        cSunGrad.addColorStop(0.35, 'rgba(224, 242, 254, 0.7)');
+        cSunGrad.addColorStop(1, 'rgba(186, 230, 253, 0)');
+        ctx.fillStyle = cSunGrad;
+        ctx.beginPath();
+        ctx.arc(coldSunX, coldSunY, cSunR * 2.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Jagged Snow Mountain Silhouettes
+        ctx.fillStyle = '#334155';
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height);
+        ctx.lineTo(0, 310 * scale);
+        ctx.lineTo(130 * scale, 170 * scale);
+        ctx.lineTo(260 * scale, 310 * scale);
+        ctx.lineTo(390 * scale, 210 * scale);
+        ctx.lineTo(splitX, 290 * scale);
+        ctx.lineTo(splitX, canvas.height);
+        ctx.closePath();
+        ctx.fill();
+
+        // White snowcaps
+        ctx.fillStyle = '#f8fafc';
+        ctx.beginPath();
+        ctx.moveTo(130 * scale, 170 * scale);
+        ctx.lineTo(105 * scale, 215 * scale);
+        ctx.lineTo(155 * scale, 215 * scale);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(390 * scale, 210 * scale);
+        ctx.lineTo(365 * scale, 250 * scale);
+        ctx.lineTo(415 * scale, 250 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // Frozen Rock Ground Platform
+        const rockGrad = ctx.createLinearGradient(0, groundY, 0, canvas.height);
+        rockGrad.addColorStop(0, '#334155');
+        rockGrad.addColorStop(0.4, '#1e293b');
+        rockGrad.addColorStop(1, '#0f172a');
+        ctx.fillStyle = rockGrad;
+        ctx.fillRect(0, groundY, splitX, canvas.height - groundY);
+
+        // Snow Blanket on surface
+        ctx.fillStyle = '#f8fafc';
+        ctx.fillRect(0, groundY, splitX, 12 * scale);
+        ctx.fillStyle = '#bae6fd';
+        for (let ix = 20 * scale; ix < splitX - 10 * scale; ix += 28 * scale) {
+            ctx.beginPath();
+            ctx.moveTo(ix - 3 * scale, groundY + 12 * scale);
+            ctx.lineTo(ix, groundY + 24 * scale);
+            ctx.lineTo(ix + 3 * scale, groundY + 12 * scale);
+            ctx.fill();
+        }
+
+        // Falling Blizzard flakes on snow side
+        drawSnowfall(scale);
+
+        ctx.restore();
+
+        // 2. Right Side: Desert Biome (Heat side: x >= splitX)
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(splitX, 0, canvas.width - splitX, canvas.height);
+        ctx.clip();
+
+        // Blazing Radiant Desert Sky
+        const desertSky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        desertSky.addColorStop(0, '#c2410c'); // rich burnt orange
+        desertSky.addColorStop(0.28, '#ea580c');
+        desertSky.addColorStop(0.55, '#f59e0b');
+        desertSky.addColorStop(0.82, '#fde047');
+        desertSky.addColorStop(1, '#fef08a');
+        ctx.fillStyle = desertSky;
+        ctx.fillRect(splitX, 0, canvas.width - splitX, canvas.height);
+
+        // Blazing Desert Sun with radiant corona
+        const sunX = Math.max(splitX + 160 * scale, canvas.width - 180 * scale);
+        const sunY = 120 * scale;
+        const dSunR = 48 * scale;
+        const dSunGrad = ctx.createRadialGradient(sunX, sunY, 6 * scale, sunX, sunY, dSunR * 2.8);
+        dSunGrad.addColorStop(0, '#ffffff');
+        dSunGrad.addColorStop(0.2, '#fef08a');
+        dSunGrad.addColorStop(0.5, 'rgba(251, 191, 36, 0.45)');
+        dSunGrad.addColorStop(1, 'rgba(245, 158, 11, 0)');
+        ctx.fillStyle = dSunGrad;
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, dSunR * 2.8, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Sun Corona Rays
+        ctx.strokeStyle = 'rgba(254, 240, 138, 0.35)';
+        ctx.lineWidth = 2 * scale;
+        for (let r = 0; r < 12; r++) {
+            const ang = (r * Math.PI) / 6 + Date.now() * 0.0004;
+            ctx.beginPath();
+            ctx.moveTo(sunX + Math.cos(ang) * (dSunR + 4 * scale), sunY + Math.sin(ang) * (dSunR + 4 * scale));
+            ctx.lineTo(sunX + Math.cos(ang) * (dSunR + 32 * scale), sunY + Math.sin(ang) * (dSunR + 32 * scale));
+            ctx.stroke();
+        }
+
+        // Distant Sandstone Canyon Mesa Silhouettes
+        ctx.fillStyle = '#b45309';
+        ctx.beginPath();
+        ctx.moveTo(splitX, canvas.height);
+        ctx.lineTo(splitX, 320 * scale);
+        ctx.lineTo(splitX + 120 * scale, 240 * scale);
+        ctx.lineTo(splitX + 280 * scale, 240 * scale);
+        ctx.lineTo(splitX + 340 * scale, 330 * scale);
+        ctx.lineTo(splitX + 500 * scale, 220 * scale);
+        ctx.lineTo(splitX + 660 * scale, 220 * scale);
+        ctx.lineTo(canvas.width, 340 * scale);
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.closePath();
+        ctx.fill();
+
+        // Rolling Golden Sand Dunes
+        ctx.fillStyle = '#d97706';
+        ctx.beginPath();
+        ctx.moveTo(splitX, canvas.height);
+        ctx.quadraticCurveTo(splitX + 160 * scale, 340 * scale, splitX + 340 * scale, 420 * scale);
+        ctx.quadraticCurveTo(splitX + 520 * scale, 360 * scale, canvas.width, 410 * scale);
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.closePath();
+        ctx.fill();
+
+        // Distant Saguaro Cactus in the sand
+        ctx.fillStyle = '#15803d';
+        const dcX = splitX + 220 * scale;
+        const dcY = groundY;
+        ctx.fillRect(dcX - 4 * scale, dcY - 45 * scale, 8 * scale, 45 * scale);
+        ctx.fillRect(dcX - 14 * scale, dcY - 32 * scale, 10 * scale, 5 * scale);
+        ctx.fillRect(dcX - 14 * scale, dcY - 44 * scale, 5 * scale, 16 * scale);
+        ctx.fillRect(dcX + 4 * scale, dcY - 26 * scale, 12 * scale, 5 * scale);
+        ctx.fillRect(dcX + 11 * scale, dcY - 38 * scale, 5 * scale, 16 * scale);
+
+        // Desert Golden Sand Ground Platform
+        const sandGrad = ctx.createLinearGradient(0, groundY, 0, canvas.height);
+        sandGrad.addColorStop(0, '#d97706');
+        sandGrad.addColorStop(0.3, '#b45309');
+        sandGrad.addColorStop(1, '#78350f');
+        ctx.fillStyle = sandGrad;
+        ctx.fillRect(splitX, groundY, canvas.width - splitX, canvas.height - groundY);
+
+        // Golden sand dune crest & ripples
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillRect(splitX, groundY, canvas.width - splitX, 10 * scale);
+        ctx.fillStyle = '#fde047';
+        ctx.fillRect(splitX, groundY, canvas.width - splitX, 3.5 * scale);
+
+        // Ambient Drifting Sand Particles
+        drawAmbientSand(scale);
+
+        ctx.restore();
+
+        // 3. Contrast Dividing Border Line (where cold meets heat)
+        ctx.save();
+        const seamGrad = ctx.createLinearGradient(splitX - 6 * scale, groundY - 140 * scale, splitX + 6 * scale, groundY + 60 * scale);
+        seamGrad.addColorStop(0, 'rgba(186, 230, 253, 0.7)');
+        seamGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.95)');
+        seamGrad.addColorStop(1, 'rgba(251, 191, 36, 0.85)');
+        ctx.strokeStyle = seamGrad;
+        ctx.lineWidth = 3 * scale;
+        ctx.beginPath();
+        ctx.moveTo(splitX, 0);
+        ctx.lineTo(splitX, canvas.height);
+        ctx.stroke();
+
+        // Melting Water Droplets at the Seam
+        ctx.fillStyle = 'rgba(224, 242, 254, 0.85)';
+        for (let dy = groundY; dy < groundY + 40 * scale; dy += 10 * scale) {
+            ctx.beginPath();
+            ctx.arc(splitX, dy, 2.5 * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.restore();
+
+        // 4. Draw Breath Puffs (cold side)
+        cutsceneIntro61.breathPuffs.forEach(p => {
+            const px = (p.x - cameraX) * scale;
+            const py = (p.y - cameraY) * scale;
+            ctx.save();
+            ctx.fillStyle = `rgba(241, 245, 249, ${p.alpha * 0.75})`;
+            ctx.beginPath();
+            ctx.arc(px, py, p.size * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        });
+
+        // 5. Draw Thawing Steam Puffs (rising from stickman in desert)
+        cutsceneIntro61.steamPuffs.forEach(sp => {
+            const sx = (sp.x - cameraX) * scale;
+            const sy = (sp.y - cameraY) * scale;
+            ctx.save();
+            const sGrad = ctx.createRadialGradient(sx, sy, 0, sx, sy, sp.size * scale);
+            sGrad.addColorStop(0, `rgba(254, 243, 199, ${sp.alpha * 0.8})`);
+            sGrad.addColorStop(0.5, `rgba(248, 250, 252, ${sp.alpha * 0.5})`);
+            sGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            ctx.fillStyle = sGrad;
+            ctx.beginPath();
+            ctx.arc(sx, sy, sp.size * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        });
+    }
+
+    // ==========================================
+    // --- DESERT RENDERING: BUILDINGS, LADDERS, CACTI & SAND ---
+    // ==========================================
+    const ambientSand = [];
+    for (let i = 0; i < 75; i++) {
+        ambientSand.push({
+            x: Math.random() * 2600,
+            y: Math.random() * 650,
+            vx: 1.8 + Math.random() * 2.5,
+            vy: (Math.random() - 0.4) * 0.8,
+            size: 1.2 + Math.random() * 2.2,
+            alpha: 0.25 + Math.random() * 0.5,
+            color: Math.random() < 0.6 ? '#f59e0b' : '#fde047'
+        });
+    }
+
+    function updateAmbientSand() {
+        const scale = canvas.height / 675 || 1;
+        const viewW = canvas.width / scale;
+        ambientSand.forEach(grain => {
+            grain.x += grain.vx;
+            grain.y += grain.vy;
+            if (grain.x > cameraX + viewW + 100) {
+                grain.x = cameraX - 100;
+                grain.y = Math.random() * 580;
+            }
+            if (grain.y > 600) {
+                grain.y = Math.random() * 400;
+            }
+        });
+    }
+
+    function drawAmbientSand(scale) {
+        ambientSand.forEach(grain => {
+            const gx = (grain.x - cameraX) * scale;
+            const gy = (grain.y - cameraY) * scale;
+            if (gx < -30 || gx > canvas.width + 30) return;
+
+            ctx.save();
+            ctx.fillStyle = grain.color;
+            ctx.globalAlpha = grain.alpha;
+            ctx.beginPath();
+            ctx.arc(gx, gy, grain.size * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        });
+    }
+
+    function drawDesertBuilding(box, scale) {
+        const drawX = (box.x - cameraX) * scale;
+        const drawY = (box.y - cameraY) * scale;
+        const drawW = box.w * scale;
+        const drawH = box.h * scale;
+
+        ctx.save();
+        // Main sandstone body gradient (warm yellowish-orange tones)
+        const bGrad = ctx.createLinearGradient(drawX, drawY, drawX + drawW, drawY + drawH);
+        bGrad.addColorStop(0, '#d97706'); // warm golden amber sandstone
+        bGrad.addColorStop(0.45, '#b45309');
+        bGrad.addColorStop(1, '#78350f');
+        ctx.fillStyle = bGrad;
+        ctx.fillRect(drawX, drawY, drawW, drawH);
+
+        // Sandstone Ashlar Block Courses (horizontal mortar lines)
+        ctx.strokeStyle = 'rgba(69, 26, 3, 0.4)';
+        ctx.lineWidth = 2 * scale;
+        const rowHeight = 26;
+        let rIndex = 0;
+        for (let by = box.y; by < box.y + box.h; by += rowHeight) {
+            const screenBy = (by - cameraY) * scale;
+            ctx.beginPath();
+            ctx.moveTo(drawX, screenBy);
+            ctx.lineTo(drawX + drawW, screenBy);
+            ctx.stroke();
+
+            // Alternating vertical brick lines
+            const colWidth = 48;
+            const shift = (rIndex % 2) * (colWidth / 2);
+            for (let bx = box.x + shift; bx < box.x + box.w; bx += colWidth) {
+                const screenBx = (bx - cameraX) * scale;
+                ctx.beginPath();
+                ctx.moveTo(screenBx, screenBy);
+                ctx.lineTo(screenBx, Math.min(drawY + drawH, screenBy + rowHeight * scale));
+                ctx.stroke();
+            }
+            rIndex++;
+        }
+
+        // Rooftop Sandstone Coping / Parapet Trim
+        const topH = 8 * scale;
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillRect(drawX - 2 * scale, drawY - 2 * scale, drawW + 4 * scale, topH);
+        ctx.fillStyle = '#fef08a';
+        ctx.fillRect(drawX - 2 * scale, drawY - 2 * scale, drawW + 4 * scale, 2.5 * scale);
+
+        // Decorative Roof Crenellations along the top edge
+        const crenW = 20 * scale;
+        const crenH = 10 * scale;
+        ctx.fillStyle = '#f59e0b';
+        for (let cx = drawX + 4 * scale; cx < drawX + drawW - crenW; cx += crenW * 2) {
+            ctx.fillRect(cx, drawY - crenH, crenW, crenH);
+            ctx.strokeStyle = 'rgba(69, 26, 3, 0.5)';
+            ctx.lineWidth = 1.5 * scale;
+            ctx.strokeRect(cx, drawY - crenH, crenW, crenH);
+        }
+
+        // Projecting Wooden Beams (Vigas) below the roofline
+        const vigaStep = 38 * scale;
+        for (let vx = drawX + 16 * scale; vx < drawX + drawW - 14 * scale; vx += vigaStep) {
+            const vy = drawY + 18 * scale;
+            ctx.fillStyle = '#451a03';
+            ctx.beginPath();
+            ctx.arc(vx, vy, 4.5 * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#78350f';
+            ctx.beginPath();
+            ctx.arc(vx - 1 * scale, vy - 1 * scale, 3 * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Sandstone Arched Doorways or Windows
+        if (box.h >= 160) {
+            // Upper Window
+            const winX = drawX + drawW / 2;
+            const winY = drawY + 44 * scale;
+            const winW = 18 * scale;
+            const winH = 28 * scale;
+            ctx.fillStyle = '#1e1005';
+            ctx.beginPath();
+            ctx.arc(winX, winY, winW / 2, Math.PI, 0);
+            ctx.rect(winX - winW / 2, winY, winW, winH);
+            ctx.fill();
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 2 * scale;
+            ctx.stroke();
+        }
+        if (box.h >= 240) {
+            // Second lower window
+            const win2X = drawX + drawW / 2;
+            const win2Y = drawY + 120 * scale;
+            const winW = 22 * scale;
+            const winH = 34 * scale;
+            ctx.fillStyle = '#1c0f05';
+            ctx.beginPath();
+            ctx.arc(win2X, win2Y, winW / 2, Math.PI, 0);
+            ctx.rect(win2X - winW / 2, win2Y, winW, winH);
+            ctx.fill();
+            ctx.strokeStyle = '#d97706';
+            ctx.lineWidth = 2 * scale;
+            ctx.stroke();
+        }
+
+        // Archway Gate (crawl-through tunnel underneath, e.g. when y < 0 and tall)
+        if (box.y < 0) {
+            const archW = 120 * scale;
+            const archH = 100 * scale;
+            const archX = drawX + (drawW - archW) / 2;
+            const archBaseY = (540 - cameraY) * scale;
+            ctx.fillStyle = '#1a0b03';
+            ctx.beginPath();
+            ctx.arc(archX + archW / 2, archBaseY - archH + archW / 2, archW / 2, Math.PI, 0);
+            ctx.rect(archX, archBaseY - archH + archW / 2, archW, archH - archW / 2);
+            ctx.fill();
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 3 * scale;
+            ctx.stroke();
+        }
+
+        // Outer building outline
+        ctx.strokeStyle = '#92400e';
+        ctx.lineWidth = 2.5 * scale;
+        ctx.strokeRect(drawX, drawY, drawW, drawH);
+
+        // Sand drift at the building base
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath();
+        ctx.moveTo(drawX - 8 * scale, drawY + drawH);
+        ctx.quadraticCurveTo(drawX + drawW * 0.25, drawY + drawH - 10 * scale, drawX + drawW * 0.5, drawY + drawH - 4 * scale);
+        ctx.quadraticCurveTo(drawX + drawW * 0.75, drawY + drawH - 12 * scale, drawX + drawW + 8 * scale, drawY + drawH);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    function drawDesertLadder(lad, scale) {
+        const drawX = (lad.x - cameraX) * scale;
+        const drawTopY = (lad.topY - cameraY) * scale;
+        const drawBotY = (lad.bottomY - cameraY) * scale;
+        const drawW = (lad.w || 38) * scale;
+
+        const leftX = drawX - drawW / 2;
+        const rightX = drawX + drawW / 2;
+
+        ctx.save();
+        // Vertical Desert Timber Beams
+        ctx.strokeStyle = '#78350f';
+        ctx.lineWidth = 4.5 * scale;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(leftX, drawTopY - 4 * scale);
+        ctx.lineTo(leftX, drawBotY);
+        ctx.moveTo(rightX, drawTopY - 4 * scale);
+        ctx.lineTo(rightX, drawBotY);
+        ctx.stroke();
+
+        // Iron Mounting Brackets on Wall
+        const bStep = 80;
+        for (let by = lad.topY + 20; by < lad.bottomY; by += bStep) {
+            const screenBy = (by - cameraY) * scale;
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(leftX - 6 * scale, screenBy - 3 * scale, 5 * scale, 6 * scale);
+            ctx.fillRect(rightX + 1 * scale, screenBy - 3 * scale, 5 * scale, 6 * scale);
+        }
+
+        // Wooden Rungs
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 3.5 * scale;
+        const rungStep = 22;
+        for (let rY = lad.topY + 12; rY <= lad.bottomY - 8; rY += rungStep) {
+            const rungScreenY = (rY - cameraY) * scale;
+            ctx.beginPath();
+            ctx.moveTo(leftX + 2 * scale, rungScreenY);
+            ctx.lineTo(rightX - 2 * scale, rungScreenY);
+            ctx.stroke();
+
+            // Iron nail on rungs
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            ctx.arc(leftX + 4 * scale, rungScreenY, 1.8 * scale, 0, Math.PI * 2);
+            ctx.arc(rightX - 4 * scale, rungScreenY, 1.8 * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Top Finials
+        ctx.fillStyle = '#b45309';
+        ctx.beginPath();
+        ctx.arc(leftX, drawTopY - 4 * scale, 4 * scale, 0, Math.PI * 2);
+        ctx.arc(rightX, drawTopY - 4 * scale, 4 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    function drawDesertCactus(cactus, scale) {
+        const drawX = (cactus.x - cameraX) * scale;
+        const drawY = (cactus.y - cameraY) * scale;
+        const drawW = cactus.w * scale;
+        const drawH = cactus.h * scale;
+
+        ctx.save();
+        // Soft sand shadow under cactus
+        ctx.fillStyle = 'rgba(120, 53, 15, 0.45)';
+        ctx.beginPath();
+        ctx.ellipse(drawX, drawY + 2 * scale, drawW * 0.7, 5 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Main Trunk Column
+        const trunkW = drawW * 0.42;
+        const trunkX = drawX - trunkW / 2;
+        const trunkH = drawH;
+
+        const cGrad = ctx.createLinearGradient(trunkX, drawY - trunkH, trunkX + trunkW, drawY);
+        cGrad.addColorStop(0, '#22c55e'); // sunlit green
+        cGrad.addColorStop(0.4, '#16a34a');
+        cGrad.addColorStop(0.85, '#15803d');
+        cGrad.addColorStop(1, '#14532d'); // shaded green
+
+        // Draw Main Trunk
+        ctx.fillStyle = cGrad;
+        ctx.beginPath();
+        ctx.arc(drawX, drawY - trunkH + trunkW / 2, trunkW / 2, Math.PI, 0);
+        ctx.rect(trunkX, drawY - trunkH + trunkW / 2, trunkW, trunkH - trunkW / 2);
+        ctx.fill();
+
+        // Saguaro Arms (if height >= 60)
+        const armW = trunkW * 0.8;
+        if (cactus.h >= 60) {
+            // Left arm
+            const leftArmY = drawY - trunkH * 0.55;
+            const leftArmLen = drawW * 0.45;
+            const leftArmUp = trunkH * 0.4;
+
+            ctx.fillStyle = cGrad;
+            ctx.beginPath();
+            ctx.rect(drawX - trunkW / 2 - leftArmLen, leftArmY, leftArmLen + 2 * scale, armW);
+            ctx.rect(drawX - trunkW / 2 - leftArmLen, leftArmY - leftArmUp + armW / 2, armW, leftArmUp);
+            ctx.arc(drawX - trunkW / 2 - leftArmLen + armW / 2, leftArmY - leftArmUp + armW / 2, armW / 2, Math.PI, 0);
+            ctx.fill();
+
+            // Right arm (for taller cacti)
+            if (cactus.h >= 75) {
+                const rightArmY = drawY - trunkH * 0.45;
+                const rightArmLen = drawW * 0.48;
+                const rightArmUp = trunkH * 0.45;
+
+                ctx.fillStyle = cGrad;
+                ctx.beginPath();
+                ctx.rect(drawX + trunkW / 2 - 2 * scale, rightArmY, rightArmLen + 2 * scale, armW);
+                ctx.rect(drawX + trunkW / 2 + rightArmLen - armW, rightArmY - rightArmUp + armW / 2, armW, rightArmUp);
+                ctx.arc(drawX + trunkW / 2 + rightArmLen - armW / 2, rightArmY - rightArmUp + armW / 2, armW / 2, Math.PI, 0);
+                ctx.fill();
+            }
+        }
+
+        // Vertical Rib Striations
+        ctx.strokeStyle = 'rgba(20, 83, 45, 0.45)';
+        ctx.lineWidth = 1.5 * scale;
+        const ribCount = 3;
+        for (let r = 1; r <= ribCount; r++) {
+            const rx = trunkX + (trunkW / (ribCount + 1)) * r;
+            ctx.beginPath();
+            ctx.moveTo(rx, drawY - trunkH + trunkW * 0.4);
+            ctx.lineTo(rx, drawY);
+            ctx.stroke();
+        }
+
+        // Sharp Needles / Spines along edges
+        ctx.strokeStyle = '#fef08a';
+        ctx.lineWidth = 1.5 * scale;
+        const spineStep = 14 * scale;
+        for (let sy = drawY - trunkH + 12 * scale; sy < drawY - 6 * scale; sy += spineStep) {
+            // Left spine
+            ctx.beginPath();
+            ctx.moveTo(trunkX, sy);
+            ctx.lineTo(trunkX - 6 * scale, sy - 3 * scale);
+            ctx.moveTo(trunkX, sy);
+            ctx.lineTo(trunkX - 6 * scale, sy + 3 * scale);
+            // Right spine
+            ctx.moveTo(trunkX + trunkW, sy);
+            ctx.lineTo(trunkX + trunkW + 6 * scale, sy - 3 * scale);
+            ctx.moveTo(trunkX + trunkW, sy);
+            ctx.lineTo(trunkX + trunkW + 6 * scale, sy + 3 * scale);
+            ctx.stroke();
+        }
+
+        // Vibrant Pink/Magenta Desert Blossom on select cacti
+        if (cactus.hasFlower || (cactus.h >= 70 && !cactus.isSmall)) {
+            const flX = drawX;
+            const flY = drawY - trunkH;
+            ctx.fillStyle = '#ec4899'; // desert rose magenta
+            for (let a = 0; a < Math.PI * 2; a += Math.PI / 3) {
+                ctx.beginPath();
+                ctx.ellipse(flX + Math.cos(a) * 4 * scale, flY + Math.sin(a) * 4 * scale, 4 * scale, 2 * scale, a, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.fillStyle = '#fde047';
+            ctx.beginPath();
+            ctx.arc(flX, flY, 2.5 * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.restore();
+    }
+
+    function drawDesertFlag(flag, scale) {
+        const flagX = (flag.x - cameraX) * scale;
+        const flagY = (flag.y - cameraY) * scale;
+        const poleH = (flag.poleHeight || 110) * scale;
+        const bannerW = (flag.bannerW || 45) * scale;
+        const bannerH = (flag.bannerH || 30) * scale;
+
+        ctx.save();
+        // Brass Pole
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(flagX, flagY);
+        ctx.lineTo(flagX, flagY - poleH);
+        ctx.stroke();
+
+        // Golden Sun Finial on top
+        ctx.fillStyle = '#fbbf24';
+        ctx.beginPath();
+        ctx.arc(flagX, flagY - poleH, 7 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        // Sun rays
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 2 * scale;
+        for (let r = 0; r < 8; r++) {
+            const ang = (r * Math.PI) / 4;
+            ctx.beginPath();
+            ctx.moveTo(flagX + Math.cos(ang) * 8 * scale, flagY - poleH + Math.sin(ang) * 8 * scale);
+            ctx.lineTo(flagX + Math.cos(ang) * 13 * scale, flagY - poleH + Math.sin(ang) * 13 * scale);
+            ctx.stroke();
+        }
+
+        // Silk Banner fluttering in desert wind
+        const wave = Math.sin(Date.now() * 0.006) * 5 * scale;
+        const topY = flagY - poleH + 8 * scale;
+
+        const fGrad = ctx.createLinearGradient(flagX, topY, flagX + bannerW, topY);
+        fGrad.addColorStop(0, '#dc2626'); // rich desert crimson
+        fGrad.addColorStop(0.5, '#ea580c');
+        fGrad.addColorStop(1, '#f59e0b'); // golden edge
+
+        ctx.fillStyle = fGrad;
+        ctx.beginPath();
+        ctx.moveTo(flagX, topY);
+        ctx.quadraticCurveTo(flagX + bannerW * 0.5, topY + wave, flagX + bannerW, topY + wave / 2);
+        ctx.lineTo(flagX + bannerW, topY + bannerH + wave / 2);
+        ctx.quadraticCurveTo(flagX + bannerW * 0.5, topY + bannerH + wave, flagX, topY + bannerH);
+        ctx.closePath();
+        ctx.fill();
+
+        // Golden Sun Emblem on banner
+        ctx.fillStyle = '#fef08a';
+        ctx.font = `bold ${16 * scale}px sans-serif`;
+        ctx.fillText('☀️', flagX + 10 * scale, topY + bannerH * 0.7 + wave / 2);
+
+        ctx.restore();
+    }
+
+    function drawDesertWell(well, scale) {
+        const drawX = (well.x - cameraX) * scale;
+        const drawY = (well.y - cameraY) * scale;
+        const drawW = (well.w || 96) * scale;
+        const drawH = (well.h || 110) * scale;
+        const halfW = drawW / 2;
+
+        ctx.save();
+
+        // 1. Damp sand / stone foundation shadow
+        ctx.fillStyle = 'rgba(67, 20, 7, 0.45)';
+        ctx.beginPath();
+        ctx.ellipse(drawX, drawY + 2 * scale, halfW * 1.15, 12 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 2. Stone Curb Basin (Cylindrical sandstone masonry)
+        const basinH = 46 * scale;
+        const basinY = drawY - basinH;
+
+        // Outer circular stone wall gradient
+        const curbGrad = ctx.createLinearGradient(drawX - halfW, 0, drawX + halfW, 0);
+        curbGrad.addColorStop(0, '#78350f');
+        curbGrad.addColorStop(0.2, '#b45309');
+        curbGrad.addColorStop(0.5, '#d97706');
+        curbGrad.addColorStop(0.8, '#b45309');
+        curbGrad.addColorStop(1, '#451a03');
+        ctx.fillStyle = curbGrad;
+        ctx.beginPath();
+        ctx.roundRect(drawX - halfW, basinY, drawW, basinH, 6 * scale);
+        ctx.fill();
+
+        // Stone ashlar seams on well basin
+        ctx.strokeStyle = 'rgba(69, 26, 3, 0.45)';
+        ctx.lineWidth = 1.8 * scale;
+        // Horizontal stone courses
+        ctx.beginPath();
+        ctx.moveTo(drawX - halfW + 4 * scale, basinY + basinH * 0.33);
+        ctx.lineTo(drawX + halfW - 4 * scale, basinY + basinH * 0.33);
+        ctx.moveTo(drawX - halfW + 4 * scale, basinY + basinH * 0.66);
+        ctx.lineTo(drawX + halfW - 4 * scale, basinY + basinH * 0.66);
+        ctx.stroke();
+
+        // Vertical block seams
+        ctx.beginPath();
+        ctx.moveTo(drawX - halfW * 0.4, basinY);
+        ctx.lineTo(drawX - halfW * 0.4, basinY + basinH * 0.33);
+        ctx.moveTo(drawX + halfW * 0.3, basinY);
+        ctx.lineTo(drawX + halfW * 0.3, basinY + basinH * 0.33);
+        ctx.moveTo(drawX, basinY + basinH * 0.33);
+        ctx.lineTo(drawX, basinY + basinH * 0.66);
+        ctx.moveTo(drawX - halfW * 0.5, basinY + basinH * 0.66);
+        ctx.lineTo(drawX - halfW * 0.5, basinY + basinH);
+        ctx.moveTo(drawX + halfW * 0.4, basinY + basinH * 0.66);
+        ctx.lineTo(drawX + halfW * 0.4, basinY + basinH);
+        ctx.stroke();
+
+        // Basin Top Rim (lip)
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath();
+        ctx.ellipse(drawX, basinY, halfW, 11 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#78350f';
+        ctx.lineWidth = 2 * scale;
+        ctx.stroke();
+
+        // Deep interior opening showing dark depth and cool blue shimmering water
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.ellipse(drawX, basinY, halfW * 0.72, 7.5 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Shimmering Turquoise Water Surface inside the well
+        const waterPulse = Math.sin(Date.now() * 0.004) * 1.5 * scale;
+        const waterGrad = ctx.createRadialGradient(drawX, basinY, 2 * scale, drawX, basinY, halfW * 0.7);
+        waterGrad.addColorStop(0, '#67e8f9');
+        waterGrad.addColorStop(0.4, '#06b6d4');
+        waterGrad.addColorStop(0.8, '#0369a1');
+        waterGrad.addColorStop(1, '#082f49');
+        ctx.fillStyle = waterGrad;
+        ctx.beginPath();
+        ctx.ellipse(drawX, basinY + 1 * scale, halfW * 0.68 + waterPulse, 6.5 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 3. Wooden Support Pillars
+        const postW = 9 * scale;
+        const postLeftX = drawX - halfW * 0.78;
+        const postRightX = drawX + halfW * 0.78 - postW;
+        const roofY = drawY - drawH;
+        const roofH = 26 * scale;
+
+        ctx.fillStyle = '#78350f';
+        // Left pillar
+        ctx.fillRect(postLeftX, roofY + roofH * 0.5, postW, basinY - roofY);
+        // Right pillar
+        ctx.fillRect(postRightX, roofY + roofH * 0.5, postW, basinY - roofY);
+
+        // Pillar iron brackets
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(postLeftX - 2 * scale, basinY - 8 * scale, postW + 4 * scale, 5 * scale);
+        ctx.fillRect(postRightX - 2 * scale, basinY - 8 * scale, postW + 4 * scale, 5 * scale);
+
+        // 4. Wooden Winch Spindle / Cylinder & Rope
+        const spindleY = roofY + (basinY - roofY) * 0.42;
+        const spindleW = postRightX - (postLeftX + postW);
+        const spindleH = 14 * scale;
+
+        // Wooden cross spindle
+        ctx.fillStyle = '#b45309';
+        ctx.fillRect(postLeftX + postW, spindleY - spindleH / 2, spindleW, spindleH);
+
+        // Wound hemp rope coils
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 2.5 * scale;
+        for (let rx = postLeftX + postW + 6 * scale; rx < postRightX - 6 * scale; rx += 4.5 * scale) {
+            ctx.beginPath();
+            ctx.moveTo(rx, spindleY - spindleH / 2);
+            ctx.lineTo(rx, spindleY + spindleH / 2);
+            ctx.stroke();
+        }
+
+        // Iron Crank Handle on the right
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 3.5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(postRightX + postW, spindleY);
+        ctx.lineTo(postRightX + postW + 12 * scale, spindleY);
+        ctx.lineTo(postRightX + postW + 12 * scale, spindleY + 14 * scale);
+        ctx.stroke();
+        ctx.fillStyle = '#94a3b8';
+        ctx.beginPath();
+        ctx.arc(postRightX + postW + 12 * scale, spindleY + 14 * scale, 3.5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hanging Rope descending into well
+        ctx.strokeStyle = '#b45309';
+        ctx.lineWidth = 2.5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(drawX, spindleY + spindleH / 2);
+        const bucketDropY = basinY - 6 * scale;
+        ctx.lineTo(drawX, bucketDropY - 14 * scale);
+        ctx.stroke();
+
+        // 5. Wooden Water Bucket dangling above the water
+        const bucketX = drawX;
+        const bucketY = bucketDropY;
+        const bW = 16 * scale;
+        const bH = 18 * scale;
+
+        // Bucket metal handle
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 2 * scale;
+        ctx.beginPath();
+        ctx.arc(bucketX, bucketY - bH + 5 * scale, bW * 0.45, Math.PI, 0, false);
+        ctx.stroke();
+
+        // Bucket body (tapered)
+        ctx.fillStyle = '#92400e';
+        ctx.beginPath();
+        ctx.moveTo(bucketX - bW * 0.42, bucketY - bH + 5 * scale);
+        ctx.lineTo(bucketX + bW * 0.42, bucketY - bH + 5 * scale);
+        ctx.lineTo(bucketX + bW * 0.35, bucketY);
+        ctx.lineTo(bucketX - bW * 0.35, bucketY);
+        ctx.closePath();
+        ctx.fill();
+
+        // Iron hoops on bucket
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 2 * scale;
+        ctx.beginPath();
+        ctx.moveTo(bucketX - bW * 0.4, bucketY - bH + 9 * scale);
+        ctx.lineTo(bucketX + bW * 0.4, bucketY - bH + 9 * scale);
+        ctx.moveTo(bucketX - bW * 0.36, bucketY - 3 * scale);
+        ctx.lineTo(bucketX + bW * 0.36, bucketY - 3 * scale);
+        ctx.stroke();
+
+        // Water dripping from bucket
+        const dripTime = (Date.now() * 0.003) % 1;
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(bucketX, bucketY + dripTime * 12 * scale, 2 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 6. Canopy Roof (Terracotta shaded tiles)
+        const roofExtra = 12 * scale;
+        const rLeft = drawX - halfW - roofExtra;
+        const rRight = drawX + halfW + roofExtra;
+        const rPeakY = roofY;
+        const rEaveY = roofY + roofH;
+
+        // Roof shadow underneath
+        ctx.fillStyle = 'rgba(67, 20, 7, 0.4)';
+        ctx.beginPath();
+        ctx.moveTo(rLeft + 4 * scale, rEaveY);
+        ctx.lineTo(rRight - 4 * scale, rEaveY);
+        ctx.lineTo(drawX, rPeakY + 6 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // Roof gable triangle / hipped tiles
+        const roofGrad = ctx.createLinearGradient(0, rPeakY, 0, rEaveY);
+        roofGrad.addColorStop(0, '#ea580c');
+        roofGrad.addColorStop(0.5, '#c2410c');
+        roofGrad.addColorStop(1, '#9a3412');
+        ctx.fillStyle = roofGrad;
+        ctx.beginPath();
+        ctx.moveTo(drawX, rPeakY);
+        ctx.lineTo(rRight, rEaveY);
+        ctx.lineTo(rLeft, rEaveY);
+        ctx.closePath();
+        ctx.fill();
+
+        // Roof tile ridge lines
+        ctx.strokeStyle = '#7c2d12';
+        ctx.lineWidth = 2 * scale;
+        for (let tx = rLeft + 8 * scale; tx <= rRight - 8 * scale; tx += 9 * scale) {
+            ctx.beginPath();
+            ctx.moveTo(drawX, rPeakY);
+            ctx.lineTo(tx, rEaveY);
+            ctx.stroke();
+        }
+
+        // Roof Peak Cap Finial
+        ctx.fillStyle = '#fbbf24';
+        ctx.beginPath();
+        ctx.arc(drawX, rPeakY - 2 * scale, 4 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 7. Interactive Floating Prompt / Glow if Player is Near
+        const distToPlayer = Math.abs(player.x - well.x);
+        const isNear = distToPlayer < 75 && Math.abs(player.y - well.y) < 70;
+        if (isNear && currentState === STATES.PLAYING) {
+            const floatBob = Math.sin(Date.now() * 0.007) * 4 * scale;
+            const badgeY = roofY - 22 * scale + floatBob;
+
+            // Soft cyan water glow aura
+            ctx.fillStyle = 'rgba(6, 182, 212, 0.25)';
+            ctx.beginPath();
+            ctx.ellipse(drawX, badgeY, 68 * scale, 16 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Glass badge
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+            ctx.beginPath();
+            ctx.roundRect(drawX - 58 * scale, badgeY - 12 * scale, 116 * scale, 24 * scale, 8 * scale);
+            ctx.fill();
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 1.5 * scale;
+            ctx.stroke();
+
+            // Text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `bold ${11 * scale}px 'Outfit', sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('💧 [E] Напиться', drawX, badgeY);
+        }
+
+        ctx.restore();
+    }
+
+    // ==========================================
     // --- LEVEL 60: BOSS YETI SYSTEM ---
     // ==========================================
     const yeti = {
@@ -12049,11 +24032,15 @@
         if (cutsceneOverlay) cutsceneOverlay.classList.add('hidden');
         currentState = STATES.VICTORY;
 
+        unlockedPage4Levels = Math.max(unlockedPage4Levels, 61);
+        generateLevelsGrid();
+
         if (victoryTitle) victoryTitle.textContent = 'Уровень 60 пройден!';
-        if (victorySubtext) victorySubtext.textContent = 'ВЕЛИКИЙ ЙЕТИ ПОБЕЖДЁН! Вы покорили Вечный Холод и прошли все 60 уровней Вселенной Паркура!';
+        if (victorySubtext) victorySubtext.textContent = 'ВЕЛИКИЙ ЙЕТИ ПОБЕЖДЁН! Вы покорили Вечный Холод! Впереди неизведанная пустыня "Исохшая земля"!';
 
         if (btnNextLevel) {
-            btnNextLevel.classList.add('hidden');
+            btnNextLevel.classList.remove('hidden');
+            btnNextLevel.innerHTML = '<span class="btn-icon">🏜️</span> Исохшая земля: Уровень 61';
         }
         if (btnReplay) btnReplay.innerHTML = '<span class="btn-icon">🔄</span> Пройти снова';
         if (btnToMenu) btnToMenu.innerHTML = '<span class="btn-icon">🏠</span> В меню уровней';
@@ -12700,9 +24687,1697 @@
         ctx.restore();
     }
 
+    // =========================================================================
+    // LEVEL 80 BOSS: ВЕЛИКАЯ ДРЕВНЯЯ МУМИЯ (500 HP, 5 ATTACKS & PYRAMIDS)
+    // =========================================================================
+
+    const mummy = {
+        active: false,
+        health: 500,
+        maxHealth: 500,
+        x: 14850,
+        y: 540,
+        baseY: 540,
+        w: 90,
+        h: 190,
+        state: 'INACTIVE', // 'INTRO', 'IDLE', 'ATTACK_SPIKES', 'ATTACK_MINIONS', 'ATTACK_SAND_IN_EYES', 'ATTACK_ANUBIS', 'ATTACK_SANDSTORM', 'DEFEAT'
+        timer: 0,
+        attackIndex: 0,
+        hitFlashTimer: 0,
+        shoveTimer: 0,
+        eyeGlow: 1.0,
+        isFallen: false,
+        fallAngle: 0,
+        introPlayed: false,
+        arenaLeft: 13250,
+        arenaRight: 15800,
+        lastDefeatReason: '', // 'SPIKES', 'MINIONS', 'ANUBIS', 'TORNADO'
+
+        // Attack 1: Sand Spikes (3 spikes, 1s red trajectory line warning, 15 dmg each)
+        spikeWarning: false,
+        spikeWarningTimer: 0,
+        spikeTrajectories: [], // [{ startX, startY, endX, endY, angle }]
+        spikes: [],            // [{ x, y, vx, vy, rot, active }]
+
+        // Attack 2: Lesser Mummies (5 minions, 5 dmg per hit, defeated by 2-3 punches on LMB)
+        minions: [],           // [{ id, x, y, hp, maxHp, vx, facing, hitTimer, animTime, active, attackCooldown }]
+
+        // Attack 3: Sand in Eyes (sand cloud, 5s blurry vision, 0 dmg)
+        sandCloud: null,       // { x, y, startX, startY, targetX, targetY, t, radius, active }
+        sandInEyesTimer: 0,
+
+        // Attack 4: Staff of Anubis (golden jackal staff, 5 ground slams, shockwaves 20 dmg, avoid by jumping)
+        staffActive: false,
+        staffSlamsRemaining: 0,
+        staffSlamTimer: 0,
+        shockwaves: [],        // [{ x, y, vx, w, h, damage, active }]
+
+        // Attack 5: Sandstorm Tornado & QTE Balance Bar (balance needle, hit Space/LMB in green zone)
+        tornadoActive: false,
+        tornadoTimer: 0,
+        tornadoOrb: null,      // { x, y, radius, growing }
+        qteActive: false,
+        qteSlider: 0.15,       // 0 to 1
+        qteDirection: 1,
+        qteSpeed: 1.9,
+        qteGreenMin: 0.36,
+        qteGreenMax: 0.64,
+        qteResolved: false,
+        qteSuccess: false,
+        qteTimeout: 4.5,
+
+        // Defeat Mechanic: Collect Golden Pyramids (spawn periodically, deal 25 dmg to boss)
+        pyramids: [],          // [{ id, x, y, baseY, bobTimer, collected }]
+        pyramidSpawnTimer: 0,
+        pyramidBeams: []       // [{ startX, startY, curX, curY, targetX, targetY, t, active }]
+    };
+
+    const mummyIntroCutscene = {
+        active: false,
+        phase: 'NONE', // 'STORM_RISE', 'EMERGE', 'ROAR'
+        timer: 0,
+        sandVortexAlpha: 0,
+        vortexRadius: 0
+    };
+
+    const mummyDefeatCutscene = {
+        active: false,
+        phase: 'NONE',
+        timer: 0,
+        confetti: [],
+        sandBlastRadius: 0
+    };
+
+    function startMummyIntroCutscene() {
+        if (mummy.introPlayed || mummyIntroCutscene.active || mummy.active || mummy.isFallen) return;
+        currentState = STATES.CUTSCENE;
+        mummyIntroCutscene.active = true;
+        mummyIntroCutscene.phase = 'STORM_RISE';
+        mummyIntroCutscene.timer = 0;
+        mummyIntroCutscene.sandVortexAlpha = 0;
+        mummyIntroCutscene.vortexRadius = 0;
+
+        if (thirstHud) thirstHud.classList.add('hidden');
+
+        mummy.x = 14850;
+        mummy.y = currentLevelData.groundY;
+        mummy.baseY = currentLevelData.groundY;
+        mummy.state = 'INACTIVE';
+        mummy.eyeGlow = 0;
+
+        // Player stands completely still at the entrance of the arena!
+        player.state = 'IDLE';
+        player.facing = 1;
+        player.grounded = true;
+        player.y = currentLevelData.groundY;
+        player.vy = 0;
+        player.vx = 0;
+        player.isBossMode = false;
+
+        keys.left = false;
+        keys.right = false;
+        keys.jump = false;
+
+        // Ensure vertical camera is perfectly aligned with ground level
+        cameraY = 0;
+
+        if (bossHud) bossHud.classList.add('hidden');
+        if (cutsceneOverlay) cutsceneOverlay.classList.remove('hidden');
+        if (cutsceneChapter) cutsceneChapter.textContent = '🏜️ УРОВЕНЬ 80: ВЕЛИКАЯ ГРОБНИЦА ФАРАОНА';
+        if (cutsceneText) cutsceneText.textContent = 'Священный зал гробницы... Впереди разгорается древняя песчаная буря!';
+
+        playSound('sandTornado');
+    }
+
+    function updateMummyIntroCutscene() {
+        mummyIntroCutscene.timer += 0.016;
+
+        const scale = canvas.height / 675;
+        const screenW = canvas.width / scale;
+
+        // Ensure camera Y is smoothly focused on ground level
+        cameraY += (0 - cameraY) * 0.1;
+
+        if (mummyIntroCutscene.phase === 'STORM_RISE') {
+            mummyIntroCutscene.sandVortexAlpha = Math.min(1.0, mummyIntroCutscene.sandVortexAlpha + 0.025);
+            mummyIntroCutscene.vortexRadius = Math.min(180, mummyIntroCutscene.vortexRadius + 3.5);
+
+            // Smoothly pan camera towards Mummy's vortex ahead
+            const targetCamX = mummy.x - screenW * 0.55;
+            cameraX += (targetCamX - cameraX) * 0.06;
+
+            if (mummyIntroCutscene.timer > 1.8) {
+                mummyIntroCutscene.phase = 'EMERGE';
+                mummyIntroCutscene.timer = 0;
+                if (cutsceneText) cutsceneText.textContent = 'Из песчаного вихря поднимается исполинский Древний Фараон!';
+                mummy.state = 'INTRO';
+                playSound('mummyRoar');
+                screenShake = 18;
+            }
+        } else if (mummyIntroCutscene.phase === 'EMERGE') {
+            mummy.eyeGlow = Math.min(1.0, mummyIntroCutscene.timer / 2.0);
+            const targetCamX = mummy.x - screenW * 0.52;
+            cameraX += (targetCamX - cameraX) * 0.06;
+
+            if (mummyIntroCutscene.timer > 2.2) {
+                mummyIntroCutscene.phase = 'ROAR';
+                mummyIntroCutscene.timer = 0;
+                if (cutsceneText) cutsceneText.textContent = 'ДРЕВНЯЯ МУМИЯ ПРОБУДИЛАСЬ! Собирайте священные пирамиды!';
+                playSound('anubisSlam');
+                screenShake = 24;
+            }
+        } else if (mummyIntroCutscene.phase === 'ROAR') {
+            mummy.eyeGlow = 1.0;
+            const targetCamX = (player.x + mummy.x) * 0.5 - screenW * 0.5;
+            cameraX += (targetCamX - cameraX) * 0.06;
+
+            if (mummyIntroCutscene.timer > 1.8) {
+                finishMummyIntroCutscene();
+            }
+        }
+
+        // Spawn swirling vortex particles
+        if (mummyIntroCutscene.phase === 'STORM_RISE' || mummyIntroCutscene.phase === 'EMERGE') {
+            for (let i = 0; i < 3; i++) {
+                const ang = Math.random() * Math.PI * 2;
+                const r = 20 + Math.random() * 85;
+                particles.push({
+                    x: mummy.x + Math.cos(ang) * r,
+                    y: currentLevelData.groundY - Math.random() * 180,
+                    vx: -Math.sin(ang) * (3 + Math.random() * 4),
+                    vy: -(2 + Math.random() * 5),
+                    size: 3 + Math.random() * 5,
+                    color: Math.random() < 0.6 ? '#f59e0b' : '#fbbf24',
+                    life: 0.6,
+                    decay: 0.035
+                });
+            }
+        }
+    }
+
+    function finishMummyIntroCutscene() {
+        if (!mummyIntroCutscene.active) return;
+        mummyIntroCutscene.active = false;
+        mummyIntroCutscene.phase = 'NONE';
+        mummy.introPlayed = true;
+
+        if (cutsceneOverlay) cutsceneOverlay.classList.add('hidden');
+
+        player.state = 'IDLE';
+        player.vx = 0;
+        player.vy = 0;
+        player.isBossMode = false;
+        player.grounded = true;
+        player.facing = 1;
+
+        keys.left = false;
+        keys.right = false;
+        keys.jump = false;
+
+        currentState = STATES.PLAYING;
+        startMummyFight();
+    }
+
+    function startMummyFight() {
+        if (mummy.active) return;
+        mummy.active = true;
+        mummy.health = 500;
+        mummy.maxHealth = 500;
+        mummy.x = 14850;
+        mummy.y = currentLevelData.groundY;
+        mummy.baseY = currentLevelData.groundY;
+        mummy.state = 'IDLE';
+        mummy.timer = 0;
+        mummy.attackIndex = 0;
+        mummy.hitFlashTimer = 0;
+        mummy.shoveTimer = 0;
+        mummy.eyeGlow = 1.0;
+        mummy.isFallen = false;
+        mummy.fallAngle = 0;
+        mummy.lastDefeatReason = '';
+        mummy.spikeWarning = false;
+        mummy.spikeWarningTimer = 0;
+        mummy.spikeTrajectories = [];
+        mummy.spikes = [];
+        mummy.minions = [];
+        mummy.sandCloud = null;
+        mummy.sandInEyesTimer = 0;
+        mummy.staffActive = false;
+        mummy.staffSlamsRemaining = 0;
+        mummy.shockwaves = [];
+        mummy.tornadoActive = false;
+        mummy.qteActive = false;
+        mummy.qteResolved = false;
+        mummy.qteSuccess = false;
+        mummy.pyramids = [];
+        mummy.pyramidSpawnTimer = 1.0;
+        mummy.pyramidBeams = [];
+
+        // Manual player control: isBossMode MUST BE FALSE
+        player.isBossMode = false;
+        player.vx = 0;
+        player.state = 'IDLE';
+        player.punchTimer = 0;
+        keys.left = false;
+        keys.right = false;
+        keys.jump = false;
+
+        if (thirstHud) thirstHud.classList.add('hidden');
+
+        if (bossHud) {
+            bossHud.classList.remove('hidden');
+        }
+        if (bossName) {
+            bossName.textContent = '🏺 ВЕЛИКАЯ ДРЕВНЯЯ МУМИЯ';
+        }
+        if (bossHealthBar) {
+            bossHealthBar.style.width = '100%';
+            bossHealthBar.style.background = 'linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%)';
+        }
+        if (bossPhaseText) {
+            bossPhaseText.textContent = 'БОСС: 500 / 500 | [ЛКМ - Удар, собирайте пирамиды!]';
+        }
+
+        playSound('mummyRoar');
+        screenShake = 16;
+    }
+
+    function resetMummy() {
+        mummy.active = false;
+        mummy.health = 500;
+        mummy.x = 14850;
+        mummy.arenaLeft = 13250;
+        mummy.arenaRight = 15800;
+        mummy.state = 'INACTIVE';
+        mummy.timer = 0;
+        mummy.attackIndex = 0;
+        mummy.hitFlashTimer = 0;
+        mummy.shoveTimer = 0;
+        mummy.eyeGlow = 1.0;
+        mummy.isFallen = false;
+        mummy.fallAngle = 0;
+        mummy.introPlayed = false;
+        mummy.lastDefeatReason = '';
+        mummy.spikeWarning = false;
+        mummy.spikeWarningTimer = 0;
+        mummy.spikeTrajectories = [];
+        mummy.spikes = [];
+        mummy.minions = [];
+        mummy.sandCloud = null;
+        mummy.sandInEyesTimer = 0;
+        mummy.staffActive = false;
+        mummy.staffSlamsRemaining = 0;
+        mummy.shockwaves = [];
+        mummy.tornadoActive = false;
+        mummy.qteActive = false;
+        mummy.qteResolved = false;
+        mummy.qteSuccess = false;
+        mummy.pyramids = [];
+        mummy.pyramidSpawnTimer = 0;
+        mummy.pyramidBeams = [];
+        mummyIntroCutscene.active = false;
+        mummyIntroCutscene.phase = 'NONE';
+        mummyDefeatCutscene.active = false;
+        mummyDefeatCutscene.phase = 'NONE';
+
+        player.isBossMode = false;
+        player.vx = 0;
+        player.punchTimer = 0;
+
+        if (currentLevelIndex === 80 && bossHud) {
+            bossHud.classList.add('hidden');
+        }
+    }
+
+    function playerPunch() {
+        if (player.state === 'DEFEAT' || currentState !== STATES.PLAYING) return;
+        if (player.punchTimer && player.punchTimer > 0.08) return;
+
+        player.punchTimer = 0.22;
+        playSound('punch');
+
+        // Check melee hit against any active minions
+        if (currentLevelIndex === 80 && typeof mummy !== 'undefined' && mummy.minions) {
+            mummy.minions.forEach(minion => {
+                if (!minion.active) return;
+                const dist = Math.abs(player.x - minion.x);
+                const facingMatches = (player.facing > 0 && minion.x >= player.x - 20) || (player.facing < 0 && minion.x <= player.x + 20);
+                if (dist < 80 && Math.abs(player.y - minion.y) < 60 && facingMatches) {
+                    minion.hp -= 1;
+                    minion.hitTimer = 0.25;
+                    minion.x += player.facing * 30; // knockback
+                    playSound('mummyHit');
+                    screenShake = 6;
+
+                    // Sand puff particles
+                    for (let p = 0; p < 12; p++) {
+                        particles.push({
+                            x: minion.x + (Math.random() - 0.5) * 16,
+                            y: minion.y - 25 + (Math.random() - 0.5) * 20,
+                            vx: player.facing * (2 + Math.random() * 3),
+                            vy: -(1 + Math.random() * 3),
+                            size: 2 + Math.random() * 3,
+                            color: Math.random() < 0.6 ? '#f59e0b' : '#d97706',
+                            life: 0.45,
+                            decay: 0.03
+                        });
+                    }
+
+                    if (minion.hp <= 0) {
+                        minion.active = false;
+                        // Crumble explosion
+                        for (let p = 0; p < 24; p++) {
+                            particles.push({
+                                x: minion.x + (Math.random() - 0.5) * 20,
+                                y: minion.y - 25 + (Math.random() - 0.5) * 25,
+                                vx: (Math.random() - 0.5) * 6,
+                                vy: -(2 + Math.random() * 5),
+                                size: 2.5 + Math.random() * 3.5,
+                                color: Math.random() < 0.5 ? '#f59e0b' : '#b45309',
+                                life: 0.6,
+                                decay: 0.025
+                            });
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    function handleMummyQteClick() {
+        if (!mummy.active || !mummy.qteActive || mummy.qteResolved) return;
+        mummy.qteResolved = true;
+
+        if (mummy.qteSlider >= mummy.qteGreenMin && mummy.qteSlider <= mummy.qteGreenMax) {
+            // SUCCESS! Player holds balance
+            mummy.qteSuccess = true;
+            mummy.qteActive = false;
+            playSound('victory');
+            screenShake = 12;
+
+            // Golden shielding burst
+            for (let p = 0; p < 36; p++) {
+                const angle = Math.random() * Math.PI * 2;
+                const spd = 3 + Math.random() * 5;
+                particles.push({
+                    x: player.x,
+                    y: player.y - 38,
+                    vx: Math.cos(angle) * spd,
+                    vy: Math.sin(angle) * spd,
+                    size: 3 + Math.random() * 4,
+                    color: Math.random() < 0.5 ? '#facc15' : '#fbbf24',
+                    life: 0.7,
+                    decay: 0.025
+                });
+            }
+
+            // Disperse tornado
+            mummy.tornadoActive = false;
+            mummy.timer = 0;
+            mummy.state = 'IDLE';
+        } else {
+            // FAILURE! Missed or hit red zone -> Sucked into tornado (lethal)
+            mummy.qteSuccess = false;
+            mummy.qteActive = false;
+            mummy.lastDefeatReason = 'TORNADO';
+
+            triggerDefeat(false);
+            player.vy = -18;
+            player.vx = -12;
+            screenShake = 24;
+            playSound('sandTornado');
+        }
+    }
+
+    function updateMummy() {
+        if (!mummy.active || mummy.health <= 0) return;
+
+        // Arena boundary enforcement (cannot leave boss chamber or pass through mummy)
+        if (player.x < mummy.arenaLeft + 30) {
+            player.x = mummy.arenaLeft + 30;
+            if (player.vx < 0) player.vx = 0;
+        }
+        if (!mummy.isFallen && mummy.state !== 'DEFEAT') {
+            if (player.x > mummy.x - 80) {
+                player.x = mummy.x - 80;
+                if (player.vx > 0) player.vx = 0;
+            }
+        } else {
+            if (player.x > mummy.arenaRight - 30) {
+                player.x = mummy.arenaRight - 30;
+                if (player.vx > 0) player.vx = 0;
+            }
+        }
+
+        mummy.hitFlashTimer = Math.max(0, mummy.hitFlashTimer - 0.016);
+        if (mummy.shoveTimer > 0) mummy.shoveTimer = Math.max(0, mummy.shoveTimer - 0.016);
+        mummy.sandInEyesTimer = Math.max(0, mummy.sandInEyesTimer - 0.016);
+
+        // --- SPAWN GOLDEN PYRAMIDS (DAMAGE MECHANIC) ---
+        mummy.pyramidSpawnTimer -= 0.016;
+        const activePyramids = mummy.pyramids.filter(p => !p.collected);
+        if (mummy.pyramidSpawnTimer <= 0 && activePyramids.length < 2 && mummy.state !== 'DEFEAT') {
+            mummy.pyramidSpawnTimer = 4.2;
+            const floorY = (currentLevelData && currentLevelData.groundY ? currentLevelData.groundY : 540) - 35; // 505: hovers right above ground floor
+            const spawnSpots = [
+                { x: 13480, y: floorY },
+                { x: 13700, y: floorY },
+                { x: 13920, y: floorY },
+                { x: 14140, y: floorY },
+                { x: 14360, y: floorY },
+                { x: 14580, y: floorY }
+            ];
+            const availableSpots = spawnSpots.filter(s => !activePyramids.some(p => Math.abs(p.x - s.x) < 150));
+            const spotsToUse = availableSpots.length > 0 ? availableSpots : spawnSpots;
+            const spot = spotsToUse[Math.floor(Math.random() * spotsToUse.length)];
+            mummy.pyramids.push({
+                id: 'pyr_' + Date.now(),
+                x: spot.x,
+                y: spot.y,
+                baseY: spot.y,
+                bobTimer: Math.random() * Math.PI * 2,
+                collected: false
+            });
+        }
+
+        // --- UPDATE PYRAMIDS & PLAYER PICKUP ---
+        for (let i = mummy.pyramids.length - 1; i >= 0; i--) {
+            const pyr = mummy.pyramids[i];
+            if (pyr.collected) continue;
+            pyr.bobTimer += 0.04;
+            pyr.y = pyr.baseY + Math.sin(pyr.bobTimer) * 7;
+
+            // Check pickup by player
+            const dx = Math.abs(player.x - pyr.x);
+            const dy = Math.abs((player.y - 36) - pyr.y);
+            if (dx < 36 && dy < 48 && player.state !== 'DEFEAT' && currentState === STATES.PLAYING) {
+                pyr.collected = true;
+                playSound('pyramidCollect');
+
+                // Launch brilliant solar ray from player to Mummy
+                mummy.pyramidBeams.push({
+                    startX: player.x,
+                    startY: player.y - 35,
+                    curX: player.x,
+                    curY: player.y - 35,
+                    targetX: mummy.x - 20,
+                    targetY: mummy.y - 110,
+                    t: 0,
+                    active: true
+                });
+            }
+        }
+
+        // --- UPDATE PYRAMID SOLAR BEAMS ---
+        for (let i = mummy.pyramidBeams.length - 1; i >= 0; i--) {
+            const beam = mummy.pyramidBeams[i];
+            beam.t += 0.07;
+            beam.curX = beam.startX + (beam.targetX - beam.startX) * Math.min(1.0, beam.t);
+            beam.curY = beam.startY + (beam.targetY - beam.startY) * Math.min(1.0, beam.t);
+
+            if (beam.t >= 1.0) {
+                beam.active = false;
+                mummy.pyramidBeams.splice(i, 1);
+
+                // DAMAGE MUMMY: -25 HP
+                mummy.health = Math.max(0, mummy.health - 25);
+                mummy.hitFlashTimer = 0.35;
+                screenShake = 14;
+                playSound('mummyHit');
+
+                // Energy burst on Mummy
+                for (let p = 0; p < 28; p++) {
+                    const ang = Math.random() * Math.PI * 2;
+                    const spd = 2 + Math.random() * 5;
+                    particles.push({
+                        x: mummy.x - 20,
+                        y: mummy.y - 110,
+                        vx: Math.cos(ang) * spd,
+                        vy: Math.sin(ang) * spd,
+                        size: 3 + Math.random() * 4,
+                        color: Math.random() < 0.6 ? '#f59e0b' : '#fbbf24',
+                        life: 0.6,
+                        decay: 0.025
+                    });
+                }
+
+                if (bossHealthBar) {
+                    bossHealthBar.style.width = (mummy.health / 500 * 100) + '%';
+                }
+                if (bossPhaseText) {
+                    bossPhaseText.textContent = `БОСС: ${mummy.health} / 500 (Собирайте пирамиды!)`;
+                }
+
+                if (mummy.health <= 0) {
+                    startMummyDefeatCutscene();
+                    return;
+                }
+            }
+        }
+
+        // --- MUMMY STATE MACHINE & ATTACK CYCLES ---
+        mummy.timer += 0.016;
+
+        if (mummy.state === 'IDLE') {
+            if (mummy.timer > 2.4) {
+                mummy.timer = 0;
+                const attacks = ['ATTACK_SPIKES', 'ATTACK_MINIONS', 'ATTACK_SAND_IN_EYES', 'ATTACK_ANUBIS', 'ATTACK_SANDSTORM'];
+                mummy.state = attacks[mummy.attackIndex];
+                mummy.attackIndex = (mummy.attackIndex + 1) % attacks.length;
+
+                if (mummy.state === 'ATTACK_SPIKES') {
+                    mummy.spikeWarning = true;
+                    mummy.spikeWarningTimer = 1.0;
+                    playSound('warning');
+
+                    // 3 Trajectory projection lines across arena
+                    const originX = mummy.x - 30;
+                    const originY = mummy.y - 110;
+                    mummy.spikeTrajectories = [
+                        { startX: originX, startY: originY, angle: -2.85, length: 1600 },
+                        { startX: originX, startY: originY, angle: -3.05, length: 1600 },
+                        { startX: originX, startY: originY, angle: -3.25, length: 1600 }
+                    ];
+                } else if (mummy.state === 'ATTACK_MINIONS') {
+                    // Spawn 5 lesser mummies from the ground
+                    mummy.minions = [];
+                    const spawnXPositions = [mummy.x - 180, mummy.x - 340, mummy.x - 500, mummy.x - 660, mummy.x - 820];
+                    spawnXPositions.forEach((sx, idx) => {
+                        mummy.minions.push({
+                            id: 'minion_' + idx,
+                            x: sx,
+                            y: currentLevelData.groundY,
+                            hp: 2 + (idx % 2), // 2 to 3 hits
+                            maxHp: 3,
+                            vx: -1.7,
+                            facing: -1,
+                            hitTimer: 0,
+                            animTime: Math.random() * 5,
+                            attackCooldown: 0,
+                            active: true
+                        });
+                    });
+                    playSound('slam');
+                    screenShake = 12;
+                } else if (mummy.state === 'ATTACK_SAND_IN_EYES') {
+                    // Launch tracking sand cloud with homing capability
+                    mummy.sandCloud = {
+                        x: mummy.x - 40,
+                        y: mummy.y - 120,
+                        vx: -5,
+                        vy: -2,
+                        speed: 7.2,
+                        radius: 32,
+                        lifetime: 6.0,
+                        active: true
+                    };
+                    playSound('sandTornado');
+                } else if (mummy.state === 'ATTACK_ANUBIS') {
+                    mummy.staffActive = true;
+                    mummy.staffSlamsRemaining = 5;
+                    mummy.staffSlamTimer = 0.6;
+                    playSound('mummyRoar');
+                } else if (mummy.state === 'ATTACK_SANDSTORM') {
+                    mummy.tornadoActive = true;
+                    mummy.tornadoTimer = 0;
+                    mummy.qteActive = true;
+                    mummy.qteSlider = 0.15;
+                    mummy.qteDirection = 1;
+                    mummy.qteSpeed = 1.9;
+                    mummy.qteGreenMin = 0.36;
+                    mummy.qteGreenMax = 0.64;
+                    mummy.qteResolved = false;
+                    mummy.qteSuccess = false;
+                    mummy.qteTimeout = 4.5;
+                    playSound('sandTornado');
+                    screenShake = 16;
+                }
+            }
+        }
+
+        // --- ATTACK 1: SPIKES UPDATE ---
+        if (mummy.state === 'ATTACK_SPIKES') {
+            if (mummy.spikeWarning) {
+                mummy.spikeWarningTimer -= 0.016;
+                if (mummy.spikeWarningTimer <= 0) {
+                    mummy.spikeWarning = false;
+                    playSound('slam');
+                    screenShake = 10;
+
+                    // Shoot 3 spikes along trajectories (15 dmg each)
+                    mummy.spikeTrajectories.forEach(traj => {
+                        const spd = 16;
+                        mummy.spikes.push({
+                            x: traj.startX,
+                            y: traj.startY,
+                            vx: Math.cos(traj.angle) * spd,
+                            vy: Math.sin(traj.angle) * spd,
+                            rot: traj.angle,
+                            damage: 15,
+                            active: true
+                        });
+                    });
+                }
+            } else {
+                // Update flying spikes
+                let anyActive = false;
+                for (let i = mummy.spikes.length - 1; i >= 0; i--) {
+                    const spk = mummy.spikes[i];
+                    if (!spk.active) continue;
+                    anyActive = true;
+                    spk.x += spk.vx;
+                    spk.y += spk.vy;
+
+                    // Check player collision
+                    const pDist = Math.hypot(player.x - spk.x, (player.y - 36) - spk.y);
+                    if (pDist < 26 && player.state !== 'DEFEAT' && currentState === STATES.PLAYING) {
+                        mummy.lastDefeatReason = 'SPIKES';
+                        playerTakeDamage(spk.damage, 'mummySpike');
+                        spk.active = false;
+                    }
+
+                    if (spk.x < mummy.arenaLeft - 100 || spk.y > currentLevelData.groundY + 10) {
+                        spk.active = false;
+                    }
+                }
+
+                if (!anyActive && mummy.timer > 2.0) {
+                    mummy.timer = 0;
+                    mummy.state = 'IDLE';
+                }
+            }
+        }
+
+        // --- ATTACK 2: MINIONS UPDATE ---
+        if (mummy.state === 'ATTACK_MINIONS') {
+            let livingCount = 0;
+            mummy.minions.forEach(minion => {
+                if (!minion.active) return;
+                livingCount++;
+                minion.animTime += 0.04;
+                minion.hitTimer = Math.max(0, minion.hitTimer - 0.016);
+                minion.attackCooldown = Math.max(0, minion.attackCooldown - 0.016);
+
+                // March towards player
+                minion.facing = player.x < minion.x ? -1 : 1;
+                minion.x += minion.facing * 1.8;
+
+                // Attack player on touch (5 dmg per hit)
+                const dist = Math.abs(player.x - minion.x);
+                if (dist < 34 && Math.abs(player.y - minion.y) < 30 && minion.attackCooldown <= 0 && player.state !== 'DEFEAT' && currentState === STATES.PLAYING) {
+                    minion.attackCooldown = 1.1;
+                    mummy.lastDefeatReason = 'MINIONS';
+                    playerTakeDamage(5, 'mummyMinion');
+                }
+            });
+
+            if (livingCount === 0 || mummy.timer > 11.0) {
+                mummy.minions.forEach(m => m.active = false);
+                mummy.timer = 0;
+                mummy.state = 'IDLE';
+            }
+        }
+
+        // --- ATTACK 3: HOMING SAND CLOUD & BLINDNESS UPDATE ---
+        if (mummy.sandCloud && mummy.sandCloud.active) {
+            const sc = mummy.sandCloud;
+            sc.lifetime -= 0.016;
+
+            // Target player center
+            const targetX = player.x;
+            const targetY = player.y - 35;
+            const dx = targetX - sc.x;
+            const dy = targetY - sc.y;
+            const dist = Math.hypot(dx, dy);
+
+            // Smooth homing tracking towards player
+            if (dist > 0) {
+                const desiredVx = (dx / dist) * sc.speed;
+                const desiredVy = (dy / dist) * sc.speed;
+                sc.vx += (desiredVx - sc.vx) * 0.12;
+                sc.vy += (desiredVy - sc.vy) * 0.12;
+            }
+
+            sc.x += sc.vx;
+            sc.y += sc.vy;
+
+            // Spawn trailing sand particles while in flight
+            if (Math.random() < 0.65) {
+                particles.push({
+                    x: sc.x + (Math.random() - 0.5) * 20,
+                    y: sc.y + (Math.random() - 0.5) * 20,
+                    vx: -sc.vx * 0.25 + (Math.random() - 0.5) * 2.5,
+                    vy: -sc.vy * 0.25 + (Math.random() - 0.5) * 2.5,
+                    size: 3 + Math.random() * 4.5,
+                    color: Math.random() < 0.6 ? '#f59e0b' : '#fbbf24',
+                    life: 0.45,
+                    decay: 0.035
+                });
+            }
+
+            // Proximity hit: when close to player, cloud bursts and applies 7-second blindness
+            if (dist < 48 && player.state !== 'DEFEAT' && currentState === STATES.PLAYING) {
+                sc.active = false;
+                mummy.sandInEyesTimer = 7.0; // 7 seconds blindness duration!
+                playSound('rustle');
+                playSound('airBoost');
+                screenShake = 10;
+
+                // Dense sand burst explosion around player
+                for (let p = 0; p < 36; p++) {
+                    const ang = Math.random() * Math.PI * 2;
+                    const spd = 2 + Math.random() * 5.5;
+                    particles.push({
+                        x: player.x + (Math.random() - 0.5) * 24,
+                        y: player.y - 36 + (Math.random() - 0.5) * 24,
+                        vx: Math.cos(ang) * spd,
+                        vy: Math.sin(ang) * spd - 1.5,
+                        size: 3 + Math.random() * 5,
+                        color: Math.random() < 0.5 ? '#f59e0b' : (Math.random() < 0.5 ? '#d97706' : '#fef3c7'),
+                        life: 0.85,
+                        decay: 0.025
+                    });
+                }
+            } else if (sc.lifetime <= 0) {
+                sc.active = false;
+            }
+        }
+
+        if (mummy.state === 'ATTACK_SAND_IN_EYES') {
+            if ((!mummy.sandCloud || !mummy.sandCloud.active || mummy.timer > 3.2) && mummy.timer > 1.4) {
+                mummy.timer = 0;
+                mummy.state = 'IDLE';
+            }
+        }
+
+        // --- ATTACK 4: STAFF OF ANUBIS UPDATE ---
+        if (mummy.state === 'ATTACK_ANUBIS') {
+            mummy.staffSlamTimer -= 0.016;
+
+            if (mummy.staffSlamsRemaining > 0 && mummy.staffSlamTimer <= 0) {
+                mummy.staffSlamsRemaining--;
+                mummy.staffSlamTimer = 1.1; // rhythm slam every 1.1s
+                playSound('anubisSlam');
+                screenShake = 15;
+
+                // Send rolling shockwave across arena floor (20 dmg, avoid by jumping)
+                mummy.shockwaves.push({
+                    x: mummy.x - 40,
+                    y: currentLevelData.groundY,
+                    vx: -11.5,
+                    w: 38,
+                    h: 46,
+                    damage: 20,
+                    active: true
+                });
+            }
+
+            // Update shockwaves
+            for (let i = mummy.shockwaves.length - 1; i >= 0; i--) {
+                const sw = mummy.shockwaves[i];
+                if (!sw.active) continue;
+                sw.x += sw.vx;
+
+                // Hit player if player is touching the ground
+                if (Math.abs(player.x - sw.x) < 28 && player.grounded && player.y >= currentLevelData.groundY - 14 && player.state !== 'DEFEAT' && currentState === STATES.PLAYING) {
+                    mummy.lastDefeatReason = 'ANUBIS';
+                    playerTakeDamage(sw.damage, 'anubisWave');
+                    sw.active = false;
+                }
+
+                if (sw.x < mummy.arenaLeft - 80) {
+                    sw.active = false;
+                }
+            }
+
+            if (mummy.staffSlamsRemaining <= 0 && mummy.shockwaves.every(s => !s.active) && mummy.timer > 6.5) {
+                mummy.staffActive = false;
+                mummy.timer = 0;
+                mummy.state = 'IDLE';
+            }
+        }
+
+        // --- ATTACK 5: SANDSTORM TORNADO & QTE UPDATE ---
+        if (mummy.state === 'ATTACK_SANDSTORM') {
+            if (mummy.qteActive && !mummy.qteResolved) {
+                mummy.qteSlider += mummy.qteDirection * mummy.qteSpeed * 0.016;
+                if (mummy.qteSlider > 0.98) {
+                    mummy.qteSlider = 0.98;
+                    mummy.qteDirection = -1;
+                } else if (mummy.qteSlider < 0.02) {
+                    mummy.qteSlider = 0.02;
+                    mummy.qteDirection = 1;
+                }
+
+                mummy.qteTimeout -= 0.016;
+                if (mummy.qteTimeout <= 0) {
+                    // Time expired without hitting balance -> Fatal defeat
+                    handleMummyQteClick();
+                }
+            }
+
+            if (mummy.qteSuccess && mummy.timer > 2.5) {
+                mummy.tornadoActive = false;
+                mummy.timer = 0;
+                mummy.state = 'IDLE';
+            }
+        }
+    }
+
+    function startMummyDefeatCutscene() {
+        mummy.state = 'DEFEAT';
+        mummy.active = false;
+        mummy.isFallen = true;
+        currentState = STATES.CUTSCENE;
+        mummyDefeatCutscene.active = true;
+        mummyDefeatCutscene.phase = 'CRACK';
+        mummyDefeatCutscene.timer = 0;
+        mummyDefeatCutscene.confetti = [];
+
+        if (bossHud) bossHud.classList.add('hidden');
+        if (cutsceneOverlay) cutsceneOverlay.classList.remove('hidden');
+        if (cutsceneChapter) cutsceneChapter.textContent = '🏺 ВЕЛИКАЯ МУМИЯ ПОВЕРЖЕНА!';
+        if (cutsceneText) cutsceneText.textContent = 'Древний владыка рассыпается в священный золотой песок!';
+
+        playSound('victory');
+        screenShake = 22;
+
+        // Golden sand burst
+        for (let i = 0; i < 90; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const spd = 2 + Math.random() * 8;
+            mummyDefeatCutscene.confetti.push({
+                x: mummy.x - 20,
+                y: mummy.y - 100,
+                vx: Math.cos(angle) * spd,
+                vy: Math.sin(angle) * spd,
+                size: 3 + Math.random() * 6,
+                color: ['#f59e0b', '#fbbf24', '#facc15', '#b45309', '#e0e7ff'][Math.floor(Math.random() * 5)],
+                rot: Math.random() * Math.PI * 2,
+                rotSpd: (Math.random() - 0.5) * 0.2
+            });
+        }
+    }
+
+    function updateMummyDefeatCutscene() {
+        mummyDefeatCutscene.timer += 0.016;
+        mummyDefeatCutscene.confetti.forEach(c => {
+            c.x += c.vx;
+            c.y += c.vy;
+            c.vy += 0.12; // gravity
+            c.rot += c.rotSpd;
+        });
+
+        if (mummyDefeatCutscene.timer > 3.2) {
+            finishMummyDefeatCutscene();
+        }
+    }
+
+    function finishMummyDefeatCutscene() {
+        if (!mummyDefeatCutscene.active) return;
+        mummyDefeatCutscene.active = false;
+        if (cutsceneOverlay) cutsceneOverlay.classList.add('hidden');
+
+        currentState = STATES.VICTORY;
+        unlockedPage4Levels = Math.max(unlockedPage4Levels, 80);
+        generateLevelsGrid();
+
+        if (victoryTitle) victoryTitle.textContent = '🏆 80 Уровень пройден!';
+        if (victorySubtext) victorySubtext.textContent = 'ВЕЛИКАЯ ДРЕВНЯЯ МУМИЯ ПОВЕРЖЕНА! Вы преодолели все 40 препятствий и спасли Вселенную Паркура!';
+
+        if (btnNextLevel) {
+            btnNextLevel.classList.add('hidden'); // Level 80 is the final boss!
+        }
+        if (btnReplay) btnReplay.innerHTML = '<span class="btn-icon">🔄</span> Пройти снова';
+        if (btnToMenu) btnToMenu.innerHTML = '<span class="btn-icon">🏠</span> В меню уровней';
+
+        if (victoryScreen) {
+            victoryScreen.classList.remove('hidden');
+            victoryScreen.classList.add('screen-active');
+        }
+        player.state = 'VICTORY_IDLE';
+        playSound('victory');
+    }
+
+    // Helper to draw swirling 3D sand cyclone during intro cutscene
+    function drawMummySandVortex(ctx, mx, my, camX, camY, scale, radius, alpha) {
+        if (alpha <= 0) return;
+        const cx = (mx - camX) * scale;
+        const cy = (my - camY) * scale;
+        const time = Date.now() * 0.007;
+
+        ctx.save();
+        ctx.globalAlpha = Math.min(1.0, alpha);
+
+        // Ground sand dust burst
+        const baseGrad = ctx.createRadialGradient(cx, cy, 10 * scale, cx, cy, radius * 1.3 * scale);
+        baseGrad.addColorStop(0, 'rgba(251, 191, 36, 0.7)');
+        baseGrad.addColorStop(0.5, 'rgba(217, 119, 6, 0.4)');
+        baseGrad.addColorStop(1, 'rgba(180, 83, 9, 0)');
+        ctx.fillStyle = baseGrad;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, radius * 1.3 * scale, radius * 0.35 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 8 Spiraling 3D Sand Cyclone Funnel Rings rising up into the sky
+        for (let ring = 0; ring < 8; ring++) {
+            const hOffset = -ring * 25 * scale;
+            const rWidth = (radius * (0.35 + ring * 0.1)) * scale;
+            const rHeight = rWidth * 0.28;
+            const sway = Math.sin(time + ring * 0.8) * 14 * scale;
+
+            ctx.strokeStyle = (ring % 2 === 0) ? '#fbbf24' : '#d97706';
+            ctx.lineWidth = (2.5 + (8 - ring) * 0.4) * scale;
+            ctx.beginPath();
+            ctx.ellipse(cx + sway, cy + hOffset, rWidth, rHeight, Math.sin(time * 0.7 + ring) * 0.15, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+        ctx.restore();
+    }
+
+    // --- DRAW MUMMY BOSS ---
+    function drawMummy(scale) {
+        if (!mummy.active && !mummy.introPlayed && !mummyDefeatCutscene.active && (!mummyIntroCutscene || !mummyIntroCutscene.active)) return;
+        if (mummyDefeatCutscene.active && mummyDefeatCutscene.timer > 2.5) return;
+
+        let drawY = mummy.y;
+        let mummyAlpha = 1.0;
+
+        if (mummyIntroCutscene && mummyIntroCutscene.active) {
+            if (mummyIntroCutscene.phase === 'STORM_RISE') {
+                drawMummySandVortex(ctx, mummy.x, mummy.y, cameraX, cameraY, scale, mummyIntroCutscene.vortexRadius, mummyIntroCutscene.sandVortexAlpha);
+                drawY = mummy.y + 110;
+                mummyAlpha = 0.3 * mummyIntroCutscene.sandVortexAlpha;
+            } else if (mummyIntroCutscene.phase === 'EMERGE') {
+                const emergeProg = Math.min(1.0, mummyIntroCutscene.timer / 2.0);
+                drawMummySandVortex(ctx, mummy.x, mummy.y, cameraX, cameraY, scale, 180, Math.max(0.3, 1.0 - emergeProg * 0.5));
+                drawY = mummy.y + (1.0 - emergeProg) * 110;
+                mummyAlpha = Math.min(1.0, 0.4 + emergeProg * 0.6);
+            } else if (mummyIntroCutscene.phase === 'ROAR') {
+                drawMummySandVortex(ctx, mummy.x, mummy.y, cameraX, cameraY, scale, 130, 0.35);
+                drawY = mummy.y;
+                mummyAlpha = 1.0;
+            }
+        }
+
+        const screenX = (mummy.x - cameraX) * scale;
+        const screenY = (drawY - cameraY) * scale;
+
+        ctx.save();
+        ctx.translate(screenX, screenY);
+        ctx.globalAlpha = mummyAlpha;
+
+        // Disintegration fade on defeat
+        if (mummyDefeatCutscene.active) {
+            ctx.globalAlpha = Math.max(0, 1.0 - mummyDefeatCutscene.timer / 2.5);
+        }
+
+        // Damage flash
+        const isHit = mummy.hitFlashTimer > 0;
+        const linenBase = isHit ? '#ffffff' : '#fef3c7';
+        const linenShadow = isHit ? '#f87171' : '#d97706';
+        const goldAccent = isHit ? '#ffffff' : '#fbbf24';
+        const royalBlue = isHit ? '#ef4444' : '#1e3a8a';
+
+        // 1. Sand Aura Particles orbiting Mummy
+        const auraTime = Date.now() * 0.003;
+        for (let i = 0; i < 16; i++) {
+            const aAng = auraTime + i * (Math.PI / 8);
+            const aRadX = 55 * scale;
+            const aRadY = 95 * scale;
+            const ax = Math.cos(aAng) * aRadX;
+            const ay = -95 * scale + Math.sin(aAng) * aRadY;
+            ctx.fillStyle = (i % 2 === 0) ? 'rgba(245, 158, 11, 0.7)' : 'rgba(251, 191, 36, 0.5)';
+            ctx.beginPath();
+            ctx.arc(ax, ay, (2 + (i % 3)) * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // 2. Colossal Mummy Body (Wrapped Torso & Robes)
+        ctx.fillStyle = linenBase;
+        ctx.strokeStyle = linenShadow;
+        ctx.lineWidth = 2.5 * scale;
+
+        // Legs / Skirt base
+        ctx.beginPath();
+        ctx.moveTo(-35 * scale, 0);
+        ctx.lineTo(-40 * scale, -90 * scale);
+        ctx.lineTo(40 * scale, -90 * scale);
+        ctx.lineTo(35 * scale, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Horizontal Bandage Wraps across Lower Body
+        for (let b = 1; b <= 6; b++) {
+            const by = -b * 14 * scale;
+            ctx.beginPath();
+            ctx.moveTo(-38 * scale, by);
+            ctx.quadraticCurveTo(0, by + 5 * scale, 38 * scale, by);
+            ctx.stroke();
+        }
+
+        // Torso
+        ctx.beginPath();
+        ctx.moveTo(-45 * scale, -90 * scale);
+        ctx.lineTo(-50 * scale, -150 * scale);
+        ctx.lineTo(50 * scale, -150 * scale);
+        ctx.lineTo(45 * scale, -90 * scale);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Diagonal Bandage Wraps across Torso
+        ctx.beginPath();
+        ctx.moveTo(-48 * scale, -140 * scale);
+        ctx.lineTo(44 * scale, -100 * scale);
+        ctx.moveTo(-44 * scale, -100 * scale);
+        ctx.lineTo(48 * scale, -140 * scale);
+        ctx.moveTo(-46 * scale, -120 * scale);
+        ctx.lineTo(46 * scale, -120 * scale);
+        ctx.stroke();
+
+        // 3. Ornate Pharaoh Golden Pectoral Collar (Усех)
+        ctx.fillStyle = goldAccent;
+        ctx.beginPath();
+        ctx.arc(0, -150 * scale, 42 * scale, 0, Math.PI);
+        ctx.fill();
+        ctx.strokeStyle = royalBlue;
+        ctx.lineWidth = 3 * scale;
+        ctx.stroke();
+
+        // 4. Arms
+        // Left Arm (bent holding staff, charging, thrusting out in shove, or raised roaring)
+        ctx.fillStyle = linenBase;
+        ctx.strokeStyle = linenShadow;
+        ctx.lineWidth = 2.5 * scale;
+        ctx.beginPath();
+        if (mummy.shoveTimer && mummy.shoveTimer > 0) {
+            ctx.moveTo(-50 * scale, -140 * scale);
+            ctx.lineTo(-95 * scale, -140 * scale);
+            ctx.lineTo(-95 * scale, -115 * scale);
+            ctx.lineTo(-44 * scale, -115 * scale);
+        } else if (mummyIntroCutscene && mummyIntroCutscene.active && mummyIntroCutscene.phase === 'ROAR') {
+            ctx.moveTo(-50 * scale, -145 * scale);
+            ctx.lineTo(-85 * scale, -175 * scale);
+            ctx.lineTo(-70 * scale, -195 * scale);
+            ctx.lineTo(-44 * scale, -155 * scale);
+        } else {
+            ctx.moveTo(-50 * scale, -145 * scale);
+            ctx.lineTo(-75 * scale, -115 * scale);
+            ctx.lineTo(-58 * scale, -85 * scale);
+            ctx.lineTo(-44 * scale, -95 * scale);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Right Arm
+        ctx.beginPath();
+        if (mummyIntroCutscene && mummyIntroCutscene.active && mummyIntroCutscene.phase === 'ROAR') {
+            ctx.moveTo(50 * scale, -145 * scale);
+            ctx.lineTo(85 * scale, -175 * scale);
+            ctx.lineTo(70 * scale, -195 * scale);
+            ctx.lineTo(44 * scale, -155 * scale);
+        } else {
+            ctx.moveTo(50 * scale, -145 * scale);
+            ctx.lineTo(75 * scale, -115 * scale);
+            ctx.lineTo(58 * scale, -85 * scale);
+            ctx.lineTo(44 * scale, -95 * scale);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // 5. Staff of Anubis (When Active or Attacking)
+        if (mummy.staffActive || mummy.state === 'ATTACK_ANUBIS') {
+            const staffX = -75 * scale;
+            const staffY = -140 * scale;
+
+            ctx.save();
+            // Golden shaft
+            const sGrad = ctx.createLinearGradient(staffX - 5 * scale, 0, staffX + 5 * scale, 0);
+            sGrad.addColorStop(0, '#fef08a');
+            sGrad.addColorStop(0.5, '#f59e0b');
+            sGrad.addColorStop(1, '#b45309');
+            ctx.fillStyle = sGrad;
+            ctx.fillRect(staffX - 4 * scale, staffY, 8 * scale, 170 * scale);
+            ctx.strokeStyle = '#78350f';
+            ctx.lineWidth = 1.5 * scale;
+            ctx.strokeRect(staffX - 4 * scale, staffY, 8 * scale, 170 * scale);
+
+            // Jackal Head of Anubis at top
+            ctx.fillStyle = '#0f172a'; // Obsidian black
+            ctx.beginPath();
+            ctx.moveTo(staffX, staffY - 35 * scale);
+            ctx.lineTo(staffX - 16 * scale, staffY - 12 * scale);
+            ctx.lineTo(staffX + 16 * scale, staffY - 12 * scale);
+            ctx.closePath();
+            ctx.fill();
+
+            // Pointed Jackal Ears
+            ctx.beginPath();
+            ctx.moveTo(staffX - 12 * scale, staffY - 12 * scale);
+            ctx.lineTo(staffX - 22 * scale, staffY - 45 * scale);
+            ctx.lineTo(staffX - 6 * scale, staffY - 26 * scale);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(staffX + 12 * scale, staffY - 12 * scale);
+            ctx.lineTo(staffX + 22 * scale, staffY - 45 * scale);
+            ctx.lineTo(staffX + 6 * scale, staffY - 26 * scale);
+            ctx.closePath();
+            ctx.fill();
+
+            // Glowing Turquoise Jackal Eyes
+            ctx.fillStyle = '#38bdf8';
+            ctx.beginPath();
+            ctx.arc(staffX - 6 * scale, staffY - 20 * scale, 2.5 * scale, 0, Math.PI * 2);
+            ctx.arc(staffX + 6 * scale, staffY - 20 * scale, 2.5 * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // 6. Pharaoh Head & Nemes Headdress
+        const headCenterY = -175 * scale;
+
+        // Nemes Flaps (Golden & Royal Blue Striped headdress wings)
+        ctx.fillStyle = goldAccent;
+        ctx.beginPath();
+        ctx.moveTo(-28 * scale, headCenterY - 28 * scale);
+        ctx.lineTo(-48 * scale, headCenterY + 22 * scale);
+        ctx.lineTo(-24 * scale, headCenterY + 20 * scale);
+        ctx.lineTo(-20 * scale, headCenterY);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = royalBlue;
+        ctx.lineWidth = 3 * scale;
+        ctx.stroke();
+
+        ctx.fillStyle = goldAccent;
+        ctx.beginPath();
+        ctx.moveTo(28 * scale, headCenterY - 28 * scale);
+        ctx.lineTo(48 * scale, headCenterY + 22 * scale);
+        ctx.lineTo(24 * scale, headCenterY + 20 * scale);
+        ctx.lineTo(20 * scale, headCenterY);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Head Base
+        ctx.fillStyle = linenBase;
+        ctx.strokeStyle = linenShadow;
+        ctx.lineWidth = 2.5 * scale;
+        ctx.beginPath();
+        ctx.ellipse(0, headCenterY, 26 * scale, 30 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Bandages around Head
+        ctx.beginPath();
+        ctx.moveTo(-22 * scale, headCenterY - 10 * scale);
+        ctx.lineTo(22 * scale, headCenterY - 10 * scale);
+        ctx.moveTo(-24 * scale, headCenterY + 8 * scale);
+        ctx.lineTo(24 * scale, headCenterY + 8 * scale);
+        ctx.stroke();
+
+        // Braided Pharaoh Beard (Осирисова бородка)
+        ctx.fillStyle = goldAccent;
+        ctx.fillRect(-5 * scale, headCenterY + 26 * scale, 10 * scale, 24 * scale);
+        ctx.strokeStyle = royalBlue;
+        ctx.strokeRect(-5 * scale, headCenterY + 26 * scale, 10 * scale, 24 * scale);
+
+        // 7. Glowing Ancient Amber Eyes
+        const eyeAlpha = mummy.eyeGlow;
+        ctx.fillStyle = `rgba(245, 158, 11, ${eyeAlpha})`;
+        ctx.beginPath();
+        ctx.ellipse(-10 * scale, headCenterY - 4 * scale, 5 * scale, 3.5 * scale, 0, 0, Math.PI * 2);
+        ctx.ellipse(10 * scale, headCenterY - 4 * scale, 5 * scale, 3.5 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.arc(-10 * scale, headCenterY - 4 * scale, 2 * scale, 0, Math.PI * 2);
+        ctx.arc(10 * scale, headCenterY - 4 * scale, 2 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Eye glow rays
+        ctx.strokeStyle = `rgba(251, 191, 36, ${0.45 * eyeAlpha})`;
+        ctx.lineWidth = 2 * scale;
+        ctx.beginPath();
+        ctx.moveTo(-10 * scale, headCenterY - 4 * scale);
+        ctx.lineTo(-24 * scale, headCenterY - 4 * scale);
+        ctx.moveTo(10 * scale, headCenterY - 4 * scale);
+        ctx.lineTo(24 * scale, headCenterY - 4 * scale);
+        ctx.stroke();
+
+        // Frayed trailing bandage ribbons drifting behind
+        const ribbonWave = Math.sin(Date.now() * 0.005);
+        ctx.strokeStyle = 'rgba(254, 243, 199, 0.7)';
+        ctx.lineWidth = 3 * scale;
+        ctx.beginPath();
+        ctx.moveTo(-45 * scale, -130 * scale);
+        ctx.quadraticCurveTo(-75 * scale + ribbonWave * 12 * scale, -120 * scale, -95 * scale, -90 * scale);
+        ctx.moveTo(45 * scale, -130 * scale);
+        ctx.quadraticCurveTo(75 * scale + ribbonWave * 12 * scale, -120 * scale, 95 * scale, -90 * scale);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    // --- DRAW MUMMY HAZARDS (SPIKES, MINIONS, SHOCKWAVES, TORNADO, PYRAMIDS) ---
+    function drawMummyHazards(scale) {
+        if (currentLevelIndex !== 80) return;
+
+        // 1. Attack 1 Warning Trajectory Lines (Translucent Red Dashed Lines)
+        if (mummy.active && mummy.spikeWarning && mummy.spikeTrajectories) {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(239, 68, 68, 0.55)';
+            ctx.lineWidth = 2.5 * scale;
+            ctx.setLineDash([12 * scale, 8 * scale]);
+
+            mummy.spikeTrajectories.forEach(traj => {
+                const sx = (traj.startX - cameraX) * scale;
+                const sy = (traj.startY - cameraY) * scale;
+                const ex = (traj.startX + Math.cos(traj.angle) * traj.length - cameraX) * scale;
+                const ey = (traj.startY + Math.sin(traj.angle) * traj.length - cameraY) * scale;
+
+                ctx.beginPath();
+                ctx.moveTo(sx, sy);
+                ctx.lineTo(ex, ey);
+                ctx.stroke();
+
+                // Warning target indicator
+                ctx.fillStyle = 'rgba(239, 68, 68, 0.75)';
+                ctx.beginPath();
+                ctx.arc(ex, ey, 6 * scale, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.restore();
+        }
+
+        // 2. Attack 1 Flying Sand Spikes
+        if (mummy.spikes && mummy.spikes.length > 0) {
+            mummy.spikes.forEach(spk => {
+                if (!spk.active) return;
+                const sx = (spk.x - cameraX) * scale;
+                const sy = (spk.y - cameraY) * scale;
+
+                ctx.save();
+                ctx.translate(sx, sy);
+                ctx.rotate(spk.rot);
+
+                // Sharp crystalline dried sand spike
+                ctx.fillStyle = '#d97706';
+                ctx.strokeStyle = '#fef3c7';
+                ctx.lineWidth = 2 * scale;
+                ctx.beginPath();
+                ctx.moveTo(22 * scale, 0);
+                ctx.lineTo(-18 * scale, -8 * scale);
+                ctx.lineTo(-12 * scale, 0);
+                ctx.lineTo(-18 * scale, 8 * scale);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Golden trail particles
+                ctx.fillStyle = 'rgba(251, 191, 36, 0.6)';
+                ctx.beginPath();
+                ctx.arc(-22 * scale, 0, 4 * scale, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+        }
+
+        // 3. Attack 2 Lesser Mummies (5 Minions)
+        if (mummy.minions && mummy.minions.length > 0) {
+            mummy.minions.forEach(minion => {
+                if (!minion.active) return;
+                const mx = (minion.x - cameraX) * scale;
+                const my = (minion.y - cameraY) * scale;
+
+                ctx.save();
+                ctx.translate(mx, my);
+
+                const isHit = minion.hitTimer > 0;
+                ctx.fillStyle = isHit ? '#ffffff' : '#fef3c7';
+                ctx.strokeStyle = isHit ? '#ef4444' : '#b45309';
+                ctx.lineWidth = 2 * scale;
+
+                // Little mummy body
+                const walkCycle = Math.sin(minion.animTime * 6);
+                ctx.beginPath();
+                ctx.ellipse(0, -22 * scale, 10 * scale, 18 * scale, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Feet
+                ctx.beginPath();
+                ctx.moveTo(-6 * scale, -4 * scale);
+                ctx.lineTo(-6 * scale + walkCycle * 6 * scale, 0);
+                ctx.moveTo(6 * scale, -4 * scale);
+                ctx.lineTo(6 * scale - walkCycle * 6 * scale, 0);
+                ctx.stroke();
+
+                // Head
+                ctx.beginPath();
+                ctx.arc(0, -42 * scale, 8.5 * scale, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Glowing red eyes
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(minion.facing * 3 * scale - 2 * scale, -42 * scale, 2 * scale, 0, Math.PI * 2);
+                ctx.arc(minion.facing * 3 * scale + 2 * scale, -42 * scale, 2 * scale, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Health pips above minion
+                for (let h = 0; h < minion.maxHp; h++) {
+                    ctx.fillStyle = (h < minion.hp) ? '#22c55e' : '#64748b';
+                    ctx.fillRect((-10 + h * 8) * scale, -56 * scale, 6 * scale, 3 * scale);
+                }
+
+                ctx.restore();
+            });
+        }
+
+        // 4. Attack 3 Sand Cloud In Flight (Swirling Homing Sacred Orb)
+        if (mummy.sandCloud && mummy.sandCloud.active) {
+            const sc = mummy.sandCloud;
+            const cx = (sc.x - cameraX) * scale;
+            const cy = (sc.y - cameraY) * scale;
+            const r = sc.radius * scale;
+
+            ctx.save();
+            // Swirling sand vortex core
+            const sGrad = ctx.createRadialGradient(cx, cy, r * 0.12, cx, cy, r);
+            sGrad.addColorStop(0, 'rgba(254, 240, 138, 0.95)');
+            sGrad.addColorStop(0.4, 'rgba(245, 158, 11, 0.85)');
+            sGrad.addColorStop(0.75, 'rgba(217, 119, 6, 0.6)');
+            sGrad.addColorStop(1, 'rgba(180, 83, 9, 0)');
+            ctx.fillStyle = sGrad;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Swirling inner energy rings
+            const rotTime = Date.now() * 0.012;
+            ctx.strokeStyle = 'rgba(254, 243, 199, 0.75)';
+            ctx.lineWidth = 2 * scale;
+            for (let ring = 0; ring < 3; ring++) {
+                ctx.beginPath();
+                ctx.ellipse(cx, cy, r * (0.45 + ring * 0.2), r * (0.22 + ring * 0.12), rotTime + ring * 1.3, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        // 5. Attack 4 Ground Shockwaves (Staff of Anubis)
+        if (mummy.shockwaves && mummy.shockwaves.length > 0) {
+            mummy.shockwaves.forEach(sw => {
+                if (!sw.active) return;
+                const wx = (sw.x - cameraX) * scale;
+                const wy = (sw.y - cameraY) * scale;
+
+                ctx.save();
+                ctx.translate(wx, wy);
+
+                // Rolling sand crest
+                const wGrad = ctx.createLinearGradient(0, -sw.h * scale, 0, 0);
+                wGrad.addColorStop(0, '#fef08a');
+                wGrad.addColorStop(0.5, '#f59e0b');
+                wGrad.addColorStop(1, '#78350f');
+                ctx.fillStyle = wGrad;
+
+                ctx.beginPath();
+                ctx.moveTo(-sw.w * 0.5 * scale, 0);
+                ctx.quadraticCurveTo(0, -sw.h * scale, sw.w * 0.5 * scale, 0);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.strokeStyle = '#fde68a';
+                ctx.lineWidth = 2.5 * scale;
+                ctx.stroke();
+                ctx.restore();
+            });
+        }
+
+        // 6. Attack 5 Arena Tornado Vortex
+        if (mummy.tornadoActive) {
+            ctx.save();
+            const tTime = Date.now() * 0.008;
+            const vortexW = 120 * scale;
+            const centerX = canvas.width / 2;
+
+            // Swirling conical tornado spanning from ground to sky
+            for (let yStep = 0; yStep < 18; yStep++) {
+                const yPos = canvas.height - yStep * 32 * scale;
+                const ringW = (35 + yStep * 14) * scale;
+                const offX = Math.sin(tTime * 3 + yStep * 0.4) * 28 * scale;
+
+                ctx.fillStyle = (yStep % 2 === 0) ? 'rgba(245, 158, 11, 0.22)' : 'rgba(217, 119, 6, 0.28)';
+                ctx.beginPath();
+                ctx.ellipse(centerX + offX, yPos, ringW, 14 * scale, 0, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        // 7. Collectible Golden Pyramids
+        if (mummy.pyramids && mummy.pyramids.length > 0) {
+            mummy.pyramids.forEach(pyr => {
+                if (pyr.collected) return;
+                const px = (pyr.x - cameraX) * scale;
+                const py = (pyr.y - cameraY) * scale;
+                const size = 18 * scale;
+
+                ctx.save();
+                ctx.translate(px, py);
+
+                // Glowing halo ring
+                const halo = ctx.createRadialGradient(0, 0, 4 * scale, 0, 0, 28 * scale);
+                halo.addColorStop(0, 'rgba(253, 224, 71, 0.75)');
+                halo.addColorStop(0.5, 'rgba(245, 158, 11, 0.35)');
+                halo.addColorStop(1, 'rgba(245, 158, 11, 0)');
+                ctx.fillStyle = halo;
+                ctx.beginPath();
+                ctx.arc(0, 0, 28 * scale, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 3D Shaded Pyramid Faces
+                // Left face (illuminated)
+                ctx.fillStyle = '#fde047';
+                ctx.beginPath();
+                ctx.moveTo(0, -size);
+                ctx.lineTo(-size, size * 0.7);
+                ctx.lineTo(0, size * 0.85);
+                ctx.closePath();
+                ctx.fill();
+
+                // Right face (shaded)
+                ctx.fillStyle = '#d97706';
+                ctx.beginPath();
+                ctx.moveTo(0, -size);
+                ctx.lineTo(0, size * 0.85);
+                ctx.lineTo(size, size * 0.7);
+                ctx.closePath();
+                ctx.fill();
+
+                // Golden outlines & Capstone
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1.6 * scale;
+                ctx.stroke();
+
+                // Mini capstone gleam
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(0, -size * 0.8, 2.5 * scale, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+            });
+        }
+
+        // 8. Pyramid Solar Beams to Mummy
+        if (mummy.pyramidBeams && mummy.pyramidBeams.length > 0) {
+            mummy.pyramidBeams.forEach(bm => {
+                if (!bm.active) return;
+                const sx = (bm.startX - cameraX) * scale;
+                const sy = (bm.startY - cameraY) * scale;
+                const cx = (bm.curX - cameraX) * scale;
+                const cy = (bm.curY - cameraY) * scale;
+
+                ctx.save();
+                ctx.strokeStyle = '#fef08a';
+                ctx.lineWidth = 5 * scale;
+                ctx.beginPath();
+                ctx.moveTo(sx, sy);
+                ctx.lineTo(cx, cy);
+                ctx.stroke();
+
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2.5 * scale;
+                ctx.stroke();
+
+                // Head burst
+                ctx.fillStyle = '#fbbf24';
+                ctx.beginPath();
+                ctx.arc(cx, cy, 7 * scale, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+        }
+
+        // 9. Mummy Defeat Confetti & Sand Explosion
+        if (mummyDefeatCutscene.active && mummyDefeatCutscene.confetti) {
+            ctx.save();
+            mummyDefeatCutscene.confetti.forEach(c => {
+                const cx = (c.x - cameraX) * scale;
+                const cy = (c.y - cameraY) * scale;
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(c.rot);
+                ctx.fillStyle = c.color;
+                ctx.fillRect(-c.size * scale * 0.5, -c.size * scale * 0.5, c.size * scale, c.size * scale);
+                ctx.restore();
+            });
+            ctx.restore();
+        }
+    }
+
+    // --- DRAW ATTACK 3 SAND IN EYES OVERLAY ---
+    function drawSandInEyesOverlay(scale) {
+        if (currentLevelIndex !== 80 || !mummy.sandInEyesTimer || mummy.sandInEyesTimer <= 0) return;
+
+        ctx.save();
+        const intensity = Math.min(1.0, mummy.sandInEyesTimer / 2.5);
+
+        // 1. Full-screen warm sandy blur veil
+        ctx.fillStyle = `rgba(217, 119, 6, ${0.32 * intensity})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 2. Heavy blurry sandy vignette (substantially blinds the view)
+        const maxR = Math.max(canvas.width, canvas.height) * 0.75;
+        const sVig = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, maxR * 0.1, canvas.width / 2, canvas.height / 2, maxR);
+        sVig.addColorStop(0, `rgba(245, 158, 11, ${0.38 * intensity})`);
+        sVig.addColorStop(0.35, `rgba(217, 119, 6, ${0.68 * intensity})`);
+        sVig.addColorStop(0.7, `rgba(180, 83, 9, ${0.88 * intensity})`);
+        sVig.addColorStop(1, `rgba(120, 53, 15, ${0.96 * intensity})`);
+        ctx.fillStyle = sVig;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 3. Dense drifting sand dust specks across screen
+        const dTime = Date.now() * 0.0035;
+        ctx.fillStyle = 'rgba(254, 243, 199, 0.75)';
+        for (let s = 0; s < 75; s++) {
+            const sx = (Math.sin(s * 73 + dTime * (1 + (s % 3) * 0.4)) * 0.5 + 0.5) * canvas.width;
+            const sy = (Math.cos(s * 41 + dTime * (1.2 + (s % 2) * 0.5)) * 0.5 + 0.5) * canvas.height;
+            ctx.beginPath();
+            ctx.arc(sx, sy, (1.8 + (s % 4)) * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // 4. Timer badge at top with progress bar
+        const badgeW = 240 * scale;
+        const badgeH = 32 * scale;
+        const badgeX = canvas.width / 2 - badgeW / 2;
+        const badgeY = 28 * scale;
+
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+        ctx.fillRect(badgeX, badgeY, badgeW, badgeH);
+
+        // Timer progress fill (7.0s max)
+        const prog = Math.max(0, Math.min(1.0, mummy.sandInEyesTimer / 7.0));
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.35)';
+        ctx.fillRect(badgeX, badgeY, badgeW * prog, badgeH);
+
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 2 * scale;
+        ctx.strokeRect(badgeX, badgeY, badgeW, badgeH);
+
+        ctx.fillStyle = '#fef08a';
+        ctx.font = `bold ${13 * scale}px Outfit, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(`⏳ ПЕСОК В ГЛАЗАХ (${mummy.sandInEyesTimer.toFixed(1)}с)`, canvas.width / 2, badgeY + 21 * scale);
+
+        ctx.restore();
+    }
+
+    // --- DRAW ATTACK 5 QTE BALANCE BAR ---
+    function drawQteBalanceBar(scale) {
+        if (currentLevelIndex !== 80 || !mummy.qteActive) return;
+
+        ctx.save();
+        const barW = 340 * scale;
+        const barH = 26 * scale;
+        const barX = canvas.width / 2 - barW / 2;
+        const barY = 82 * scale;
+
+        // Container panel
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+        ctx.fillRect(barX - 16 * scale, barY - 26 * scale, barW + 32 * scale, barH + 52 * scale);
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 2.5 * scale;
+        ctx.strokeRect(barX - 16 * scale, barY - 26 * scale, barW + 32 * scale, barH + 52 * scale);
+
+        // Title text
+        ctx.fillStyle = '#fef08a';
+        ctx.font = `900 ${12 * scale}px "Russo One", sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText('⚖️ УДЕРЖИВАЙТЕ РАВНОВЕСИЕ В ТОРНАДО!', canvas.width / 2, barY - 8 * scale);
+
+        // Bar track background (Red hazard zones)
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(barX, barY, barW, barH);
+
+        // Green safe zone in center (0.36 to 0.64)
+        const greenX = barX + mummy.qteGreenMin * barW;
+        const greenW = (mummy.qteGreenMax - mummy.qteGreenMin) * barW;
+        ctx.fillStyle = '#22c55e';
+        ctx.fillRect(greenX, barY, greenW, barH);
+
+        // Safe zone border & stripes
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2 * scale;
+        ctx.strokeRect(greenX, barY, greenW, barH);
+
+        // Track frame
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2 * scale;
+        ctx.strokeRect(barX, barY, barW, barH);
+
+        // Oscillating Balance Needle
+        const needleX = barX + mummy.qteSlider * barW;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.moveTo(needleX, barY - 5 * scale);
+        ctx.lineTo(needleX - 6 * scale, barY - 14 * scale);
+        ctx.lineTo(needleX + 6 * scale, barY - 14 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 3.5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(needleX, barY - 4 * scale);
+        ctx.lineTo(needleX, barY + barH + 4 * scale);
+        ctx.stroke();
+
+        // Prompt hint
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = `600 ${11 * scale}px Outfit, sans-serif`;
+        ctx.fillText('Нажмите [ ПРОБЕЛ ] или [ ЛКМ ] в зелёной зоне!', canvas.width / 2, barY + barH + 18 * scale);
+
+        ctx.restore();
+    }
+
     if (btnSkipCutscene) {
         btnSkipCutscene.addEventListener('click', () => {
-            if (cutsceneIntro21 && cutsceneIntro21.active) {
+            if (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) {
+                finishLevel61IntroCutscene();
+            } else if (cutsceneIntro21 && cutsceneIntro21.active) {
                 finishLevel21IntroCutscene();
             } else if (cutsceneIntro41 && cutsceneIntro41.active) {
                 finishLevel41IntroCutscene();
@@ -12714,6 +26389,10 @@
                 finishYetiIntroCutscene();
             } else if (typeof yetiDefeatCutscene !== 'undefined' && yetiDefeatCutscene && yetiDefeatCutscene.active) {
                 finishYetiDefeatCutscene();
+            } else if (typeof mummyIntroCutscene !== 'undefined' && mummyIntroCutscene && mummyIntroCutscene.active) {
+                finishMummyIntroCutscene();
+            } else if (typeof mummyDefeatCutscene !== 'undefined' && mummyDefeatCutscene && mummyDefeatCutscene.active) {
+                finishMummyDefeatCutscene();
             }
         });
     }
@@ -14488,6 +28167,11 @@
         cold: 0,
         freezeTimer: 0,
         isWarming: false,
+        health: 100,
+        maxHealth: 100,
+        damageCooldown: 0,
+        punchTimer: 0,
+        thirst: 100,
         animTime: 0,
         victoryTimer: 0,
         victoryLandY: null,
@@ -14529,10 +28213,15 @@
             this.dashCooldown = 0;
             this.rollTimer = 0;
             this.rollCooldown = 0;
-            this.hasLighter = (currentLevelIndex >= 41);
+            this.hasLighter = (currentLevelIndex >= 41 && currentLevelIndex <= 60);
             this.cold = 0;
             this.freezeTimer = 0;
             this.isWarming = false;
+            this.health = 100;
+            this.maxHealth = 100;
+            this.damageCooldown = 0;
+            this.punchTimer = 0;
+            this.thirst = 100;
             cameraX = 0;
             cameraY = 0;
 
@@ -14541,11 +28230,29 @@
             }
 
             if (coldHud) {
-                if (currentLevelData && (currentLevelData.theme === 'snow' || currentLevelIndex >= 41) && currentState === STATES.PLAYING) {
+                if (currentLevelData && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60)) && currentState === STATES.PLAYING) {
                     coldHud.classList.remove('hidden');
                     updateColdHud();
                 } else {
                     coldHud.classList.add('hidden');
+                }
+            }
+
+            if (healthHud) {
+                if (currentLevelData && (currentLevelData.theme === 'desert' || currentLevelIndex >= 61) && currentState === STATES.PLAYING) {
+                    healthHud.classList.remove('hidden');
+                    updateHealthHud();
+                } else {
+                    healthHud.classList.add('hidden');
+                }
+            }
+
+            if (thirstHud) {
+                if (currentLevelData && (currentLevelData.hasThirst || currentLevelIndex >= 62) && currentState === STATES.PLAYING) {
+                    thirstHud.classList.remove('hidden');
+                    updateThirstHud();
+                } else {
+                    thirstHud.classList.add('hidden');
                 }
             }
 
@@ -14561,6 +28268,9 @@
             }
             if (typeof cutsceneIntro41 !== 'undefined') {
                 cutsceneIntro41.active = false;
+            }
+            if (typeof cutsceneIntro61 !== 'undefined') {
+                cutsceneIntro61.active = false;
             }
             if (cutsceneOverlay) {
                 cutsceneOverlay.classList.add('hidden');
@@ -14641,6 +28351,19 @@
             }
         }
 
+        // Check boss arena intro trigger on Level 80 (passes Object 40, runs through corridor, reaches battlefield entrance)
+        if (currentLevelIndex === 80 && typeof mummy !== 'undefined' && !mummy.active && !mummy.isFallen && player.state !== 'DEFEAT') {
+            if ((player.x >= 13200 && player.grounded && player.y >= currentLevelData.groundY - 15) || player.x >= 13400) {
+                if (thirstHud) thirstHud.classList.add('hidden');
+                if (!mummy.introPlayed && (!mummyIntroCutscene || !mummyIntroCutscene.active)) {
+                    startMummyIntroCutscene();
+                    return;
+                } else if (!mummy.active && mummy.introPlayed) {
+                    startMummyFight();
+                }
+            }
+        }
+
         // --- FREEZE STATE (100% ХОЛОДА: АНИМАЦИЯ ЗАМЕРЗАНИЯ И ПРОИГРЫШ) ---
         if (player.state === 'FREEZE') {
             player.freezeTimer += 0.016;
@@ -14671,7 +28394,7 @@
         }
 
         // --- COLD ACCUMULATION & WARMING (SNOW BIOME) ---
-        const isSnowLevel = (currentLevelData.theme === 'snow' || currentLevelIndex >= 41);
+        const isSnowLevel = (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60)) && currentLevelData.theme !== 'desert' && currentLevelIndex < 61;
         const isYetiArena = (currentLevelIndex === 60 && (player.x >= 17620 || (typeof yeti !== 'undefined' && yeti.active) || (typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene.active) || (typeof yeti !== 'undefined' && yeti.isFallen)));
         if (isYetiArena) {
             if (coldHud) coldHud.classList.add('hidden');
@@ -14801,11 +28524,26 @@
                 if (victorySubtext) victorySubtext.textContent = `Отличный паркур и результаты на Уровне ${currentLevelIndex}!`;
 
                 const nextLevelNum = currentLevelIndex + 1;
-                if (currentLevelIndex >= 41) {
+                if (currentLevelIndex >= 61) {
+                    unlockedPage4Levels = Math.max(unlockedPage4Levels, Math.min(80, nextLevelNum));
+                    generateLevelsGrid();
+                    if (currentLevelIndex === 61) {
+                        if (victorySubtext) victorySubtext.textContent = 'Отличный старт в пустыне! 61 уровень пройден! Впереди 62 уровень с испытанием жаждой и колодцами!';
+                    } else if (currentLevelIndex === 62) {
+                        if (victorySubtext) victorySubtext.textContent = 'Превосходно! Вы покорили палящую пустыню, утолили жажду у колодца и добрались до финиша!';
+                    } else if (currentLevelIndex === 79) {
+                        if (victorySubtext) victorySubtext.textContent = 'НЕВЕРОЯТНО! Все 79 уровней пустыни пройдены! Вы подошли к самому Святилищу!';
+                    } else {
+                        if (victorySubtext) victorySubtext.textContent = `Отличный паркур! Пустынный уровень ${currentLevelIndex} пройден!`;
+                    }
+                } else if (currentLevelIndex >= 41) {
                     unlockedPage3Levels = Math.max(unlockedPage3Levels, Math.min(60, nextLevelNum));
+                    if (nextLevelNum > 60) {
+                        unlockedPage4Levels = Math.max(unlockedPage4Levels, 61);
+                    }
                     generateLevelsGrid();
                     if (currentLevelIndex === 60) {
-                        if (victorySubtext) victorySubtext.textContent = 'ВЕЛИКИЙ ЙЕТИ ПОБЕЖДЁН! Вы покорили Вечный Холод и прошли все 60 уровней!';
+                        if (victorySubtext) victorySubtext.textContent = 'ВЕЛИКИЙ ЙЕТИ ПОБЕЖДЁН! Вы покорили Вечный Холод! Впереди неизведанная пустыня "Исохшая земля"!';
                     } else if (nextLevelNum === 60) {
                         if (victorySubtext) victorySubtext.textContent = 'Впереди финальное испытание — Логово Древнего Йети на 60 уровне!';
                     } else {
@@ -14821,7 +28559,7 @@
                     generateLevelsGrid();
                 }
 
-                if (levelsData[nextLevelNum] && nextLevelNum <= 60) {
+                if (levelsData[nextLevelNum]) {
                     btnNextLevel.classList.remove('hidden');
                     btnNextLevel.innerHTML = (nextLevelNum === 40)
                         ? '<span class="btn-icon">🗿</span> К БОССУ: Уровень 40'
@@ -14829,7 +28567,11 @@
                             ? '<span class="btn-icon">❄️</span> Вечный холод: Уровень 41'
                             : (nextLevelNum === 60)
                                 ? '<span class="btn-icon">❄️</span> К БОССУ: ЙЕТИ (Уровень 60)'
-                                : '<span class="btn-icon">➡️</span> Следующий уровень';
+                                : (nextLevelNum === 61)
+                                    ? '<span class="btn-icon">🏜️</span> Исохшая земля: Уровень 61'
+                                    : (nextLevelNum === 62)
+                                        ? '<span class="btn-icon">💧</span> Пустынный колодец: Уровень 62'
+                                        : '<span class="btn-icon">➡️</span> Следующий уровень';
                 } else {
                     btnNextLevel.classList.add('hidden');
                 }
@@ -15592,6 +29334,60 @@
             }
         }
 
+        // Level 80: Ancient Mummy Living Wall & Non-Lethal Pushback
+        if (currentLevelIndex === 80 && typeof mummy !== 'undefined' && (mummy.active || (typeof mummyIntroCutscene !== 'undefined' && mummyIntroCutscene && mummyIntroCutscene.active)) && !mummy.isFallen) {
+            const mLeft = mummy.x - 70;
+            const mRight = mummy.x + 70;
+            const mTop = 0; // Impassable full-height living wall (cannot pass through or jump over)
+            const mBottom = currentLevelData.groundY + 30;
+
+            // 1. Solid Living Wall: Player CANNOT pass through the Mummy
+            if (nextY > mTop && nextY - player.height < mBottom) {
+                if (player.x <= mummy.x && nextX + 16 > mLeft) {
+                    nextX = mLeft - 16;
+                    if (player.vx > 0) player.vx = 0;
+                } else if (player.x > mummy.x && nextX - 16 < mRight) {
+                    nextX = mRight + 16;
+                    if (player.vx < 0) player.vx = 0;
+                }
+            }
+
+            // 2. Proximity Shove: If player approaches Mummy too closely, Mummy blasts them back with sacred sand
+            if (player.shoveCooldown <= 0 && mummy.active && mummy.state !== 'DEFEAT' && !mummy.isFallen && player.state !== 'DEFEAT') {
+                const distToMummy = Math.abs(nextX - mummy.x);
+                if (distToMummy < 125 && nextY <= currentLevelData.groundY + 15) {
+                    player.shoveCooldown = 45; // ~0.75s cooldown
+                    mummy.shoveTimer = 0.35; // Mummy thrusts arm forward
+
+                    const shoveDir = (nextX <= mummy.x) ? -1 : 1;
+                    player.vx = shoveDir * 18;
+                    player.vy = -7.0;
+                    player.grounded = false;
+                    player.state = 'JUMP';
+                    nextX += shoveDir * 25;
+
+                    playSound('slam');
+                    playSound('airBoost');
+                    screenShake = 12;
+                    spawnDust(nextX, currentLevelData.groundY);
+
+                    // Ancient golden-sand shockwave particles
+                    for (let sp = 0; sp < 16; sp++) {
+                        particles.push({
+                            x: mummy.x + shoveDir * 60,
+                            y: mummy.y - 40 + (Math.random() - 0.5) * 60,
+                            vx: shoveDir * (5 + Math.random() * 10),
+                            vy: (Math.random() - 0.5) * 6,
+                            size: 4 + Math.random() * 7,
+                            color: Math.random() < 0.6 ? '#f59e0b' : '#fbbf24',
+                            life: 0.6,
+                            decay: 0.04
+                        });
+                    }
+                }
+            }
+        }
+
         // Ground platform collision & Chasm check
         if (nextY >= currentLevelData.groundY) {
             if (isOverChasm(nextX)) {
@@ -15613,6 +29409,87 @@
 
         player.x = Math.max(20, nextX);
         player.y = nextY;
+
+        // Damage invulnerability timer
+        if (player.damageCooldown > 0) {
+            player.damageCooldown = Math.max(0, player.damageCooldown - 0.016);
+        }
+        if (player.punchTimer > 0) {
+            player.punchTimer = Math.max(0, player.punchTimer - 0.016);
+        }
+
+        // Cactus Collision Check (Desert Biome)
+        if (currentLevelData.cacti && player.damageCooldown <= 0 && player.state !== 'DEFEAT' && player.state !== 'VICTORY' && player.state !== 'VICTORY_IDLE' && currentState === STATES.PLAYING) {
+            const pLeft = player.x - 12;
+            const pRight = player.x + 12;
+            const pTop = player.y - player.height;
+            const pBottom = player.y;
+
+            for (const cactus of currentLevelData.cacti) {
+                const cLeft = cactus.x - cactus.w * 0.42;
+                const cRight = cactus.x + cactus.w * 0.42;
+                const cTop = cactus.y - cactus.h;
+                const cBottom = cactus.y;
+
+                if (pRight > cLeft && pLeft < cRight && pBottom > cTop && pTop < cBottom) {
+                    playerTakeDamage(25, 'cactus');
+                    break;
+                }
+            }
+        }
+
+        // Thirst System (Desert Biome / Level 62+, disabled during Mummy boss fight)
+        const isMummyBossFight = (currentLevelIndex === 80 && (mummy.active || (typeof mummyIntroCutscene !== 'undefined' && mummyIntroCutscene.active) || (typeof mummyDefeatCutscene !== 'undefined' && mummyDefeatCutscene.active) || player.x >= 13150));
+        const hasThirstBiome = (currentLevelData.hasThirst || currentLevelIndex >= 62) && !isMummyBossFight;
+        if (isMummyBossFight && thirstHud && !thirstHud.classList.contains('hidden')) {
+            thirstHud.classList.add('hidden');
+        }
+        if (hasThirstBiome && currentState === STATES.PLAYING && player.state !== 'DEFEAT' && player.state !== 'VICTORY' && player.state !== 'VICTORY_IDLE') {
+            const thirstRate = (player.state === 'DASH' || Math.abs(player.vx) > 5) ? 1.35 : 0.85; // decreases steadily under sun
+            player.thirst = Math.max(0, (player.thirst || 100) - thirstRate * 0.016);
+            updateThirstHud();
+
+            // Dehydration damage if thirst is 0%
+            if (player.thirst <= 0) {
+                player.health = Math.max(0, (player.health || 100) - 0.12);
+                updateHealthHud();
+                if (player.health <= 0) {
+                    triggerDefeat(false);
+                    const defeatSubtextEl = defeatScreen ? defeatScreen.querySelector('.defeat-subtext') : null;
+                    if (defeatSubtextEl) {
+                        defeatSubtextEl.textContent = 'Вы погибли от обезвоживания под палящим солнцем пустыни! Пейте воду из колодцев, чтобы восстанавливать жажду.';
+                    }
+                    const defeatTitleEl = defeatScreen ? defeatScreen.querySelector('.defeat-title') : null;
+                    if (defeatTitleEl) {
+                        defeatTitleEl.textContent = '☀️ Смертельная жажда';
+                    }
+                    return;
+                }
+            }
+        }
+
+        // Desert Well Interaction Check
+        let nearWell = null;
+        if (currentLevelData.wells && currentState === STATES.PLAYING) {
+            for (const well of currentLevelData.wells) {
+                if (Math.abs(player.x - well.x) < 75 && Math.abs(player.y - well.y) < 70) {
+                    nearWell = well;
+                    break;
+                }
+            }
+        }
+
+        if (wellHint) {
+            if (nearWell && currentState === STATES.PLAYING && player.state !== 'DEFEAT') {
+                wellHint.classList.remove('hidden');
+            } else {
+                wellHint.classList.add('hidden');
+            }
+        }
+
+        if (nearWell && keys.interactPressedThisFrame) {
+            drinkFromWell(nearWell);
+        }
 
         // General out-of-world / abyss fall fallback
         if (player.y > currentLevelData.groundY + 90) {
@@ -15691,6 +29568,14 @@
                 cameraX += (targetCamX - cameraX) * 0.08;
                 const minCam = Math.max(0, yeti.arenaLeft - 40);
                 const maxCam = Math.max(minCam, yeti.arenaRight + 40 - screenW);
+                cameraX = Math.max(minCam, Math.min(maxCam, cameraX));
+            } else if (currentLevelIndex === 80 && typeof mummy !== 'undefined' && (mummy.active || mummy.isFallen)) {
+                // Boss Mummy arena camera: smoothly frame player and Mummy
+                const targetMidX = (player.x + mummy.x) * 0.5;
+                const targetCamX = targetMidX - screenW * 0.5;
+                cameraX += (targetCamX - cameraX) * 0.08;
+                const minCam = Math.max(0, mummy.arenaLeft - 40);
+                const maxCam = Math.max(minCam, mummy.arenaRight + 40 - screenW);
                 cameraX = Math.max(minCam, Math.min(maxCam, cameraX));
             } else {
                 const targetCamX = player.x - screenW * 0.35;
@@ -15827,10 +29712,83 @@
             return;
 
         } else {
-            const isSnow = currentLevelData.theme === 'snow' || currentLevelIndex >= 41;
-            const isNature = !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
+            const isDesert = currentLevelData.theme === 'desert' || currentLevelIndex >= 61;
+            const isSnow = !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
+            const isNature = !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
 
-            if (isSnow) {
+            if (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) {
+                drawCutscene61Scene(scale);
+            } else if (isDesert) {
+                // ==========================================
+                // DESERT THEME: SUN-BAKED VIBRANT SKY, BLAZING SUN & CANYON MESAS
+                // ==========================================
+                const desertSky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                desertSky.addColorStop(0, '#c2410c'); // Deep burnt orange zenith
+                desertSky.addColorStop(0.3, '#ea580c');
+                desertSky.addColorStop(0.65, '#f59e0b'); // Golden amber
+                desertSky.addColorStop(0.9, '#fde047'); // Warm horizon glow
+                desertSky.addColorStop(1, '#fef08a');
+                ctx.fillStyle = desertSky;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Blazing Desert Sun with shimmering heat haze corona
+                const dSunX = canvas.width - 200 * scale;
+                const dSunY = 110 * scale;
+                const dSunR = 46 * scale;
+                const dSunGrad = ctx.createRadialGradient(dSunX, dSunY, 4 * scale, dSunX, dSunY, dSunR * 2.8);
+                dSunGrad.addColorStop(0, '#ffffff');
+                dSunGrad.addColorStop(0.25, '#fef08a');
+                dSunGrad.addColorStop(0.55, 'rgba(251, 191, 36, 0.4)');
+                dSunGrad.addColorStop(0.85, 'rgba(249, 115, 22, 0.15)');
+                dSunGrad.addColorStop(1, 'rgba(249, 115, 22, 0)');
+                ctx.fillStyle = dSunGrad;
+                ctx.beginPath();
+                ctx.arc(dSunX, dSunY, dSunR * 2.8, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Distant Canyon Mesas & Flat-topped Mountains (Parallax 1)
+                ctx.save();
+                ctx.fillStyle = '#9a3412';
+                ctx.beginPath();
+                ctx.moveTo(0, canvas.height);
+                const mesaStep = 300 * scale;
+                const mesaOffset = -(cameraX * 0.05 * scale) % mesaStep;
+                for (let mx = mesaOffset - mesaStep; mx < canvas.width + mesaStep * 2; mx += mesaStep) {
+                    ctx.lineTo(mx, 320 * scale);
+                    ctx.lineTo(mx + mesaStep * 0.15, 230 * scale);
+                    ctx.lineTo(mx + mesaStep * 0.75, 230 * scale);
+                    ctx.lineTo(mx + mesaStep * 0.9, 320 * scale);
+                }
+                ctx.lineTo(canvas.width, canvas.height);
+                ctx.closePath();
+                ctx.fill();
+
+                // Mesa Plateau Top Rim Highlights
+                ctx.fillStyle = '#ea580c';
+                for (let mx = mesaOffset - mesaStep; mx < canvas.width + mesaStep * 2; mx += mesaStep) {
+                    ctx.fillRect(mx + mesaStep * 0.15, 228 * scale, mesaStep * 0.6, 5 * scale);
+                }
+                ctx.restore();
+
+                // Closer Rolling Golden Sand Dunes (Parallax 2)
+                ctx.save();
+                ctx.fillStyle = '#b45309';
+                ctx.beginPath();
+                ctx.moveTo(0, canvas.height);
+                const duneStep = 340 * scale;
+                const duneOffset = -(cameraX * 0.12 * scale) % duneStep;
+                for (let dx = duneOffset - duneStep; dx < canvas.width + duneStep * 2; dx += duneStep) {
+                    ctx.quadraticCurveTo(dx + duneStep * 0.45, 350 * scale, dx + duneStep, 410 * scale);
+                }
+                ctx.lineTo(canvas.width, canvas.height);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+
+                // Ambient Wind-blown Sand Particles
+                drawAmbientSand(scale);
+
+            } else if (isSnow) {
                 // ==========================================
                 // SNOW THEME: WINTER TWILIGHT SKY & BLIZZARD
                 // ==========================================
@@ -16032,23 +29990,52 @@
             }
         }
 
-        const isSnow = currentLevelData.theme === 'snow' || currentLevelIndex >= 41;
-        const isNature = !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
+        const isDesert = currentLevelData.theme === 'desert' || currentLevelIndex >= 61;
+        const isSnow = !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
+        const isNature = !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
 
         // --- RENDER LEVEL PLATFORMS & OBSTACLES ---
-        if (isSnow && currentLevelData.chasms) {
-            drawSnowChasms(scale);
-        } else if (isNature && currentLevelData.chasms) {
-            drawNatureChasms(scale);
-        }
-        // Ground Platform
-        currentLevelData.platforms.forEach(plat => {
-            const drawX = (plat.x - cameraX) * scale;
-            const drawY = (plat.y - cameraY) * scale;
-            const drawW = plat.w * scale;
-            const drawH = plat.h * scale;
+        if (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) {
+            // Cutscene 61 rendered its split border world
+        } else {
+            if (isSnow && currentLevelData.chasms) {
+                drawSnowChasms(scale);
+            } else if (isNature && currentLevelData.chasms) {
+                drawNatureChasms(scale);
+            }
+            // Ground Platform
+            currentLevelData.platforms.forEach(plat => {
+                const drawX = (plat.x - cameraX) * scale;
+                const drawY = (plat.y - cameraY) * scale;
+                const drawW = plat.w * scale;
+                const drawH = plat.h * scale;
 
-            if (isSnow) {
+                if (isDesert) {
+                    // Desert Golden Sand Platform with wind ripples & sandstone base
+                    const sandGrad = ctx.createLinearGradient(0, drawY, 0, drawY + drawH);
+                    sandGrad.addColorStop(0, '#d97706');
+                    sandGrad.addColorStop(0.25, '#b45309');
+                    sandGrad.addColorStop(0.7, '#78350f');
+                    sandGrad.addColorStop(1, '#451a03');
+                    ctx.fillStyle = sandGrad;
+                    ctx.fillRect(drawX, drawY, drawW, drawH);
+
+                    // Golden sand dune surface with ripples
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.fillRect(drawX, drawY, drawW, 10 * scale);
+                    ctx.fillStyle = '#fde047';
+                    ctx.fillRect(drawX, drawY, drawW, 3 * scale);
+
+                    // Subtle sand ripples
+                    ctx.strokeStyle = '#d97706';
+                    ctx.lineWidth = 1.5 * scale;
+                    for (let rx = drawX + 15 * scale; rx < drawX + drawW - 15 * scale; rx += 45 * scale) {
+                        ctx.beginPath();
+                        ctx.moveTo(rx, drawY + 5 * scale);
+                        ctx.quadraticCurveTo(rx + 15 * scale, drawY + 2 * scale, rx + 30 * scale, drawY + 6 * scale);
+                        ctx.stroke();
+                    }
+                } else if (isSnow) {
                 // Frozen Rock Ground Platform with thick snow blanket & hanging icicles
                 const rockGrad = ctx.createLinearGradient(0, drawY, 0, drawY + drawH);
                 rockGrad.addColorStop(0, '#334155');
@@ -16162,10 +30149,13 @@
                 ctx.fillRect(drawX, drawY, drawW, 4 * scale);
             }
         });
+        }
 
-        // Box / Stone Obstacles
+        // Box / Stone Obstacles / Desert Buildings
         currentLevelData.boxes.forEach(box => {
-            if (isSnow || box.isSnow) {
+            if (isDesert || box.isDesertBuilding) {
+                drawDesertBuilding(box, scale);
+            } else if (isSnow || box.isSnow) {
                 drawSnowRock(box, scale);
             } else if (isNature || box.isStone) {
                 drawNatureRock(box, scale);
@@ -16205,7 +30195,9 @@
         // Render Ladders
         if (currentLevelData.ladders) {
             currentLevelData.ladders.forEach(lad => {
-                if (isSnow || lad.isSnowBranchLadder) {
+                if (isDesert || lad.isDesertLadder) {
+                    drawDesertLadder(lad, scale);
+                } else if (isSnow || lad.isSnowBranchLadder) {
                     drawSnowDryBranchLadder(lad, scale);
                 } else if (isNature || lad.isWoodLadder) {
                     drawNatureLadder(lad, scale);
@@ -16376,9 +30368,25 @@
             drawSnowCave(currentLevelData.cave, scale);
         }
 
+        // Render Cacti (Desert Biome)
+        if (currentLevelData.cacti) {
+            currentLevelData.cacti.forEach(cactus => {
+                drawDesertCactus(cactus, scale);
+            });
+        }
+
+        // Render Desert Wells (Oasis Water)
+        if (currentLevelData.wells) {
+            currentLevelData.wells.forEach(well => {
+                drawDesertWell(well, scale);
+            });
+        }
+
         // Finish Flag
         if (currentLevelData.flag) {
-            if (isSnow || currentLevelData.flag.isSnowFlag) {
+            if (isDesert || currentLevelData.flag.isDesertFlag) {
+                drawDesertFlag(currentLevelData.flag, scale);
+            } else if (isSnow || currentLevelData.flag.isSnowFlag) {
                 drawSnowFlag(currentLevelData.flag, scale);
             } else if (isNature || currentLevelData.flag.isNatureFlag) {
                 drawNatureFlag(currentLevelData.flag, scale);
@@ -16449,11 +30457,17 @@
         // Draw Snow Yeti
         drawYeti();
 
+        // Draw Ancient Pharaoh Mummy & Hazards (Level 80)
+        drawMummy(scale);
+        drawMummyHazards(scale);
+        drawSandInEyesOverlay(scale);
+        drawQteBalanceBar(scale);
+
         // Draw Snowy Biome & Cold Breath
         drawSnowyBiome(scale);
 
         // Screen Frost Vignette as cold increases (обледенение экрана по краям)
-        if ((currentLevelData.theme === 'snow' || currentLevelIndex >= 41) && player.cold > 15 && currentState === STATES.PLAYING) {
+        if (!isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60)) && player.cold > 15 && currentState === STATES.PLAYING) {
             ctx.save();
             const frostIntensity = Math.min(1, (player.cold - 15) / 85);
             const maxRadius = Math.max(canvas.width, canvas.height) * 0.75;
@@ -16489,9 +30503,15 @@
         const time = player.animTime;
         const cold = player.cold || 0;
 
-        // Frozen color shift in FREEZE state
+        // Frozen color shift in FREEZE state or damage flicker
         let stickColor = '#020617';
-        if (player.state === 'FREEZE') {
+        if (player.damageCooldown > 0) {
+            // Rapid damage flicker / red tint when hurt by cactus
+            if (Math.floor(Date.now() / 65) % 2 === 0) {
+                stickColor = '#ef4444';
+                ctx.globalAlpha = 0.65;
+            }
+        } else if (player.state === 'FREEZE') {
             const fTime = player.freezeTimer || 0;
             if (fTime > 0.8) {
                 stickColor = '#7dd3fc'; // Frost cyan
@@ -16866,84 +30886,113 @@
             }
 
         } else if (player.state === 'RUN') {
-            if (player.isBossMode) {
-                // High-speed survival sprint in Boss Fight
-                const sprintPhase = time * 3.8;
-                const legSwing = Math.sin(sprintPhase);
-                const armSwing = Math.cos(sprintPhase);
+            const isBoss = player.isBossMode;
+            const runSpeed = isBoss ? 4.2 : 3.4;
+            const cycle = time * runSpeed;
 
-                hip.y = -36 + Math.abs(Math.sin(sprintPhase)) * 5;
-                shoulder.y = -52 + Math.abs(Math.sin(sprintPhase)) * 4;
-                head.y = shoulder.y - 12;
+            // Vertical bounce (2 natural steps per stride cycle)
+            const bob = Math.abs(Math.sin(cycle)) * (isBoss ? 4.5 : 3.6);
+            hip.y = -38 + bob;
+            shoulder.y = -54 + bob * 0.8;
+            head.y = shoulder.y - 14;
 
-                // Strong forward athletic lean
-                shoulder.x = facing * 14;
-                head.x = facing * 22;
-                hip.x = -facing * 4;
+            // Natural athletic forward lean
+            const lean = isBoss ? 11 : 6.5;
+            hip.x = -facing * (lean * 0.25);
+            shoulder.x = facing * (lean * 0.7);
+            head.x = facing * lean;
 
-                leftFoot = { x: legSwing * 24 * facing, y: Math.max(0, -legSwing * 14) };
-                rightFoot = { x: -legSwing * 24 * facing, y: Math.max(0, legSwing * 14) };
+            const stride = isBoss ? 21 : 16;
+            const lift = isBoss ? 13 : 9;
 
-                leftKnee = { x: (leftFoot.x + hip.x) / 2 + facing * 6, y: -20 };
-                rightKnee = { x: (rightFoot.x + hip.x) / 2 - facing * 6, y: -20 };
+            // Leg mechanics: phase for left and right legs
+            const phaseL = cycle;
+            const phaseR = cycle + Math.PI;
 
-                leftHand = { x: armSwing * 22 * facing, y: -44 + armSwing * 8 };
-                rightHand = { x: -armSwing * 22 * facing, y: -44 - armSwing * 8 };
-            } else {
-                const legSwing = Math.sin(time * 2.5);
-                const armSwing = Math.cos(time * 2.5);
-
-                hip.y = -38 + Math.abs(Math.sin(time * 2.5)) * 4;
-                shoulder.y = -54 + Math.abs(Math.sin(time * 2.5)) * 3;
-                head.y = shoulder.y - 14;
-
-                shoulder.x = facing * 4;
-                head.x = facing * 6;
-
-                leftFoot = { x: legSwing * 18 * facing, y: Math.max(0, -legSwing * 10) };
-                rightFoot = { x: -legSwing * 18 * facing, y: Math.max(0, legSwing * 10) };
-
-                leftKnee = { x: (leftFoot.x + hip.x) / 2 + facing * 4, y: -20 };
-                rightKnee = { x: (rightFoot.x + hip.x) / 2 - facing * 4, y: -20 };
-
-                if (cold >= 50) {
-                    // При 50% и 75% холода бежит с прижатыми к груди руками, согревая себя
-                    const rubRun = Math.sin(Date.now() * 0.016) * 2;
-                    leftHand = { x: facing * 6 + legSwing * 2, y: -46 + rubRun };
-                    rightHand = { x: -facing * 4 - legSwing * 2, y: -45 - rubRun };
+            function calcRunLeg(p) {
+                const s = Math.sin(p);
+                const footX = s * stride * facing;
+                let footY = 0;
+                if (s > 0) {
+                    footY = -s * lift;
                 } else {
-                    leftHand = { x: armSwing * 16 * facing, y: -42 + armSwing * 6 };
-                    rightHand = { x: -armSwing * 16 * facing, y: -42 - armSwing * 6 };
+                    footY = Math.max(0, -s * (lift * 0.35));
                 }
+                // Both knees ALWAYS bend forward in the facing direction
+                const kneeForward = facing * (5.5 + (s > 0 ? 3.0 : 1.5));
+                const kneeY = -19 + (s > 0 ? -6.5 : 1.0);
+                const kneeX = (hip.x + footX) * 0.5 + kneeForward;
+                return {
+                    foot: { x: footX, y: footY },
+                    knee: { x: kneeX, y: kneeY }
+                };
+            }
+
+            const rL = calcRunLeg(phaseL);
+            const rR = calcRunLeg(phaseR);
+            leftFoot = rL.foot;
+            leftKnee = rL.knee;
+            rightFoot = rR.foot;
+            rightKnee = rR.knee;
+
+            // Arm swing opposite to legs
+            const armSwing = Math.cos(cycle);
+            const armRange = isBoss ? 20 : 15;
+            if (cold >= 50) {
+                const rubRun = Math.sin(Date.now() * 0.016) * 2;
+                leftHand = { x: facing * 6 + armSwing * 2, y: -46 + rubRun };
+                rightHand = { x: -facing * 4 - armSwing * 2, y: -45 - rubRun };
+            } else {
+                leftHand = { x: -armSwing * armRange * facing, y: -43 - Math.abs(armSwing) * 3 };
+                rightHand = { x: armSwing * armRange * facing, y: -43 - Math.abs(armSwing) * 3 };
             }
 
         } else if (player.state === 'WALK') {
-            const walkCycle = time * 2.2;
-            const legSwing = Math.sin(walkCycle);
-            const armSwing = Math.cos(walkCycle);
-            const bob = Math.abs(Math.sin(walkCycle)) * 2.2;
+            const walkCycle = time * 2.4;
+            const bob = Math.abs(Math.sin(walkCycle)) * 2.0;
 
             hip.y = -38 + bob;
             shoulder.y = -54 + bob * 0.8;
             head.y = shoulder.y - 14;
 
-            shoulder.x = facing * 2;
-            head.x = facing * 3;
+            shoulder.x = facing * 3.0;
+            head.x = facing * 4.5;
             hip.x = 0;
 
-            leftFoot = { x: legSwing * 13 * facing, y: Math.max(0, -legSwing * 6) };
-            rightFoot = { x: -legSwing * 13 * facing, y: Math.max(0, legSwing * 6) };
+            const stride = 12.5;
+            const lift = 6.0;
+            const phaseL = walkCycle;
+            const phaseR = walkCycle + Math.PI;
 
-            leftKnee = { x: (leftFoot.x + hip.x) / 2 + facing * 2, y: -19 - (legSwing > 0 ? 3 : 0) };
-            rightKnee = { x: (rightFoot.x + hip.x) / 2 - facing * 2, y: -19 - (legSwing < 0 ? 3 : 0) };
+            function calcWalkLeg(p) {
+                const s = Math.sin(p);
+                const footX = s * stride * facing;
+                const footY = s > 0 ? -s * lift : 0;
+                // Both knees ALWAYS bend forward in the facing direction
+                const kneeForward = facing * (4.2 + (s > 0 ? 1.5 : 0.8));
+                const kneeY = -18.5 + (s > 0 ? -3.5 : 0.5);
+                const kneeX = (hip.x + footX) * 0.5 + kneeForward;
+                return {
+                    foot: { x: footX, y: footY },
+                    knee: { x: kneeX, y: kneeY }
+                };
+            }
 
+            const wL = calcWalkLeg(phaseL);
+            const wR = calcWalkLeg(phaseR);
+            leftFoot = wL.foot;
+            leftKnee = wL.knee;
+            rightFoot = wR.foot;
+            rightKnee = wR.knee;
+
+            const armSwing = Math.cos(walkCycle);
             if (cold >= 50) {
                 const rubWalk = Math.sin(Date.now() * 0.016) * 2;
-                leftHand = { x: facing * 5 + legSwing * 2, y: -46 + rubWalk };
-                rightHand = { x: -facing * 3 - legSwing * 2, y: -45 - rubWalk };
+                leftHand = { x: facing * 5 + armSwing * 2, y: -46 + rubWalk };
+                rightHand = { x: -facing * 3 - armSwing * 2, y: -45 - rubWalk };
             } else {
-                leftHand = { x: armSwing * 11 * facing, y: -40 + armSwing * 4 };
-                rightHand = { x: -armSwing * 11 * facing, y: -40 - armSwing * 4 };
+                leftHand = { x: -armSwing * 11 * facing, y: -40 + Math.abs(armSwing) * 2 };
+                rightHand = { x: armSwing * 11 * facing, y: -40 + Math.abs(armSwing) * 2 };
             }
 
         } else if (player.state === 'JUMP') {
@@ -17073,6 +31122,24 @@
             leftHand.y += shiverY;
             rightHand.x += shiverX;
             rightHand.y += shiverY;
+        }
+
+        // Dynamic Punch Animation Overlay (LMB attack against mummies)
+        if (player.punchTimer && player.punchTimer > 0) {
+            const punchProgress = Math.sin((player.punchTimer / 0.22) * Math.PI);
+            rightHand = { x: facing * (24 + punchProgress * 16), y: -48 };
+            shoulder.x += facing * 5 * punchProgress;
+            head.x += facing * 4 * punchProgress;
+
+            // Fist punch wind trail
+            ctx.save();
+            ctx.strokeStyle = 'rgba(251, 191, 36, 0.7)';
+            ctx.lineWidth = 2.5 * scale;
+            ctx.beginPath();
+            ctx.moveTo(rightHand.x * scale - facing * 14 * scale, rightHand.y * scale);
+            ctx.lineTo(rightHand.x * scale, rightHand.y * scale);
+            ctx.stroke();
+            ctx.restore();
         }
 
         // Draw Skeleton Lines
@@ -17317,9 +31384,12 @@
 
     // Game loop
     function gameLoop() {
-        const isSnow = currentLevelData.theme === 'snow' || currentLevelIndex >= 41;
-        const isNature = !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
-        if (isSnow) {
+        const isDesert = currentLevelData.theme === 'desert' || currentLevelIndex >= 61;
+        const isSnow = !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
+        const isNature = !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
+        if (isDesert) {
+            updateAmbientSand();
+        } else if (isSnow) {
             updateAmbientSnow();
         } else if (isNature) {
             updateAmbientLeaves();
@@ -17331,7 +31401,9 @@
             updateParticles();
             updateCamera();
         } else if (currentState === STATES.CUTSCENE) {
-            if (cutsceneIntro21 && cutsceneIntro21.active) {
+            if (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) {
+                updateCutsceneIntro61();
+            } else if (cutsceneIntro21 && cutsceneIntro21.active) {
                 updateCutsceneIntro21();
             } else if (cutsceneIntro41 && cutsceneIntro41.active) {
                 updateCutsceneIntro41();
@@ -17343,11 +31415,18 @@
                 updateYetiDefeatCutscene();
             } else if (typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene && yetiIntroCutscene.active) {
                 updateYetiIntroCutscene();
+            } else if (typeof mummyDefeatCutscene !== 'undefined' && mummyDefeatCutscene && mummyDefeatCutscene.active) {
+                updateMummyDefeatCutscene();
+            } else if (typeof mummyIntroCutscene !== 'undefined' && mummyIntroCutscene && mummyIntroCutscene.active) {
+                updateMummyIntroCutscene();
             } else {
                 updateCutscene();
             }
             updateParticles();
-            if (!((typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene && yetiIntroCutscene.active) || 
+            if (!((typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) ||
+                  (typeof mummyIntroCutscene !== 'undefined' && mummyIntroCutscene && mummyIntroCutscene.active) ||
+                  (typeof mummyDefeatCutscene !== 'undefined' && mummyDefeatCutscene && mummyDefeatCutscene.active) ||
+                  (typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene && yetiIntroCutscene.active) || 
                   (typeof yetiDefeatCutscene !== 'undefined' && yetiDefeatCutscene && yetiDefeatCutscene.active) ||
                   (typeof golemIntroCutscene !== 'undefined' && golemIntroCutscene && golemIntroCutscene.active) ||
                   (typeof golemCutscene !== 'undefined' && golemCutscene && golemCutscene.active))) {
@@ -17419,7 +31498,10 @@
         victoryScreen.classList.add('hidden');
 
         const nextLevelNum = currentLevelIndex + 1;
-        if (nextLevelNum > 40) {
+        if (nextLevelNum > 60) {
+            currentSelectPage = 4;
+            generateLevelsGrid();
+        } else if (nextLevelNum > 40) {
             currentSelectPage = 3;
             generateLevelsGrid();
         } else if (nextLevelNum > 20 && currentSelectPage === 1) {
@@ -17468,7 +31550,13 @@
 
         triggerFadeTransition(() => {
             player.reset();
-            if (currentLevelIndex >= 41) {
+            if (currentLevelIndex >= 61) {
+                currentSelectPage = 4;
+                generateLevelsGrid();
+                levelSelectScreen.classList.remove('hidden');
+                levelSelectScreen.classList.add('screen-active');
+                currentState = STATES.LEVEL_SELECT;
+            } else if (currentLevelIndex >= 41) {
                 currentSelectPage = 3;
                 generateLevelsGrid();
                 levelSelectScreen.classList.remove('hidden');
@@ -17519,7 +31607,9 @@
 
             triggerFadeTransition(() => {
                 player.reset();
-                if (currentLevelIndex >= 41) {
+                if (currentLevelIndex >= 61) {
+                    currentSelectPage = 4;
+                } else if (currentLevelIndex >= 41) {
                     currentSelectPage = 3;
                 } else if (currentLevelIndex >= 21) {
                     currentSelectPage = 2;
@@ -17556,7 +31646,9 @@
 
             triggerFadeTransition(() => {
                 player.reset();
-                if (currentLevelIndex >= 41) {
+                if (currentLevelIndex >= 61) {
+                    currentSelectPage = 4;
+                } else if (currentLevelIndex >= 41) {
                     currentSelectPage = 3;
                 } else if (currentLevelIndex >= 21) {
                     currentSelectPage = 2;
