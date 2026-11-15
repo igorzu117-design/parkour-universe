@@ -47,6 +47,7 @@
     const dotPage2 = document.getElementById('dotPage2');
     const dotPage3 = document.getElementById('dotPage3');
     const dotPage4 = document.getElementById('dotPage4');
+    const dotPage5 = document.getElementById('dotPage5');
     const levelPageBadge = document.getElementById('levelPageBadge');
     const cutsceneOverlay = document.getElementById('cutsceneOverlay');
     const cutsceneChapter = document.getElementById('cutsceneChapter');
@@ -668,6 +669,35 @@
                 gain.connect(audioCtx.destination);
                 osc.start(now);
                 osc.stop(now + 1.2);
+            } else if (type === 'sakuraGlow') {
+                // Mystical Japanese koto pentatonic arpeggio + katana metallic resonance
+                const notes = [440, 493.88, 554.37, 659.25, 739.99, 880, 1108.73];
+                notes.forEach((freq, i) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + i * 0.08);
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.setValueAtTime(0.22, now + i * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.008, now + i * 0.08 + 0.65);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + i * 0.08);
+                    osc.stop(now + i * 0.08 + 0.68);
+                });
+                // Katana sheath/blade metallic shimmer
+                const bladeOsc = audioCtx.createOscillator();
+                const bladeGain = audioCtx.createGain();
+                bladeOsc.type = 'sine';
+                bladeOsc.frequency.setValueAtTime(1760, now + 0.35);
+                bladeOsc.frequency.exponentialRampToValueAtTime(2637, now + 0.75);
+                bladeGain.gain.setValueAtTime(0.001, now);
+                bladeGain.gain.setValueAtTime(0.18, now + 0.35);
+                bladeGain.gain.exponentialRampToValueAtTime(0.005, now + 0.95);
+                bladeOsc.connect(bladeGain);
+                bladeGain.connect(audioCtx.destination);
+                bladeOsc.start(now + 0.35);
+                bladeOsc.stop(now + 0.98);
             }
         } catch (e) {
             console.error(e);
@@ -760,6 +790,11 @@
                     finishLevel61IntroCutscene();
                     return;
                 }
+            } else if (typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active) {
+                if (e.code === 'Space' || e.code === 'Escape' || e.code === 'Enter') {
+                    finishLevel81IntroCutscene();
+                    return;
+                }
             } else if (typeof golemCutscene !== 'undefined' && golemCutscene && golemCutscene.active) {
                 if (e.code === 'Space' || e.code === 'Escape' || e.code === 'Enter') {
                     finishGolemDefeatCutscene();
@@ -810,9 +845,19 @@
                     playSound('jump');
                     generateLevelsGrid();
                     return;
+                } else if (currentSelectPage === 4) {
+                    currentSelectPage = 5;
+                    playSound('jump');
+                    generateLevelsGrid();
+                    return;
                 }
             } else if (e.code === 'ArrowLeft') {
-                if (currentSelectPage === 4) {
+                if (currentSelectPage === 5) {
+                    currentSelectPage = 4;
+                    playSound('jump');
+                    generateLevelsGrid();
+                    return;
+                } else if (currentSelectPage === 4) {
                     currentSelectPage = 3;
                     playSound('jump');
                     generateLevelsGrid();
@@ -913,7 +958,8 @@
     let unlockedPage2Levels = 40; // 2nd Page: levels 21 to 40 unlocked!
     let unlockedPage3Levels = 60; // 3rd Page (Вечный холод): levels 41 to 60 unlocked!
     let unlockedPage4Levels = 80; // 4th Page (Исохшая земля): levels 61-80 unlocked (Boss Level 80)!
-    let currentSelectPage = 1;    // 1: Building (1-20), 2: Nature (21-40), 3: Eternal Cold (41-60), 4: Dried Earth (61-80)
+    let unlockedPage5Levels = 81; // 5th Page (Цветение сакуры): level 81+ unlocked!
+    let currentSelectPage = 1;    // 1: Building (1-20), 2: Nature (21-40), 3: Eternal Cold (41-60), 4: Dried Earth (61-80), 5: Sakura Blossom (81-100)
     let currentLevelIndex = 1;
 
     const levelsData = {
@@ -17355,6 +17401,93 @@
                 { id: "d80_w3", x: 11300, y: 540, w: 96, h: 110 }
             ],
             flag: null
+        },
+        81: {
+            id: 81,
+            title: "Уровень 81: Цветение сакуры",
+            theme: "sakura",
+            hasThirst: false,
+            worldWidth: 11800,
+            groundY: 540,
+            playerStartX: 200,
+            platforms: [
+                { x: 0, y: 540, w: 11800, h: 200 }
+            ],
+            chasms: [
+                { startX: 1620, endX: 2080 },
+                { startX: 3480, endX: 3980 },
+                { startX: 5460, endX: 6040 },
+                { startX: 7600, endX: 8220 },
+                { startX: 9700, endX: 10340 }
+            ],
+            boxes: [
+                // Opening Torii Gate & Machiya Townhouses
+                { id: "s81_b1", x: 460, y: 390, w: 220, h: 150, isSakuraShrine: true, shrineStyle: "torii" },
+                { id: "s81_b2", x: 760, y: 330, w: 240, h: 210, isSakuraBuilding: true, buildingStyle: "machiya" },
+                { id: "s81_b3", x: 1090, y: 250, w: 250, h: 290, isSakuraBuilding: true, buildingStyle: "teahouse" },
+                { id: "s81_b4", x: 1410, y: 310, w: 190, h: 230, isSakuraShrine: true, shrineStyle: "honden" },
+
+                // Across 1st chasm (1620-2080): Shinto Shrine & Multi-tier Pagoda District
+                { id: "s81_b5", x: 2110, y: 360, w: 230, h: 180, isSakuraShrine: true, shrineStyle: "torii" },
+                { id: "s81_b6", x: 2430, y: 280, w: 260, h: 260, isSakuraShrine: true, shrineStyle: "honden" },
+                { id: "s81_b7", x: 2790, y: 190, w: 240, h: 350, isSakuraShrine: true, shrineStyle: "pagoda" },
+                { id: "s81_b8", x: 3140, y: 270, w: 280, h: 270, isSakuraBuilding: true, buildingStyle: "castle" },
+
+                // Across 2nd chasm (3480-3980): Imperial Castle & Sakura Rooftops
+                { id: "s81_b9", x: 4020, y: 370, w: 230, h: 170, isSakuraBuilding: true, buildingStyle: "machiya" },
+                { id: "s81_b10", x: 4340, y: 290, w: 250, h: 250, isSakuraBuilding: true, buildingStyle: "teahouse" },
+                { id: "s81_b11", x: 4690, y: 200, w: 270, h: 340, isSakuraBuilding: true, buildingStyle: "castle" },
+                { id: "s81_b12", x: 5070, y: 260, w: 320, h: 280, isSakuraShrine: true, shrineStyle: "honden" },
+
+                // Across 3rd chasm (5460-6040): Sacred Shrine Sanctuary
+                { id: "s81_b13", x: 6080, y: 360, w: 220, h: 180, isSakuraShrine: true, shrineStyle: "torii" },
+                { id: "s81_b14", x: 6390, y: 270, w: 260, h: 270, isSakuraShrine: true, shrineStyle: "pagoda" },
+                { id: "s81_b15", x: 6750, y: 180, w: 250, h: 360, isSakuraShrine: true, shrineStyle: "pagoda" },
+                { id: "s81_b16", x: 7110, y: 250, w: 230, h: 290, isSakuraBuilding: true, buildingStyle: "machiya" },
+                { id: "s81_b17", x: 7390, y: 310, w: 190, h: 230, isSakuraShrine: true, shrineStyle: "torii" },
+
+                // Across 4th chasm (7600-8220): High Castle Keep & Teahouse Quarter
+                { id: "s81_b18", x: 8260, y: 350, w: 240, h: 190, isSakuraBuilding: true, buildingStyle: "teahouse" },
+                { id: "s81_b19", x: 8590, y: 260, w: 260, h: 280, isSakuraBuilding: true, buildingStyle: "castle" },
+                { id: "s81_b20", x: 8950, y: 170, w: 280, h: 370, isSakuraShrine: true, shrineStyle: "pagoda" },
+                { id: "s81_b21", x: 9340, y: 250, w: 300, h: 290, isSakuraShrine: true, shrineStyle: "honden" },
+
+                // Across 5th chasm (9700-10340): Final Grand Sakura Shrine Approach
+                { id: "s81_b22", x: 10380, y: 360, w: 230, h: 180, isSakuraShrine: true, shrineStyle: "torii" },
+                { id: "s81_b23", x: 10700, y: 280, w: 260, h: 260, isSakuraBuilding: true, buildingStyle: "castle" },
+                { id: "s81_b24", x: 11060, y: 200, w: 480, h: 340, isSakuraShrine: true, shrineStyle: "honden" }
+            ],
+            ladders: [
+                { id: "s81_lad1", x: 775, topY: 330, bottomY: 540, w: 42, isSakuraLadder: true },
+                { id: "s81_lad2", x: 2445, topY: 280, bottomY: 540, w: 42, isSakuraLadder: true },
+                { id: "s81_lad3", x: 4355, topY: 290, bottomY: 540, w: 42, isSakuraLadder: true },
+                { id: "s81_lad4", x: 6405, topY: 270, bottomY: 540, w: 42, isSakuraLadder: true },
+                { id: "s81_lad5", x: 8605, topY: 260, bottomY: 540, w: 42, isSakuraLadder: true },
+                { id: "s81_lad6", x: 10715, topY: 280, bottomY: 540, w: 42, isSakuraLadder: true }
+            ],
+            turniks: [
+                { id: "s81_tur1", x: 1850, y: 220, boxBottomY: 540, length: 95, isSakuraTree: true },
+                { id: "s81_tur2", x: 3730, y: 195, boxBottomY: 540, length: 95, isSakuraTree: true },
+                { id: "s81_tur3", x: 7910, y: 215, boxBottomY: 540, length: 95, isSakuraTree: true },
+                { id: "s81_tur4", x: 10020, y: 205, boxBottomY: 540, length: 95, isSakuraTree: true }
+            ],
+            ropes: [
+                { id: "s81_rop1", x: 5620, anchorY: 70, length: 185, isSakuraRope: true },
+                { id: "s81_rop2", x: 5880, anchorY: 70, length: 185, isSakuraRope: true }
+            ],
+            cacti: [
+                { id: "s81_hz1", x: 705, y: 540, w: 40, h: 55, isBambooSpikes: true },
+                { id: "s81_hz2", x: 1215, y: 250, w: 38, h: 48, isBambooSpikes: true },
+                { id: "s81_hz3", x: 2560, y: 280, w: 38, h: 48, isBambooSpikes: true },
+                { id: "s81_hz4", x: 3280, y: 270, w: 40, h: 50, isBambooSpikes: true },
+                { id: "s81_hz5", x: 4825, y: 200, w: 38, h: 48, isBambooSpikes: true },
+                { id: "s81_hz6", x: 5220, y: 260, w: 40, h: 50, isBambooSpikes: true },
+                { id: "s81_hz7", x: 6875, y: 180, w: 38, h: 48, isBambooSpikes: true },
+                { id: "s81_hz8", x: 9090, y: 170, w: 40, h: 50, isBambooSpikes: true },
+                { id: "s81_hz9", x: 9490, y: 250, w: 40, h: 50, isBambooSpikes: true },
+                { id: "s81_hz10", x: 10830, y: 280, w: 38, h: 48, isBambooSpikes: true }
+            ],
+            flag: { x: 11420, y: 200, poleHeight: 115, bannerW: 46, bannerH: 32, isSakuraFlag: true }
         }
     };
 
@@ -17365,16 +17498,19 @@
         currentLevelData = levelsData[levelNum] || levelsData[1];
 
         // Dynamic HUD control descriptions
-        const isDesert = currentLevelData.theme === 'desert' || currentLevelIndex >= 61;
-        const isSnow = !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
-        const isNature = !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
+        const isSakura = currentLevelData.theme === 'sakura' || currentLevelIndex >= 81;
+        const isDesert = !isSakura && (currentLevelData.theme === 'desert' || (currentLevelIndex >= 61 && currentLevelIndex <= 80));
+        const isSnow = !isSakura && !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
+        const isNature = !isSakura && !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
 
         if (ctrlTurnik) {
             if (isDesert) {
                 ctrlTurnik.style.display = 'none';
             } else {
                 ctrlTurnik.style.display = 'block';
-                if (isSnow) {
+                if (isSakura) {
+                    ctrlTurnik.innerHTML = '<span>ВЕТКА САКУРЫ</span> Раскачка A/D, рывок Пробел';
+                } else if (isSnow) {
                     ctrlTurnik.innerHTML = '<span>СУХАЯ ВЕТКА</span> Раскачка A/D, рывок Пробел';
                 } else if (isNature) {
                     ctrlTurnik.innerHTML = '<span>ВЕТКА</span> Дерево (раскачка)';
@@ -17388,7 +17524,9 @@
                 ctrlRope.style.display = 'none';
             } else {
                 ctrlRope.style.display = 'block';
-                if (isSnow) {
+                if (isSakura) {
+                    ctrlRope.innerHTML = '<span>КАНАТ ФОНАРЯ</span> Раскачка A/D, рывок Пробел';
+                } else if (isSnow) {
                     ctrlRope.innerHTML = '<span>СВИСАЮЩАЯ ВЕТКА</span> Раскачка A/D, рывок Пробел';
                 } else if (isNature) {
                     ctrlRope.innerHTML = '<span>ЛИАНА</span> Раскачка A/D, рывок Пробел';
@@ -17398,7 +17536,9 @@
             }
         }
         if (ctrlLadder) {
-            if (isDesert) {
+            if (isSakura) {
+                ctrlLadder.innerHTML = '<span>E</span> Бамбуковая лестница';
+            } else if (isDesert) {
                 ctrlLadder.innerHTML = '<span>E</span> Лестница на здании';
             } else if (isSnow) {
                 ctrlLadder.innerHTML = '<span>ВЕТВЯНАЯ ЛЕСТНИЦА</span> E залезть';
@@ -17427,7 +17567,7 @@
         }
 
         if (healthHud) {
-            if (isDesert && currentState === STATES.PLAYING) {
+            if ((isDesert || isSakura) && currentState === STATES.PLAYING) {
                 healthHud.classList.remove('hidden');
                 updateHealthHud();
             } else {
@@ -17436,7 +17576,7 @@
         }
 
         if (thirstHud) {
-            if (isDesert && (currentLevelData.hasThirst || currentLevelIndex >= 62) && currentState === STATES.PLAYING) {
+            if (isDesert && (currentLevelData.hasThirst || (currentLevelIndex >= 62 && currentLevelIndex <= 80)) && currentState === STATES.PLAYING) {
                 thirstHud.classList.remove('hidden');
                 updateThirstHud();
             } else {
@@ -17647,6 +17787,15 @@
                 if (defeatTitleEl) {
                     defeatTitleEl.textContent = 'Укол кактуса';
                 }
+            } else if (source === 'bamboo') {
+                const defeatSubtextEl = defeatScreen ? defeatScreen.querySelector('.defeat-subtext') : null;
+                if (defeatSubtextEl) {
+                    defeatSubtextEl.textContent = 'Острые бамбуковые колья нанесли вам смертельный урон! Перепрыгивайте ловушки на крышах и берегите здоровье!';
+                }
+                const defeatTitleEl = defeatScreen ? defeatScreen.querySelector('.defeat-title') : null;
+                if (defeatTitleEl) {
+                    defeatTitleEl.textContent = '🎋 Бамбуковые шипы';
+                }
             }
         }
     }
@@ -17656,11 +17805,12 @@
         1: { name: 'Здание Препятствий', shortName: 'Здание', themeClass: 'theme-building' },
         2: { name: 'Дикая Природа', shortName: 'Природа', themeClass: 'theme-nature' },
         3: { name: 'Вечный холод', shortName: 'Вечный холод', themeClass: 'theme-snow' },
-        4: { name: 'Исохшая земля', shortName: 'Исохшая земля', themeClass: 'theme-desert' }
+        4: { name: 'Исохшая земля', shortName: 'Исохшая земля', themeClass: 'theme-desert' },
+        5: { name: 'Цветение сакуры', shortName: 'Цветение сакуры', themeClass: 'theme-sakura' }
     };
 
     function updatePaginationArrows(page) {
-        const allThemes = ['theme-building', 'theme-nature', 'theme-snow', 'theme-desert'];
+        const allThemes = ['theme-building', 'theme-nature', 'theme-snow', 'theme-desert', 'theme-sakura'];
 
         // Left / Previous Arrow (leads to page - 1)
         if (btnPrevPage) {
@@ -17685,7 +17835,7 @@
         if (btnNextPage) {
             btnNextPage.classList.remove(...allThemes, 'pulse-hint');
             const nextPage = page + 1;
-            if (nextPage <= 4 && PAGE_NAV_THEMES[nextPage]) {
+            if (nextPage <= 5 && PAGE_NAV_THEMES[nextPage]) {
                 const nextTheme = PAGE_NAV_THEMES[nextPage];
                 btnNextPage.disabled = false;
                 btnNextPage.classList.remove('disabled');
@@ -17701,7 +17851,7 @@
         }
     }
 
-    // Generate 20 Level Tiles in Grid (Page 1: 1-20, Page 2: 21-40, Page 3: 41-60, Page 4: 61-80)
+    // Generate 20 Level Tiles in Grid (Page 1: 1-20, Page 2: 21-40, Page 3: 41-60, Page 4: 61-80, Page 5: 81-100)
     function generateLevelsGrid() {
         if (!levelsGrid) return;
         levelsGrid.innerHTML = '';
@@ -17714,16 +17864,19 @@
             }
             if (dotPage1) {
                 dotPage1.classList.add('active');
-                dotPage1.classList.remove('nature', 'snow', 'desert');
+                dotPage1.classList.remove('nature', 'snow', 'desert', 'sakura');
             }
             if (dotPage2) {
-                dotPage2.classList.remove('active', 'nature', 'snow', 'desert');
+                dotPage2.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
             }
             if (dotPage3) {
-                dotPage3.classList.remove('active', 'nature', 'snow', 'desert');
+                dotPage3.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
             }
             if (dotPage4) {
-                dotPage4.classList.remove('active', 'nature', 'snow', 'desert');
+                dotPage4.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
+            }
+            if (dotPage5) {
+                dotPage5.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
             }
 
             for (let i = 1; i <= 20; i++) {
@@ -17753,17 +17906,20 @@
                 levelPageBadge.className = 'level-page-badge page-nature';
             }
             if (dotPage1) {
-                dotPage1.classList.remove('active', 'nature', 'snow', 'desert');
+                dotPage1.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
             }
             if (dotPage2) {
                 dotPage2.classList.add('active', 'nature');
-                dotPage2.classList.remove('snow', 'desert');
+                dotPage2.classList.remove('snow', 'desert', 'sakura');
             }
             if (dotPage3) {
-                dotPage3.classList.remove('active', 'nature', 'snow', 'desert');
+                dotPage3.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
             }
             if (dotPage4) {
-                dotPage4.classList.remove('active', 'nature', 'snow', 'desert');
+                dotPage4.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
+            }
+            if (dotPage5) {
+                dotPage5.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
             }
 
             for (let i = 21; i <= 40; i++) {
@@ -17794,17 +17950,20 @@
                 levelPageBadge.className = 'level-page-badge page-snow';
             }
             if (dotPage1) {
-                dotPage1.classList.remove('active', 'nature', 'snow', 'desert');
+                dotPage1.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
             }
             if (dotPage2) {
-                dotPage2.classList.remove('active', 'nature', 'snow', 'desert');
+                dotPage2.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
             }
             if (dotPage3) {
                 dotPage3.classList.add('active', 'snow');
-                dotPage3.classList.remove('nature', 'desert');
+                dotPage3.classList.remove('nature', 'desert', 'sakura');
             }
             if (dotPage4) {
-                dotPage4.classList.remove('active', 'nature', 'snow', 'desert');
+                dotPage4.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
+            }
+            if (dotPage5) {
+                dotPage5.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
             }
 
             for (let i = 41; i <= 60; i++) {
@@ -17826,24 +17985,27 @@
                 }
                 levelsGrid.appendChild(tile);
             }
-        } else {
+        } else if (currentSelectPage === 4) {
             // Page 4: Исохшая земля (Levels 61-80)
             if (levelPageBadge) {
                 levelPageBadge.textContent = '4 страница - Исохшая земля';
                 levelPageBadge.className = 'level-page-badge page-desert';
             }
             if (dotPage1) {
-                dotPage1.classList.remove('active', 'nature', 'snow', 'desert');
+                dotPage1.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
             }
             if (dotPage2) {
-                dotPage2.classList.remove('active', 'nature', 'snow', 'desert');
+                dotPage2.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
             }
             if (dotPage3) {
-                dotPage3.classList.remove('active', 'nature', 'snow', 'desert');
+                dotPage3.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
             }
             if (dotPage4) {
                 dotPage4.classList.add('active', 'desert');
-                dotPage4.classList.remove('nature', 'snow');
+                dotPage4.classList.remove('nature', 'snow', 'sakura');
+            }
+            if (dotPage5) {
+                dotPage5.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
             }
 
             for (let i = 61; i <= 80; i++) {
@@ -17861,6 +18023,48 @@
                     tile.className = (i === 80) ? 'level-tile locked desert boss-level-80' : 'level-tile locked desert';
                     tile.innerHTML = (i === 80)
                         ? `<span>80 🏺</span><span class="lock-icon">🔒</span>`
+                        : `<span>${i}</span><span class="lock-icon">🔒</span>`;
+                }
+                levelsGrid.appendChild(tile);
+            }
+        } else {
+            // Page 5: Цветение сакуры (Levels 81-100)
+            if (levelPageBadge) {
+                levelPageBadge.textContent = '5 страница - Цветение сакуры';
+                levelPageBadge.className = 'level-page-badge page-sakura';
+            }
+            if (dotPage1) {
+                dotPage1.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
+            }
+            if (dotPage2) {
+                dotPage2.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
+            }
+            if (dotPage3) {
+                dotPage3.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
+            }
+            if (dotPage4) {
+                dotPage4.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
+            }
+            if (dotPage5) {
+                dotPage5.classList.add('active', 'sakura');
+                dotPage5.classList.remove('nature', 'snow', 'desert');
+            }
+
+            for (let i = 81; i <= 100; i++) {
+                const tile = document.createElement('div');
+                if (i <= unlockedPage5Levels && levelsData[i]) {
+                    tile.className = (i === 100) ? 'level-tile unlocked sakura boss-level-100' : 'level-tile unlocked sakura';
+                    tile.innerHTML = (i === 100)
+                        ? `<span>100</span><span style="font-size: 0.65rem; display: block; font-weight: 700; letter-spacing: 0.5px;">⛩️ БОСС</span>`
+                        : `<span>${i}</span><span style="font-size: 0.65rem; display: block; font-weight: 700; letter-spacing: 0.5px;">🌸 САКУРА</span>`;
+                    const levelNum = i;
+                    tile.addEventListener('click', () => {
+                        startLevelWithFade(levelNum);
+                    });
+                } else {
+                    tile.className = (i === 100) ? 'level-tile locked sakura boss-level-100' : 'level-tile locked sakura';
+                    tile.innerHTML = (i === 100)
+                        ? `<span>100 ⛩️</span><span class="lock-icon">🔒</span>`
                         : `<span>${i}</span><span class="lock-icon">🔒</span>`;
                 }
                 levelsGrid.appendChild(tile);
@@ -17883,6 +18087,10 @@
                 currentSelectPage = 4;
                 playSound('jump');
                 generateLevelsGrid();
+            } else if (currentSelectPage === 4) {
+                currentSelectPage = 5;
+                playSound('jump');
+                generateLevelsGrid();
             }
         });
     }
@@ -17890,7 +18098,11 @@
     if (btnPrevPage) {
         btnPrevPage.addEventListener('click', () => {
             initAudio();
-            if (currentSelectPage === 4) {
+            if (currentSelectPage === 5) {
+                currentSelectPage = 4;
+                playSound('jump');
+                generateLevelsGrid();
+            } else if (currentSelectPage === 4) {
                 currentSelectPage = 3;
                 playSound('jump');
                 generateLevelsGrid();
@@ -17950,6 +18162,17 @@
         });
     }
 
+    if (dotPage5) {
+        dotPage5.addEventListener('click', () => {
+            if (currentSelectPage !== 5) {
+                initAudio();
+                currentSelectPage = 5;
+                playSound('jump');
+                generateLevelsGrid();
+            }
+        });
+    }
+
     generateLevelsGrid();
 
     // Smooth Fade Transition Handler
@@ -17977,10 +18200,13 @@
                 startLevel41IntroCutscene();
             } else if (levelNum === 61 && !forceSkipCutscene) {
                 startLevel61IntroCutscene();
+            } else if (levelNum === 81 && !forceSkipCutscene) {
+                startLevel81IntroCutscene();
             } else {
                 hudOverlay.classList.remove('hidden');
-                const isDesert = (currentLevelData.theme === 'desert' || currentLevelIndex >= 61);
-                const isSnow = !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
+                const isSakura = (currentLevelData.theme === 'sakura' || currentLevelIndex >= 81);
+                const isDesert = !isSakura && (currentLevelData.theme === 'desert' || (currentLevelIndex >= 61 && currentLevelIndex <= 80));
+                const isSnow = !isSakura && !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
                 if (inventoryHud && isSnow) {
                     inventoryHud.classList.remove('hidden');
                 }
@@ -17988,11 +18214,11 @@
                     coldHud.classList.remove('hidden');
                     updateColdHud();
                 }
-                if (healthHud && isDesert) {
+                if (healthHud && (isDesert || isSakura)) {
                     healthHud.classList.remove('hidden');
                     updateHealthHud();
                 }
-                if (thirstHud && isDesert && (currentLevelData.hasThirst || currentLevelIndex >= 62)) {
+                if (thirstHud && isDesert && (currentLevelData.hasThirst || (currentLevelIndex >= 62 && currentLevelIndex <= 80))) {
                     thirstHud.classList.remove('hidden');
                     updateThirstHud();
                 }
@@ -23192,6 +23418,1199 @@
     }
 
     // ==========================================
+    // --- LEVEL 81 INTRO CUTSCENE (STEPPE -> JAPANESE TOWN -> GLOWING SAMURAI OUTFIT & KATANA) ---
+    // ==========================================
+    const cutsceneIntro81 = {
+        active: false,
+        timer: 0,
+        phase: 'WALK_STEPPE', // 'WALK_STEPPE' -> 'ARRIVE_TOWN' -> 'GLOW_TRANSFORM' -> 'READY_POSE'
+        townBorderX: 540,
+        glowProgress: 0,
+        glowIntensity: 0,
+        glowRings: [],
+        glowPetals: []
+    };
+
+    function startLevel81IntroCutscene() {
+        currentState = STATES.CUTSCENE;
+        cutsceneIntro81.active = true;
+        cutsceneIntro81.timer = 0;
+        cutsceneIntro81.phase = 'WALK_STEPPE';
+        cutsceneIntro81.glowProgress = 0;
+        cutsceneIntro81.glowIntensity = 0;
+        cutsceneIntro81.glowRings = [];
+        cutsceneIntro81.glowPetals = [];
+
+        if (hudOverlay) hudOverlay.classList.add('hidden');
+        if (inventoryHud) inventoryHud.classList.add('hidden');
+        if (coldHud) coldHud.classList.add('hidden');
+        if (healthHud) healthHud.classList.add('hidden');
+        if (thirstHud) thirstHud.classList.add('hidden');
+
+        if (cutsceneOverlay) {
+            cutsceneOverlay.classList.remove('hidden');
+        }
+        if (cutsceneChapter) {
+            cutsceneChapter.textContent = '🌸 СТРАНИЦА 5: ЦВЕТЕНИЕ САКУРЫ';
+        }
+        if (cutsceneText) {
+            cutsceneText.textContent = 'Стикмен идет по бескрайней зеленой степи под ярким солнцем и облаками...';
+        }
+
+        // Start in the open steppe without the Japanese outfit/katana yet
+        player.x = 100;
+        player.y = 540;
+        player.vx = 0;
+        player.vy = 0;
+        player.facing = 1;
+        player.state = 'RUN';
+        player.animTime = 0;
+        player.cold = 0;
+        player.health = 100;
+        player.thirst = 100;
+        player.hasSamuraiOutfit = false;
+
+        cameraX = 0;
+        cameraY = 0;
+    }
+
+    function updateCutsceneIntro81() {
+        if (!cutsceneIntro81.active) return;
+
+        cutsceneIntro81.timer += 0.016;
+        updateAmbientSakura();
+
+        // Update expanding glow rings
+        for (let i = cutsceneIntro81.glowRings.length - 1; i >= 0; i--) {
+            const r = cutsceneIntro81.glowRings[i];
+            r.radius += r.speed;
+            r.alpha -= 0.022;
+            if (r.alpha <= 0) cutsceneIntro81.glowRings.splice(i, 1);
+        }
+
+        // Update swirling glow petals & golden sparks
+        for (let i = cutsceneIntro81.glowPetals.length - 1; i >= 0; i--) {
+            const p = cutsceneIntro81.glowPetals[i];
+            p.angle += p.angSpeed;
+            p.y -= p.vy;
+            p.radius += p.radSpeed;
+            p.x = player.x + Math.cos(p.angle) * p.radius;
+            p.alpha -= 0.014;
+            if (p.alpha <= 0) cutsceneIntro81.glowPetals.splice(i, 1);
+        }
+
+        if (cutsceneIntro81.phase === 'WALK_STEPPE') {
+            // Walk across the open green steppe
+            player.x += 2.4;
+            player.vx = 2.4;
+            player.facing = 1;
+            player.state = 'WALK';
+            player.animTime += 0.16;
+
+            const targetCamX = Math.max(0, player.x - 320);
+            cameraX += (targetCamX - cameraX) * 0.08;
+
+            if (player.x >= cutsceneIntro81.townBorderX - 35) {
+                cutsceneIntro81.phase = 'ARRIVE_TOWN';
+                cutsceneIntro81.timer = 0;
+                if (cutsceneChapter) {
+                    cutsceneChapter.textContent = '⛩️ ДРЕВНИЙ ЯПОНСКИЙ ГОРОДОК';
+                }
+                if (cutsceneText) {
+                    cutsceneText.textContent = 'Степь сменяется цветущим японским городком со святилищами и сакурой...';
+                }
+            }
+        } else if (cutsceneIntro81.phase === 'ARRIVE_TOWN') {
+            // Walk under the Torii gate into the town square
+            if (player.x < 680) {
+                player.x += 2.1;
+                player.vx = 2.1;
+                player.state = 'WALK';
+                player.animTime += 0.14;
+            } else {
+                player.vx = 0;
+                player.state = 'IDLE';
+                player.animTime += 0.06;
+            }
+
+            const targetCamX = Math.max(0, player.x - 360);
+            cameraX += (targetCamX - cameraX) * 0.08;
+
+            if (cutsceneIntro81.timer >= 1.55) {
+                cutsceneIntro81.phase = 'GLOW_TRANSFORM';
+                cutsceneIntro81.timer = 0;
+                cutsceneIntro81.glowProgress = 0;
+                player.vx = 0;
+                player.state = 'IDLE';
+                playSound('sakuraGlow');
+
+                // Initial ring burst
+                cutsceneIntro81.glowRings.push({ radius: 10, speed: 4.2, alpha: 0.95, color: '#fef08a' });
+                cutsceneIntro81.glowRings.push({ radius: 4, speed: 2.8, alpha: 0.9, color: '#f472b6' });
+
+                if (cutsceneChapter) {
+                    cutsceneChapter.textContent = '✨ СИЯЮЩЕЕ ПРЕОБРАЖЕНИЕ САМУРАЯ';
+                }
+                if (cutsceneText) {
+                    cutsceneText.textContent = 'Внезапно в сиянии сакуры у героя появляется традиционная японская одежда и катана на поясе!';
+                }
+            }
+        } else if (cutsceneIntro81.phase === 'GLOW_TRANSFORM') {
+            cutsceneIntro81.glowProgress = Math.min(1, cutsceneIntro81.timer / 2.2);
+            // Smooth bell curve glow intensity peaking around progress 0.5
+            cutsceneIntro81.glowIntensity = Math.sin(cutsceneIntro81.glowProgress * Math.PI);
+
+            // Spawn swirling golden sparks & sakura petals around the player
+            if (Math.random() < 0.75) {
+                cutsceneIntro81.glowPetals.push({
+                    angle: Math.random() * Math.PI * 2,
+                    angSpeed: 0.08 + Math.random() * 0.06,
+                    radius: 12 + Math.random() * 28,
+                    radSpeed: 0.35,
+                    x: player.x,
+                    y: player.y - 10 - Math.random() * 55,
+                    vy: 1.2 + Math.random() * 1.6,
+                    size: 3 + Math.random() * 4,
+                    color: Math.random() < 0.55 ? '#fef08a' : (Math.random() < 0.5 ? '#f472b6' : '#fbcfe8'),
+                    alpha: 0.95
+                });
+            }
+
+            if (Math.floor(cutsceneIntro81.timer * 60) % 18 === 0) {
+                cutsceneIntro81.glowRings.push({
+                    radius: 12,
+                    speed: 3.6,
+                    alpha: 0.85,
+                    color: Math.random() < 0.5 ? '#fde047' : '#f9a8d4'
+                });
+            }
+
+            // Equip traditional Japanese clothing & waist katana at peak glow!
+            if (cutsceneIntro81.glowProgress >= 0.48 && !player.hasSamuraiOutfit) {
+                player.hasSamuraiOutfit = true;
+                screenShake = 8;
+                cutsceneIntro81.glowRings.push({ radius: 15, speed: 6.0, alpha: 1.0, color: '#ffffff' });
+                cutsceneIntro81.glowRings.push({ radius: 8, speed: 4.5, alpha: 0.95, color: '#fbbf24' });
+            }
+
+            if (cutsceneIntro81.timer >= 2.3) {
+                cutsceneIntro81.phase = 'READY_POSE';
+                cutsceneIntro81.timer = 0;
+                cutsceneIntro81.glowIntensity = 0.25;
+                if (cutsceneText) {
+                    cutsceneText.textContent = 'Облаченный в одеяние самурая с катаной на поясе, герой готов к паркуру по крышам и святилищам!';
+                }
+            }
+        } else if (cutsceneIntro81.phase === 'READY_POSE') {
+            cutsceneIntro81.glowIntensity = Math.max(0, 0.25 * (1 - cutsceneIntro81.timer / 1.4));
+            if (cutsceneIntro81.timer >= 1.5) {
+                finishLevel81IntroCutscene();
+            }
+        }
+    }
+
+    function finishLevel81IntroCutscene() {
+        if (!cutsceneIntro81.active) return;
+        cutsceneIntro81.active = false;
+        cutsceneIntro81.glowIntensity = 0;
+        if (cutsceneOverlay) {
+            cutsceneOverlay.classList.add('hidden');
+        }
+        triggerFadeTransition(() => {
+            loadLevel(81);
+            player.reset();
+            player.hasSamuraiOutfit = true;
+            if (hudOverlay) hudOverlay.classList.remove('hidden');
+            if (inventoryHud) inventoryHud.classList.add('hidden');
+            if (coldHud) coldHud.classList.add('hidden');
+            if (thirstHud) thirstHud.classList.add('hidden');
+            if (healthHud) {
+                healthHud.classList.remove('hidden');
+                updateHealthHud();
+            }
+            currentState = STATES.PLAYING;
+        });
+    }
+
+    function drawCutscene81Scene(scale) {
+        const splitX = (cutsceneIntro81.townBorderX - cameraX) * scale;
+        const groundY = (540 - cameraY) * scale;
+
+        // 1. Sky Background (Bright Steppe Blue blending into Soft Warm Sakura Sky on the right)
+        const skyGrad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        skyGrad.addColorStop(0, '#38bdf8');    // clear steppe sky blue
+        skyGrad.addColorStop(0.45, '#7dd3fc'); // light azure
+        skyGrad.addColorStop(0.75, '#fbcfe8'); // warm sakura pink horizon
+        skyGrad.addColorStop(1, '#fde68a');    // golden morning glow
+        ctx.fillStyle = skyGrad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 2. Bright Sun in the sky (visible over steppe and town)
+        const sunX = 240 * scale - cameraX * 0.12 * scale;
+        const sunY = 115 * scale;
+        const sunR = 46 * scale;
+        const sunGlow = ctx.createRadialGradient(sunX, sunY, 8 * scale, sunX, sunY, sunR * 2.8);
+        sunGlow.addColorStop(0, '#ffffff');
+        sunGlow.addColorStop(0.25, '#fef08a');
+        sunGlow.addColorStop(0.6, 'rgba(253, 224, 71, 0.35)');
+        sunGlow.addColorStop(1, 'rgba(253, 224, 71, 0)');
+        ctx.fillStyle = sunGlow;
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, sunR * 2.8, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 3. Fluffy White Steppe Clouds drifting across the sky
+        const cloudPositions = [
+            { x: 140, y: 95, s: 1.0 },
+            { x: 390, y: 130, s: 0.85 },
+            { x: 640, y: 85, s: 1.1 },
+            { x: 920, y: 120, s: 0.9 }
+        ];
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+        cloudPositions.forEach((cl, idx) => {
+            const drift = (Date.now() * 0.012 * (idx % 2 === 0 ? 1 : 0.7)) % 1200;
+            const cx = ((cl.x + drift * 0.05 - cameraX * 0.2) * scale);
+            const cy = cl.y * scale;
+            const cs = cl.s * scale;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 24 * cs, 0, Math.PI * 2);
+            ctx.arc(cx + 20 * cs, cy - 6 * cs, 20 * cs, 0, Math.PI * 2);
+            ctx.arc(cx - 20 * cs, cy - 4 * cs, 18 * cs, 0, Math.PI * 2);
+            ctx.arc(cx + 36 * cs, cy + 2 * cs, 15 * cs, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // 4. LEFT SIDE: Open Green Steppe (Просто трава, облака и солнце)
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, Math.max(0, splitX), canvas.height);
+        ctx.clip();
+
+        // Gentle distant steppe grass hills (no trees or buildings — pure steppe!)
+        ctx.fillStyle = '#86efac';
+        ctx.beginPath();
+        ctx.moveTo(0, groundY);
+        ctx.quadraticCurveTo(180 * scale, groundY - 42 * scale, 380 * scale, groundY - 12 * scale);
+        ctx.quadraticCurveTo(520 * scale, groundY - 28 * scale, splitX + 40 * scale, groundY);
+        ctx.lineTo(0, groundY);
+        ctx.fill();
+
+        // Steppe Ground Soil & Lush Green Grass
+        const steppeGrad = ctx.createLinearGradient(0, groundY, 0, canvas.height);
+        steppeGrad.addColorStop(0, '#22c55e');
+        steppeGrad.addColorStop(0.18, '#16a34a');
+        steppeGrad.addColorStop(0.45, '#15803d');
+        steppeGrad.addColorStop(1, '#14532d');
+        ctx.fillStyle = steppeGrad;
+        ctx.fillRect(0, groundY, Math.max(0, splitX), canvas.height - groundY);
+
+        // Top vibrant grass turf strip
+        ctx.fillStyle = '#4ade80';
+        ctx.fillRect(0, groundY, Math.max(0, splitX), 8 * scale);
+
+        // Steppe grass blades swaying in the breeze
+        const windSway = Math.sin(Date.now() * 0.004) * 3 * scale;
+        ctx.fillStyle = '#22c55e';
+        for (let gx = 10; gx < cutsceneIntro81.townBorderX; gx += 14) {
+            const sx = (gx - cameraX) * scale;
+            const bh = (8 + (gx % 7)) * scale;
+            ctx.beginPath();
+            ctx.moveTo(sx - 2 * scale, groundY);
+            ctx.lineTo(sx + windSway, groundY - bh);
+            ctx.lineTo(sx + 2.5 * scale, groundY);
+            ctx.fill();
+        }
+        ctx.restore();
+
+        // 5. RIGHT SIDE: Japanese Town (Городок с сакурой, зданиями и святилищами)
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(Math.max(0, splitX), 0, canvas.width - Math.max(0, splitX), canvas.height);
+        ctx.clip();
+
+        // Distant Mount Fuji silhouette on the horizon
+        const fujiX = splitX + 430 * scale;
+        const fujiBaseY = groundY;
+        const fujiPeakY = 195 * scale;
+        const fujiGrad = ctx.createLinearGradient(fujiX, fujiPeakY, fujiX, fujiBaseY);
+        fujiGrad.addColorStop(0, '#6366f1');
+        fujiGrad.addColorStop(0.5, '#818cf8');
+        fujiGrad.addColorStop(1, 'rgba(199, 210, 254, 0.4)');
+        ctx.fillStyle = fujiGrad;
+        ctx.beginPath();
+        ctx.moveTo(fujiX - 280 * scale, fujiBaseY);
+        ctx.quadraticCurveTo(fujiX - 85 * scale, fujiPeakY + 45 * scale, fujiX - 28 * scale, fujiPeakY);
+        ctx.lineTo(fujiX + 28 * scale, fujiPeakY);
+        ctx.quadraticCurveTo(fujiX + 85 * scale, fujiPeakY + 45 * scale, fujiX + 280 * scale, fujiBaseY);
+        ctx.closePath();
+        ctx.fill();
+
+        // Snow cap on Mount Fuji
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.moveTo(fujiX - 28 * scale, fujiPeakY);
+        ctx.lineTo(fujiX + 28 * scale, fujiPeakY);
+        ctx.lineTo(fujiX + 64 * scale, fujiPeakY + 75 * scale);
+        ctx.lineTo(fujiX + 22 * scale, fujiPeakY + 58 * scale);
+        ctx.lineTo(fujiX, fujiPeakY + 78 * scale);
+        ctx.lineTo(fujiX - 22 * scale, fujiPeakY + 58 * scale);
+        ctx.lineTo(fujiX - 64 * scale, fujiPeakY + 75 * scale);
+        ctx.closePath();
+        ctx.fill();
+
+        // Town Background Sakura Trees
+        const townTrees = [610, 790, 980, 1140];
+        townTrees.forEach(tx => {
+            const treeScreenX = (tx - cameraX) * scale;
+            // Trunk
+            ctx.fillStyle = '#451a03';
+            ctx.fillRect(treeScreenX - 7 * scale, groundY - 125 * scale, 14 * scale, 125 * scale);
+            // Blossoming pink canopy clouds
+            ctx.fillStyle = '#f472b6';
+            ctx.beginPath();
+            ctx.arc(treeScreenX, groundY - 140 * scale, 48 * scale, 0, Math.PI * 2);
+            ctx.arc(treeScreenX - 34 * scale, groundY - 122 * scale, 36 * scale, 0, Math.PI * 2);
+            ctx.arc(treeScreenX + 34 * scale, groundY - 122 * scale, 36 * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#fbcfe8';
+            ctx.beginPath();
+            ctx.arc(treeScreenX, groundY - 148 * scale, 34 * scale, 0, Math.PI * 2);
+            ctx.arc(treeScreenX - 24 * scale, groundY - 130 * scale, 24 * scale, 0, Math.PI * 2);
+            ctx.arc(treeScreenX + 24 * scale, groundY - 130 * scale, 24 * scale, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // Town Entrance Vermilion Torii Gate (at x = 575)
+        drawSakuraShrine({ x: 550, y: 380, w: 120, h: 160, shrineStyle: 'torii' }, scale);
+
+        // Background Traditional Japanese Buildings & Pagoda in the Town Square
+        drawSakuraBuilding({ x: 760, y: 340, w: 210, h: 200, buildingStyle: 'machiya' }, scale);
+        drawSakuraShrine({ x: 1010, y: 240, w: 220, h: 300, shrineStyle: 'pagoda' }, scale);
+
+        // Stone-paved Japanese Town Ground
+        const townGroundGrad = ctx.createLinearGradient(0, groundY, 0, canvas.height);
+        townGroundGrad.addColorStop(0, '#475569');
+        townGroundGrad.addColorStop(0.25, '#334155');
+        townGroundGrad.addColorStop(1, '#1e293b');
+        ctx.fillStyle = townGroundGrad;
+        ctx.fillRect(Math.max(0, splitX), groundY, canvas.width - Math.max(0, splitX), canvas.height - groundY);
+
+        // Stone Flagstone Tiles & Fallen Sakura Petals on Town Road
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillRect(Math.max(0, splitX), groundY, canvas.width - Math.max(0, splitX), 6 * scale);
+        ctx.fillStyle = '#f9a8d4';
+        for (let px = cutsceneIntro81.townBorderX + 10; px < cutsceneIntro81.townBorderX + 900; px += 28) {
+            const spx = (px - cameraX) * scale;
+            ctx.beginPath();
+            ctx.ellipse(spx, groundY + 2 * scale, 4 * scale, 2 * scale, 0.2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Falling Sakura Petals in the town
+        drawAmbientSakura(scale);
+        ctx.restore();
+
+        // 6. Glowing Transformation Aura Effect around the Player (during GLOW_TRANSFORM & READY_POSE)
+        if (cutsceneIntro81.glowIntensity > 0 || cutsceneIntro81.glowRings.length > 0 || cutsceneIntro81.glowPetals.length > 0) {
+            const px = (player.x - cameraX) * scale;
+            const py = (player.y - 34 - cameraY) * scale;
+
+            ctx.save();
+            if (cutsceneIntro81.glowIntensity > 0) {
+                const gInt = cutsceneIntro81.glowIntensity;
+                // Vertical celestial beam of light
+                const beamGrad = ctx.createLinearGradient(px - 55 * scale, 0, px + 55 * scale, 0);
+                beamGrad.addColorStop(0, 'rgba(251, 207, 232, 0)');
+                beamGrad.addColorStop(0.3, `rgba(244, 114, 182, ${gInt * 0.45})`);
+                beamGrad.addColorStop(0.5, `rgba(254, 240, 138, ${gInt * 0.85})`);
+                beamGrad.addColorStop(0.7, `rgba(244, 114, 182, ${gInt * 0.45})`);
+                beamGrad.addColorStop(1, 'rgba(251, 207, 232, 0)');
+                ctx.fillStyle = beamGrad;
+                ctx.fillRect(px - 55 * scale, 0, 110 * scale, groundY);
+
+                // Radial golden-sakura aura sphere
+                const auraR = (65 + gInt * 55) * scale;
+                const auraGrad = ctx.createRadialGradient(px, py, 4 * scale, px, py, auraR);
+                auraGrad.addColorStop(0, `rgba(255, 255, 255, ${Math.min(1, gInt * 1.1)})`);
+                auraGrad.addColorStop(0.35, `rgba(253, 224, 71, ${gInt * 0.8})`);
+                auraGrad.addColorStop(0.7, `rgba(244, 114, 182, ${gInt * 0.5})`);
+                auraGrad.addColorStop(1, 'rgba(236, 72, 153, 0)');
+                ctx.fillStyle = auraGrad;
+                ctx.beginPath();
+                ctx.arc(px, py, auraR, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Expanding light rings
+            cutsceneIntro81.glowRings.forEach(r => {
+                ctx.strokeStyle = r.color;
+                ctx.globalAlpha = Math.max(0, r.alpha);
+                ctx.lineWidth = 3 * scale;
+                ctx.beginPath();
+                ctx.arc(px, py, r.radius * scale, 0, Math.PI * 2);
+                ctx.stroke();
+            });
+
+            // Swirling petals & golden sparks
+            cutsceneIntro81.glowPetals.forEach(pt => {
+                const ptx = (pt.x - cameraX) * scale;
+                const pty = (pt.y - cameraY) * scale;
+                ctx.globalAlpha = Math.max(0, pt.alpha);
+                ctx.fillStyle = pt.color;
+                ctx.beginPath();
+                ctx.ellipse(ptx, pty, pt.size * scale, pt.size * 0.6 * scale, pt.angle, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.restore();
+        }
+    }
+
+    // ==========================================
+    // --- SAKURA BLOSSOM BIOME RENDERING (BUILDINGS, SHRINES, TREES, PETALS, KATANA) ---
+    // ==========================================
+    const ambientSakura = [];
+    for (let i = 0; i < 95; i++) {
+        ambientSakura.push({
+            x: Math.random() * 2600,
+            y: Math.random() * 675,
+            vx: -0.9 - Math.random() * 1.5,
+            vy: 0.8 + Math.random() * 1.3,
+            size: 3.2 + Math.random() * 3.5,
+            angle: Math.random() * Math.PI * 2,
+            spinSpeed: (Math.random() - 0.5) * 0.06,
+            swayPhase: Math.random() * Math.PI * 2,
+            alpha: 0.55 + Math.random() * 0.4,
+            color: Math.random() < 0.5 ? '#fbcfe8' : (Math.random() < 0.6 ? '#f9a8d4' : '#f472b6')
+        });
+    }
+
+    function updateAmbientSakura() {
+        for (let i = 0; i < ambientSakura.length; i++) {
+            const p = ambientSakura[i];
+            p.swayPhase += 0.035;
+            p.x += p.vx + Math.sin(p.swayPhase) * 0.65;
+            p.y += p.vy + Math.cos(p.swayPhase * 0.7) * 0.25;
+            p.angle += p.spinSpeed;
+
+            if (p.y > 685) {
+                p.y = -12;
+                p.x = Math.random() * 2600;
+            }
+            if (p.x < -30) {
+                p.x = 2580;
+                p.y = Math.random() * 660;
+            }
+        }
+    }
+
+    function drawAmbientSakura(scale) {
+        ctx.save();
+        for (let i = 0; i < ambientSakura.length; i++) {
+            const p = ambientSakura[i];
+            const sx = (p.x % (width + 200)) * scale;
+            const sy = p.y * scale;
+            if (sx < -20 || sx > canvas.width + 20) continue;
+
+            ctx.save();
+            ctx.translate(sx, sy);
+            ctx.rotate(p.angle);
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+
+            // Delicate notched sakura petal shape
+            const r = p.size * scale;
+            ctx.beginPath();
+            ctx.moveTo(0, -r);
+            ctx.bezierCurveTo(r * 0.85, -r * 0.6, r * 0.75, r * 0.6, 0, r);
+            ctx.bezierCurveTo(-r * 0.75, r * 0.6, -r * 0.85, -r * 0.6, 0, -r * 0.35);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+        ctx.restore();
+    }
+
+    function drawSakuraChasms(scale) {
+        if (!currentLevelData.chasms) return;
+        const groundY = (currentLevelData.groundY - cameraY) * scale;
+        const chasmBottom = canvas.height;
+
+        currentLevelData.chasms.forEach(ch => {
+            const startX = (ch.startX - cameraX) * scale;
+            const endX = (ch.endX - cameraX) * scale;
+            const chasmW = endX - startX;
+            if (endX < -80 || startX > canvas.width + 80) return;
+
+            ctx.save();
+            // Deep Japanese mountain ravine sky/mist backdrop
+            const mistGrad = ctx.createLinearGradient(0, groundY, 0, chasmBottom);
+            mistGrad.addColorStop(0, '#475569');
+            mistGrad.addColorStop(0.45, '#1e293b');
+            mistGrad.addColorStop(0.78, '#0284c7'); // tranquil koi stream at bottom
+            mistGrad.addColorStop(1, '#0369a1');
+            ctx.fillStyle = mistGrad;
+            ctx.fillRect(startX, groundY - 2 * scale, chasmW, chasmBottom - groundY + 4 * scale);
+
+            // Shimmering water ripples & floating sakura petals at bottom of ravine
+            const waterY = groundY + 75 * scale;
+            if (waterY < canvas.height) {
+                ctx.fillStyle = 'rgba(125, 211, 252, 0.35)';
+                ctx.fillRect(startX, waterY, chasmW, 6 * scale);
+                ctx.fillStyle = '#fbcfe8';
+                for (let wx = ch.startX + 25; wx < ch.endX - 20; wx += 55) {
+                    const drift = Math.sin(Date.now() * 0.003 + wx) * 8 * scale;
+                    ctx.beginPath();
+                    ctx.ellipse((wx - cameraX) * scale + drift, waterY + 4 * scale, 4 * scale, 2 * scale, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // Stone embankment walls on left and right edges
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(startX - 8 * scale, groundY, 10 * scale, chasmBottom - groundY);
+            ctx.fillRect(endX - 2 * scale, groundY, 10 * scale, chasmBottom - groundY);
+
+            // Vermilion wooden railing posts at chasm edges
+            ctx.fillStyle = '#dc2626';
+            ctx.fillRect(startX - 10 * scale, groundY - 22 * scale, 7 * scale, 22 * scale);
+            ctx.fillRect(endX + 3 * scale, groundY - 22 * scale, 7 * scale, 22 * scale);
+            ctx.fillStyle = '#fbbf24';
+            ctx.fillRect(startX - 11 * scale, groundY - 25 * scale, 9 * scale, 4 * scale);
+            ctx.fillRect(endX + 2 * scale, groundY - 25 * scale, 9 * scale, 4 * scale);
+            ctx.restore();
+        });
+    }
+
+    function drawSakuraBuilding(box, scale) {
+        const drawX = (box.x - cameraX) * scale;
+        const drawY = (box.y - cameraY) * scale;
+        const drawW = box.w * scale;
+        const drawH = box.h * scale;
+        if (drawX + drawW < -120 || drawX > canvas.width + 120) return;
+
+        const style = box.buildingStyle || 'machiya';
+        ctx.save();
+
+        // 1. Stone Foundation Base (Ishigaki castle stone wall at bottom)
+        const baseH = Math.min(36 * scale, drawH * 0.22);
+        const baseY = drawY + drawH - baseH;
+
+        // Main walls (White Japanese shikkui plaster or warm cedar wood)
+        const wallGrad = ctx.createLinearGradient(drawX, drawY, drawX + drawW, drawY + drawH);
+        if (style === 'castle') {
+            wallGrad.addColorStop(0, '#f8fafc');
+            wallGrad.addColorStop(0.65, '#e2e8f0');
+            wallGrad.addColorStop(1, '#cbd5e1');
+        } else if (style === 'teahouse') {
+            wallGrad.addColorStop(0, '#78350f');
+            wallGrad.addColorStop(0.5, '#92400e');
+            wallGrad.addColorStop(1, '#451a03');
+        } else {
+            // machiya
+            wallGrad.addColorStop(0, '#fef3c7');
+            wallGrad.addColorStop(0.55, '#fde68a');
+            wallGrad.addColorStop(1, '#d97706');
+        }
+        ctx.fillStyle = wallGrad;
+        ctx.fillRect(drawX + 4 * scale, drawY + 12 * scale, drawW - 8 * scale, drawH - 12 * scale);
+
+        // Stone foundation blocks at the bottom
+        ctx.fillStyle = '#475569';
+        ctx.fillRect(drawX + 2 * scale, baseY, drawW - 4 * scale, baseH);
+        ctx.strokeStyle = '#1e293b';
+        ctx.lineWidth = 1.5 * scale;
+        for (let sx = drawX + 18 * scale; sx < drawX + drawW - 10 * scale; sx += 28 * scale) {
+            ctx.beginPath();
+            ctx.moveTo(sx, baseY);
+            ctx.lineTo(sx - 4 * scale, baseY + baseH);
+            ctx.stroke();
+        }
+
+        // Dark Timber Pillars & Crossbeams (Hashira & Nuki)
+        ctx.fillStyle = '#291509';
+        const pillarW = 7 * scale;
+        ctx.fillRect(drawX + 4 * scale, drawY + 12 * scale, pillarW, drawH - baseH - 12 * scale);
+        ctx.fillRect(drawX + drawW - 4 * scale - pillarW, drawY + 12 * scale, pillarW, drawH - baseH - 12 * scale);
+        ctx.fillRect(drawX + 4 * scale, drawY + (drawH - baseH) * 0.52, drawW - 8 * scale, 6 * scale);
+
+        // Glowing Shoji Paper Sliding Windows (Kumiko lattice)
+        const winTopY = drawY + 26 * scale;
+        const winH = Math.max(24 * scale, (drawH - baseH) * 0.34);
+        const winCount = Math.max(2, Math.floor(box.w / 65));
+        const winGap = 14 * scale;
+        const totalWinW = drawW - 28 * scale;
+        const singleWinW = (totalWinW - winGap * (winCount - 1)) / winCount;
+
+        for (let w = 0; w < winCount; w++) {
+            const wx = drawX + 14 * scale + w * (singleWinW + winGap);
+            const shojiGrad = ctx.createLinearGradient(wx, winTopY, wx, winTopY + winH);
+            shojiGrad.addColorStop(0, '#fef08a');
+            shojiGrad.addColorStop(0.5, '#fde047');
+            shojiGrad.addColorStop(1, '#f59e0b');
+            ctx.fillStyle = shojiGrad;
+            ctx.fillRect(wx, winTopY, singleWinW, winH);
+
+            // Wooden shoji grid bars
+            ctx.strokeStyle = '#451a03';
+            ctx.lineWidth = 1.6 * scale;
+            ctx.strokeRect(wx, winTopY, singleWinW, winH);
+            ctx.beginPath();
+            ctx.moveTo(wx + singleWinW * 0.5, winTopY);
+            ctx.lineTo(wx + singleWinW * 0.5, winTopY + winH);
+            ctx.moveTo(wx, winTopY + winH * 0.5);
+            ctx.lineTo(wx + singleWinW, winTopY + winH * 0.5);
+            ctx.stroke();
+        }
+
+        // Mid-tier secondary eave for tall castle/teahouse buildings
+        if (box.h >= 240) {
+            const midRoofY = drawY + (drawH - baseH) * 0.52;
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            ctx.moveTo(drawX - 10 * scale, midRoofY + 8 * scale);
+            ctx.quadraticCurveTo(drawX + drawW * 0.5, midRoofY - 4 * scale, drawX + drawW + 10 * scale, midRoofY + 8 * scale);
+            ctx.lineTo(drawX + drawW + 4 * scale, midRoofY - 5 * scale);
+            ctx.lineTo(drawX - 4 * scale, midRoofY - 5 * scale);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        // Hanging Red Chochin Paper Lanterns under the eaves
+        const lanternY = drawY + 22 * scale;
+        const lanternPositions = [drawX + 24 * scale, drawX + drawW - 24 * scale];
+        lanternPositions.forEach(lx => {
+            const sway = Math.sin(Date.now() * 0.004 + lx) * 2 * scale;
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1.5 * scale;
+            ctx.beginPath();
+            ctx.moveTo(lx, drawY + 12 * scale);
+            ctx.lineTo(lx + sway, lanternY);
+            ctx.stroke();
+
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.ellipse(lx + sway, lanternY + 7 * scale, 6 * scale, 8 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#fef08a';
+            ctx.beginPath();
+            ctx.ellipse(lx + sway, lanternY + 7 * scale, 3 * scale, 5 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // 2. Traditional Curved Kawara Tiled Roof (Parkour Top Surface at drawY)
+        const eaveOverhang = 16 * scale;
+        const roofLeft = drawX - eaveOverhang;
+        const roofRight = drawX + drawW + eaveOverhang;
+        const roofTopY = drawY;
+        const roofEaveY = drawY + 18 * scale;
+
+        const roofGrad = ctx.createLinearGradient(0, roofTopY - 8 * scale, 0, roofEaveY);
+        roofGrad.addColorStop(0, '#334155');
+        roofGrad.addColorStop(0.5, '#1e293b');
+        roofGrad.addColorStop(1, '#0f172a');
+        ctx.fillStyle = roofGrad;
+
+        ctx.beginPath();
+        // Upturned left horn
+        ctx.moveTo(roofLeft, roofEaveY - 8 * scale);
+        ctx.quadraticCurveTo(drawX + 10 * scale, roofTopY + 2 * scale, drawX + 18 * scale, roofTopY);
+        // Flat parkourable ridge across the top
+        ctx.lineTo(drawX + drawW - 18 * scale, roofTopY);
+        // Upturned right horn
+        ctx.quadraticCurveTo(drawX + drawW - 10 * scale, roofTopY + 2 * scale, roofRight, roofEaveY - 8 * scale);
+        ctx.lineTo(roofRight - 6 * scale, roofEaveY);
+        ctx.lineTo(roofLeft + 6 * scale, roofEaveY);
+        ctx.closePath();
+        ctx.fill();
+
+        // Roof tile ribbing & golden ridge trim
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 1.5 * scale;
+        for (let rx = drawX + 8 * scale; rx < drawX + drawW - 8 * scale; rx += 16 * scale) {
+            ctx.beginPath();
+            ctx.moveTo(rx, roofTopY + 2 * scale);
+            ctx.lineTo(rx, roofEaveY - 2 * scale);
+            ctx.stroke();
+        }
+
+        // Golden ridge beam & sakura blossom highlight along the walkable top edge
+        ctx.fillStyle = (style === 'castle') ? '#fbbf24' : '#f472b6';
+        ctx.fillRect(drawX + 8 * scale, roofTopY, drawW - 16 * scale, 3.5 * scale);
+
+        // Fallen sakura petals resting on the roof
+        ctx.fillStyle = '#fbcfe8';
+        for (let px = box.x + 22; px < box.x + box.w - 22; px += 34) {
+            ctx.beginPath();
+            ctx.ellipse((px - cameraX) * scale, roofTopY + 1.5 * scale, 3.5 * scale, 1.8 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.restore();
+    }
+
+    function drawSakuraShrine(box, scale) {
+        const drawX = (box.x - cameraX) * scale;
+        const drawY = (box.y - cameraY) * scale;
+        const drawW = box.w * scale;
+        const drawH = box.h * scale;
+        if (drawX + drawW < -140 || drawX > canvas.width + 140) return;
+
+        const style = box.shrineStyle || 'honden';
+        ctx.save();
+
+        if (style === 'torii') {
+            // Iconic Vermilion Shinto Torii Gate (parkourable across top kasagi lintel!)
+            const pillarW = Math.max(14 * scale, drawW * 0.09);
+            const leftPillarX = drawX + drawW * 0.16;
+            const rightPillarX = drawX + drawW * 0.84 - pillarW;
+
+            // Black stone pillar bases (Kamebara)
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(leftPillarX - 4 * scale, drawY + drawH - 22 * scale, pillarW + 8 * scale, 22 * scale);
+            ctx.fillRect(rightPillarX - 4 * scale, drawY + drawH - 22 * scale, pillarW + 8 * scale, 22 * scale);
+
+            // Vermilion Cylindrical Pillars (Hashira)
+            const vermGrad = ctx.createLinearGradient(leftPillarX, 0, leftPillarX + pillarW, 0);
+            vermGrad.addColorStop(0, '#991b1b');
+            vermGrad.addColorStop(0.4, '#ef4444');
+            vermGrad.addColorStop(1, '#b91c1c');
+            ctx.fillStyle = vermGrad;
+            ctx.fillRect(leftPillarX, drawY + 10 * scale, pillarW, drawH - 30 * scale);
+            ctx.fillRect(rightPillarX, drawY + 10 * scale, pillarW, drawH - 30 * scale);
+
+            // Lower Tie Beam (Nuki)
+            const nukiY = drawY + 34 * scale;
+            ctx.fillStyle = '#dc2626';
+            ctx.fillRect(drawX + 6 * scale, nukiY, drawW - 12 * scale, 11 * scale);
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(drawX + 4 * scale, nukiY, 6 * scale, 11 * scale);
+            ctx.fillRect(drawX + drawW - 10 * scale, nukiY, 6 * scale, 11 * scale);
+
+            // Center strut (Gakuzuka) & Golden Shrine Tablet
+            const centerX = drawX + drawW * 0.5;
+            ctx.fillStyle = '#b91c1c';
+            ctx.fillRect(centerX - 6 * scale, drawY + 12 * scale, 12 * scale, 24 * scale);
+            ctx.fillStyle = '#fbbf24';
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 2 * scale;
+            ctx.fillRect(centerX - 11 * scale, drawY + 14 * scale, 22 * scale, 18 * scale);
+            ctx.strokeRect(centerX - 11 * scale, drawY + 14 * scale, 22 * scale, 18 * scale);
+
+            // Sacred Shimenawa Rope with White Shide Zigzag Papers
+            ctx.strokeStyle = '#d97706';
+            ctx.lineWidth = 4 * scale;
+            ctx.beginPath();
+            ctx.moveTo(leftPillarX + pillarW, nukiY + 14 * scale);
+            ctx.quadraticCurveTo(centerX, nukiY + 26 * scale, rightPillarX, nukiY + 14 * scale);
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            for (let s = 1; s <= 3; s++) {
+                const sx = leftPillarX + pillarW + (rightPillarX - leftPillarX - pillarW) * (s / 4);
+                const sy = nukiY + 19 * scale;
+                ctx.beginPath();
+                ctx.moveTo(sx, sy);
+                ctx.lineTo(sx - 4 * scale, sy + 7 * scale);
+                ctx.lineTo(sx + 2 * scale, sy + 7 * scale);
+                ctx.lineTo(sx - 2 * scale, sy + 14 * scale);
+                ctx.lineTo(sx + 4 * scale, sy + 8 * scale);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // Top Curved Lintel (Kasagi & Shimaki - Parkourable Top at drawY)
+            const overhang = 18 * scale;
+            ctx.fillStyle = '#dc2626';
+            ctx.fillRect(drawX - overhang * 0.5, drawY + 6 * scale, drawW + overhang, 8 * scale);
+
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath();
+            ctx.moveTo(drawX - overhang, drawY - 5 * scale);
+            ctx.quadraticCurveTo(centerX, drawY + 2 * scale, drawX + drawW + overhang, drawY - 5 * scale);
+            ctx.lineTo(drawX + drawW + overhang * 0.7, drawY + 7 * scale);
+            ctx.lineTo(drawX - overhang * 0.7, drawY + 7 * scale);
+            ctx.closePath();
+            ctx.fill();
+
+            // Golden top highlight & sakura petals
+            ctx.fillStyle = '#fbbf24';
+            ctx.fillRect(drawX, drawY, drawW, 2.5 * scale);
+        } else if (style === 'pagoda') {
+            // Multi-Tiered Japanese Pagoda (Gojunoto)
+            const tiers = box.h >= 320 ? 4 : 3;
+            const tierH = (drawH - 24 * scale) / tiers;
+
+            // Stone podium base
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(drawX + 6 * scale, drawY + drawH - 24 * scale, drawW - 12 * scale, 24 * scale);
+
+            for (let t = 0; t < tiers; t++) {
+                const tTopY = drawY + t * tierH;
+                const inset = (tiers - 1 - t) * 6 * scale;
+                const tX = drawX + 10 * scale + inset;
+                const tW = drawW - 20 * scale - inset * 2;
+
+                // Vermilion & white walls of tier
+                ctx.fillStyle = '#fef2f2';
+                ctx.fillRect(tX, tTopY + 12 * scale, tW, tierH - 12 * scale);
+                ctx.strokeStyle = '#dc2626';
+                ctx.lineWidth = 3 * scale;
+                ctx.strokeRect(tX, tTopY + 12 * scale, tW, tierH - 12 * scale);
+
+                // Vertical vermilion lattice columns
+                for (let cx = tX + 16 * scale; cx < tX + tW - 10 * scale; cx += 22 * scale) {
+                    ctx.fillStyle = '#b91c1c';
+                    ctx.fillRect(cx, tTopY + 12 * scale, 4 * scale, tierH - 12 * scale);
+                }
+
+                // Curved Dark Slate Pagoda Eave for each tier
+                const eaveExt = (t === 0 ? 18 : 14) * scale;
+                const rLeft = (t === 0 ? drawX - 12 * scale : tX - eaveExt);
+                const rRight = (t === 0 ? drawX + drawW + 12 * scale : tX + tW + eaveExt);
+                ctx.fillStyle = '#1e293b';
+                ctx.beginPath();
+                ctx.moveTo(rLeft, tTopY + 8 * scale);
+                ctx.quadraticCurveTo(drawX + drawW * 0.5, tTopY - 2 * scale, rRight, tTopY + 8 * scale);
+                ctx.lineTo(rRight - 6 * scale, tTopY + 16 * scale);
+                ctx.lineTo(rLeft + 6 * scale, tTopY + 16 * scale);
+                ctx.closePath();
+                ctx.fill();
+
+                // Gold bell ornaments hanging from eaves corners
+                ctx.fillStyle = '#fbbf24';
+                ctx.beginPath();
+                ctx.arc(rLeft + 4 * scale, tTopY + 14 * scale, 3 * scale, 0, Math.PI * 2);
+                ctx.arc(rRight - 4 * scale, tTopY + 14 * scale, 3 * scale, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Walkable Top Pagoda Ridge & Golden Sorin Spire
+            ctx.fillStyle = '#fbbf24';
+            ctx.fillRect(drawX + 6 * scale, drawY, drawW - 12 * scale, 3.5 * scale);
+        } else {
+            // Sacred Shinto Honden Sanctuary Shrine
+            const baseH = 28 * scale;
+            const baseY = drawY + drawH - baseH;
+
+            // Stone foundation & steps
+            ctx.fillStyle = '#64748b';
+            ctx.fillRect(drawX + 4 * scale, baseY, drawW - 8 * scale, baseH);
+
+            // White sacred plaster walls with vermilion timber frame
+            ctx.fillStyle = '#fff1f2';
+            ctx.fillRect(drawX + 8 * scale, drawY + 16 * scale, drawW - 16 * scale, drawH - baseH - 16 * scale);
+
+            // Vermilion columns & beams
+            ctx.fillStyle = '#dc2626';
+            const colStep = Math.max(38 * scale, (drawW - 24 * scale) / 4);
+            for (let cx = drawX + 8 * scale; cx <= drawX + drawW - 14 * scale; cx += colStep) {
+                ctx.fillRect(cx, drawY + 16 * scale, 8 * scale, drawH - baseH - 16 * scale);
+            }
+            ctx.fillRect(drawX + 4 * scale, drawY + 20 * scale, drawW - 8 * scale, 8 * scale);
+            ctx.fillRect(drawX + 4 * scale, baseY - 10 * scale, drawW - 8 * scale, 8 * scale);
+
+            // Sacred Suzu Bell & Rope in center
+            const midX = drawX + drawW * 0.5;
+            ctx.strokeStyle = '#fde047';
+            ctx.lineWidth = 4 * scale;
+            ctx.beginPath();
+            ctx.moveTo(midX, drawY + 28 * scale);
+            ctx.lineTo(midX, baseY - 12 * scale);
+            ctx.stroke();
+            ctx.fillStyle = '#fbbf24';
+            ctx.beginPath();
+            ctx.arc(midX, drawY + 34 * scale, 7 * scale, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Grand Shrine Roof with Golden Chigi Finials & Katsuogi Logs
+            const rLeft = drawX - 18 * scale;
+            const rRight = drawX + drawW + 18 * scale;
+            const rGrad = ctx.createLinearGradient(0, drawY, 0, drawY + 20 * scale);
+            rGrad.addColorStop(0, '#1e293b');
+            rGrad.addColorStop(1, '#0f172a');
+            ctx.fillStyle = rGrad;
+            ctx.beginPath();
+            ctx.moveTo(rLeft, drawY + 10 * scale);
+            ctx.quadraticCurveTo(drawX + 16 * scale, drawY, drawX + 24 * scale, drawY);
+            ctx.lineTo(drawX + drawW - 24 * scale, drawY);
+            ctx.quadraticCurveTo(drawX + drawW - 16 * scale, drawY, rRight, drawY + 10 * scale);
+            ctx.lineTo(rRight - 8 * scale, drawY + 20 * scale);
+            ctx.lineTo(rLeft + 8 * scale, drawY + 20 * scale);
+            ctx.closePath();
+            ctx.fill();
+
+            // Golden Katsuogi ridge billets & crimson/gold top highlight
+            ctx.fillStyle = '#fbbf24';
+            ctx.fillRect(drawX + 12 * scale, drawY, drawW - 24 * scale, 4 * scale);
+            for (let kx = drawX + 28 * scale; kx < drawX + drawW - 28 * scale; kx += 32 * scale) {
+                ctx.fillRect(kx - 5 * scale, drawY - 4 * scale, 10 * scale, 4 * scale);
+            }
+        }
+
+        ctx.restore();
+    }
+
+    function drawSakuraLadder(lad, scale) {
+        const drawX = (lad.x - cameraX) * scale;
+        const drawTopY = (lad.topY - cameraY) * scale;
+        const drawBotY = (lad.bottomY - cameraY) * scale;
+        const drawW = (lad.w || 40) * scale;
+        if (drawX + drawW < -60 || drawX - drawW > canvas.width + 60) return;
+
+        const leftX = drawX - drawW / 2;
+        const rightX = drawX + drawW / 2;
+
+        ctx.save();
+        // Green-Gold Bamboo Side Rails
+        ctx.strokeStyle = '#65a30d';
+        ctx.lineWidth = 5.5 * scale;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(leftX, drawTopY);
+        ctx.lineTo(leftX, drawBotY);
+        ctx.moveTo(rightX, drawTopY);
+        ctx.lineTo(rightX, drawBotY);
+        ctx.stroke();
+
+        // Bamboo Highlight Core
+        ctx.strokeStyle = '#a3e635';
+        ctx.lineWidth = 2 * scale;
+        ctx.beginPath();
+        ctx.moveTo(leftX - 1 * scale, drawTopY);
+        ctx.lineTo(leftX - 1 * scale, drawBotY);
+        ctx.moveTo(rightX - 1 * scale, drawTopY);
+        ctx.lineTo(rightX - 1 * scale, drawBotY);
+        ctx.stroke();
+
+        // Horizontal Bamboo Rungs with Crimson Cord Bindings
+        const step = 22;
+        for (let rY = lad.topY + 12; rY <= lad.bottomY - 8; rY += step) {
+            const rungY = (rY - cameraY) * scale;
+            ctx.strokeStyle = '#84cc16';
+            ctx.lineWidth = 4 * scale;
+            ctx.beginPath();
+            ctx.moveTo(leftX - 2 * scale, rungY);
+            ctx.lineTo(rightX + 2 * scale, rungY);
+            ctx.stroke();
+
+            // Crimson tie knots at corners
+            ctx.fillStyle = '#dc2626';
+            ctx.beginPath();
+            ctx.arc(leftX, rungY, 3 * scale, 0, Math.PI * 2);
+            ctx.arc(rightX, rungY, 3 * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.restore();
+    }
+
+    function drawSakuraTreeTurnik(tur, scale) {
+        const drawX = (tur.x - cameraX) * scale;
+        const drawY = (tur.y - cameraY) * scale;
+        const groundY = ((tur.boxBottomY || currentLevelData.groundY) - cameraY) * scale;
+        const barLen = (tur.length || 90) * scale;
+        if (drawX + barLen < -150 || drawX - barLen > canvas.width + 150) return;
+
+        ctx.save();
+        const trunkX = drawX - barLen * 0.52;
+        const crownY = drawY - 42 * scale;
+
+        // 1. Gnarled Cherry Blossom Tree Trunk rising from the ravine/ground
+        const trunkGrad = ctx.createLinearGradient(trunkX - 16 * scale, 0, trunkX + 16 * scale, 0);
+        trunkGrad.addColorStop(0, '#291509');
+        trunkGrad.addColorStop(0.5, '#5c240e');
+        trunkGrad.addColorStop(1, '#3b1506');
+        ctx.fillStyle = trunkGrad;
+        ctx.beginPath();
+        ctx.moveTo(trunkX - 18 * scale, groundY);
+        ctx.quadraticCurveTo(trunkX - 10 * scale, (groundY + drawY) * 0.5, trunkX - 11 * scale, crownY);
+        ctx.lineTo(trunkX + 11 * scale, crownY);
+        ctx.quadraticCurveTo(trunkX + 12 * scale, (groundY + drawY) * 0.5, trunkX + 20 * scale, groundY);
+        ctx.closePath();
+        ctx.fill();
+
+        // 2. Lush Blossoming Sakura Canopy Clouds above the branch
+        const clusters = [
+            { dx: 0, dy: -22, r: 46, c: '#ec4899' },
+            { dx: -36, dy: -8, r: 36, c: '#f472b6' },
+            { dx: 38, dy: -12, r: 40, c: '#f472b6' },
+            { dx: 8, dy: -28, r: 34, c: '#fbcfe8' },
+            { dx: -20, dy: -16, r: 28, c: '#fce7f3' }
+        ];
+        clusters.forEach(cl => {
+            ctx.fillStyle = cl.c;
+            ctx.beginPath();
+            ctx.arc(trunkX + cl.dx * scale, crownY + cl.dy * scale, cl.r * scale, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // 3. Horizontal Swingable Sakura Branch at (drawX, drawY)
+        ctx.strokeStyle = '#451a03';
+        ctx.lineWidth = 8 * scale;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(trunkX, drawY - 4 * scale);
+        ctx.quadraticCurveTo(drawX - barLen * 0.25, drawY, drawX + barLen * 0.5, drawY);
+        ctx.stroke();
+
+        // Highlighted swing bar zone with glowing pink blossom buds
+        ctx.strokeStyle = '#f472b6';
+        ctx.lineWidth = 4 * scale;
+        ctx.beginPath();
+        ctx.moveTo(drawX - barLen * 0.45, drawY);
+        ctx.lineTo(drawX + barLen * 0.45, drawY);
+        ctx.stroke();
+
+        // Small sakura blossoms along the branch ends
+        ctx.fillStyle = '#fbcfe8';
+        ctx.beginPath();
+        ctx.arc(drawX - barLen * 0.48, drawY - 3 * scale, 6 * scale, 0, Math.PI * 2);
+        ctx.arc(drawX + barLen * 0.5, drawY - 2 * scale, 7 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    function drawSakuraRope(rope, scale) {
+        const anchorX = (rope.x - cameraX) * scale;
+        const anchorY = (rope.anchorY - cameraY) * scale;
+        const ropeLen = (rope.length || 180) * scale;
+        if (anchorX < -120 || anchorX > canvas.width + 120) return;
+
+        let currentAngle = 0;
+        if ((player.state === 'ROPE' || player.state === 'ROPE_SWING') && player.activeRope && (player.activeRope === rope || player.activeRope.id === rope.id)) {
+            currentAngle = player.ropeAngle;
+        } else {
+            currentAngle = Math.sin(Date.now() * 0.002 + rope.x) * 0.05;
+        }
+
+        const endX = anchorX + Math.sin(currentAngle) * ropeLen;
+        const endY = anchorY + Math.cos(currentAngle) * ropeLen;
+
+        ctx.save();
+        // Overhead wooden shrine beam mount
+        ctx.fillStyle = '#dc2626';
+        ctx.fillRect(anchorX - 14 * scale, anchorY - 8 * scale, 28 * scale, 10 * scale);
+        ctx.fillStyle = '#fbbf24';
+        ctx.beginPath();
+        ctx.arc(anchorX, anchorY, 5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Braided Crimson & Gold Silk Shrine Cord
+        ctx.strokeStyle = '#dc2626';
+        ctx.lineWidth = 4.5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(anchorX, anchorY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 1.8 * scale;
+        ctx.setLineDash([5 * scale, 5 * scale]);
+        ctx.beginPath();
+        ctx.moveTo(anchorX, anchorY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Glowing Red & Gold Japanese Paper Lantern (Chochin) at the grip knot
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.ellipse(endX, endY, 10 * scale, 13 * scale, -currentAngle, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.ellipse(endX, endY, 5 * scale, 8 * scale, -currentAngle, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(endX - 6 * scale, endY - 13 * scale, 12 * scale, 3 * scale);
+        ctx.fillRect(endX - 6 * scale, endY + 10 * scale, 12 * scale, 3 * scale);
+        ctx.restore();
+    }
+
+    function drawSakuraHazard(hz, scale) {
+        const drawX = (hz.x - cameraX) * scale;
+        const drawY = (hz.y - cameraY) * scale;
+        const w = (hz.w || 38) * scale;
+        const h = (hz.h || 50) * scale;
+        if (drawX + w < -60 || drawX - w > canvas.width + 60) return;
+
+        ctx.save();
+        // Bundle of sharpened bamboo stakes bound with crimson cord
+        const spikes = [-0.36, -0.18, 0, 0.18, 0.36];
+        spikes.forEach((offset, idx) => {
+            const sx = drawX + offset * w;
+            const sh = h * (idx === 2 ? 1.0 : (idx % 2 === 1 ? 0.88 : 0.74));
+            ctx.fillStyle = idx % 2 === 0 ? '#4d7c0f' : '#65a30d';
+            ctx.beginPath();
+            ctx.moveTo(sx - 4.5 * scale, drawY);
+            ctx.lineTo(sx, drawY - sh);
+            ctx.lineTo(sx + 4.5 * scale, drawY);
+            ctx.closePath();
+            ctx.fill();
+
+            // Freshly cut sharp pale bamboo bevel tip
+            ctx.fillStyle = '#fef08a';
+            ctx.beginPath();
+            ctx.moveTo(sx - 2.2 * scale, drawY - sh * 0.72);
+            ctx.lineTo(sx, drawY - sh);
+            ctx.lineTo(sx + 2.2 * scale, drawY - sh * 0.72);
+            ctx.closePath();
+            ctx.fill();
+        });
+
+        // Crimson binding band near the base
+        ctx.fillStyle = '#dc2626';
+        ctx.fillRect(drawX - w * 0.44, drawY - 14 * scale, w * 0.88, 6 * scale);
+        ctx.restore();
+    }
+
+    function drawSakuraFlag(flag, scale) {
+        const flagX = (flag.x - cameraX) * scale;
+        const flagY = (flag.y - cameraY) * scale;
+        const poleH = (flag.poleHeight || 115) * scale;
+        const bannerW = (flag.bannerW || 46) * scale;
+        const bannerH = (flag.bannerH || 32) * scale;
+
+        ctx.save();
+        // Red-lacquered Samurai Nobori Pole
+        ctx.strokeStyle = '#991b1b';
+        ctx.lineWidth = 5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(flagX, flagY);
+        ctx.lineTo(flagX, flagY - poleH);
+        ctx.stroke();
+
+        // Golden Crest Finial
+        ctx.fillStyle = '#fbbf24';
+        ctx.beginPath();
+        ctx.arc(flagX, flagY - poleH, 7 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Fluttering Sakura Pink & Crimson Silk Banner
+        const wave = Math.sin(Date.now() * 0.006) * 5 * scale;
+        const topY = flagY - poleH + 8 * scale;
+        const fGrad = ctx.createLinearGradient(flagX, topY, flagX + bannerW, topY);
+        fGrad.addColorStop(0, '#be185d');
+        fGrad.addColorStop(0.5, '#ec4899');
+        fGrad.addColorStop(1, '#fbcfe8');
+
+        ctx.fillStyle = fGrad;
+        ctx.beginPath();
+        ctx.moveTo(flagX, topY);
+        ctx.quadraticCurveTo(flagX + bannerW * 0.5, topY + wave, flagX + bannerW, topY + wave / 2);
+        ctx.lineTo(flagX + bannerW, topY + bannerH + wave / 2);
+        ctx.quadraticCurveTo(flagX + bannerW * 0.5, topY + bannerH + wave, flagX, topY + bannerH);
+        ctx.closePath();
+        ctx.fill();
+
+        // Sakura Blossom Emblem on Banner
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `bold ${16 * scale}px sans-serif`;
+        ctx.fillText('🌸', flagX + 11 * scale, topY + bannerH * 0.72 + wave / 2);
+        ctx.restore();
+    }
+
+    // ==========================================
     // --- LEVEL 60: BOSS YETI SYSTEM ---
     // ==========================================
     const yeti = {
@@ -25600,13 +27019,19 @@
 
         currentState = STATES.VICTORY;
         unlockedPage4Levels = Math.max(unlockedPage4Levels, 80);
+        unlockedPage5Levels = Math.max(unlockedPage5Levels, 81);
         generateLevelsGrid();
 
         if (victoryTitle) victoryTitle.textContent = '🏆 80 Уровень пройден!';
-        if (victorySubtext) victorySubtext.textContent = 'ВЕЛИКАЯ ДРЕВНЯЯ МУМИЯ ПОВЕРЖЕНА! Вы преодолели все 40 препятствий и спасли Вселенную Паркура!';
+        if (victorySubtext) victorySubtext.textContent = 'ВЕЛИКАЯ ДРЕВНЯЯ МУМИЯ ПОВЕРЖЕНА! Открыта 5 страница — Цветение сакуры!';
 
         if (btnNextLevel) {
-            btnNextLevel.classList.add('hidden'); // Level 80 is the final boss!
+            if (levelsData[81]) {
+                btnNextLevel.classList.remove('hidden');
+                btnNextLevel.innerHTML = '<span class="btn-icon">🌸</span> Цветение сакуры: Уровень 81';
+            } else {
+                btnNextLevel.classList.add('hidden');
+            }
         }
         if (btnReplay) btnReplay.innerHTML = '<span class="btn-icon">🔄</span> Пройти снова';
         if (btnToMenu) btnToMenu.innerHTML = '<span class="btn-icon">🏠</span> В меню уровней';
@@ -26375,7 +27800,9 @@
 
     if (btnSkipCutscene) {
         btnSkipCutscene.addEventListener('click', () => {
-            if (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) {
+            if (typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active) {
+                finishLevel81IntroCutscene();
+            } else if (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) {
                 finishLevel61IntroCutscene();
             } else if (cutsceneIntro21 && cutsceneIntro21.active) {
                 finishLevel21IntroCutscene();
@@ -28164,6 +29591,7 @@
         shoveCooldown: 0,
 
         hasLighter: false,
+        hasSamuraiOutfit: false,
         cold: 0,
         freezeTimer: 0,
         isWarming: false,
@@ -28214,6 +29642,7 @@
             this.rollTimer = 0;
             this.rollCooldown = 0;
             this.hasLighter = (currentLevelIndex >= 41 && currentLevelIndex <= 60);
+            this.hasSamuraiOutfit = (currentLevelData && currentLevelData.theme === 'sakura') || currentLevelIndex >= 81;
             this.cold = 0;
             this.freezeTimer = 0;
             this.isWarming = false;
@@ -28239,7 +29668,7 @@
             }
 
             if (healthHud) {
-                if (currentLevelData && (currentLevelData.theme === 'desert' || currentLevelIndex >= 61) && currentState === STATES.PLAYING) {
+                if (currentLevelData && (currentLevelData.theme === 'desert' || currentLevelData.theme === 'sakura' || currentLevelIndex >= 61) && currentState === STATES.PLAYING) {
                     healthHud.classList.remove('hidden');
                     updateHealthHud();
                 } else {
@@ -28248,7 +29677,8 @@
             }
 
             if (thirstHud) {
-                if (currentLevelData && (currentLevelData.hasThirst || currentLevelIndex >= 62) && currentState === STATES.PLAYING) {
+                const isSakuraLvl = currentLevelData && (currentLevelData.theme === 'sakura' || currentLevelIndex >= 81);
+                if (!isSakuraLvl && currentLevelData && (currentLevelData.hasThirst || (currentLevelIndex >= 62 && currentLevelIndex <= 80)) && currentState === STATES.PLAYING) {
                     thirstHud.classList.remove('hidden');
                     updateThirstHud();
                 } else {
@@ -28271,6 +29701,9 @@
             }
             if (typeof cutsceneIntro61 !== 'undefined') {
                 cutsceneIntro61.active = false;
+            }
+            if (typeof cutsceneIntro81 !== 'undefined') {
+                cutsceneIntro81.active = false;
             }
             if (cutsceneOverlay) {
                 cutsceneOverlay.classList.add('hidden');
@@ -28524,8 +29957,17 @@
                 if (victorySubtext) victorySubtext.textContent = `Отличный паркур и результаты на Уровне ${currentLevelIndex}!`;
 
                 const nextLevelNum = currentLevelIndex + 1;
-                if (currentLevelIndex >= 61) {
+                if (currentLevelIndex >= 81) {
+                    unlockedPage5Levels = Math.max(unlockedPage5Levels, Math.min(100, nextLevelNum));
+                    generateLevelsGrid();
+                    if (victorySubtext) {
+                        victorySubtext.textContent = `Безупречный путь самурая! Уровень ${currentLevelIndex} среди цветущей сакуры и святилищ пройден!`;
+                    }
+                } else if (currentLevelIndex >= 61) {
                     unlockedPage4Levels = Math.max(unlockedPage4Levels, Math.min(80, nextLevelNum));
+                    if (nextLevelNum > 80) {
+                        unlockedPage5Levels = Math.max(unlockedPage5Levels, 81);
+                    }
                     generateLevelsGrid();
                     if (currentLevelIndex === 61) {
                         if (victorySubtext) victorySubtext.textContent = 'Отличный старт в пустыне! 61 уровень пройден! Впереди 62 уровень с испытанием жаждой и колодцами!';
@@ -29418,7 +30860,7 @@
             player.punchTimer = Math.max(0, player.punchTimer - 0.016);
         }
 
-        // Cactus Collision Check (Desert Biome)
+        // Cactus / Bamboo Spikes Collision Check (Desert & Sakura Biomes)
         if (currentLevelData.cacti && player.damageCooldown <= 0 && player.state !== 'DEFEAT' && player.state !== 'VICTORY' && player.state !== 'VICTORY_IDLE' && currentState === STATES.PLAYING) {
             const pLeft = player.x - 12;
             const pRight = player.x + 12;
@@ -29432,15 +30874,17 @@
                 const cBottom = cactus.y;
 
                 if (pRight > cLeft && pLeft < cRight && pBottom > cTop && pTop < cBottom) {
-                    playerTakeDamage(25, 'cactus');
+                    const dmgSource = (cactus.isBambooSpikes || currentLevelData.theme === 'sakura' || currentLevelIndex >= 81) ? 'bamboo' : 'cactus';
+                    playerTakeDamage(25, dmgSource);
                     break;
                 }
             }
         }
 
-        // Thirst System (Desert Biome / Level 62+, disabled during Mummy boss fight)
+        // Thirst System (Desert Biome / Level 62-80 only, disabled on Sakura Page 5 and during Mummy boss fight)
         const isMummyBossFight = (currentLevelIndex === 80 && (mummy.active || (typeof mummyIntroCutscene !== 'undefined' && mummyIntroCutscene.active) || (typeof mummyDefeatCutscene !== 'undefined' && mummyDefeatCutscene.active) || player.x >= 13150));
-        const hasThirstBiome = (currentLevelData.hasThirst || currentLevelIndex >= 62) && !isMummyBossFight;
+        const isSakuraBiome = (currentLevelData.theme === 'sakura' || currentLevelIndex >= 81);
+        const hasThirstBiome = !isSakuraBiome && (currentLevelData.hasThirst || (currentLevelIndex >= 62 && currentLevelIndex <= 80)) && !isMummyBossFight;
         if (isMummyBossFight && thirstHud && !thirstHud.classList.contains('hidden')) {
             thirstHud.classList.add('hidden');
         }
@@ -29712,12 +31156,128 @@
             return;
 
         } else {
-            const isDesert = currentLevelData.theme === 'desert' || currentLevelIndex >= 61;
-            const isSnow = !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
-            const isNature = !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
+            const isSakura = currentLevelData.theme === 'sakura' || currentLevelIndex >= 81;
+            const isDesert = !isSakura && (currentLevelData.theme === 'desert' || (currentLevelIndex >= 61 && currentLevelIndex <= 80));
+            const isSnow = !isSakura && !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
+            const isNature = !isSakura && !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
 
-            if (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) {
+            if (typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active) {
+                drawCutscene81Scene(scale);
+            } else if (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) {
                 drawCutscene61Scene(scale);
+            } else if (isSakura) {
+                // ==========================================
+                // SAKURA BLOSSOM THEME (PAGE 5: JAPAN, MOUNT FUJI, SAKURA TREES & PETALS)
+                // ==========================================
+                const sakuraSky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                sakuraSky.addColorStop(0, '#1e3a8a');   // deep serene spring zenith
+                sakuraSky.addColorStop(0.28, '#3b82f6'); // clear Japanese sky blue
+                sakuraSky.addColorStop(0.62, '#f9a8d4'); // warm cherry blossom pink
+                sakuraSky.addColorStop(0.88, '#fbcfe8'); // soft pastel petal mist
+                sakuraSky.addColorStop(1, '#fef3c7');    // golden sunlit horizon
+                ctx.fillStyle = sakuraSky;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Warm Rising Spring Sun (Hinomaru glow)
+                const sSunX = canvas.width - 230 * scale;
+                const sSunY = 125 * scale;
+                const sSunR = 52 * scale;
+                const sSunHalo = ctx.createRadialGradient(sSunX, sSunY, 8 * scale, sSunX, sSunY, sSunR * 2.6);
+                sSunHalo.addColorStop(0, '#ffffff');
+                sSunHalo.addColorStop(0.3, '#fecdd3');
+                sSunHalo.addColorStop(0.65, 'rgba(244, 114, 182, 0.35)');
+                sSunHalo.addColorStop(1, 'rgba(244, 114, 182, 0)');
+                ctx.fillStyle = sSunHalo;
+                ctx.beginPath();
+                ctx.arc(sSunX, sSunY, sSunR * 2.6, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Soft Drifting Spring Clouds
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.78)';
+                const cloudStep = 380 * scale;
+                const cloudOffset = -(cameraX * 0.04 * scale) % cloudStep;
+                for (let cx = cloudOffset - cloudStep; cx < canvas.width + cloudStep; cx += cloudStep) {
+                    const cy = 95 * scale + Math.sin(cx * 0.01) * 18 * scale;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, 22 * scale, 0, Math.PI * 2);
+                    ctx.arc(cx + 20 * scale, cy - 5 * scale, 18 * scale, 0, Math.PI * 2);
+                    ctx.arc(cx - 18 * scale, cy - 3 * scale, 16 * scale, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Majestic Mount Fuji Silhouette in Parallax
+                const fujiX = canvas.width * 0.45 - (cameraX * 0.025 * scale);
+                const fujiBaseY = 440 * scale;
+                const fujiPeakY = 165 * scale;
+                ctx.save();
+                const fujiGrad = ctx.createLinearGradient(fujiX, fujiPeakY, fujiX, fujiBaseY);
+                fujiGrad.addColorStop(0, '#4f46e5');
+                fujiGrad.addColorStop(0.55, '#818cf8');
+                fujiGrad.addColorStop(1, 'rgba(244, 114, 182, 0.25)');
+                ctx.fillStyle = fujiGrad;
+                ctx.beginPath();
+                ctx.moveTo(fujiX - 360 * scale, fujiBaseY);
+                ctx.quadraticCurveTo(fujiX - 110 * scale, fujiPeakY + 55 * scale, fujiX - 34 * scale, fujiPeakY);
+                ctx.lineTo(fujiX + 34 * scale, fujiPeakY);
+                ctx.quadraticCurveTo(fujiX + 110 * scale, fujiPeakY + 55 * scale, fujiX + 360 * scale, fujiBaseY);
+                ctx.closePath();
+                ctx.fill();
+
+                // Mount Fuji Snow Crown
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(fujiX - 34 * scale, fujiPeakY);
+                ctx.lineTo(fujiX + 34 * scale, fujiPeakY);
+                ctx.lineTo(fujiX + 82 * scale, fujiPeakY + 90 * scale);
+                ctx.lineTo(fujiX + 28 * scale, fujiPeakY + 68 * scale);
+                ctx.lineTo(fujiX, fujiPeakY + 95 * scale);
+                ctx.lineTo(fujiX - 28 * scale, fujiPeakY + 68 * scale);
+                ctx.lineTo(fujiX - 82 * scale, fujiPeakY + 90 * scale);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+
+                // Distant Rolling Cherry-Blossom Hills (Parallax 2)
+                ctx.save();
+                ctx.fillStyle = 'rgba(131, 24, 67, 0.28)';
+                ctx.beginPath();
+                ctx.moveTo(0, canvas.height);
+                const hillStep = 320 * scale;
+                const hillOffset = -(cameraX * 0.1 * scale) % hillStep;
+                for (let hx = hillOffset - hillStep; hx < canvas.width + hillStep * 2; hx += hillStep) {
+                    ctx.quadraticCurveTo(hx + hillStep * 0.5, 345 * scale, hx + hillStep, 415 * scale);
+                }
+                ctx.lineTo(canvas.width, canvas.height);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+
+                // Parallax Background Blossoming Sakura Trees Everywhere along the Horizon
+                ctx.save();
+                const bgTreeStep = 210 * scale;
+                const bgTreeOffset = -(cameraX * 0.22 * scale) % bgTreeStep;
+                const horizonY = (currentLevelData.groundY - cameraY) * scale;
+                for (let tx = bgTreeOffset - bgTreeStep; tx < canvas.width + bgTreeStep; tx += bgTreeStep) {
+                    // Tree trunk
+                    ctx.fillStyle = 'rgba(69, 26, 3, 0.65)';
+                    ctx.fillRect(tx - 5 * scale, horizonY - 105 * scale, 10 * scale, 105 * scale);
+                    // Pink sakura blossom canopy
+                    ctx.fillStyle = 'rgba(244, 114, 182, 0.72)';
+                    ctx.beginPath();
+                    ctx.arc(tx, horizonY - 118 * scale, 42 * scale, 0, Math.PI * 2);
+                    ctx.arc(tx - 28 * scale, horizonY - 102 * scale, 30 * scale, 0, Math.PI * 2);
+                    ctx.arc(tx + 28 * scale, horizonY - 102 * scale, 30 * scale, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = 'rgba(251, 207, 232, 0.8)';
+                    ctx.beginPath();
+                    ctx.arc(tx, horizonY - 125 * scale, 28 * scale, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+
+                // Ambient Falling Sakura Petals Everywhere
+                drawAmbientSakura(scale);
+
             } else if (isDesert) {
                 // ==========================================
                 // DESERT THEME: SUN-BAKED VIBRANT SKY, BLAZING SUN & CANYON MESAS
@@ -29990,15 +31550,19 @@
             }
         }
 
-        const isDesert = currentLevelData.theme === 'desert' || currentLevelIndex >= 61;
-        const isSnow = !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
-        const isNature = !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
+        const isSakura = currentLevelData.theme === 'sakura' || currentLevelIndex >= 81;
+        const isDesert = !isSakura && (currentLevelData.theme === 'desert' || (currentLevelIndex >= 61 && currentLevelIndex <= 80));
+        const isSnow = !isSakura && !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
+        const isNature = !isSakura && !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
 
         // --- RENDER LEVEL PLATFORMS & OBSTACLES ---
-        if (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) {
-            // Cutscene 61 rendered its split border world
+        if ((typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) ||
+            (typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active)) {
+            // Cutscene 61 / 81 rendered its custom world scene
         } else {
-            if (isSnow && currentLevelData.chasms) {
+            if (isSakura && currentLevelData.chasms) {
+                drawSakuraChasms(scale);
+            } else if (isSnow && currentLevelData.chasms) {
                 drawSnowChasms(scale);
             } else if (isNature && currentLevelData.chasms) {
                 drawNatureChasms(scale);
@@ -30010,7 +31574,33 @@
                 const drawW = plat.w * scale;
                 const drawH = plat.h * scale;
 
-                if (isDesert) {
+                if (isSakura) {
+                    // Japanese Stone-Paved & Mossy Garden Ground Platform with Fallen Sakura Petals
+                    const stoneGrad = ctx.createLinearGradient(0, drawY, 0, drawY + drawH);
+                    stoneGrad.addColorStop(0, '#334155');
+                    stoneGrad.addColorStop(0.25, '#1e293b');
+                    stoneGrad.addColorStop(1, '#0f172a');
+                    ctx.fillStyle = stoneGrad;
+                    ctx.fillRect(drawX, drawY, drawW, drawH);
+
+                    // Top flagstone & mossy grass border
+                    ctx.fillStyle = '#22c55e';
+                    ctx.fillRect(drawX, drawY, drawW, 7 * scale);
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.fillRect(drawX, drawY + 7 * scale, drawW, 4 * scale);
+
+                    // Carpet of fallen pink sakura petals along the ground
+                    const petalStep = 26;
+                    const visMin = Math.max(plat.x, Math.floor((cameraX - 50) / petalStep) * petalStep);
+                    const visMax = Math.min(plat.x + plat.w, Math.ceil((cameraX + canvas.width / scale + 50) / petalStep) * petalStep);
+                    for (let wx = visMin; wx <= visMax; wx += petalStep) {
+                        const gx = (wx - cameraX) * scale;
+                        ctx.fillStyle = (wx % 52 === 0) ? '#fbcfe8' : '#f472b6';
+                        ctx.beginPath();
+                        ctx.ellipse(gx, drawY + 2.5 * scale, 4.5 * scale, 2 * scale, 0.15, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                } else if (isDesert) {
                     // Desert Golden Sand Platform with wind ripples & sandstone base
                     const sandGrad = ctx.createLinearGradient(0, drawY, 0, drawY + drawH);
                     sandGrad.addColorStop(0, '#d97706');
@@ -30151,9 +31741,13 @@
         });
         }
 
-        // Box / Stone Obstacles / Desert Buildings
+        // Box / Stone Obstacles / Desert Buildings / Japanese Buildings & Shrines
         currentLevelData.boxes.forEach(box => {
-            if (isDesert || box.isDesertBuilding) {
+            if (box.isSakuraShrine) {
+                drawSakuraShrine(box, scale);
+            } else if (isSakura || box.isSakuraBuilding) {
+                drawSakuraBuilding(box, scale);
+            } else if (isDesert || box.isDesertBuilding) {
                 drawDesertBuilding(box, scale);
             } else if (isSnow || box.isSnow) {
                 drawSnowRock(box, scale);
@@ -30195,7 +31789,9 @@
         // Render Ladders
         if (currentLevelData.ladders) {
             currentLevelData.ladders.forEach(lad => {
-                if (isDesert || lad.isDesertLadder) {
+                if (isSakura || lad.isSakuraLadder) {
+                    drawSakuraLadder(lad, scale);
+                } else if (isDesert || lad.isDesertLadder) {
                     drawDesertLadder(lad, scale);
                 } else if (isSnow || lad.isSnowBranchLadder) {
                     drawSnowDryBranchLadder(lad, scale);
@@ -30242,10 +31838,12 @@
             });
         }
 
-        // Render Turniks / Trees / Bare Branches
+        // Render Turniks / Trees / Bare Branches / Sakura Branches
         if (currentLevelData.turniks) {
             currentLevelData.turniks.forEach(tur => {
-                if (isSnow || tur.isBareTree) {
+                if (isSakura || tur.isSakuraTree) {
+                    drawSakuraTreeTurnik(tur, scale);
+                } else if (isSnow || tur.isBareTree) {
                     drawSnowDryBranchTurnik(tur, scale);
                 } else if (isNature || tur.isTree) {
                     drawNatureTree(tur, scale);
@@ -30288,10 +31886,12 @@
             });
         }
 
-        // Render Ropes / Vines / Dry Hanging Branches
+        // Render Ropes / Vines / Dry Hanging Branches / Shrine Lantern Ropes
         if (currentLevelData.ropes) {
             currentLevelData.ropes.forEach(rope => {
-                if (isSnow || rope.isDryHangingBranch) {
+                if (isSakura || rope.isSakuraRope) {
+                    drawSakuraRope(rope, scale);
+                } else if (isSnow || rope.isDryHangingBranch) {
                     drawSnowDryHangingBranch(rope, scale);
                 } else if (isNature || rope.isVine) {
                     drawNatureVine(rope, scale);
@@ -30368,10 +31968,14 @@
             drawSnowCave(currentLevelData.cave, scale);
         }
 
-        // Render Cacti (Desert Biome)
+        // Render Cacti (Desert Biome) / Bamboo Spikes (Sakura Biome)
         if (currentLevelData.cacti) {
             currentLevelData.cacti.forEach(cactus => {
-                drawDesertCactus(cactus, scale);
+                if (isSakura || cactus.isBambooSpikes) {
+                    drawSakuraHazard(cactus, scale);
+                } else {
+                    drawDesertCactus(cactus, scale);
+                }
             });
         }
 
@@ -30384,7 +31988,9 @@
 
         // Finish Flag
         if (currentLevelData.flag) {
-            if (isDesert || currentLevelData.flag.isDesertFlag) {
+            if (isSakura || currentLevelData.flag.isSakuraFlag) {
+                drawSakuraFlag(currentLevelData.flag, scale);
+            } else if (isDesert || currentLevelData.flag.isDesertFlag) {
                 drawDesertFlag(currentLevelData.flag, scale);
             } else if (isSnow || currentLevelData.flag.isSnowFlag) {
                 drawSnowFlag(currentLevelData.flag, scale);
@@ -31179,6 +32785,199 @@
         ctx.lineTo(rightFoot.x * scale, rightFoot.y * scale);
         ctx.stroke();
 
+        // --- TRADITIONAL JAPANESE SAMURAI CLOTHING & WAIST KATANA (PAGE 5: ЦВЕТЕНИЕ САКУРЫ) ---
+        if (player.hasSamuraiOutfit) {
+            ctx.save();
+            const hX = hip.x * scale;
+            const hY = hip.y * scale;
+            const sX = shoulder.x * scale;
+            const sY = shoulder.y * scale;
+            const hdX = head.x * scale;
+            const hdY = head.y * scale - 4 * scale;
+
+            // 1. Traditional Pleated Hakama (Wide Samurai Trousers over upper/lower legs)
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 9.5 * scale;
+            ctx.lineCap = 'butt';
+            ctx.beginPath();
+            ctx.moveTo(hX, hY);
+            ctx.lineTo(leftKnee.x * scale, leftKnee.y * scale);
+            ctx.moveTo(hX, hY);
+            ctx.lineTo(rightKnee.x * scale, rightKnee.y * scale);
+            ctx.stroke();
+
+            // Hakama vertical fold pleats highlight
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 1.8 * scale;
+            ctx.beginPath();
+            ctx.moveTo(hX - 2 * scale, hY);
+            ctx.lineTo(leftKnee.x * scale - 2 * scale, leftKnee.y * scale);
+            ctx.moveTo(hX + 2 * scale, hY);
+            ctx.lineTo(rightKnee.x * scale + 2 * scale, rightKnee.y * scale);
+            ctx.stroke();
+
+            // White Tabi Socks & Waraji Sandals on feet
+            [leftFoot, rightFoot].forEach(ft => {
+                ctx.fillStyle = '#f8fafc';
+                ctx.beginPath();
+                ctx.ellipse(ft.x * scale + facing * 2 * scale, ft.y * scale - 1.5 * scale, 5 * scale, 2.5 * scale, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#b45309';
+                ctx.lineWidth = 1.5 * scale;
+                ctx.stroke();
+            });
+
+            // 2. Kimono & Haori Jacket (Torso & Wide Sleeves)
+            const torsoAngle = Math.atan2(hY - sY, hX - sX);
+            const perpX = Math.cos(torsoAngle - Math.PI / 2);
+            const perpY = Math.sin(torsoAngle - Math.PI / 2);
+
+            // Haori Coat Body (Deep Samurai Indigo with Crimson lining)
+            ctx.fillStyle = '#1e1b4b';
+            ctx.strokeStyle = '#dc2626';
+            ctx.lineWidth = 1.8 * scale;
+            ctx.beginPath();
+            ctx.moveTo(sX - perpX * 8 * scale, sY - perpY * 8 * scale);
+            ctx.lineTo(sX + perpX * 8 * scale, sY + perpY * 8 * scale);
+            ctx.lineTo(hX + perpX * 10 * scale, hY + perpY * 10 * scale + 4 * scale);
+            ctx.lineTo(hX - perpX * 10 * scale, hY - perpY * 10 * scale + 4 * scale);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Crisp White Juban V-Collar (Eri) at chest/neck
+            ctx.strokeStyle = '#f8fafc';
+            ctx.lineWidth = 2.6 * scale;
+            ctx.beginPath();
+            ctx.moveTo(sX - facing * 4 * scale, sY);
+            ctx.lineTo(sX + facing * 3 * scale, (sY + hY) * 0.5);
+            ctx.lineTo(sX + facing * 5 * scale, sY);
+            ctx.stroke();
+
+            // Wide Haori Sleeves along the upper arms
+            [leftHand, rightHand].forEach(hand => {
+                const midArmX = sX + (hand.x * scale - sX) * 0.65;
+                const midArmY = sY + (hand.y * scale - sY) * 0.65;
+                ctx.strokeStyle = '#312e81';
+                ctx.lineWidth = 8.5 * scale;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(sX, sY);
+                ctx.lineTo(midArmX, midArmY);
+                ctx.stroke();
+
+                // Crimson sleeve cuff trim
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 2.2 * scale;
+                ctx.beginPath();
+                ctx.moveTo(midArmX, midArmY - 3.5 * scale);
+                ctx.lineTo(midArmX, midArmY + 3.5 * scale);
+                ctx.stroke();
+            });
+
+            // 3. Crimson & Gold Brocade Obi Sash around the Waist (в области талии)
+            ctx.fillStyle = '#dc2626';
+            ctx.beginPath();
+            ctx.roundRect(hX - 10 * scale, hY - 4.5 * scale, 20 * scale, 9 * scale, 3 * scale);
+            ctx.fill();
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 2 * scale;
+            ctx.beginPath();
+            ctx.moveTo(hX - 9 * scale, hY);
+            ctx.lineTo(hX + 9 * scale, hY);
+            ctx.stroke();
+
+            // 4. Crimson Hachimaki Headband with fluttering tails
+            const hbWave = Math.sin(Date.now() * 0.012 + player.x * 0.08) * 4 * scale;
+            ctx.strokeStyle = '#dc2626';
+            ctx.lineWidth = 3.5 * scale;
+            ctx.beginPath();
+            ctx.moveTo(hdX - 9 * scale, hdY - 2 * scale);
+            ctx.lineTo(hdX + 9 * scale, hdY - 2 * scale);
+            ctx.stroke();
+
+            // Fluttering headband ribbons trailing behind the head
+            ctx.lineWidth = 2.5 * scale;
+            ctx.beginPath();
+            ctx.moveTo(hdX - facing * 8 * scale, hdY - 2 * scale);
+            ctx.quadraticCurveTo(hdX - facing * 17 * scale, hdY - 5 * scale + hbWave, hdX - facing * 24 * scale, hdY - 1 * scale + hbWave);
+            ctx.moveTo(hdX - facing * 8 * scale, hdY - 1 * scale);
+            ctx.quadraticCurveTo(hdX - facing * 15 * scale, hdY + 3 * scale - hbWave * 0.6, hdX - facing * 21 * scale, hdY + 6 * scale - hbWave * 0.6);
+            ctx.stroke();
+
+            // Golden sun disk emblem on forehead headband
+            ctx.fillStyle = '#fbbf24';
+            ctx.beginPath();
+            ctx.arc(hdX + facing * 6 * scale, hdY - 2 * scale, 2.5 * scale, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 5. KATANA AT THE WAIST (Катана в области талии в ножнах с гардой и рукоятью)
+            ctx.save();
+            ctx.translate(hX, hY + 1 * scale);
+            // Slight dynamic tilt as the player runs/jumps
+            const katanaTilt = facing * (-0.22 + Math.sin(time * 2.5) * 0.04);
+            ctx.rotate(katanaTilt);
+
+            // Curved Black & Crimson Lacquered Scabbard (Saya) extending behind the waist
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 4.8 * scale;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(facing * 3 * scale, 0);
+            ctx.quadraticCurveTo(-facing * 12 * scale, 3 * scale, -facing * 28 * scale, 7 * scale);
+            ctx.stroke();
+
+            // Inner crimson lacquer sheen along scabbard
+            ctx.strokeStyle = '#b91c1c';
+            ctx.lineWidth = 2 * scale;
+            ctx.beginPath();
+            ctx.moveTo(facing * 2 * scale, 0);
+            ctx.quadraticCurveTo(-facing * 12 * scale, 3 * scale, -facing * 26 * scale, 6.5 * scale);
+            ctx.stroke();
+
+            // Golden Kojiri (scabbard tip cap) & Sageo cord knot
+            ctx.fillStyle = '#fbbf24';
+            ctx.beginPath();
+            ctx.arc(-facing * 28 * scale, 7 * scale, 2.4 * scale, 0, Math.PI * 2);
+            ctx.arc(-facing * 6 * scale, 1.5 * scale, 2.5 * scale, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Ornate Golden Handguard (Tsuba) at the waist
+            ctx.fillStyle = '#fbbf24';
+            ctx.strokeStyle = '#78350f';
+            ctx.lineWidth = 1.2 * scale;
+            ctx.beginPath();
+            ctx.ellipse(facing * 4 * scale, -0.5 * scale, 2.5 * scale, 6.5 * scale, facing * 0.2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Wrapped Katana Hilt (Tsuka) extending forward from the Tsuba
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 4.2 * scale;
+            ctx.beginPath();
+            ctx.moveTo(facing * 5 * scale, -1 * scale);
+            ctx.lineTo(facing * 17 * scale, -4.5 * scale);
+            ctx.stroke();
+
+            // Crimson Silk Diamond Wrap (Tsuka-ito) & Golden Kashira Pommel
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 2.2 * scale;
+            ctx.setLineDash([2.2 * scale, 2.2 * scale]);
+            ctx.beginPath();
+            ctx.moveTo(facing * 6 * scale, -1.2 * scale);
+            ctx.lineTo(facing * 16 * scale, -4.2 * scale);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#fbbf24';
+            ctx.beginPath();
+            ctx.arc(facing * 17.5 * scale, -4.6 * scale, 2.3 * scale, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+            ctx.restore();
+        }
+
         // Draw Prominent, Clearly Visible Gripping Hands & Knuckles
         if (player.state === 'ROPE') {
             // Both hands visibly gripping the rope/liana knot with knuckles and clasping finger wraps
@@ -31384,10 +33183,13 @@
 
     // Game loop
     function gameLoop() {
-        const isDesert = currentLevelData.theme === 'desert' || currentLevelIndex >= 61;
-        const isSnow = !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
-        const isNature = !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
-        if (isDesert) {
+        const isSakura = currentLevelData.theme === 'sakura' || currentLevelIndex >= 81;
+        const isDesert = !isSakura && (currentLevelData.theme === 'desert' || (currentLevelIndex >= 61 && currentLevelIndex <= 80));
+        const isSnow = !isSakura && !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
+        const isNature = !isSakura && !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
+        if (isSakura) {
+            updateAmbientSakura();
+        } else if (isDesert) {
             updateAmbientSand();
         } else if (isSnow) {
             updateAmbientSnow();
@@ -31401,7 +33203,9 @@
             updateParticles();
             updateCamera();
         } else if (currentState === STATES.CUTSCENE) {
-            if (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) {
+            if (typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active) {
+                updateCutsceneIntro81();
+            } else if (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) {
                 updateCutsceneIntro61();
             } else if (cutsceneIntro21 && cutsceneIntro21.active) {
                 updateCutsceneIntro21();
@@ -31423,7 +33227,8 @@
                 updateCutscene();
             }
             updateParticles();
-            if (!((typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) ||
+            if (!((typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active) ||
+                  (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) ||
                   (typeof mummyIntroCutscene !== 'undefined' && mummyIntroCutscene && mummyIntroCutscene.active) ||
                   (typeof mummyDefeatCutscene !== 'undefined' && mummyDefeatCutscene && mummyDefeatCutscene.active) ||
                   (typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene && yetiIntroCutscene.active) || 
@@ -31498,7 +33303,10 @@
         victoryScreen.classList.add('hidden');
 
         const nextLevelNum = currentLevelIndex + 1;
-        if (nextLevelNum > 60) {
+        if (nextLevelNum > 80) {
+            currentSelectPage = 5;
+            generateLevelsGrid();
+        } else if (nextLevelNum > 60) {
             currentSelectPage = 4;
             generateLevelsGrid();
         } else if (nextLevelNum > 40) {
@@ -31550,7 +33358,13 @@
 
         triggerFadeTransition(() => {
             player.reset();
-            if (currentLevelIndex >= 61) {
+            if (currentLevelIndex >= 81) {
+                currentSelectPage = 5;
+                generateLevelsGrid();
+                levelSelectScreen.classList.remove('hidden');
+                levelSelectScreen.classList.add('screen-active');
+                currentState = STATES.LEVEL_SELECT;
+            } else if (currentLevelIndex >= 61) {
                 currentSelectPage = 4;
                 generateLevelsGrid();
                 levelSelectScreen.classList.remove('hidden');
@@ -31607,7 +33421,9 @@
 
             triggerFadeTransition(() => {
                 player.reset();
-                if (currentLevelIndex >= 61) {
+                if (currentLevelIndex >= 81) {
+                    currentSelectPage = 5;
+                } else if (currentLevelIndex >= 61) {
                     currentSelectPage = 4;
                 } else if (currentLevelIndex >= 41) {
                     currentSelectPage = 3;
@@ -31646,7 +33462,9 @@
 
             triggerFadeTransition(() => {
                 player.reset();
-                if (currentLevelIndex >= 61) {
+                if (currentLevelIndex >= 81) {
+                    currentSelectPage = 5;
+                } else if (currentLevelIndex >= 61) {
                     currentSelectPage = 4;
                 } else if (currentLevelIndex >= 41) {
                     currentSelectPage = 3;
