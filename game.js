@@ -56,6 +56,7 @@
     const ctrlTurnik = document.getElementById('ctrlTurnik');
     const ctrlRope = document.getElementById('ctrlRope');
     const ctrlLadder = document.getElementById('ctrlLadder');
+    const ctrlKatana = document.getElementById('ctrlKatana');
     const inventoryHud = document.getElementById('inventoryHud');
     const coldHud = document.getElementById('coldHud');
     const coldIcon = document.getElementById('coldIcon');
@@ -698,6 +699,92 @@
                 bladeGain.connect(audioCtx.destination);
                 bladeOsc.start(now + 0.35);
                 bladeOsc.stop(now + 0.98);
+            } else if (type === 'katanaSlash') {
+                // Crisp steel katana draw & high-speed air slice
+                const bufferSize = Math.floor(audioCtx.sampleRate * 0.18);
+                const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = noiseBuffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.35));
+                }
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = noiseBuffer;
+
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(2600, now);
+                filter.frequency.exponentialRampToValueAtTime(650, now + 0.16);
+                filter.Q.value = 1.6;
+
+                const noiseGain = audioCtx.createGain();
+                noiseGain.gain.setValueAtTime(0.36, now);
+                noiseGain.gain.exponentialRampToValueAtTime(0.005, now + 0.17);
+
+                noise.connect(filter);
+                filter.connect(noiseGain);
+                noiseGain.connect(audioCtx.destination);
+                noise.start(now);
+
+                // Ringing metallic steel edge shimmer
+                const steelOsc = audioCtx.createOscillator();
+                const steelGain = audioCtx.createGain();
+                steelOsc.type = 'triangle';
+                steelOsc.frequency.setValueAtTime(1950, now);
+                steelOsc.frequency.exponentialRampToValueAtTime(3400, now + 0.05);
+                steelOsc.frequency.exponentialRampToValueAtTime(1250, now + 0.18);
+                steelGain.gain.setValueAtTime(0.14, now);
+                steelGain.gain.exponentialRampToValueAtTime(0.003, now + 0.19);
+                steelOsc.connect(steelGain);
+                steelGain.connect(audioCtx.destination);
+                steelOsc.start(now);
+                steelOsc.stop(now + 0.2);
+            } else if (type === 'bambooCut') {
+                // Hollow bamboo cleave snap + wooden resonance
+                const popOsc = audioCtx.createOscillator();
+                const popGain = audioCtx.createGain();
+                popOsc.type = 'triangle';
+                popOsc.frequency.setValueAtTime(520, now);
+                popOsc.frequency.exponentialRampToValueAtTime(145, now + 0.11);
+                popGain.gain.setValueAtTime(0.45, now);
+                popGain.gain.exponentialRampToValueAtTime(0.005, now + 0.13);
+                popOsc.connect(popGain);
+                popGain.connect(audioCtx.destination);
+                popOsc.start(now);
+                popOsc.stop(now + 0.14);
+
+                // Secondary hollow knock resonance
+                const knockOsc = audioCtx.createOscillator();
+                const knockGain = audioCtx.createGain();
+                knockOsc.type = 'sine';
+                knockOsc.frequency.setValueAtTime(840, now + 0.03);
+                knockOsc.frequency.exponentialRampToValueAtTime(310, now + 0.17);
+                knockGain.gain.setValueAtTime(0.24, now + 0.03);
+                knockGain.gain.exponentialRampToValueAtTime(0.004, now + 0.18);
+                knockOsc.connect(knockGain);
+                knockGain.connect(audioCtx.destination);
+                knockOsc.start(now + 0.03);
+                knockOsc.stop(now + 0.19);
+
+                // Crisp wood splinter / leaf burst noise
+                const bufLen = Math.floor(audioCtx.sampleRate * 0.16);
+                const buf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
+                const ch = buf.getChannelData(0);
+                for (let i = 0; i < bufLen; i++) {
+                    ch[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufLen * 0.28));
+                }
+                const src = audioCtx.createBufferSource();
+                src.buffer = buf;
+                const bp = audioCtx.createBiquadFilter();
+                bp.type = 'bandpass';
+                bp.frequency.setValueAtTime(1400, now);
+                bp.Q.value = 1.2;
+                const ng = audioCtx.createGain();
+                ng.gain.setValueAtTime(0.28, now);
+                ng.gain.exponentialRampToValueAtTime(0.005, now + 0.15);
+                src.connect(bp);
+                bp.connect(ng);
+                ng.connect(audioCtx.destination);
+                src.start(now);
             }
         } catch (e) {
             console.error(e);
@@ -914,7 +1001,8 @@
         }
     });
 
-    canvas.addEventListener('pointerdown', () => {
+    canvas.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
         initAudio();
         if (currentState === STATES.PLAYING && player.state !== 'DEFEAT') {
             if (currentLevelIndex === 60 && typeof yeti !== 'undefined' && yeti.active) {
@@ -925,6 +1013,8 @@
                 } else {
                     playerPunch();
                 }
+            } else if (player.hasSamuraiOutfit || (currentLevelData && currentLevelData.theme === 'sakura') || currentLevelIndex >= 81) {
+                playerKatanaSlash();
             } else {
                 playerPunch();
             }
@@ -958,7 +1048,7 @@
     let unlockedPage2Levels = 40; // 2nd Page: levels 21 to 40 unlocked!
     let unlockedPage3Levels = 60; // 3rd Page (Вечный холод): levels 41 to 60 unlocked!
     let unlockedPage4Levels = 80; // 4th Page (Исохшая земля): levels 61-80 unlocked (Boss Level 80)!
-    let unlockedPage5Levels = 81; // 5th Page (Цветение сакуры): level 81+ unlocked!
+    let unlockedPage5Levels = 99; // 5th Page (Цветение сакуры): levels 81-99 unlocked!
     let currentSelectPage = 1;    // 1: Building (1-20), 2: Nature (21-40), 3: Eternal Cold (41-60), 4: Dried Earth (61-80), 5: Sakura Blossom (81-100)
     let currentLevelIndex = 1;
 
@@ -17487,9 +17577,437 @@
                 { id: "s81_hz9", x: 9490, y: 250, w: 40, h: 50, isBambooSpikes: true },
                 { id: "s81_hz10", x: 10830, y: 280, w: 38, h: 48, isBambooSpikes: true }
             ],
+            bamboos: [
+                // Full-height impassable bamboo thickets — can ONLY be passed by slicing with the katana (LMB)!
+                { id: "s81_bam1", x: 360, y: 540, w: 46 },
+                { id: "s81_bam2", x: 1500, y: 310, w: 46 },
+                { id: "s81_bam3", x: 2910, y: 190, w: 48 },
+                { id: "s81_bam4", x: 4470, y: 290, w: 46 },
+                { id: "s81_bam5", x: 6530, y: 270, w: 48 },
+                { id: "s81_bam6", x: 8730, y: 260, w: 48 },
+                { id: "s81_bam7", x: 11240, y: 200, w: 52 }
+            ],
             flag: { x: 11420, y: 200, poleHeight: 115, bannerW: 46, bannerH: 32, isSakuraFlag: true }
         }
     };
+
+    // --- PROCEDURAL CURATED BUILDER FOR PAGE 5 SAKURA LEVELS (82-99) ---
+    (function populateSakuraLevels82To99() {
+        const SAKURA_LEVEL_SPECS = [
+            {
+                id: 82, title: "Уровень 82: Бамбуковая тропа",
+                startBamboo: true, spikeChance: 0.36, doubleBambooDistricts: [1, 3],
+                chasmPattern: ['single_turnik', 'double_rope', 'single_turnik', 'double_rope'],
+                styleOrder: ['machiya', 'torii', 'teahouse', 'honden', 'pagoda']
+            },
+            {
+                id: 83, title: "Уровень 83: Крыши старого Киото",
+                startBamboo: false, spikeChance: 0.40, doubleBambooDistricts: [0, 2, 4],
+                chasmPattern: ['double_rope', 'single_turnik', 'double_rope', 'single_turnik'],
+                styleOrder: ['machiya', 'teahouse', 'machiya', 'castle', 'honden']
+            },
+            {
+                id: 84, title: "Уровень 84: Сад красных торий",
+                startBamboo: true, spikeChance: 0.42, doubleBambooDistricts: [1, 3],
+                chasmPattern: ['single_turnik', 'double_rope', 'single_turnik', 'double_rope', 'single_turnik'],
+                styleOrder: ['torii', 'honden', 'torii', 'pagoda', 'teahouse']
+            },
+            {
+                id: 85, title: "Уровень 85: Лепестки на ветру",
+                startBamboo: true, spikeChance: 0.44, doubleBambooDistricts: [2, 4],
+                chasmPattern: ['single_turnik', 'double_turnik', 'double_rope', 'double_turnik', 'single_turnik'],
+                styleOrder: ['pagoda', 'teahouse', 'torii', 'pagoda', 'castle']
+            },
+            {
+                id: 86, title: "Уровень 86: Улица бумажных фонарей",
+                startBamboo: false, spikeChance: 0.46, doubleBambooDistricts: [1, 3, 4],
+                chasmPattern: ['double_rope', 'triple_rope', 'single_turnik', 'triple_rope', 'double_rope'],
+                styleOrder: ['teahouse', 'machiya', 'honden', 'teahouse', 'castle']
+            },
+            {
+                id: 87, title: "Уровень 87: Путь клинка",
+                startBamboo: true, spikeChance: 0.46, doubleBambooDistricts: [0, 1, 2, 3, 4],
+                chasmPattern: ['single_turnik', 'hybrid_branch_rope', 'double_rope', 'double_turnik', 'single_turnik'],
+                styleOrder: ['torii', 'castle', 'honden', 'pagoda', 'machiya']
+            },
+            {
+                id: 88, title: "Уровень 88: Чайная терраса",
+                startBamboo: true, spikeChance: 0.50, doubleBambooDistricts: [1, 3, 5],
+                chasmPattern: ['double_rope', 'single_turnik', 'hybrid_branch_rope', 'double_rope', 'double_turnik'],
+                styleOrder: ['teahouse', 'machiya', 'teahouse', 'pagoda', 'honden']
+            },
+            {
+                id: 89, title: "Уровень 89: Долина пагод",
+                startBamboo: false, spikeChance: 0.52, doubleBambooDistricts: [0, 2, 4],
+                chasmPattern: ['double_turnik', 'double_rope', 'double_turnik', 'triple_rope', 'single_turnik', 'hybrid_branch_rope'],
+                styleOrder: ['pagoda', 'honden', 'pagoda', 'torii', 'pagoda']
+            },
+            {
+                id: 90, title: "Уровень 90: Крепость Сёгуна",
+                startBamboo: true, spikeChance: 0.54, doubleBambooDistricts: [1, 2, 4, 5],
+                chasmPattern: ['single_turnik', 'hybrid_branch_rope', 'double_turnik', 'triple_rope', 'hybrid_branch_rope', 'double_turnik'],
+                styleOrder: ['castle', 'torii', 'castle', 'pagoda', 'honden']
+            },
+            {
+                id: 91, title: "Уровень 91: Священный пруд",
+                startBamboo: true, spikeChance: 0.54, doubleBambooDistricts: [0, 3, 5],
+                chasmPattern: ['double_rope', 'double_turnik', 'triple_rope', 'double_turnik', 'triple_rope', 'double_rope'],
+                styleOrder: ['torii', 'teahouse', 'honden', 'machiya', 'pagoda']
+            },
+            {
+                id: 92, title: "Уровень 92: Роща тысячи стеблей",
+                startBamboo: true, spikeChance: 0.52, doubleBambooDistricts: [0, 1, 2, 3, 4, 5],
+                chasmPattern: ['single_turnik', 'double_rope', 'hybrid_branch_rope', 'double_turnik', 'double_rope', 'hybrid_branch_rope'],
+                styleOrder: ['machiya', 'torii', 'honden', 'teahouse', 'castle']
+            },
+            {
+                id: 93, title: "Уровень 93: Храм утренней росы",
+                startBamboo: false, spikeChance: 0.56, doubleBambooDistricts: [1, 2, 4, 5],
+                chasmPattern: ['hybrid_branch_rope', 'double_turnik', 'triple_rope', 'single_turnik', 'hybrid_branch_rope', 'triple_rope'],
+                styleOrder: ['honden', 'pagoda', 'torii', 'honden', 'teahouse']
+            },
+            {
+                id: 94, title: "Уровень 94: Небесные крыши Эдо",
+                startBamboo: true, spikeChance: 0.58, doubleBambooDistricts: [0, 2, 4, 6],
+                chasmPattern: ['double_turnik', 'triple_rope', 'hybrid_branch_rope', 'double_turnik', 'double_rope', 'hybrid_branch_rope', 'double_turnik'],
+                styleOrder: ['castle', 'pagoda', 'machiya', 'castle', 'teahouse']
+            },
+            {
+                id: 95, title: "Уровень 95: Танец катаны",
+                startBamboo: true, spikeChance: 0.60, doubleBambooDistricts: [0, 1, 3, 4, 6],
+                chasmPattern: ['hybrid_branch_rope', 'double_turnik', 'triple_rope', 'hybrid_branch_rope', 'double_turnik', 'triple_rope', 'hybrid_branch_rope'],
+                styleOrder: ['torii', 'castle', 'pagoda', 'honden', 'castle']
+            },
+            {
+                id: 96, title: "Уровень 96: Забытое святилище",
+                startBamboo: false, spikeChance: 0.62, doubleBambooDistricts: [1, 2, 3, 5, 6],
+                chasmPattern: ['double_rope', 'double_turnik', 'triple_rope', 'double_turnik', 'hybrid_branch_rope', 'triple_rope', 'double_turnik'],
+                styleOrder: ['honden', 'torii', 'pagoda', 'honden', 'machiya']
+            },
+            {
+                id: 97, title: "Уровень 97: Цитадель сакуры",
+                startBamboo: true, spikeChance: 0.64, doubleBambooDistricts: [0, 1, 2, 4, 5, 6],
+                chasmPattern: ['double_turnik', 'hybrid_branch_rope', 'triple_rope', 'double_turnik', 'triple_rope', 'hybrid_branch_rope', 'double_turnik'],
+                styleOrder: ['castle', 'pagoda', 'castle', 'honden', 'torii']
+            },
+            {
+                id: 98, title: "Уровень 98: Испытание мастера",
+                startBamboo: true, spikeChance: 0.66, doubleBambooDistricts: [0, 1, 2, 4, 5, 6, 7],
+                chasmPattern: ['hybrid_branch_rope', 'double_turnik', 'triple_rope', 'hybrid_branch_rope', 'double_turnik', 'triple_rope', 'hybrid_branch_rope', 'double_turnik'],
+                styleOrder: ['pagoda', 'castle', 'torii', 'pagoda', 'honden']
+            },
+            {
+                id: 99, title: "Уровень 99: Врата Великого Святилища",
+                startBamboo: true, spikeChance: 0.68, doubleBambooDistricts: [0, 1, 2, 3, 4, 5, 6, 7],
+                chasmPattern: ['double_turnik', 'triple_rope', 'hybrid_branch_rope', 'double_turnik', 'triple_rope', 'hybrid_branch_rope', 'triple_rope', 'double_turnik'],
+                styleOrder: ['torii', 'pagoda', 'castle', 'honden', 'pagoda']
+            }
+        ];
+
+        const SHRINE_STYLES = new Set(['torii', 'honden', 'pagoda']);
+
+        function makeRng(seed) {
+            let s = (seed * 2654435761) >>> 0;
+            return function () {
+                s = (s * 1664525 + 1013904223) >>> 0;
+                return s / 4294967296;
+            };
+        }
+
+        function randInt(rng, min, max) {
+            return Math.floor(rng() * (max - min + 1)) + min;
+        }
+
+        SAKURA_LEVEL_SPECS.forEach((spec) => {
+            const lvl = spec.id;
+            const diff = (lvl - 81) / 18; // 0.055 .. 1.0
+            const rng = makeRng(lvl * 97 + 1337);
+            const groundY = 540;
+            const prefix = `s${lvl}`;
+
+            const chasms = [];
+            const boxes = [];
+            const ladders = [];
+            const turniks = [];
+            const ropes = [];
+            const cacti = [];
+            const bamboos = [];
+
+            let boxIdx = 1;
+            let ladIdx = 1;
+            let turIdx = 1;
+            let ropIdx = 1;
+            let hzIdx = 1;
+            let bamIdx = 1;
+
+            let cursorX = spec.startBamboo ? 460 : 420;
+            if (spec.startBamboo) {
+                bamboos.push({ id: `${prefix}_bam${bamIdx++}`, x: 355, y: groundY, w: 46 });
+            }
+
+            const totalDistricts = spec.chasmPattern.length + 1;
+            let styleCursor = 0;
+
+            for (let d = 0; d < totalDistricts; d++) {
+                const isFinalDistrict = (d === totalDistricts - 1);
+                const buildingsInDistrict = isFinalDistrict ? 3 : (d % 2 === 0 ? 4 : (rng() < 0.45 ? 5 : 4));
+                const districtBoxes = [];
+
+                // Choose which building indices in this district carry impassable bamboo walls
+                const wantsDoubleBamboo = spec.doubleBambooDistricts.includes(d);
+                const bambooSlots = new Set();
+                if (!isFinalDistrict) {
+                    if (wantsDoubleBamboo && buildingsInDistrict >= 4) {
+                        bambooSlots.add(1);
+                        bambooSlots.add(buildingsInDistrict - 1);
+                    } else {
+                        bambooSlots.add(buildingsInDistrict - 1 - (d % 2 === 1 && buildingsInDistrict >= 4 ? 1 : 0));
+                    }
+                } else {
+                    // Final district always has a bamboo gate guarding the finish shrine (plus optional earlier one on tough levels)
+                    if (lvl >= 90) bambooSlots.add(0);
+                }
+
+                let prevY = 365;
+                for (let b = 0; b < buildingsInDistrict; b++) {
+                    const isFinalShrine = isFinalDistrict && (b === buildingsInDistrict - 1);
+                    const hasBambooHere = bambooSlots.has(b) || isFinalShrine;
+
+                    // Pick architectural style
+                    let style = spec.styleOrder[styleCursor % spec.styleOrder.length];
+                    styleCursor++;
+                    if (isFinalShrine) style = (lvl === 99) ? 'honden' : (lvl % 2 === 0 ? 'honden' : 'pagoda');
+
+                    // Determine width & height (all buildings extend cleanly to groundY = 540)
+                    let w;
+                    let y;
+                    if (isFinalShrine) {
+                        w = 480;
+                        y = randInt(rng, 190, 225);
+                    } else if (b === 0) {
+                        w = hasBambooHere ? randInt(rng, 240, 270) : randInt(rng, 210, 250);
+                        y = randInt(rng, 340, 385);
+                    } else {
+                        w = hasBambooHere ? randInt(rng, 245, 285) : randInt(rng, 210, 275);
+                        // Create dramatic stepped ascending/descending silhouette (always jumpable!)
+                        const peakIndex = Math.floor(buildingsInDistrict * 0.6);
+                        if (b <= peakIndex) {
+                            const climbStep = randInt(rng, 55, 95);
+                            y = Math.max(170, prevY - climbStep);
+                        } else {
+                            const dropStep = randInt(rng, 35, 85);
+                            y = Math.min(325, prevY + dropStep);
+                        }
+                    }
+
+                    // Ensure step-up from previous building never exceeds 105px (single jump = 161px)
+                    if (b > 0 && prevY - y > 102) {
+                        y = prevY - 102;
+                    }
+
+                    const boxObj = {
+                        id: `${prefix}_b${boxIdx++}`,
+                        x: cursorX,
+                        y: y,
+                        w: w,
+                        h: groundY - y
+                    };
+                    if (SHRINE_STYLES.has(style)) {
+                        boxObj.isSakuraShrine = true;
+                        boxObj.shrineStyle = style;
+                    } else {
+                        boxObj.isSakuraBuilding = true;
+                        boxObj.buildingStyle = style;
+                    }
+                    boxes.push(boxObj);
+                    districtBoxes.push(boxObj);
+
+                    // Attach a Bamboo Ladder to the 2nd building (or tall building) for easy recovery & climbing
+                    let hasLadderHere = false;
+                    if (b === 1 && y <= 325) {
+                        ladders.push({
+                            id: `${prefix}_lad${ladIdx++}`,
+                            x: boxObj.x + 15,
+                            topY: boxObj.y,
+                            bottomY: groundY,
+                            w: 42,
+                            isSakuraLadder: true
+                        });
+                        hasLadderHere = true;
+                    }
+
+                    // Place Bamboo Wall (impassable until cut with katana)
+                    if (isFinalShrine) {
+                        bamboos.push({
+                            id: `${prefix}_bam${bamIdx++}`,
+                            x: boxObj.x + 170,
+                            y: boxObj.y,
+                            w: 52
+                        });
+                    } else if (hasBambooHere) {
+                        // Safe offset away from ladder dismount (box.x + 50) and edges
+                        const minOffset = hasLadderHere ? 128 : 95;
+                        const maxOffset = boxObj.w - 82;
+                        const bamOffset = Math.max(minOffset, Math.min(maxOffset, Math.round(boxObj.w * 0.56)));
+                        bamboos.push({
+                            id: `${prefix}_bam${bamIdx++}`,
+                            x: boxObj.x + bamOffset,
+                            y: boxObj.y,
+                            w: 46 + (lvl >= 92 ? 2 : 0)
+                        });
+                    } else if (b > 0 && boxObj.w >= 215 && rng() < spec.spikeChance) {
+                        // Place sharpened bamboo spikes ONLY on roofs without bamboo walls & clear of ladder dismount
+                        const spikeOffset = hasLadderHere
+                            ? Math.max(135, boxObj.w - 75)
+                            : Math.round(boxObj.w * (0.45 + rng() * 0.14));
+                        cacti.push({
+                            id: `${prefix}_hz${hzIdx++}`,
+                            x: boxObj.x + spikeOffset,
+                            y: boxObj.y,
+                            w: 38,
+                            h: 48 + (lvl >= 90 ? 2 : 0),
+                            isBambooSpikes: true
+                        });
+                    }
+
+                    prevY = y;
+
+                    if (b < buildingsInDistrict - 1) {
+                        const gap = randInt(rng, Math.round(78 + diff * 18), Math.round(108 + diff * 22));
+                        cursorX += w + gap;
+                    } else {
+                        cursorX += w;
+                    }
+                }
+
+                // If not the final district, build the Chasm Crossing (Turniks / Lantern Ropes)
+                if (!isFinalDistrict) {
+                    const chasmType = spec.chasmPattern[d];
+                    const chasmStartX = cursorX + 28;
+                    let chasmWidth = 500;
+
+                    if (chasmType === 'single_turnik') {
+                        chasmWidth = randInt(rng, 430, 470);
+                        const midX = chasmStartX + Math.round(chasmWidth * 0.5);
+                        turniks.push({
+                            id: `${prefix}_tur${turIdx++}`,
+                            x: midX,
+                            y: randInt(rng, 195, 222),
+                            boxBottomY: groundY,
+                            length: 95,
+                            isSakuraTree: true
+                        });
+                    } else if (chasmType === 'double_turnik') {
+                        chasmWidth = randInt(rng, 680, 725);
+                        const t1X = chasmStartX + 205;
+                        const t2X = chasmStartX + chasmWidth - 205;
+                        turniks.push({
+                            id: `${prefix}_tur${turIdx++}`,
+                            x: t1X,
+                            y: randInt(rng, 210, 228),
+                            boxBottomY: groundY,
+                            length: 95,
+                            isSakuraTree: true
+                        });
+                        turniks.push({
+                            id: `${prefix}_tur${turIdx++}`,
+                            x: t2X,
+                            y: randInt(rng, 188, 212),
+                            boxBottomY: groundY,
+                            length: 95,
+                            isSakuraTree: true
+                        });
+                    } else if (chasmType === 'double_rope') {
+                        chasmWidth = randInt(rng, 580, 625);
+                        const r1X = chasmStartX + 180;
+                        const r2X = chasmStartX + chasmWidth - 180;
+                        ropes.push({
+                            id: `${prefix}_rop${ropIdx++}`,
+                            x: r1X,
+                            anchorY: 70,
+                            length: 185,
+                            isSakuraRope: true
+                        });
+                        ropes.push({
+                            id: `${prefix}_rop${ropIdx++}`,
+                            x: r2X,
+                            anchorY: 70,
+                            length: 185,
+                            isSakuraRope: true
+                        });
+                    } else if (chasmType === 'triple_rope') {
+                        chasmWidth = randInt(rng, 825, 865);
+                        const r1X = chasmStartX + 175;
+                        const r2X = chasmStartX + Math.round(chasmWidth * 0.5);
+                        const r3X = chasmStartX + chasmWidth - 175;
+                        [r1X, r2X, r3X].forEach((rx, idx) => {
+                            ropes.push({
+                                id: `${prefix}_rop${ropIdx++}`,
+                                x: rx,
+                                anchorY: 68 + (idx % 2) * 6,
+                                length: 184,
+                                isSakuraRope: true
+                            });
+                        });
+                    } else if (chasmType === 'hybrid_branch_rope') {
+                        chasmWidth = randInt(rng, 720, 760);
+                        const tX = chasmStartX + 215;
+                        const rX = chasmStartX + chasmWidth - 195;
+                        turniks.push({
+                            id: `${prefix}_tur${turIdx++}`,
+                            x: tX,
+                            y: randInt(rng, 200, 220),
+                            boxBottomY: groundY,
+                            length: 95,
+                            isSakuraTree: true
+                        });
+                        ropes.push({
+                            id: `${prefix}_rop${ropIdx++}`,
+                            x: rX,
+                            anchorY: 70,
+                            length: 185,
+                            isSakuraRope: true
+                        });
+                    }
+
+                    const chasmEndX = chasmStartX + chasmWidth;
+                    chasms.push({ startX: chasmStartX, endX: chasmEndX });
+                    cursorX = chasmEndX + 34;
+                }
+            }
+
+            const lastBox = boxes[boxes.length - 1];
+            const worldWidth = lastBox.x + lastBox.w + 340;
+
+            levelsData[lvl] = {
+                id: lvl,
+                title: spec.title,
+                theme: "sakura",
+                hasThirst: false,
+                worldWidth: worldWidth,
+                groundY: groundY,
+                playerStartX: 200,
+                platforms: [
+                    { x: 0, y: groundY, w: worldWidth, h: 200 }
+                ],
+                chasms: chasms,
+                boxes: boxes,
+                ladders: ladders,
+                turniks: turniks,
+                ropes: ropes,
+                cacti: cacti,
+                bamboos: bamboos,
+                flag: {
+                    x: lastBox.x + 365,
+                    y: lastBox.y,
+                    poleHeight: 115,
+                    bannerW: 46,
+                    bannerH: 32,
+                    isSakuraFlag: true
+                }
+            };
+        });
+    })();
 
     let currentLevelData = levelsData[1];
 
@@ -17547,6 +18065,9 @@
             } else {
                 ctrlLadder.innerHTML = '<span>E</span> Лестница';
             }
+        }
+        if (ctrlKatana) {
+            ctrlKatana.style.display = isSakura ? 'block' : 'none';
         }
 
         if (inventoryHud) {
@@ -24610,6 +25131,307 @@
         ctx.restore();
     }
 
+    // --- SAKURA BAMBOO OBSTACLE & WORKING KATANA SYSTEM (LEVEL 81+) ---
+    function resetBamboos() {
+        if (!currentLevelData || !currentLevelData.bamboos) return;
+        currentLevelData.bamboos.forEach(bam => {
+            bam.isCut = false;
+            bam.cutTimer = 0;
+            bam.cutY = bam.y - 46;
+            bam.cutDir = 1;
+            bam.fallX = 0;
+            bam.fallY = 0;
+            bam.fallVx = 0;
+            bam.fallVy = 0;
+            bam.fallAngle = 0;
+            bam.fallAngVel = 0;
+            bam.alpha = 1;
+        });
+    }
+
+    function playerKatanaSlash() {
+        if (player.state === 'DEFEAT' || player.state === 'VICTORY' || player.state === 'VICTORY_IDLE' || currentState !== STATES.PLAYING) return;
+        if (['HANG', 'CLIMB', 'LADDER', 'TURNIK', 'TURNIK_SWING', 'ROPE', 'FREEZE'].includes(player.state)) return;
+        if (player.katanaCooldown && player.katanaCooldown > 0) return;
+
+        player.katanaSlashTimer = 0.24;
+        player.katanaCooldown = 0.28;
+        player.katanaCombo = (player.katanaCombo === 1) ? -1 : 1;
+        playSound('katanaSlash');
+
+        // Spawn swift silver-sakura wind sparks along the slash arc
+        for (let i = 0; i < 6; i++) {
+            const ang = (-0.9 + (i / 5) * 1.8) * player.katanaCombo;
+            particles.push({
+                x: player.x + player.facing * (26 + Math.cos(ang) * 28),
+                y: player.y - 44 + Math.sin(ang) * 28,
+                vx: player.facing * (2.2 + Math.random() * 2.8),
+                vy: (Math.random() - 0.5) * 2.2,
+                size: 2.2 + Math.random() * 2.2,
+                color: Math.random() < 0.55 ? '#ffffff' : '#f9a8d4',
+                life: 0.28,
+                decay: 0.04
+            });
+        }
+
+        checkKatanaBambooHits();
+    }
+
+    function checkKatanaBambooHits() {
+        if (!currentLevelData || !currentLevelData.bamboos) return;
+        currentLevelData.bamboos.forEach(bam => {
+            if (bam.isCut) return;
+            const halfW = (bam.w || 46) * 0.5;
+            const dx = (bam.x - player.x) * player.facing;
+            // Must be facing the bamboo within katana blade reach, and at/above the bamboo's base level
+            const inHorizontalReach = (dx >= -25 && dx <= 108 + halfW);
+            const inVerticalReach = (player.y <= bam.y + 28 && player.y - player.height >= -350);
+
+            if (inHorizontalReach && inVerticalReach) {
+                bam.isCut = true;
+                bam.cutTimer = 0;
+                bam.cutDir = player.facing;
+                bam.cutY = Math.min(bam.y - 24, Math.max(bam.y - 125, player.y - 40));
+                bam.fallX = 0;
+                bam.fallY = 0;
+                bam.fallVx = player.facing * 2.8;
+                bam.fallVy = -1.6;
+                bam.fallAngle = 0;
+                bam.fallAngVel = player.facing * 0.026;
+                bam.alpha = 1;
+
+                playSound('bambooCut');
+                screenShake = Math.max(screenShake, 7);
+
+                // Burst of bamboo splinters, emerald leaves & sakura petals at the slice line
+                for (let p = 0; p < 22; p++) {
+                    const isPetal = Math.random() < 0.25;
+                    particles.push({
+                        x: bam.x + (Math.random() - 0.5) * (bam.w || 46),
+                        y: bam.cutY + (Math.random() - 0.5) * 18,
+                        vx: player.facing * (1.8 + Math.random() * 5.2) + (Math.random() - 0.5) * 2.4,
+                        vy: -(1.5 + Math.random() * 4.8),
+                        size: isPetal ? (3 + Math.random() * 2.5) : (2.5 + Math.random() * 3.8),
+                        color: isPetal ? '#f9a8d4' : (Math.random() < 0.45 ? '#4ade80' : (Math.random() < 0.6 ? '#16a34a' : '#fef08a')),
+                        life: 0.65 + Math.random() * 0.35,
+                        decay: 0.024
+                    });
+                }
+            }
+        });
+    }
+
+    function updateSakuraBamboos() {
+        if (!currentLevelData || !currentLevelData.bamboos) return;
+        currentLevelData.bamboos.forEach(bam => {
+            if (!bam.isCut) return;
+            bam.cutTimer = (bam.cutTimer || 0) + 0.016;
+            if (bam.alpha <= 0) return;
+
+            if (bam.cutTimer < 0.07) {
+                // Classic samurai iaijutsu clean diagonal slide right after the cleave
+                bam.fallX += bam.cutDir * 1.1;
+                bam.fallY += 0.45;
+            } else {
+                bam.fallVy += 0.38;
+                bam.fallX += bam.fallVx;
+                bam.fallY += bam.fallVy;
+                bam.fallAngle += bam.fallAngVel;
+                if (bam.cutTimer > 0.38) {
+                    bam.alpha = Math.max(0, bam.alpha - 0.032);
+                }
+            }
+        });
+    }
+
+    function drawSakuraBamboo(bam, scale) {
+        const drawX = (bam.x - cameraX) * scale;
+        const baseY = (bam.y - cameraY) * scale;
+        const w = (bam.w || 46) * scale;
+        const topWorldY = -350;
+        const topY = (topWorldY - cameraY) * scale;
+
+        if (drawX + w * 2.5 < -140 || drawX - w * 2.5 > canvas.width + 140) return;
+
+        // 4 dense bamboo stalks forming an impassable thicket
+        const stalks = [
+            { ox: -0.34, thick: 11, main: '#15803d', light: '#4ade80', dark: '#14532d', sway: 0.8 },
+            { ox: -0.11, thick: 13, main: '#16a34a', light: '#86efac', dark: '#166534', sway: -0.6 },
+            { ox: 0.13, thick: 12, main: '#15803d', light: '#4ade80', dark: '#14532d', sway: 0.9 },
+            { ox: 0.35, thick: 10.5, main: '#22c55e', light: '#bbf7d0', dark: '#15803d', sway: -0.7 }
+        ];
+
+        const drawBambooCluster = (yStart, yEnd, includeCutBevel, bevelAtTop) => {
+            const segH = 38 * scale;
+            const time = Date.now() * 0.0022;
+
+            stalks.forEach((st, idx) => {
+                const sx = drawX + st.ox * w;
+                const stW = st.thick * scale;
+                const halfStW = stW * 0.5;
+                const slant = (bam.cutDir || 1) * 5 * scale;
+
+                // Stalk body gradient
+                const grad = ctx.createLinearGradient(sx - halfStW, 0, sx + halfStW, 0);
+                grad.addColorStop(0, st.dark);
+                grad.addColorStop(0.35, st.main);
+                grad.addColorStop(0.68, st.light);
+                grad.addColorStop(1, st.dark);
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                if (includeCutBevel && bevelAtTop) {
+                    ctx.moveTo(sx - halfStW, yStart + slant);
+                    ctx.lineTo(sx + halfStW, yStart - slant);
+                    ctx.lineTo(sx + halfStW, yEnd);
+                    ctx.lineTo(sx - halfStW, yEnd);
+                } else if (includeCutBevel && !bevelAtTop) {
+                    ctx.moveTo(sx - halfStW, yStart);
+                    ctx.lineTo(sx + halfStW, yStart);
+                    ctx.lineTo(sx + halfStW, yEnd - slant);
+                    ctx.lineTo(sx - halfStW, yEnd + slant);
+                } else {
+                    ctx.rect(sx - halfStW, yStart, stW, yEnd - yStart);
+                }
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.strokeStyle = '#052e16';
+                ctx.lineWidth = 1.2 * scale;
+                ctx.stroke();
+
+                // Bamboo internode rings & swaying bamboo leaves
+                const firstNode = yEnd - ((yEnd - yStart) % segH) + segH * 0.5;
+                for (let ny = yEnd - (18 + (idx % 2) * 14) * scale; ny > yStart + 10 * scale; ny -= segH) {
+                    // Pale cream/dark bamboo joint ring
+                    ctx.strokeStyle = '#052e16';
+                    ctx.lineWidth = 2.4 * scale;
+                    ctx.beginPath();
+                    ctx.moveTo(sx - halfStW - 1 * scale, ny);
+                    ctx.lineTo(sx + halfStW + 1 * scale, ny);
+                    ctx.stroke();
+
+                    ctx.strokeStyle = '#dcfce7';
+                    ctx.lineWidth = 1.3 * scale;
+                    ctx.beginPath();
+                    ctx.moveTo(sx - halfStW, ny - 1.5 * scale);
+                    ctx.lineTo(sx + halfStW, ny - 1.5 * scale);
+                    ctx.stroke();
+
+                    // Sprouting bamboo leaves on alternating nodes above player head
+                    if (((Math.round(ny / segH) + idx) % 2 === 0) && ny < baseY - 68 * scale) {
+                        const leafSide = (idx % 2 === 0) ? -1 : 1;
+                        const leafSway = Math.sin(time + idx + ny * 0.01) * 0.14;
+                        ctx.save();
+                        ctx.translate(sx + leafSide * halfStW, ny);
+                        ctx.rotate(leafSide * 0.55 + leafSway);
+                        ctx.fillStyle = idx % 2 === 0 ? '#16a34a' : '#22c55e';
+                        ctx.beginPath();
+                        ctx.ellipse(leafSide * 12 * scale, -2 * scale, 13 * scale, 3.6 * scale, leafSide * -0.25, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#4ade80';
+                        ctx.beginPath();
+                        ctx.ellipse(leafSide * 10 * scale, 4 * scale, 10 * scale, 2.8 * scale, leafSide * 0.25, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                    }
+                }
+
+                // Fresh pale hollow bamboo cut bevel surface
+                if (includeCutBevel) {
+                    const cutEdgeY = bevelAtTop ? yStart : yEnd;
+                    ctx.fillStyle = '#fef08a';
+                    ctx.strokeStyle = '#65a30d';
+                    ctx.lineWidth = 1.4 * scale;
+                    ctx.beginPath();
+                    ctx.ellipse(sx, cutEdgeY, halfStW * 1.04, 3.8 * scale, -(bam.cutDir || 1) * 0.35, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+                    // Hollow core
+                    ctx.fillStyle = '#a3e635';
+                    ctx.beginPath();
+                    ctx.ellipse(sx, cutEdgeY, halfStW * 0.52, 1.8 * scale, -(bam.cutDir || 1) * 0.35, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+        };
+
+        ctx.save();
+        // Ground/roof shadow under the bamboo thicket
+        ctx.fillStyle = 'rgba(2, 6, 23, 0.35)';
+        ctx.beginPath();
+        ctx.ellipse(drawX, baseY + 1 * scale, w * 0.62, 5 * scale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (!bam.isCut) {
+            // Intact full-height bamboo wall
+            drawBambooCluster(topY, baseY, false, false);
+
+            // Traditional crimson binding cord near base
+            ctx.fillStyle = '#b91c1c';
+            ctx.fillRect(drawX - w * 0.5, baseY - 22 * scale, w, 6 * scale);
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 1.4 * scale;
+            ctx.strokeRect(drawX - w * 0.5, baseY - 22 * scale, w, 6 * scale);
+
+            // Subtle shimmering diagonal katana cut-guide when the player approaches
+            const distToPlayer = Math.abs(player.x - bam.x);
+            if (distToPlayer < 210 && player.y <= bam.y + 30) {
+                const pulse = 0.45 + 0.45 * Math.sin(Date.now() * 0.01);
+                const markY = baseY - 46 * scale;
+                ctx.save();
+                ctx.strokeStyle = `rgba(254, 240, 138, ${pulse})`;
+                ctx.shadowColor = '#f472b6';
+                ctx.shadowBlur = 10 * scale;
+                ctx.lineWidth = 2.6 * scale;
+                ctx.setLineDash([6 * scale, 4 * scale]);
+                ctx.beginPath();
+                ctx.moveTo(drawX - w * 0.62, markY + 14 * scale);
+                ctx.lineTo(drawX + w * 0.62, markY - 14 * scale);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.restore();
+            }
+        } else {
+            const cutScreenY = ((bam.cutY || (bam.y - 46)) - cameraY) * scale;
+
+            // 1. Stationary freshly-sliced bottom stumps
+            drawBambooCluster(cutScreenY, baseY, true, true);
+
+            // Crimson binding cord remains around stumps
+            ctx.fillStyle = '#b91c1c';
+            ctx.fillRect(drawX - w * 0.5, baseY - 22 * scale, w, 6 * scale);
+
+            // 2. Toppling severed upper bamboo section
+            if ((bam.alpha || 0) > 0.01) {
+                ctx.save();
+                ctx.globalAlpha = bam.alpha;
+                ctx.translate(drawX + (bam.fallX || 0) * scale, cutScreenY + (bam.fallY || 0) * scale);
+                ctx.rotate(bam.fallAngle || 0);
+                ctx.translate(-drawX, -cutScreenY);
+                drawBambooCluster(topY, cutScreenY, true, false);
+                ctx.restore();
+            }
+
+            // 3. Crisp bright samurai cleave flash line right on cut impact
+            if ((bam.cutTimer || 0) < 0.16) {
+                const flashAlpha = 1 - (bam.cutTimer / 0.16);
+                ctx.save();
+                ctx.strokeStyle = `rgba(255, 255, 255, ${flashAlpha})`;
+                ctx.shadowColor = '#f472b6';
+                ctx.shadowBlur = 16 * scale;
+                ctx.lineWidth = (5.5 * flashAlpha) * scale;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(drawX - w * 1.1, cutScreenY + 24 * scale * (bam.cutDir || 1));
+                ctx.lineTo(drawX + w * 1.1, cutScreenY - 24 * scale * (bam.cutDir || 1));
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+        ctx.restore();
+    }
+
     // ==========================================
     // --- LEVEL 60: BOSS YETI SYSTEM ---
     // ==========================================
@@ -29599,6 +30421,9 @@
         maxHealth: 100,
         damageCooldown: 0,
         punchTimer: 0,
+        katanaSlashTimer: 0,
+        katanaCooldown: 0,
+        katanaCombo: 1,
         thirst: 100,
         animTime: 0,
         victoryTimer: 0,
@@ -29650,9 +30475,14 @@
             this.maxHealth = 100;
             this.damageCooldown = 0;
             this.punchTimer = 0;
+            this.katanaSlashTimer = 0;
+            this.katanaCooldown = 0;
+            this.katanaCombo = 1;
             this.thirst = 100;
             cameraX = 0;
             cameraY = 0;
+
+            resetBamboos();
 
             if (currentLevelData && currentLevelData.cave) {
                 currentLevelData.cave.isLit = false;
@@ -29961,7 +30791,11 @@
                     unlockedPage5Levels = Math.max(unlockedPage5Levels, Math.min(100, nextLevelNum));
                     generateLevelsGrid();
                     if (victorySubtext) {
-                        victorySubtext.textContent = `Безупречный путь самурая! Уровень ${currentLevelIndex} среди цветущей сакуры и святилищ пройден!`;
+                        if (currentLevelIndex === 99) {
+                            victorySubtext.textContent = 'НЕВЕРОЯТНО! Все 99 уровней пройдены! Вы достигли Врат Великого Святилища Сакуры!';
+                        } else {
+                            victorySubtext.textContent = `Безупречный путь самурая! Уровень ${currentLevelIndex} среди цветущей сакуры и святилищ пройден!`;
+                        }
                     }
                 } else if (currentLevelIndex >= 61) {
                     unlockedPage4Levels = Math.max(unlockedPage4Levels, Math.min(80, nextLevelNum));
@@ -30292,8 +31126,23 @@
                     }, 2400);
                     return;
                 }
-            } else if (player.state !== 'HANG' && player.state !== 'CLIMB') {
-                ledgeHint.classList.add('hidden');
+            } else {
+                // Check if player is near an uncut Bamboo Wall (Sakura Biome / Level 81+)
+                let nearBamboo = null;
+                if (currentLevelData && currentLevelData.bamboos && currentState === STATES.PLAYING && player.state !== 'DEFEAT') {
+                    for (const bam of currentLevelData.bamboos) {
+                        if (!bam.isCut && Math.abs(player.x - bam.x) < 145 && player.y <= bam.y + 30) {
+                            nearBamboo = bam;
+                            break;
+                        }
+                    }
+                }
+                if (nearBamboo && player.state !== 'HANG' && player.state !== 'CLIMB') {
+                    ledgeHint.innerHTML = '<span class="hint-key">ЛКМ</span> Нажмите ЛКМ, чтобы разрубить бамбук катаной!';
+                    ledgeHint.classList.remove('hidden');
+                } else if (player.state !== 'HANG' && player.state !== 'CLIMB') {
+                    ledgeHint.classList.add('hidden');
+                }
             }
         }
 
@@ -30668,6 +31517,33 @@
             }
         }
 
+        // --- SAKURA BAMBOO SOLID BARRIER COLLISIONS (Impassable until sliced with Katana!) ---
+        if (currentLevelData.bamboos) {
+            for (const bam of currentLevelData.bamboos) {
+                if (bam.isCut) continue;
+                const halfW = (bam.w || 46) * 0.5;
+                const bamLeft = bam.x - halfW;
+                const bamRight = bam.x + halfW;
+                const bamTop = -350; // Extends sky-high so player cannot jump over it
+                const bamBottom = bam.y;
+
+                const pTop = nextY - player.height;
+                const pBottom = nextY;
+
+                if (pBottom > bamTop && pTop < bamBottom) {
+                    if (player.x <= bam.x && nextX + 14 > bamLeft) {
+                        nextX = bamLeft - 14;
+                        if (player.vx > 0) player.vx = 0;
+                        if (player.state === 'DASH') player.dashTimer = 0;
+                    } else if (player.x > bam.x && nextX - 14 < bamRight) {
+                        nextX = bamRight + 14;
+                        if (player.vx < 0) player.vx = 0;
+                        if (player.state === 'DASH') player.dashTimer = 0;
+                    }
+                }
+            }
+        }
+
         // Level 40: Golem Living Wall & Non-Lethal Pushback
         if (currentLevelIndex === 40 && (golem.active || (typeof golemIntroCutscene !== 'undefined' && golemIntroCutscene && golemIntroCutscene.active)) && !golem.isFallen) {
             const gLeft = golem.x - 72;
@@ -30859,6 +31735,16 @@
         if (player.punchTimer > 0) {
             player.punchTimer = Math.max(0, player.punchTimer - 0.016);
         }
+        if (player.katanaSlashTimer > 0) {
+            player.katanaSlashTimer = Math.max(0, player.katanaSlashTimer - 0.016);
+            if (player.katanaSlashTimer > 0.08) {
+                checkKatanaBambooHits();
+            }
+        }
+        if (player.katanaCooldown > 0) {
+            player.katanaCooldown = Math.max(0, player.katanaCooldown - 0.016);
+        }
+        updateSakuraBamboos();
 
         // Cactus / Bamboo Spikes Collision Check (Desert & Sakura Biomes)
         if (currentLevelData.cacti && player.damageCooldown <= 0 && player.state !== 'DEFEAT' && player.state !== 'VICTORY' && player.state !== 'VICTORY_IDLE' && currentState === STATES.PLAYING) {
@@ -31979,6 +32865,13 @@
             });
         }
 
+        // Render Tall Cuttable Bamboo Barriers (Sakura Biome / Level 81+)
+        if (currentLevelData.bamboos && !(typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active)) {
+            currentLevelData.bamboos.forEach(bam => {
+                drawSakuraBamboo(bam, scale);
+            });
+        }
+
         // Render Desert Wells (Oasis Water)
         if (currentLevelData.wells) {
             currentLevelData.wells.forEach(well => {
@@ -32748,6 +33641,33 @@
             ctx.restore();
         }
 
+        // Dynamic Samurai Katana Slash Pose Overlay (LMB katana strike in Sakura biome)
+        const isKatanaSlashing = !!(player.hasSamuraiOutfit && player.katanaSlashTimer && player.katanaSlashTimer > 0);
+        let katanaSlashProgress = 0;
+        let katanaSwingAngle = 0;
+        if (isKatanaSlashing) {
+            // 0 -> 1 over the 0.24s slash duration (fast windup & crisp follow-through)
+            katanaSlashProgress = Math.max(0, Math.min(1, 1 - (player.katanaSlashTimer / 0.24)));
+            const easeOut = 1 - Math.pow(1 - katanaSlashProgress, 3);
+            const comboDir = player.katanaCombo || 1; // 1: high-to-low slash, -1: low-to-high reverse slash
+            const startAng = comboDir > 0 ? -2.05 : 1.15;
+            const endAng = comboDir > 0 ? 1.1 : -1.85;
+            katanaSwingAngle = startAng + (endAng - startAng) * easeOut;
+
+            const handReach = 24;
+            rightHand = {
+                x: shoulder.x + facing * Math.cos(katanaSwingAngle) * handReach,
+                y: shoulder.y + Math.sin(katanaSwingAngle) * handReach
+            };
+            // Left hand steadies the empty scabbard at the waist
+            leftHand = {
+                x: hip.x - facing * 4,
+                y: hip.y + 1
+            };
+            shoulder.x += facing * 4 * Math.sin(katanaSlashProgress * Math.PI);
+            head.x += facing * 3 * Math.sin(katanaSlashProgress * Math.PI);
+        }
+
         // Draw Skeleton Lines
         ctx.beginPath();
         ctx.moveTo(hip.x * scale, hip.y * scale);
@@ -32942,39 +33862,139 @@
             ctx.arc(-facing * 6 * scale, 1.5 * scale, 2.5 * scale, 0, Math.PI * 2);
             ctx.fill();
 
-            // Ornate Golden Handguard (Tsuba) at the waist
-            ctx.fillStyle = '#fbbf24';
-            ctx.strokeStyle = '#78350f';
-            ctx.lineWidth = 1.2 * scale;
-            ctx.beginPath();
-            ctx.ellipse(facing * 4 * scale, -0.5 * scale, 2.5 * scale, 6.5 * scale, facing * 0.2, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
+            if (!isKatanaSlashing) {
+                // Ornate Golden Handguard (Tsuba) at the waist (when katana is sheathed)
+                ctx.fillStyle = '#fbbf24';
+                ctx.strokeStyle = '#78350f';
+                ctx.lineWidth = 1.2 * scale;
+                ctx.beginPath();
+                ctx.ellipse(facing * 4 * scale, -0.5 * scale, 2.5 * scale, 6.5 * scale, facing * 0.2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
 
-            // Wrapped Katana Hilt (Tsuka) extending forward from the Tsuba
-            ctx.strokeStyle = '#1e293b';
-            ctx.lineWidth = 4.2 * scale;
-            ctx.beginPath();
-            ctx.moveTo(facing * 5 * scale, -1 * scale);
-            ctx.lineTo(facing * 17 * scale, -4.5 * scale);
-            ctx.stroke();
+                // Wrapped Katana Hilt (Tsuka) extending forward from the Tsuba
+                ctx.strokeStyle = '#1e293b';
+                ctx.lineWidth = 4.2 * scale;
+                ctx.beginPath();
+                ctx.moveTo(facing * 5 * scale, -1 * scale);
+                ctx.lineTo(facing * 17 * scale, -4.5 * scale);
+                ctx.stroke();
 
-            // Crimson Silk Diamond Wrap (Tsuka-ito) & Golden Kashira Pommel
-            ctx.strokeStyle = '#ef4444';
-            ctx.lineWidth = 2.2 * scale;
-            ctx.setLineDash([2.2 * scale, 2.2 * scale]);
-            ctx.beginPath();
-            ctx.moveTo(facing * 6 * scale, -1.2 * scale);
-            ctx.lineTo(facing * 16 * scale, -4.2 * scale);
-            ctx.stroke();
-            ctx.setLineDash([]);
+                // Crimson Silk Diamond Wrap (Tsuka-ito) & Golden Kashira Pommel
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 2.2 * scale;
+                ctx.setLineDash([2.2 * scale, 2.2 * scale]);
+                ctx.beginPath();
+                ctx.moveTo(facing * 6 * scale, -1.2 * scale);
+                ctx.lineTo(facing * 16 * scale, -4.2 * scale);
+                ctx.stroke();
+                ctx.setLineDash([]);
 
-            ctx.fillStyle = '#fbbf24';
-            ctx.beginPath();
-            ctx.arc(facing * 17.5 * scale, -4.6 * scale, 2.3 * scale, 0, Math.PI * 2);
-            ctx.fill();
+                ctx.fillStyle = '#fbbf24';
+                ctx.beginPath();
+                ctx.arc(facing * 17.5 * scale, -4.6 * scale, 2.3 * scale, 0, Math.PI * 2);
+                ctx.fill();
+            }
 
             ctx.restore();
+
+            // 6. UNSHEATHED KATANA IN HAND & LUMINOUS CRESCENT SLASH ARC (when slashing with LMB)
+            if (isKatanaSlashing) {
+                const rhX = rightHand.x * scale;
+                const rhY = rightHand.y * scale;
+                const slashAlpha = Math.sin(katanaSlashProgress * Math.PI);
+                const comboDir = player.katanaCombo || 1;
+
+                // Luminous Crescent Katana Slash Trail sweeping ahead of the player
+                ctx.save();
+                ctx.translate(sX, sY + 4 * scale);
+                if (facing < 0) ctx.scale(-1, 1);
+                const arcRadius = 58 * scale;
+                const arcStart = comboDir > 0 ? -1.45 : -1.25;
+                const arcEnd = comboDir > 0 ? 1.15 : 1.05;
+
+                // Outer Sakura-Pink Glow Crescent
+                ctx.strokeStyle = `rgba(244, 114, 182, ${0.58 * slashAlpha})`;
+                ctx.shadowColor = '#f472b6';
+                ctx.shadowBlur = 14 * scale;
+                ctx.lineWidth = (15 * slashAlpha) * scale;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.arc(4 * scale, 0, arcRadius, arcStart, arcEnd);
+                ctx.stroke();
+
+                // Crisp White-Silver Steel Core Crescent
+                ctx.strokeStyle = `rgba(255, 255, 255, ${0.95 * slashAlpha})`;
+                ctx.shadowColor = '#e0f2fe';
+                ctx.shadowBlur = 8 * scale;
+                ctx.lineWidth = (5.5 * slashAlpha) * scale;
+                ctx.beginPath();
+                ctx.arc(7 * scale, 0, arcRadius + 2 * scale, arcStart + 0.12, arcEnd - 0.12);
+                ctx.stroke();
+                ctx.restore();
+
+                // Drawn Katana Gripped in Right Hand
+                ctx.save();
+                ctx.translate(rhX, rhY);
+                if (facing < 0) ctx.scale(-1, 1);
+                ctx.rotate(katanaSwingAngle);
+
+                // Wrapped Hilt (Tsuka) behind hand
+                ctx.strokeStyle = '#1e293b';
+                ctx.lineWidth = 4 * scale;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(-11 * scale, 0);
+                ctx.lineTo(3 * scale, 0);
+                ctx.stroke();
+
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 2 * scale;
+                ctx.setLineDash([2 * scale, 2 * scale]);
+                ctx.beginPath();
+                ctx.moveTo(-10 * scale, 0);
+                ctx.lineTo(2 * scale, 0);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Golden Pommel & Handguard (Tsuba)
+                ctx.fillStyle = '#fbbf24';
+                ctx.beginPath();
+                ctx.arc(-11.5 * scale, 0, 2.2 * scale, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.strokeStyle = '#78350f';
+                ctx.lineWidth = 1.1 * scale;
+                ctx.beginPath();
+                ctx.ellipse(4 * scale, 0, 2.3 * scale, 6.2 * scale, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Gleaming Curved Steel Katana Blade (Nagasa + Kissaki tip)
+                const bladeGrad = ctx.createLinearGradient(5 * scale, -3 * scale, 54 * scale, 3 * scale);
+                bladeGrad.addColorStop(0, '#cbd5e1');
+                bladeGrad.addColorStop(0.5, '#f8fafc');
+                bladeGrad.addColorStop(1, '#ffffff');
+                ctx.fillStyle = bladeGrad;
+                ctx.shadowColor = '#f9a8d4';
+                ctx.shadowBlur = 6 * scale;
+                ctx.beginPath();
+                ctx.moveTo(5 * scale, -2.2 * scale);
+                ctx.quadraticCurveTo(30 * scale, -3.8 * scale, 54 * scale, -5.2 * scale);
+                ctx.lineTo(50 * scale, 0.4 * scale);
+                ctx.quadraticCurveTo(28 * scale, 0.8 * scale, 5 * scale, 1.8 * scale);
+                ctx.closePath();
+                ctx.fill();
+
+                // Spine shadow ridge (Mune)
+                ctx.strokeStyle = '#64748b';
+                ctx.lineWidth = 1.1 * scale;
+                ctx.beginPath();
+                ctx.moveTo(5 * scale, 1.5 * scale);
+                ctx.quadraticCurveTo(28 * scale, 0.6 * scale, 50 * scale, 0.2 * scale);
+                ctx.stroke();
+                ctx.restore();
+            }
             ctx.restore();
         }
 
