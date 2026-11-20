@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="55%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="lock" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="120" height="120" rx="26" fill="url(#bg)" stroke="#38bdf8" stroke-width="5"/>
+  <!-- Steel bars background -->
+  <g stroke="#334155" stroke-width="5">
+    <line x1="28" y1="14" x2="28" y2="114"/>
+    <line x1="46" y1="14" x2="46" y2="114"/>
+    <line x1="82" y1="14" x2="82" y2="114"/>
+    <line x1="100" y1="14" x2="100" y2="114"/>
+  </g>
+  <!-- Padlock shackle -->
+  <path d="M46 58 V42 A18 18 0 0 1 82 42 V58" fill="none" stroke="#94a3b8" stroke-width="9" stroke-linecap="round"/>
+  <!-- Padlock body -->
+  <rect x="34" y="54" width="60" height="46" rx="11" fill="url(#lock)" stroke="#bae6fd" stroke-width="3"/>
+  <!-- Keyhole -->
+  <circle cx="64" cy="73" r="6.5" fill="#0f172a"/>
+  <path d="M61 77 L59 90 L69 90 L67 77 Z" fill="#0f172a"/>
+</svg>
+

@@ -77,6 +77,39 @@
     const thirstBarFill = document.getElementById('thirstBarFill');
     const thirstStatusText = document.getElementById('thirstStatusText');
     const wellHint = document.getElementById('wellHint');
+    const btnAchievements = document.getElementById('btnAchievements');
+    const btnLevelAchievements = document.getElementById('btnLevelAchievements');
+    const menuAchCount = document.getElementById('menuAchCount');
+    const levelAchCount = document.getElementById('levelAchCount');
+    const achievementsModal = document.getElementById('achievementsModal');
+    const achievementsGrid = document.getElementById('achievementsGrid');
+    const achievementsProgressBadge = document.getElementById('achievementsProgressBadge');
+    const achievementsBarFill = document.getElementById('achievementsBarFill');
+    const achievementsSubtext = document.getElementById('achievementsSubtext');
+    const achievementToastRegion = document.getElementById('achievementToastRegion');
+    const achievementLiveRegion = document.getElementById('achievementLiveRegion');
+    const samuraiSkillsHud = document.getElementById('samuraiSkillsHud');
+    const skillSlots = [
+        null,
+        document.getElementById('skillSlot1'),
+        document.getElementById('skillSlot2'),
+        document.getElementById('skillSlot3'),
+        document.getElementById('skillSlot4')
+    ];
+    const skillCdEls = [
+        null,
+        document.getElementById('skillCd1'),
+        document.getElementById('skillCd2'),
+        document.getElementById('skillCd3'),
+        document.getElementById('skillCd4')
+    ];
+    const skillCdTextEls = [
+        null,
+        document.getElementById('skillCdText1'),
+        document.getElementById('skillCdText2'),
+        document.getElementById('skillCdText3'),
+        document.getElementById('skillCdText4')
+    ];
 
     // Sound Engine (Web Audio API)
     let audioCtx = null;
@@ -785,6 +818,114 @@
                 bp.connect(ng);
                 ng.connect(audioCtx.destination);
                 src.start(now);
+            } else if (type === 'achievementUnlock') {
+                // Bright celebratory golden fanfare chime
+                const chimeNotes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+                chimeNotes.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    const t0 = now + idx * 0.075;
+                    osc.type = idx === chimeNotes.length - 1 ? 'triangle' : 'sine';
+                    osc.frequency.setValueAtTime(freq, t0);
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.setValueAtTime(0.24, t0);
+                    gain.gain.exponentialRampToValueAtTime(0.005, t0 + (idx === chimeNotes.length - 1 ? 0.55 : 0.32));
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(t0);
+                    osc.stop(t0 + 0.58);
+                });
+            } else if (type === 'katanaClash') {
+                // Sharp ringing steel-on-steel samurai parry/draw clang
+                [1680, 2540, 3890].forEach((f, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = idx === 0 ? 'sawtooth' : 'triangle';
+                    osc.frequency.setValueAtTime(f, now);
+                    osc.frequency.exponentialRampToValueAtTime(f * 0.72, now + 0.34);
+                    gain.gain.setValueAtTime(idx === 0 ? 0.24 : 0.16, now);
+                    gain.gain.exponentialRampToValueAtTime(0.003, now + 0.36);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.38);
+                });
+            } else if (type === 'hellSlash') {
+                // Massive hellfire blade wave launch
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(290, now);
+                osc.frequency.exponentialRampToValueAtTime(62, now + 0.42);
+                gain.gain.setValueAtTime(0.38, now);
+                gain.gain.exponentialRampToValueAtTime(0.006, now + 0.44);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.45);
+                const bufLen = Math.floor(audioCtx.sampleRate * 0.38);
+                const buf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
+                const ch = buf.getChannelData(0);
+                for (let i = 0; i < bufLen; i++) ch[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufLen * 0.42));
+                const src = audioCtx.createBufferSource();
+                src.buffer = buf;
+                const bp = audioCtx.createBiquadFilter();
+                bp.type = 'bandpass';
+                bp.frequency.setValueAtTime(1100, now);
+                bp.frequency.exponentialRampToValueAtTime(320, now + 0.36);
+                const ng = audioCtx.createGain();
+                ng.gain.setValueAtTime(0.34, now);
+                ng.gain.exponentialRampToValueAtTime(0.005, now + 0.37);
+                src.connect(bp);
+                bp.connect(ng);
+                ng.connect(audioCtx.destination);
+                src.start(now);
+            } else if (type === 'fireVortex') {
+                // Swirling ring of fire whoosh
+                const bufLen = Math.floor(audioCtx.sampleRate * 0.5);
+                const buf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
+                const ch = buf.getChannelData(0);
+                for (let i = 0; i < bufLen; i++) ch[i] = (Math.random() * 2 - 1) * Math.sin((i / bufLen) * Math.PI);
+                const src = audioCtx.createBufferSource();
+                src.buffer = buf;
+                const bp = audioCtx.createBiquadFilter();
+                bp.type = 'bandpass';
+                bp.frequency.setValueAtTime(420, now);
+                bp.frequency.exponentialRampToValueAtTime(980, now + 0.25);
+                bp.frequency.exponentialRampToValueAtTime(350, now + 0.48);
+                const ng = audioCtx.createGain();
+                ng.gain.setValueAtTime(0.32, now);
+                ng.gain.exponentialRampToValueAtTime(0.006, now + 0.5);
+                src.connect(bp);
+                bp.connect(ng);
+                ng.connect(audioCtx.destination);
+                src.start(now);
+            } else if (type === 'earthFire') {
+                // Blade plunge & volcanic fire eruption
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(135, now);
+                osc.frequency.exponentialRampToValueAtTime(36, now + 0.52);
+                gain.gain.setValueAtTime(0.45, now);
+                gain.gain.exponentialRampToValueAtTime(0.006, now + 0.54);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.55);
+            } else if (type === 'kickImpact') {
+                // Heavy martial arts kick thump
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(195, now);
+                osc.frequency.exponentialRampToValueAtTime(42, now + 0.19);
+                gain.gain.setValueAtTime(0.55, now);
+                gain.gain.exponentialRampToValueAtTime(0.005, now + 0.2);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.21);
             }
         } catch (e) {
             console.error(e);
@@ -847,6 +988,7 @@
     }
 
     window.addEventListener('keydown', (e) => {
+        if (achievementsModal && achievementsModal.open) return;
         initAudio();
 
         const isGameKey = [
@@ -910,6 +1052,22 @@
             } else if (typeof mummyDefeatCutscene !== 'undefined' && mummyDefeatCutscene && mummyDefeatCutscene.active) {
                 if (e.code === 'Space' || e.code === 'Escape' || e.code === 'Enter') {
                     finishMummyDefeatCutscene();
+                    return;
+                }
+            } else if (typeof samuraiIntroCutscene !== 'undefined' && samuraiIntroCutscene && samuraiIntroCutscene.active) {
+                if (e.code === 'Space' || e.code === 'Enter') {
+                    advanceSamuraiIntroCutscene();
+                    return;
+                } else if (e.code === 'Escape') {
+                    finishSamuraiIntroCutscene();
+                    return;
+                }
+            } else if (typeof samuraiDefeatCutscene !== 'undefined' && samuraiDefeatCutscene && samuraiDefeatCutscene.active) {
+                if (e.code === 'Space' || e.code === 'Enter') {
+                    advanceSamuraiDefeatCutscene();
+                    return;
+                } else if (e.code === 'Escape') {
+                    finishSamuraiDefeatCutscene();
                     return;
                 }
             }
@@ -999,6 +1157,12 @@
                 handleMummyQteClick();
             }
         }
+        if (currentState === STATES.PLAYING && currentLevelIndex === 100 && typeof samuraiBoss !== 'undefined' && samuraiBoss.active && !samuraiBoss.isFallen && player.state !== 'DEFEAT') {
+            if (e.code === 'Digit1' || e.key === '1') usePlayerSamuraiSkill(1);
+            else if (e.code === 'Digit2' || e.key === '2') usePlayerSamuraiSkill(2);
+            else if (e.code === 'Digit3' || e.key === '3') usePlayerSamuraiSkill(3);
+            else if (e.code === 'Digit4' || e.key === '4') usePlayerSamuraiSkill(4);
+        }
     });
 
     canvas.addEventListener('pointerdown', (e) => {
@@ -1048,7 +1212,7 @@
     let unlockedPage2Levels = 40; // 2nd Page: levels 21 to 40 unlocked!
     let unlockedPage3Levels = 60; // 3rd Page (Вечный холод): levels 41 to 60 unlocked!
     let unlockedPage4Levels = 80; // 4th Page (Исохшая земля): levels 61-80 unlocked (Boss Level 80)!
-    let unlockedPage5Levels = 99; // 5th Page (Цветение сакуры): levels 81-99 unlocked!
+    let unlockedPage5Levels = 100; // 5th Page (Цветение сакуры): levels 81-100 unlocked (Boss Level 100)!
     let currentSelectPage = 1;    // 1: Building (1-20), 2: Nature (21-40), 3: Eternal Cold (41-60), 4: Dried Earth (61-80), 5: Sakura Blossom (81-100)
     let currentLevelIndex = 1;
 
@@ -18009,6 +18173,199 @@
         });
     })();
 
+    // --- LEVEL 100: 50 PARKOUR OBJECTS + CRIMSON SAMURAI DOJO BOSS ARENA ---
+    (function populateLevel100SamuraiBoss() {
+        const groundY = 540;
+        const boxes = [];
+        const chasms = [];
+        const ladders = [];
+        const turniks = [];
+        const ropes = [];
+        const cacti = [];
+        const bamboos = [];
+
+        let boxIdx = 1, ladIdx = 1, turIdx = 1, ropIdx = 1, hzIdx = 1, bamIdx = 1;
+        let s = (100 * 2654435761) >>> 0;
+        const rng = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+        const randInt = (min, max) => Math.floor(rng() * (max - min + 1)) + min;
+
+        // 11 districts totaling EXACTLY 50 parkour buildings/shrines!
+        const districtCounts = [5, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4]; // Sum = 50!
+        const chasmTypes = [
+            'single_turnik', 'double_rope', 'double_turnik', 'triple_rope',
+            'hybrid_branch_rope', 'double_turnik', 'triple_rope',
+            'hybrid_branch_rope', 'double_turnik', 'hybrid_branch_rope'
+        ];
+        const styles = ['torii', 'machiya', 'pagoda', 'castle', 'honden', 'teahouse'];
+        const shrineSet = new Set(['torii', 'honden', 'pagoda']);
+
+        let cursorX = 460;
+        // Opening ceremonial bamboo gate right after spawn
+        bamboos.push({ id: `s100_bam${bamIdx++}`, x: 355, y: groundY, w: 46 });
+
+        for (let d = 0; d < districtCounts.length; d++) {
+            const count = districtCounts[d];
+            const isLastDistrict = (d === districtCounts.length - 1);
+            let prevY = 365;
+
+            // Choose bamboo wall slots in this district
+            const bambooSlots = new Set();
+            bambooSlots.add(count - 1);
+            if (count >= 5 && d % 2 === 0) bambooSlots.add(1);
+
+            for (let b = 0; b < count; b++) {
+                const isObject50 = isLastDistrict && (b === count - 1);
+                const hasBamboo = !isObject50 && bambooSlots.has(b);
+                const style = isObject50 ? 'torii' : styles[(d * 3 + b) % styles.length];
+
+                let w, y;
+                if (isObject50) {
+                    // 50th parkour object: Grand Crimson Torii Gate descending toward the Boss Dojo courtyard
+                    w = 260;
+                    y = 350;
+                } else if (b === 0) {
+                    w = hasBamboo ? 255 : randInt(215, 250);
+                    y = randInt(345, 385);
+                } else {
+                    w = hasBamboo ? randInt(250, 280) : randInt(215, 265);
+                    const peak = Math.floor(count * 0.55);
+                    if (b <= peak) {
+                        y = Math.max(175, prevY - randInt(58, 94));
+                    } else {
+                        y = Math.min(330, prevY + randInt(40, 82));
+                    }
+                    if (prevY - y > 100) y = prevY - 100;
+                }
+
+                const boxObj = {
+                    id: `s100_b${boxIdx++}`,
+                    x: cursorX,
+                    y: y,
+                    w: w,
+                    h: groundY - y
+                };
+                if (shrineSet.has(style)) {
+                    boxObj.isSakuraShrine = true;
+                    boxObj.shrineStyle = style;
+                } else {
+                    boxObj.isSakuraBuilding = true;
+                    boxObj.buildingStyle = style;
+                }
+                boxes.push(boxObj);
+
+                let hasLadder = false;
+                if (b === 1 && y <= 325) {
+                    ladders.push({
+                        id: `s100_lad${ladIdx++}`,
+                        x: boxObj.x + 15,
+                        topY: boxObj.y,
+                        bottomY: groundY,
+                        w: 42,
+                        isSakuraLadder: true
+                    });
+                    hasLadder = true;
+                }
+
+                if (hasBamboo) {
+                    const minOff = hasLadder ? 130 : 96;
+                    const maxOff = boxObj.w - 84;
+                    const off = Math.max(minOff, Math.min(maxOff, Math.round(boxObj.w * 0.56)));
+                    bamboos.push({
+                        id: `s100_bam${bamIdx++}`,
+                        x: boxObj.x + off,
+                        y: boxObj.y,
+                        w: 48
+                    });
+                } else if (!isObject50 && b > 0 && boxObj.w >= 215 && rng() < 0.55) {
+                    const spkOff = hasLadder ? Math.max(138, boxObj.w - 74) : Math.round(boxObj.w * 0.5);
+                    cacti.push({
+                        id: `s100_hz${hzIdx++}`,
+                        x: boxObj.x + spkOff,
+                        y: boxObj.y,
+                        w: 38,
+                        h: 50,
+                        isBambooSpikes: true
+                    });
+                }
+
+                prevY = y;
+                if (b < count - 1) {
+                    cursorX += w + randInt(86, 118);
+                } else {
+                    cursorX += w;
+                }
+            }
+
+            if (!isLastDistrict) {
+                const cType = chasmTypes[d];
+                const chasmStartX = cursorX + 28;
+                let chasmW = 455;
+                if (cType === 'single_turnik') {
+                    chasmW = randInt(435, 465);
+                    turniks.push({ id: `s100_tur${turIdx++}`, x: chasmStartX + Math.round(chasmW * 0.5), y: 205, boxBottomY: groundY, length: 95, isSakuraTree: true });
+                } else if (cType === 'double_turnik') {
+                    chasmW = randInt(690, 720);
+                    turniks.push({ id: `s100_tur${turIdx++}`, x: chasmStartX + 205, y: 215, boxBottomY: groundY, length: 95, isSakuraTree: true });
+                    turniks.push({ id: `s100_tur${turIdx++}`, x: chasmStartX + chasmW - 205, y: 195, boxBottomY: groundY, length: 95, isSakuraTree: true });
+                } else if (cType === 'double_rope') {
+                    chasmW = randInt(585, 615);
+                    ropes.push({ id: `s100_rop${ropIdx++}`, x: chasmStartX + 180, anchorY: 70, length: 185, isSakuraRope: true });
+                    ropes.push({ id: `s100_rop${ropIdx++}`, x: chasmStartX + chasmW - 180, anchorY: 70, length: 185, isSakuraRope: true });
+                } else if (cType === 'triple_rope') {
+                    chasmW = randInt(830, 860);
+                    [chasmStartX + 175, chasmStartX + Math.round(chasmW * 0.5), chasmStartX + chasmW - 175].forEach((rx, idx) => {
+                        ropes.push({ id: `s100_rop${ropIdx++}`, x: rx, anchorY: 68 + (idx % 2) * 6, length: 184, isSakuraRope: true });
+                    });
+                } else if (cType === 'hybrid_branch_rope') {
+                    chasmW = randInt(725, 750);
+                    turniks.push({ id: `s100_tur${turIdx++}`, x: chasmStartX + 210, y: 208, boxBottomY: groundY, length: 95, isSakuraTree: true });
+                    ropes.push({ id: `s100_rop${ropIdx++}`, x: chasmStartX + chasmW - 195, anchorY: 70, length: 185, isSakuraRope: true });
+                }
+                chasms.push({ startX: chasmStartX, endX: chasmStartX + chasmW });
+                cursorX = chasmStartX + chasmW + 34;
+            }
+        }
+
+        // Grand Crimson Samurai Dojo Building right after the 50th parkour object!
+        const dojoX = cursorX + 240;
+        const dojoW = 1140;
+        const dojoArena = {
+            x: dojoX,
+            w: dojoW,
+            floorY: groundY,
+            roofY: 115,
+            arenaLeft: dojoX + 70,
+            arenaRight: dojoX + dojoW - 70,
+            playerEnterX: dojoX + 220,
+            bossStartX: dojoX + dojoW - 260,
+            triggerX: dojoX + 110,
+            exitDoorOpen: 0
+        };
+        const worldWidth = dojoX + dojoW + 580;
+
+        levelsData[100] = {
+            id: 100,
+            title: "Уровень 100: Святилище Огня — Босс Багровый Самурай",
+            theme: "sakura",
+            hasThirst: false,
+            worldWidth: worldWidth,
+            groundY: groundY,
+            playerStartX: 200,
+            platforms: [
+                { x: 0, y: groundY, w: worldWidth, h: 200 }
+            ],
+            chasms: chasms,
+            boxes: boxes,
+            ladders: ladders,
+            turniks: turniks,
+            ropes: ropes,
+            cacti: cacti,
+            bamboos: bamboos,
+            dojoArena: dojoArena,
+            flag: null
+        };
+    })();
+
     let currentLevelData = levelsData[1];
 
     function loadLevel(levelNum) {
@@ -18316,6 +18673,22 @@
                 const defeatTitleEl = defeatScreen ? defeatScreen.querySelector('.defeat-title') : null;
                 if (defeatTitleEl) {
                     defeatTitleEl.textContent = '🎋 Бамбуковые шипы';
+                }
+            } else if (source && source.startsWith('samurai')) {
+                if (samuraiSkillsHud) samuraiSkillsHud.classList.add('hidden');
+                const defeatTitleEl = defeatScreen ? defeatScreen.querySelector('.defeat-title') : null;
+                const defeatSubtextEl = defeatScreen ? defeatScreen.querySelector('.defeat-subtext') : null;
+                if (defeatTitleEl) defeatTitleEl.textContent = '👹 Багровый Самурай победил!';
+                if (defeatSubtextEl) {
+                    if (source === 'samuraiCounter') {
+                        defeatSubtextEl.textContent = 'Вы попались на Каунтер Багрового Самурая! Не атакуйте, пока он светится в защитной стойке.';
+                    } else if (source === 'samuraiHellSlash') {
+                        defeatSubtextEl.textContent = 'Разрез, пробивающий ад, настиг вас! Перепрыгивайте огненную волну [Пробел].';
+                    } else if (source === 'samuraiVortex') {
+                        defeatSubtextEl.textContent = 'Вихрь огня поглотил вас! Держите дистанцию 2 секунды, пока самурай крутится.';
+                    } else {
+                        defeatSubtextEl.textContent = 'Огонь из нёдр земли сжёг вас! Отбегите от огненных трещин вокруг босса.';
+                    }
                 }
             }
         }
@@ -18715,6 +19088,7 @@
             levelSelectScreen.classList.add('hidden');
 
             player.reset();
+            checkLocationAchievements(levelNum);
             if (levelNum === 21 && !forceSkipCutscene) {
                 startLevel21IntroCutscene();
             } else if (levelNum === 41 && !forceSkipCutscene) {
@@ -18723,6 +19097,8 @@
                 startLevel61IntroCutscene();
             } else if (levelNum === 81 && !forceSkipCutscene) {
                 startLevel81IntroCutscene();
+            } else if (levelNum === 100 && hasSamuraiBossCheckpoint()) {
+                startSamuraiQuickRematchCutscene();
             } else {
                 hudOverlay.classList.remove('hidden');
                 const isSakura = (currentLevelData.theme === 'sakura' || currentLevelIndex >= 81);
@@ -18981,7 +19357,7 @@
         boss.debris = [];
         screenShake = 0;
 
-        if (currentLevelIndex === 20 || currentLevelIndex === 40 || currentLevelIndex === 60 || currentLevelIndex === 80) {
+        if (currentLevelIndex === 20 || currentLevelIndex === 40 || currentLevelIndex === 60 || currentLevelIndex === 80 || currentLevelIndex === 100) {
             currentLevelData.flag = null;
         }
         if (typeof resetGolem === 'function') {
@@ -18993,8 +19369,14 @@
         if (typeof resetMummy === 'function') {
             resetMummy();
         }
+        if (typeof resetSamuraiBoss === 'function') {
+            resetSamuraiBoss();
+        }
         if (bossHud) {
             bossHud.classList.add('hidden');
+        }
+        if (samuraiSkillsHud) {
+            samuraiSkillsHud.classList.add('hidden');
         }
     }
 
@@ -19204,6 +19586,12 @@
         if (currentLevelIndex === 80) {
             if (typeof updateMummy === 'function') {
                 updateMummy();
+            }
+            return;
+        }
+        if (currentLevelIndex === 100) {
+            if (typeof updateSamuraiBoss === 'function') {
+                updateSamuraiBoss();
             }
             return;
         }
@@ -25175,6 +25563,14 @@
         }
 
         checkKatanaBambooHits();
+
+        // Also allow basic LMB katana slash to hit the Level 100 Crimson Samurai Boss (3 dmg)
+        if (currentLevelIndex === 100 && typeof samuraiBoss !== 'undefined' && samuraiBoss.active && !samuraiBoss.isFallen) {
+            const dx = (samuraiBoss.x - player.x) * player.facing;
+            if (dx >= -25 && dx <= 120 && Math.abs(player.y - samuraiBoss.y) < 92) {
+                damageSamuraiBoss(3, 'lmb');
+            }
+        }
     }
 
     function checkKatanaBambooHits() {
@@ -28642,8 +29038,2362 @@
                 finishMummyIntroCutscene();
             } else if (typeof mummyDefeatCutscene !== 'undefined' && mummyDefeatCutscene && mummyDefeatCutscene.active) {
                 finishMummyDefeatCutscene();
+            } else if (typeof samuraiIntroCutscene !== 'undefined' && samuraiIntroCutscene && samuraiIntroCutscene.active) {
+                finishSamuraiIntroCutscene();
+            } else if (typeof samuraiDefeatCutscene !== 'undefined' && samuraiDefeatCutscene && samuraiDefeatCutscene.active) {
+                finishSamuraiDefeatCutscene();
             }
         });
+    }
+
+    // =========================================================================
+    // --- LEVEL 100: CRIMSON SAMURAI BOSS FIGHT & CINEMATIC DIALOGUE SYSTEM ---
+    // =========================================================================
+    const SAMURAI_INTRO_LINES = [
+        { speaker: 'BOSS', text: 'Значит, ты всё таки пришёл сюда.' },
+        { speaker: 'BOSS', text: 'Ты прошёл далёкий путь, что бы добраться сюда.' },
+        { speaker: 'BOSS', text: 'Но, это ещё не конец.' },
+        { speaker: 'BOSS', text: 'Тебе предстоит пройти через меня, а затем, через другие препятствия.' },
+        { speaker: 'BOSS', text: 'Но я вижу, вижу что ты силён.' },
+        { speaker: 'BOSS', text: 'Тебе есть что сказать, перед боем?' },
+        { speaker: 'PLAYER', text: '...' },
+        { speaker: 'PLAYER', text: 'Меня держали взаперти.' },
+        { speaker: 'PLAYER', text: 'Но ненадолго, я выбрался быстро.' },
+        { speaker: 'PLAYER', text: 'Я прошёл через многих вроде тебя.' },
+        { speaker: 'PLAYER', text: 'Начиная с самого начала.' },
+        { speaker: 'PLAYER', text: 'Я страдал, но выжил.' },
+        { speaker: 'PLAYER', text: 'А теперь, слова в сторону.' },
+        { speaker: 'PLAYER', text: 'Начнём бой.' }
+    ];
+
+    const SAMURAI_DEFEAT_LINES = [
+        { speaker: 'BOSS', text: 'Чёрт... Всё таки, ты оказался сильнее.' },
+        { speaker: 'BOSS', text: 'Значит... Ты достоин пройти дальше.' },
+        { speaker: 'PLAYER', text: 'Я в очередной раз доказал, что я - непобедим.' },
+        { speaker: 'PLAYER', text: 'А теперь, мне нужно идти.' },
+        { speaker: 'PLAYER', text: 'Ты тоже был достойным соперником, похлеще прошлых.' }
+    ];
+
+    const samuraiIntroCutscene = {
+        active: false,
+        phase: 'ENTER', // 'ENTER' -> 'STAND_TURN' -> 'DIALOGUE' -> 'DRAW_KATANAS'
+        timer: 0,
+        lineIndex: 0,
+        lineTimer: 0,
+        seizaProgress: 1, // 1 = kneeling back turned, 0 = standing facing player
+        drawFlash: 0
+    };
+
+    const samuraiDefeatCutscene = {
+        active: false,
+        phase: 'DIALOGUE', // 'DIALOGUE' -> 'EXIT_AND_COLLAPSE'
+        timer: 0,
+        lineIndex: 0,
+        lineTimer: 0,
+        collapseAngle: 0,
+        slammedFloor: false
+    };
+
+    const samuraiBoss = {
+        active: false,
+        introPlayed: false,
+        isFallen: false,
+        x: 0,
+        y: 540,
+        vx: 0,
+        facing: -1,
+        health: 150,
+        maxHealth: 150,
+        katanaDrawn: false,
+        pose: 'SEIZA_BACK', // 'SEIZA_BACK', 'STAND', 'WALK', 'HELL_WINDUP', 'HELL_SLASH', 'VORTEX_WINDUP', 'VORTEX', 'COUNTER', 'COUNTER_STRIKE', 'EARTH_WINDUP', 'EARTH_FIRE', 'STUNNED', 'KNEELING_DEFEAT', 'COLLAPSED'
+        state: 'IDLE',
+        stateTimer: 0,
+        attackCooldown: 1.1,
+        attackCycle: ['HELL_SLASH', 'FIRE_VORTEX', 'COUNTER', 'EARTH_FIRE'],
+        attackIdx: 0,
+        hitFlashTimer: 0,
+        stunTimer: 0,
+        counterTimer: 0,      // 1.0s total window; first 0.5s brightly highlighted
+        counterTriggered: false,
+        counterStrikeTimer: 0,
+        vortexAngle: 0,
+        vortexTickTimer: 0,
+        earthCracksProgress: 0,
+        earthFireActive: false,
+        earthRadius: 195,
+        earthHitDone: false,
+        delayedSlash: null,   // { timer, maxTimer, damage, angle } from Player Skill 3!
+        hellSlashes: [],      // Projectiles from Boss Ability 1
+        floatingTexts: [],    // Damage & status combat popups
+        arenaLeft: 0,
+        arenaRight: 0,
+        dojoX: 0,
+        dojoW: 1140
+    };
+
+    const playerSamuraiSkills = {
+        cooldowns: [0, 0, 0, 0, 0], // index 1..4
+        maxCooldowns: [0, 2.8, 4.2, 5.5, 7.0],
+        activeSkill: 0,
+        timer: 0,
+        // Skill 1: X-Образный разрез
+        xSlashVfx: [], // { x, y, facing, timer, maxTimer }
+        // Skill 2: Серия разрезов (3x3) + пинок (5)
+        comboStep: 0,
+        kickVfxTimer: 0,
+        // Skill 3: Рывок с разрезом (5 dash + 2s stun + 6 delayed slash)
+        dashHitBoss: false,
+        dashStartX: 0,
+        dashAfterimages: [], // { x, y, facing, alpha }
+        // Skill 4: Тысячи разрезов (2.0s barrier, 0.5 dmg / 0.25s)
+        thousandTimer: 0,
+        thousandTickTimer: 0
+    };
+
+    function spawnSamuraiPopup(x, y, text, color = '#fef08a', big = false) {
+        samuraiBoss.floatingTexts.push({
+            x: x + (Math.random() - 0.5) * 24,
+            y: y,
+            vy: -1.45,
+            text: text,
+            color: color,
+            big: big,
+            life: 1.0,
+            maxLife: 1.0
+        });
+    }
+
+    function updateSamuraiBossHud() {
+        if (!bossHud) return;
+        const pct = Math.max(0, Math.min(100, (samuraiBoss.health / samuraiBoss.maxHealth) * 100));
+        if (bossHealthBar) {
+            bossHealthBar.style.width = `${pct}%`;
+            bossHealthBar.style.background = 'linear-gradient(90deg, #991b1b 0%, #ef4444 55%, #f97316 100%)';
+        }
+        if (bossName) {
+            bossName.textContent = '👹 БАГРОВЫЙ САМУРАЙ';
+        }
+        if (bossPhaseText) {
+            const hpStr = Number.isInteger(samuraiBoss.health)
+                ? String(samuraiBoss.health)
+                : samuraiBoss.health.toFixed(1);
+            bossPhaseText.textContent = `${hpStr} / ${samuraiBoss.maxHealth} HP`;
+        }
+    }
+
+    function updateSamuraiSkillsHud() {
+        if (!samuraiSkillsHud) return;
+        for (let i = 1; i <= 4; i++) {
+            const slot = skillSlots[i];
+            const cdEl = skillCdEls[i];
+            const txtEl = skillCdTextEls[i];
+            if (!slot || !cdEl || !txtEl) continue;
+
+            const cd = playerSamuraiSkills.cooldowns[i] || 0;
+            const maxCd = playerSamuraiSkills.maxCooldowns[i] || 1;
+            const isActive = (playerSamuraiSkills.activeSkill === i) || (i === 4 && playerSamuraiSkills.thousandTimer > 0);
+
+            slot.classList.toggle('active-skill', isActive);
+            slot.classList.toggle('on-cooldown', cd > 0);
+
+            if (cd > 0) {
+                const pct = Math.min(100, (cd / maxCd) * 100);
+                cdEl.style.height = `${pct}%`;
+                txtEl.textContent = cd >= 1 ? `${Math.ceil(cd)}` : cd.toFixed(1);
+            } else {
+                cdEl.style.height = '0%';
+                txtEl.textContent = '';
+            }
+        }
+    }
+
+    function resetSamuraiBoss() {
+        samuraiIntroCutscene.active = false;
+        samuraiIntroCutscene.phase = 'ENTER';
+        samuraiIntroCutscene.timer = 0;
+        samuraiIntroCutscene.lineIndex = 0;
+        samuraiIntroCutscene.lineTimer = 0;
+        samuraiIntroCutscene.seizaProgress = 1;
+        samuraiIntroCutscene.drawFlash = 0;
+
+        samuraiDefeatCutscene.active = false;
+        samuraiDefeatCutscene.phase = 'DIALOGUE';
+        samuraiDefeatCutscene.timer = 0;
+        samuraiDefeatCutscene.lineIndex = 0;
+        samuraiDefeatCutscene.lineTimer = 0;
+        samuraiDefeatCutscene.collapseAngle = 0;
+        samuraiDefeatCutscene.slammedFloor = false;
+
+        const dojo = (levelsData[100] && levelsData[100].dojoArena) ? levelsData[100].dojoArena : null;
+        if (dojo) dojo.exitDoorOpen = 0;
+
+        samuraiBoss.active = false;
+        samuraiBoss.introPlayed = false;
+        samuraiBoss.isFallen = false;
+        samuraiBoss.x = dojo ? dojo.bossStartX : 20000;
+        samuraiBoss.y = 540;
+        samuraiBoss.vx = 0;
+        samuraiBoss.facing = 1; // Facing AWAY from player in initial seiza pose!
+        samuraiBoss.health = 150;
+        samuraiBoss.maxHealth = 150;
+        samuraiBoss.katanaDrawn = false;
+        samuraiBoss.pose = 'SEIZA_BACK';
+        samuraiBoss.state = 'IDLE';
+        samuraiBoss.stateTimer = 0;
+        samuraiBoss.attackCooldown = 1.1;
+        samuraiBoss.attackIdx = 0;
+        samuraiBoss.hitFlashTimer = 0;
+        samuraiBoss.stunTimer = 0;
+        samuraiBoss.counterTimer = 0;
+        samuraiBoss.counterTriggered = false;
+        samuraiBoss.counterStrikeTimer = 0;
+        samuraiBoss.vortexAngle = 0;
+        samuraiBoss.vortexTickTimer = 0;
+        samuraiBoss.earthCracksProgress = 0;
+        samuraiBoss.earthFireActive = false;
+        samuraiBoss.earthHitDone = false;
+        samuraiBoss.delayedSlash = null;
+        samuraiBoss.hellSlashes = [];
+        samuraiBoss.floatingTexts = [];
+        samuraiBoss.arenaLeft = dojo ? dojo.arenaLeft : 0;
+        samuraiBoss.arenaRight = dojo ? dojo.arenaRight : 0;
+        samuraiBoss.dojoX = dojo ? dojo.x : 0;
+        samuraiBoss.dojoW = dojo ? dojo.w : 1140;
+
+        player.katanaDrawn = false;
+        playerSamuraiSkills.cooldowns = [0, 0, 0, 0, 0];
+        playerSamuraiSkills.activeSkill = 0;
+        playerSamuraiSkills.timer = 0;
+        playerSamuraiSkills.xSlashVfx = [];
+        playerSamuraiSkills.comboStep = 0;
+        playerSamuraiSkills.kickVfxTimer = 0;
+        playerSamuraiSkills.dashHitBoss = false;
+        playerSamuraiSkills.dashAfterimages = [];
+        playerSamuraiSkills.thousandTimer = 0;
+        playerSamuraiSkills.thousandTickTimer = 0;
+
+        if (samuraiSkillsHud) samuraiSkillsHud.classList.add('hidden');
+        updateSamuraiSkillsHud();
+    }
+
+    function showCutsceneDialogueLine(lineObj) {
+        if (!lineObj) return;
+        if (cutsceneChapter) {
+            if (lineObj.speaker === 'BOSS') {
+                cutsceneChapter.textContent = '👹 БАГРОВЫЙ САМУРАЙ';
+                cutsceneChapter.style.color = '#f87171';
+                cutsceneChapter.style.borderColor = 'rgba(239, 68, 68, 0.6)';
+                cutsceneChapter.style.background = 'rgba(153, 27, 27, 0.35)';
+            } else {
+                cutsceneChapter.textContent = '⚔️ ИГРОК';
+                cutsceneChapter.style.color = '#f9a8d4';
+                cutsceneChapter.style.borderColor = 'rgba(244, 114, 182, 0.55)';
+                cutsceneChapter.style.background = 'rgba(131, 24, 67, 0.32)';
+            }
+        }
+        if (cutsceneText) {
+            cutsceneText.textContent = `«${lineObj.text}»`;
+        }
+    }
+
+    function resetCutsceneChapterStyle() {
+        if (cutsceneChapter) {
+            cutsceneChapter.style.color = '';
+            cutsceneChapter.style.borderColor = '';
+            cutsceneChapter.style.background = '';
+        }
+    }
+
+    // --- LEVEL 100 BOSS ARENA AUTOSAVE CHECKPOINT ---
+    const SAMURAI_CHECKPOINT_KEY = 'parkour_universe_l100_boss_checkpoint_v1';
+    let samuraiBossCheckpointReached = false;
+    try {
+        samuraiBossCheckpointReached = localStorage.getItem(SAMURAI_CHECKPOINT_KEY) === '1';
+    } catch (e) { /* ignore storage errors */ }
+
+    function hasSamuraiBossCheckpoint() {
+        return samuraiBossCheckpointReached;
+    }
+
+    function saveSamuraiBossCheckpoint() {
+        const wasSaved = samuraiBossCheckpointReached;
+        samuraiBossCheckpointReached = true;
+        try { localStorage.setItem(SAMURAI_CHECKPOINT_KEY, '1'); } catch (e) { /* ignore */ }
+        if (!wasSaved) {
+            spawnSamuraiPopup(player.x, player.y - 105, '💾 АВТОСОХРАНЕНИЕ!', '#34d399', true);
+        }
+    }
+
+    function clearSamuraiBossCheckpoint() {
+        samuraiBossCheckpointReached = false;
+        try { localStorage.removeItem(SAMURAI_CHECKPOINT_KEY); } catch (e) { /* ignore */ }
+    }
+
+    function startSamuraiQuickRematchCutscene() {
+        const dojo = currentLevelData && currentLevelData.dojoArena;
+        if (!dojo) return;
+
+        currentState = STATES.CUTSCENE;
+        samuraiIntroCutscene.active = true;
+        samuraiIntroCutscene.phase = 'QUICK_DRAW';
+        samuraiIntroCutscene.timer = 0;
+        samuraiIntroCutscene.seizaProgress = 0;
+        samuraiIntroCutscene.drawFlash = 0;
+        samuraiIntroCutscene.quickDrawPlayed = false;
+
+        samuraiBoss.active = false;
+        samuraiBoss.isFallen = false;
+        samuraiBoss.x = dojo.bossStartX;
+        samuraiBoss.y = dojo.floorY;
+        samuraiBoss.facing = -1;
+        samuraiBoss.pose = 'STAND';
+        samuraiBoss.katanaDrawn = false;
+        samuraiBoss.health = samuraiBoss.maxHealth;
+        samuraiBoss.arenaLeft = dojo.arenaLeft;
+        samuraiBoss.arenaRight = dojo.arenaRight;
+        samuraiBoss.dojoX = dojo.x;
+        samuraiBoss.dojoW = dojo.w;
+
+        player.x = dojo.playerEnterX;
+        player.y = dojo.floorY;
+        player.vx = 0;
+        player.vy = 0;
+        player.grounded = true;
+        player.facing = 1;
+        player.state = 'IDLE';
+        player.health = 100;
+        player.katanaDrawn = false;
+        player.hasSamuraiOutfit = true;
+
+        const scale = canvas.height / 675;
+        const screenW = canvas.width / scale;
+        cameraX = (player.x + samuraiBoss.x) * 0.5 - screenW * 0.5;
+        cameraY = -22;
+
+        if (hudOverlay) hudOverlay.classList.add('hidden');
+        if (bossHud) bossHud.classList.add('hidden');
+        if (samuraiSkillsHud) samuraiSkillsHud.classList.add('hidden');
+        if (cutsceneOverlay) cutsceneOverlay.classList.remove('hidden');
+        resetCutsceneChapterStyle();
+        if (cutsceneChapter) cutsceneChapter.textContent = '💾 ЧЕКПОИНТ — АРЕНА БОССА';
+        if (cutsceneText) cutsceneText.textContent = 'Игрок и Багровый Самурай обнажают мечи — бой начинается вновь!';
+        const hintEl = cutsceneOverlay ? cutsceneOverlay.querySelector('.cutscene-hint') : null;
+        if (hintEl) hintEl.textContent = 'Нажмите [Пробел] чтобы сразу начать бой';
+    }
+
+    function startSamuraiIntroCutscene() {
+        const dojo = currentLevelData && currentLevelData.dojoArena;
+        if (!dojo || samuraiIntroCutscene.active || samuraiBoss.introPlayed) return;
+
+        saveSamuraiBossCheckpoint();
+
+        currentState = STATES.CUTSCENE;
+        samuraiIntroCutscene.active = true;
+        samuraiIntroCutscene.phase = 'ENTER';
+        samuraiIntroCutscene.timer = 0;
+        samuraiIntroCutscene.lineIndex = 0;
+        samuraiIntroCutscene.lineTimer = 0;
+        samuraiIntroCutscene.seizaProgress = 1;
+        samuraiIntroCutscene.drawFlash = 0;
+
+        samuraiBoss.x = dojo.bossStartX;
+        samuraiBoss.y = dojo.floorY;
+        samuraiBoss.facing = 1; // Sitting with back to the player!
+        samuraiBoss.pose = 'SEIZA_BACK';
+        samuraiBoss.katanaDrawn = false;
+        samuraiBoss.arenaLeft = dojo.arenaLeft;
+        samuraiBoss.arenaRight = dojo.arenaRight;
+        samuraiBoss.dojoX = dojo.x;
+        samuraiBoss.dojoW = dojo.w;
+
+        player.vx = 0;
+        player.vy = 0;
+        player.y = dojo.floorY;
+        player.grounded = true;
+        player.facing = 1;
+        player.state = 'WALK';
+        player.katanaDrawn = false;
+
+        if (hudOverlay) hudOverlay.classList.add('hidden');
+        if (samuraiSkillsHud) samuraiSkillsHud.classList.add('hidden');
+        if (cutsceneOverlay) cutsceneOverlay.classList.remove('hidden');
+        resetCutsceneChapterStyle();
+        if (cutsceneChapter) cutsceneChapter.textContent = '🏯 СВЯТИЛИЩЕ ОГНЯ — АРЕНА БОССА';
+        if (cutsceneText) cutsceneText.textContent = 'Вы входите в древнее додзё. В глубине зала спиной к вам сидит самурай в багровых доспехах...';
+        const hintEl = cutsceneOverlay ? cutsceneOverlay.querySelector('.cutscene-hint') : null;
+        if (hintEl) hintEl.textContent = 'Нажмите [Пробел] для следующей реплики • [Пропустить] для начала боя';
+    }
+
+    function advanceSamuraiIntroCutscene() {
+        if (!samuraiIntroCutscene.active) return;
+        if (samuraiIntroCutscene.phase === 'ENTER') {
+            const dojo = currentLevelData.dojoArena;
+            player.x = dojo.playerEnterX;
+            player.state = 'IDLE';
+            samuraiIntroCutscene.phase = 'STAND_TURN';
+            samuraiIntroCutscene.timer = 0;
+        } else if (samuraiIntroCutscene.phase === 'STAND_TURN') {
+            samuraiIntroCutscene.seizaProgress = 0;
+            samuraiBoss.facing = -1;
+            samuraiBoss.pose = 'STAND';
+            samuraiIntroCutscene.phase = 'DIALOGUE';
+            samuraiIntroCutscene.lineIndex = 0;
+            samuraiIntroCutscene.lineTimer = 0;
+            showCutsceneDialogueLine(SAMURAI_INTRO_LINES[0]);
+            playSound('jump');
+        } else if (samuraiIntroCutscene.phase === 'DIALOGUE') {
+            samuraiIntroCutscene.lineIndex++;
+            samuraiIntroCutscene.lineTimer = 0;
+            if (samuraiIntroCutscene.lineIndex < SAMURAI_INTRO_LINES.length) {
+                showCutsceneDialogueLine(SAMURAI_INTRO_LINES[samuraiIntroCutscene.lineIndex]);
+                playSound('grab');
+            } else {
+                samuraiIntroCutscene.phase = 'DRAW_KATANAS';
+                samuraiIntroCutscene.timer = 0;
+                samuraiIntroCutscene.drawFlash = 1.0;
+                player.katanaDrawn = true;
+                samuraiBoss.katanaDrawn = true;
+                playSound('katanaClash');
+                playSound('sakuraGlow');
+                screenShake = 10;
+                resetCutsceneChapterStyle();
+                if (cutsceneChapter) cutsceneChapter.textContent = '⚔️ ДУЭЛЬ САМУРАЕВ';
+                if (cutsceneText) cutsceneText.textContent = 'Игрок и Багровый Самурай обнажают катаны — бой начинается!';
+            }
+        } else if (samuraiIntroCutscene.phase === 'DRAW_KATANAS' || samuraiIntroCutscene.phase === 'QUICK_DRAW') {
+            finishSamuraiIntroCutscene();
+        }
+    }
+
+    function updateSamuraiIntroCutscene() {
+        if (!samuraiIntroCutscene.active) return;
+        const dojo = currentLevelData.dojoArena;
+        const scale = canvas.height / 675;
+        const screenW = canvas.width / scale;
+
+        samuraiIntroCutscene.timer += 0.016;
+        if (samuraiIntroCutscene.drawFlash > 0) {
+            samuraiIntroCutscene.drawFlash = Math.max(0, samuraiIntroCutscene.drawFlash - 0.03);
+        }
+
+        // Dynamic Cinematic Camera Panning between Player and Crimson Samurai!
+        let targetCamX = dojo.x + dojo.w * 0.5 - screenW * 0.5;
+        let targetCamY = -22;
+
+        if (samuraiIntroCutscene.phase === 'ENTER') {
+            player.state = 'WALK';
+            player.animTime += 0.15;
+            targetCamX = player.x - screenW * 0.36;
+            targetCamY = -18;
+            if (player.x < dojo.playerEnterX) {
+                player.x = Math.min(dojo.playerEnterX, player.x + 2.6);
+            } else {
+                player.state = 'IDLE';
+                if (samuraiIntroCutscene.timer >= 1.55) {
+                    samuraiIntroCutscene.phase = 'STAND_TURN';
+                    samuraiIntroCutscene.timer = 0;
+                    if (cutsceneText) cutsceneText.textContent = 'Багровый Самурай медленно поднимается и поворачивается к вам...';
+                }
+            }
+        } else if (samuraiIntroCutscene.phase === 'STAND_TURN') {
+            player.state = 'IDLE';
+            player.animTime += 0.06;
+            // Pan camera smoothly onto the Crimson Samurai Boss as he rises & turns!
+            targetCamX = samuraiBoss.x - screenW * 0.58;
+            targetCamY = -30;
+            samuraiIntroCutscene.seizaProgress = Math.max(0, 1 - samuraiIntroCutscene.timer / 1.0);
+            if (samuraiIntroCutscene.timer >= 0.72) {
+                samuraiBoss.facing = -1;
+                samuraiBoss.pose = 'STAND';
+            }
+            if (samuraiIntroCutscene.timer >= 1.55) {
+                samuraiIntroCutscene.phase = 'DIALOGUE';
+                samuraiIntroCutscene.lineIndex = 0;
+                samuraiIntroCutscene.lineTimer = 0;
+                showCutsceneDialogueLine(SAMURAI_INTRO_LINES[0]);
+            }
+        } else if (samuraiIntroCutscene.phase === 'DIALOGUE') {
+            player.state = 'IDLE';
+            player.animTime += 0.06;
+            samuraiIntroCutscene.lineTimer += 0.016;
+            const currentLine = SAMURAI_INTRO_LINES[samuraiIntroCutscene.lineIndex];
+            // Dynamically glide camera toward whoever is speaking!
+            if (currentLine && currentLine.speaker === 'BOSS') {
+                targetCamX = samuraiBoss.x - screenW * 0.58;
+                targetCamY = -32;
+            } else {
+                targetCamX = player.x - screenW * 0.40;
+                targetCamY = -22;
+            }
+            const autoWait = currentLine && currentLine.text.length > 36 ? 3.6 : (currentLine && currentLine.text === '...' ? 2.0 : 2.9);
+            if (samuraiIntroCutscene.lineTimer >= autoWait) {
+                advanceSamuraiIntroCutscene();
+            }
+        } else if (samuraiIntroCutscene.phase === 'DRAW_KATANAS') {
+            player.state = 'IDLE';
+            player.animTime += 0.1;
+            // Center camera symmetrically between both samurai as they draw their blades!
+            targetCamX = (player.x + samuraiBoss.x) * 0.5 - screenW * 0.5;
+            targetCamY = -24;
+            if (samuraiIntroCutscene.timer >= 1.35) {
+                finishSamuraiIntroCutscene();
+            }
+        } else if (samuraiIntroCutscene.phase === 'QUICK_DRAW') {
+            player.state = 'IDLE';
+            player.animTime += 0.1;
+            targetCamX = (player.x + samuraiBoss.x) * 0.5 - screenW * 0.5;
+            targetCamY = -22;
+            if (samuraiIntroCutscene.timer >= 0.3 && !samuraiIntroCutscene.quickDrawPlayed) {
+                samuraiIntroCutscene.quickDrawPlayed = true;
+                samuraiIntroCutscene.drawFlash = 1.0;
+                player.katanaDrawn = true;
+                samuraiBoss.katanaDrawn = true;
+                playSound('katanaClash');
+                playSound('sakuraGlow');
+                screenShake = 10;
+            }
+            if (samuraiIntroCutscene.timer >= 1.25) {
+                finishSamuraiIntroCutscene();
+            }
+        }
+
+        cameraX += (targetCamX - cameraX) * 0.065;
+        cameraY += (targetCamY - cameraY) * 0.07;
+    }
+
+    function finishSamuraiIntroCutscene() {
+        if (!samuraiIntroCutscene.active) return;
+        samuraiIntroCutscene.active = false;
+        samuraiIntroCutscene.seizaProgress = 0;
+        samuraiIntroCutscene.drawFlash = 0;
+        resetCutsceneChapterStyle();
+        if (cutsceneOverlay) {
+            cutsceneOverlay.classList.add('hidden');
+            const hintEl = cutsceneOverlay.querySelector('.cutscene-hint');
+            if (hintEl) hintEl.textContent = 'Нажмите [Пробел] чтобы пропустить катсцену';
+        }
+        startSamuraiFight();
+    }
+
+    function startSamuraiFight() {
+        const dojo = currentLevelData && currentLevelData.dojoArena;
+        if (!dojo) return;
+
+        samuraiBoss.active = true;
+        samuraiBoss.introPlayed = true;
+        samuraiBoss.isFallen = false;
+        samuraiBoss.x = dojo.bossStartX;
+        samuraiBoss.y = dojo.floorY;
+        samuraiBoss.facing = -1;
+        samuraiBoss.health = samuraiBoss.maxHealth;
+        samuraiBoss.katanaDrawn = true;
+        samuraiBoss.pose = 'STAND';
+        samuraiBoss.state = 'IDLE';
+        samuraiBoss.stateTimer = 0;
+        samuraiBoss.attackCooldown = 1.0;
+        samuraiBoss.attackIdx = 0;
+        samuraiBoss.stunTimer = 0;
+        samuraiBoss.counterTimer = 0;
+        samuraiBoss.counterTriggered = false;
+        samuraiBoss.delayedSlash = null;
+        samuraiBoss.hellSlashes = [];
+        samuraiBoss.floatingTexts = [];
+        samuraiBoss.arenaLeft = dojo.arenaLeft;
+        samuraiBoss.arenaRight = dojo.arenaRight;
+        samuraiBoss.dojoX = dojo.x;
+        samuraiBoss.dojoW = dojo.w;
+
+        player.x = Math.max(dojo.arenaLeft + 60, Math.min(dojo.playerEnterX + 40, player.x));
+        player.y = dojo.floorY;
+        player.vx = 0;
+        player.vy = 0;
+        player.facing = 1;
+        player.grounded = true;
+        player.state = 'IDLE';
+        player.health = 100;
+        player.damageCooldown = 0;
+        player.katanaDrawn = true;
+        player.hasSamuraiOutfit = true;
+
+        playerSamuraiSkills.cooldowns = [0, 0, 0, 0, 0];
+        playerSamuraiSkills.activeSkill = 0;
+        playerSamuraiSkills.timer = 0;
+        playerSamuraiSkills.thousandTimer = 0;
+        playerSamuraiSkills.xSlashVfx = [];
+        playerSamuraiSkills.dashAfterimages = [];
+
+        if (hudOverlay) hudOverlay.classList.remove('hidden');
+        if (healthHud) {
+            healthHud.classList.remove('hidden');
+            updateHealthHud();
+        }
+        if (bossHud) bossHud.classList.remove('hidden');
+        if (samuraiSkillsHud) samuraiSkillsHud.classList.remove('hidden');
+        updateSamuraiBossHud();
+        updateSamuraiSkillsHud();
+
+        currentState = STATES.PLAYING;
+    }
+
+    // --- BOSS DAMAGE & COUNTER CHECK ---
+    function damageSamuraiBoss(amount, source = 'slash', bypassCounter = false) {
+        if (!samuraiBoss.active || samuraiBoss.isFallen || samuraiBoss.health <= 0) return false;
+
+        // Boss Ability 3: Counter! If boss is inside his 1.0s counter window, boss evades & counter-strikes!
+        if (!bypassCounter && samuraiBoss.state === 'COUNTER' && samuraiBoss.counterTimer > 0 && !samuraiBoss.counterTriggered) {
+            samuraiBoss.counterTriggered = true;
+            samuraiBoss.counterTimer = 0;
+            samuraiBoss.state = 'COUNTER_STRIKE';
+            samuraiBoss.pose = 'COUNTER_STRIKE';
+            samuraiBoss.stateTimer = 0;
+            samuraiBoss.facing = (player.x < samuraiBoss.x) ? -1 : 1;
+
+            // Boss dashes behind/next to the player to evade and unleash slash + kick!
+            const evadeOffset = player.facing * -58;
+            samuraiBoss.x = Math.max(samuraiBoss.arenaLeft + 45, Math.min(samuraiBoss.arenaRight - 45, player.x + evadeOffset));
+            samuraiBoss.facing = (player.x >= samuraiBoss.x) ? 1 : -1;
+
+            playSound('katanaClash');
+            playSound('kickImpact');
+            screenShake = 15;
+            spawnSamuraiPopup(samuraiBoss.x, samuraiBoss.y - 108, '⚡ КАУНТЕР!', '#ef4444', true);
+
+            // Cancel player active combo/thousand cuts on counter punish
+            playerSamuraiSkills.activeSkill = 0;
+            playerSamuraiSkills.thousandTimer = 0;
+
+            // Slash + Kick knockback damage to player!
+            player.vx = samuraiBoss.facing * 17;
+            player.vy = -8.5;
+            player.grounded = false;
+            player.state = 'JUMP';
+            if (player.damageCooldown <= 0) {
+                playerTakeDamage(18, 'samuraiCounter');
+            }
+
+            // Crimson sparks & shockwave ring
+            particles.push({
+                type: 'ring',
+                x: player.x,
+                y: player.y - 42,
+                radius: 14,
+                growSpeed: 5.5,
+                color: '#ef4444',
+                life: 0.45,
+                decay: 0.04
+            });
+            for (let p = 0; p < 18; p++) {
+                particles.push({
+                    x: player.x,
+                    y: player.y - 40,
+                    vx: samuraiBoss.facing * (3 + Math.random() * 7) + (Math.random() - 0.5) * 3,
+                    vy: -(2 + Math.random() * 5),
+                    size: 3 + Math.random() * 3.5,
+                    color: Math.random() < 0.55 ? '#ef4444' : '#fde047',
+                    life: 0.55,
+                    decay: 0.03
+                });
+            }
+            return false;
+        }
+
+        // Apply actual damage to Samurai Boss
+        samuraiBoss.health = Math.max(0, Math.round((samuraiBoss.health - amount) * 10) / 10);
+        samuraiBoss.hitFlashTimer = 0.16;
+        updateSamuraiBossHud();
+
+        const dmgLabel = Number.isInteger(amount) ? `-${amount}` : `-${amount.toFixed(1)}`;
+        const popupColor = source === 'skill3_delayed' ? '#f472b6' : (amount >= 10 ? '#fde047' : '#ffffff');
+        spawnSamuraiPopup(samuraiBoss.x, samuraiBoss.y - 98, dmgLabel, popupColor, amount >= 6);
+
+        for (let p = 0; p < (amount >= 5 ? 14 : 6); p++) {
+            particles.push({
+                x: samuraiBoss.x + (Math.random() - 0.5) * 28,
+                y: samuraiBoss.y - 45 + (Math.random() - 0.5) * 36,
+                vx: player.facing * (2 + Math.random() * 5),
+                vy: -(1.5 + Math.random() * 4),
+                size: 2.5 + Math.random() * 3,
+                color: Math.random() < 0.5 ? '#f9a8d4' : '#fef08a',
+                life: 0.45,
+                decay: 0.035
+            });
+        }
+
+        if (samuraiBoss.health <= 0) {
+            startSamuraiDefeatCutscene();
+        }
+        return true;
+    }
+
+    // --- PLAYER'S 4 KATANA ABILITIES (LEVEL 100 BOSS FIGHT) ---
+    function usePlayerSamuraiSkill(skillNum) {
+        if (currentState !== STATES.PLAYING || currentLevelIndex !== 100) return;
+        if (!samuraiBoss.active || samuraiBoss.isFallen || player.state === 'DEFEAT') return;
+        if (playerSamuraiSkills.cooldowns[skillNum] > 0) return;
+        if (playerSamuraiSkills.activeSkill !== 0 && playerSamuraiSkills.activeSkill !== 4) return;
+
+        // Auto-face the boss if close, or respect current facing
+        if (Math.abs(samuraiBoss.x - player.x) < 280) {
+            player.facing = (samuraiBoss.x >= player.x) ? 1 : -1;
+        }
+
+        playerSamuraiSkills.cooldowns[skillNum] = playerSamuraiSkills.maxCooldowns[skillNum];
+
+        if (skillNum === 1) {
+            // 1. X-Образный разрез (10 урона)
+            playerSamuraiSkills.activeSkill = 1;
+            playerSamuraiSkills.timer = 0.34;
+            player.katanaSlashTimer = 0.24;
+            player.katanaCombo = 1;
+            player.vx = player.facing * 7.5;
+            playSound('katanaSlash');
+            setTimeout(() => playSound('katanaSlash'), 75);
+
+            const hitCenterX = player.x + player.facing * 68;
+            const hitCenterY = player.y - 44;
+            playerSamuraiSkills.xSlashVfx.push({
+                x: hitCenterX,
+                y: hitCenterY,
+                facing: player.facing,
+                timer: 0.48,
+                maxTimer: 0.48
+            });
+
+            const dx = (samuraiBoss.x - player.x) * player.facing;
+            if (dx >= -25 && dx <= 155 && Math.abs(player.y - samuraiBoss.y) < 95) {
+                screenShake = 9;
+                damageSamuraiBoss(10, 'skill1');
+            }
+        } else if (skillNum === 2) {
+            // 2. Серия разрезов и пинок (3x3 урона + 1 пинок 5 урона)
+            playerSamuraiSkills.activeSkill = 2;
+            playerSamuraiSkills.timer = 0.78;
+            playerSamuraiSkills.comboStep = 0;
+            player.vx = player.facing * 4.5;
+        } else if (skillNum === 3) {
+            // 3. Рывок с разрезом (5 урона при рывке + ступор 2с + висящий уменьшающийся разрез -> 6 урона!)
+            playerSamuraiSkills.activeSkill = 3;
+            playerSamuraiSkills.timer = 0.24;
+            playerSamuraiSkills.dashHitBoss = false;
+            playerSamuraiSkills.dashStartX = player.x;
+            player.katanaSlashTimer = 0.24;
+            player.vx = player.facing * 24;
+            player.vy = 0;
+            playSound('airBoost');
+            playSound('katanaSlash');
+        } else if (skillNum === 4) {
+            // 4. Тысячи разрезов (2.0с непроходимый барьер, 0.5 урона каждые 0.25с при касании)
+            playerSamuraiSkills.activeSkill = 4;
+            playerSamuraiSkills.thousandTimer = 2.0;
+            playerSamuraiSkills.thousandTickTimer = 0;
+            playSound('katanaSlash');
+        }
+        updateSamuraiSkillsHud();
+    }
+
+    function updatePlayerSamuraiSkills() {
+        for (let i = 1; i <= 4; i++) {
+            if (playerSamuraiSkills.cooldowns[i] > 0) {
+                playerSamuraiSkills.cooldowns[i] = Math.max(0, playerSamuraiSkills.cooldowns[i] - 0.016);
+            }
+        }
+
+        // Update X-Slash VFX
+        for (let i = playerSamuraiSkills.xSlashVfx.length - 1; i >= 0; i--) {
+            playerSamuraiSkills.xSlashVfx[i].timer -= 0.016;
+            if (playerSamuraiSkills.xSlashVfx[i].timer <= 0) playerSamuraiSkills.xSlashVfx.splice(i, 1);
+        }
+        // Update Dash afterimages
+        for (let i = playerSamuraiSkills.dashAfterimages.length - 1; i >= 0; i--) {
+            playerSamuraiSkills.dashAfterimages[i].alpha -= 0.06;
+            if (playerSamuraiSkills.dashAfterimages[i].alpha <= 0) playerSamuraiSkills.dashAfterimages.splice(i, 1);
+        }
+        if (playerSamuraiSkills.kickVfxTimer > 0) {
+            playerSamuraiSkills.kickVfxTimer = Math.max(0, playerSamuraiSkills.kickVfxTimer - 0.016);
+        }
+
+        // Skill 1 active timer
+        if (playerSamuraiSkills.activeSkill === 1) {
+            playerSamuraiSkills.timer -= 0.016;
+            if (playerSamuraiSkills.timer <= 0) playerSamuraiSkills.activeSkill = 0;
+        }
+
+        // Skill 2: 3 slashes (3 dmg each) + 1 kick (5 dmg + knockback)
+        if (playerSamuraiSkills.activeSkill === 2) {
+            const elapsed = 0.78 - playerSamuraiSkills.timer;
+            playerSamuraiSkills.timer -= 0.016;
+            const dx = (samuraiBoss.x - player.x) * player.facing;
+            const inRange = (dx >= -24 && dx <= 135 && Math.abs(player.y - samuraiBoss.y) < 90);
+
+            if (playerSamuraiSkills.comboStep === 0 && elapsed >= 0.06) {
+                playerSamuraiSkills.comboStep = 1;
+                player.katanaSlashTimer = 0.22;
+                player.katanaCombo = 1;
+                player.vx = player.facing * 4;
+                playSound('katanaSlash');
+                if (inRange) damageSamuraiBoss(3, 'skill2_s1');
+            } else if (playerSamuraiSkills.comboStep === 1 && elapsed >= 0.22) {
+                playerSamuraiSkills.comboStep = 2;
+                player.katanaSlashTimer = 0.22;
+                player.katanaCombo = -1;
+                player.vx = player.facing * 4;
+                playSound('katanaSlash');
+                if (inRange) damageSamuraiBoss(3, 'skill2_s2');
+            } else if (playerSamuraiSkills.comboStep === 2 && elapsed >= 0.38) {
+                playerSamuraiSkills.comboStep = 3;
+                player.katanaSlashTimer = 0.22;
+                player.katanaCombo = 1;
+                player.vx = player.facing * 4.5;
+                playSound('katanaSlash');
+                if (inRange) damageSamuraiBoss(3, 'skill2_s3');
+            } else if (playerSamuraiSkills.comboStep === 3 && elapsed >= 0.56) {
+                playerSamuraiSkills.comboStep = 4;
+                playerSamuraiSkills.kickVfxTimer = 0.24;
+                player.vx = player.facing * 6;
+                playSound('kickImpact');
+                if (inRange) {
+                    screenShake = 11;
+                    const hit = damageSamuraiBoss(5, 'skill2_kick');
+                    if (hit && samuraiBoss.active) {
+                        samuraiBoss.x = Math.max(samuraiBoss.arenaLeft + 45, Math.min(samuraiBoss.arenaRight - 45, samuraiBoss.x + player.facing * 120));
+                        particles.push({
+                            type: 'ring',
+                            x: samuraiBoss.x,
+                            y: samuraiBoss.y - 44,
+                            radius: 10,
+                            growSpeed: 5.5,
+                            color: '#fde047',
+                            life: 0.38,
+                            decay: 0.04
+                        });
+                    }
+                }
+            }
+
+            if (playerSamuraiSkills.timer <= 0) {
+                playerSamuraiSkills.activeSkill = 0;
+            }
+        }
+
+        // Skill 3: Lightning Dash Slash (5 dmg + 2.0s boss stun + hanging shrinking slash -> 6 dmg)
+        if (playerSamuraiSkills.activeSkill === 3) {
+            playerSamuraiSkills.timer -= 0.016;
+            player.vx = player.facing * 23;
+            player.vy = 0;
+
+            if (Math.random() < 0.75) {
+                playerSamuraiSkills.dashAfterimages.push({
+                    x: player.x,
+                    y: player.y,
+                    facing: player.facing,
+                    alpha: 0.65
+                });
+            }
+
+            if (!playerSamuraiSkills.dashHitBoss && samuraiBoss.active && !samuraiBoss.isFallen) {
+                if (Math.abs(player.x - samuraiBoss.x) < 62 && Math.abs(player.y - samuraiBoss.y) < 95) {
+                    playerSamuraiSkills.dashHitBoss = true;
+                    screenShake = 10;
+                    const landed = damageSamuraiBoss(5, 'skill3_dash');
+                    if (landed && samuraiBoss.active && samuraiBoss.health > 0) {
+                        // Lock boss in 2.0s stupor with shrinking hanging slash!
+                        samuraiBoss.stunTimer = 2.0;
+                        samuraiBoss.state = 'STUNNED';
+                        samuraiBoss.pose = 'STUNNED';
+                        samuraiBoss.earthFireActive = false;
+                        samuraiBoss.delayedSlash = {
+                            timer: 2.0,
+                            maxTimer: 2.0,
+                            damage: 6,
+                            angle: -0.58 * player.facing
+                        };
+                        playSound('katanaClash');
+                        spawnSamuraiPopup(samuraiBoss.x, samuraiBoss.y - 125, '⚡ СТУПОР!', '#f472b6', true);
+                    }
+                }
+            }
+
+            if (playerSamuraiSkills.timer <= 0) {
+                playerSamuraiSkills.activeSkill = 0;
+                player.vx = player.facing * 5;
+            }
+        }
+
+        // Skill 4: Thousand Cuts (2.0s active blade dome, blocks boss, 0.5 dmg every 0.25s on contact)
+        if (playerSamuraiSkills.thousandTimer > 0) {
+            playerSamuraiSkills.thousandTimer = Math.max(0, playerSamuraiSkills.thousandTimer - 0.016);
+            playerSamuraiSkills.thousandTickTimer -= 0.016;
+
+            if (Math.random() < 0.35) playSound('katanaSlash');
+
+            if (samuraiBoss.active && !samuraiBoss.isFallen) {
+                const dist = Math.abs(samuraiBoss.x - player.x);
+                const pushDir = (samuraiBoss.x >= player.x) ? 1 : -1;
+                // Do not let boss pass through the spinning blade barrier!
+                if (dist < 98 && Math.abs(samuraiBoss.y - player.y) < 95) {
+                    samuraiBoss.x = Math.max(
+                        samuraiBoss.arenaLeft + 45,
+                        Math.min(samuraiBoss.arenaRight - 45, player.x + pushDir * 98)
+                    );
+                }
+                // Deal 0.5 damage every 0.25s when boss touches the blade perimeter
+                if (dist <= 116 && Math.abs(samuraiBoss.y - player.y) < 95 && playerSamuraiSkills.thousandTickTimer <= 0) {
+                    playerSamuraiSkills.thousandTickTimer = 0.25;
+                    damageSamuraiBoss(0.5, 'skill4');
+                }
+            }
+
+            if (playerSamuraiSkills.thousandTimer <= 0 && playerSamuraiSkills.activeSkill === 4) {
+                playerSamuraiSkills.activeSkill = 0;
+            }
+        }
+
+        updateSamuraiSkillsHud();
+    }
+
+    // --- SAMURAI BOSS AI & 4 ABILITIES UPDATE ---
+    function updateSamuraiBoss() {
+        // Update floating combat text popups
+        for (let i = samuraiBoss.floatingTexts.length - 1; i >= 0; i--) {
+            const ft = samuraiBoss.floatingTexts[i];
+            ft.y += ft.vy;
+            ft.life -= 0.018;
+            if (ft.life <= 0) samuraiBoss.floatingTexts.splice(i, 1);
+        }
+
+        if (!samuraiBoss.active || samuraiBoss.isFallen) return;
+        if (player.state === 'DEFEAT') return;
+
+        updatePlayerSamuraiSkills();
+        if (!samuraiBoss.active || samuraiBoss.isFallen) return;
+
+        if (samuraiBoss.hitFlashTimer > 0) {
+            samuraiBoss.hitFlashTimer = Math.max(0, samuraiBoss.hitFlashTimer - 0.016);
+        }
+
+        // Update Boss Ability 1 projectiles (Разрез, пробивающий ад)
+        for (let i = samuraiBoss.hellSlashes.length - 1; i >= 0; i--) {
+            const wave = samuraiBoss.hellSlashes[i];
+            wave.x += wave.vx;
+            wave.age += 0.016;
+
+            // Scorching trail sparks
+            if (Math.random() < 0.7) {
+                particles.push({
+                    x: wave.x - wave.dir * 12,
+                    y: wave.y - Math.random() * wave.h,
+                    vx: -wave.dir * (1 + Math.random() * 2.5),
+                    vy: -(0.8 + Math.random() * 2.5),
+                    size: 2.5 + Math.random() * 3.5,
+                    color: Math.random() < 0.5 ? '#ef4444' : '#f97316',
+                    life: 0.4,
+                    decay: 0.035
+                });
+            }
+
+            // Player hit check (jumpable! height ~92px from floor, player jumps ~162px single / ~300px double)
+            const waveLeft = wave.x - 24;
+            const waveRight = wave.x + 24;
+            const waveTop = wave.y - wave.h;
+            const waveBottom = wave.y;
+            const pLeft = player.x - 13;
+            const pRight = player.x + 13;
+            const pTop = player.y - player.height;
+            const pBottom = player.y;
+
+            const isSkill3Invuln = (playerSamuraiSkills.activeSkill === 3);
+            if (!isSkill3Invuln && player.damageCooldown <= 0 && pRight > waveLeft && pLeft < waveRight && pBottom > waveTop && pTop < waveBottom) {
+                playerTakeDamage(20, 'samuraiHellSlash');
+                player.vx = wave.dir * 11;
+                player.vy = -6;
+                screenShake = 10;
+            }
+
+            // Travels all the way to the end of the battlefield!
+            if (wave.x < samuraiBoss.arenaLeft - 20 || wave.x > samuraiBoss.arenaRight + 20) {
+                // Wall impact burst
+                for (let p = 0; p < 16; p++) {
+                    particles.push({
+                        x: wave.x,
+                        y: wave.y - Math.random() * wave.h,
+                        vx: -wave.dir * (2 + Math.random() * 5),
+                        vy: -(1 + Math.random() * 5),
+                        size: 3 + Math.random() * 4,
+                        color: Math.random() < 0.5 ? '#ef4444' : '#fbbf24',
+                        life: 0.55,
+                        decay: 0.03
+                    });
+                }
+                samuraiBoss.hellSlashes.splice(i, 1);
+            }
+        }
+
+        // Handle hanging delayed slash from Player Skill 3 (shrinks over 2.0s, then deals 6 dmg!)
+        if (samuraiBoss.delayedSlash) {
+            samuraiBoss.delayedSlash.timer -= 0.016;
+            if (Math.random() < 0.45) {
+                particles.push({
+                    x: samuraiBoss.x + (Math.random() - 0.5) * 35,
+                    y: samuraiBoss.y - 52 + (Math.random() - 0.5) * 35,
+                    vx: (Math.random() - 0.5) * 3,
+                    vy: -(1 + Math.random() * 2.5),
+                    size: 2.2 + Math.random() * 2.5,
+                    color: Math.random() < 0.5 ? '#ffffff' : '#f472b6',
+                    life: 0.35,
+                    decay: 0.04
+                });
+            }
+            if (samuraiBoss.delayedSlash.timer <= 0) {
+                const dmg = samuraiBoss.delayedSlash.damage;
+                samuraiBoss.delayedSlash = null;
+                playSound('bambooCut');
+                playSound('katanaSlash');
+                screenShake = 12;
+                particles.push({
+                    type: 'ring',
+                    x: samuraiBoss.x,
+                    y: samuraiBoss.y - 52,
+                    radius: 14,
+                    growSpeed: 6.5,
+                    color: '#f472b6',
+                    life: 0.48,
+                    decay: 0.038
+                });
+                damageSamuraiBoss(dmg, 'skill3_delayed', true);
+                if (!samuraiBoss.active) return;
+            }
+        }
+
+        // Boss Stunned State (from Player Skill 3)
+        if (samuraiBoss.stunTimer > 0) {
+            samuraiBoss.stunTimer = Math.max(0, samuraiBoss.stunTimer - 0.016);
+            samuraiBoss.state = 'STUNNED';
+            samuraiBoss.pose = 'STUNNED';
+            if (samuraiBoss.stunTimer <= 0) {
+                samuraiBoss.state = 'IDLE';
+                samuraiBoss.pose = 'STAND';
+                samuraiBoss.attackCooldown = 0.65;
+            }
+            return;
+        }
+
+        samuraiBoss.stateTimer += 0.016;
+        const distToPlayer = player.x - samuraiBoss.x;
+        const absDist = Math.abs(distToPlayer);
+
+        if (samuraiBoss.state === 'IDLE') {
+            samuraiBoss.facing = distToPlayer >= 0 ? 1 : -1;
+            samuraiBoss.attackCooldown -= 0.016;
+
+            // Tactical samurai pacing toward player
+            if (absDist > 210) {
+                samuraiBoss.pose = 'WALK';
+                samuraiBoss.x += samuraiBoss.facing * 3.1;
+            } else if (absDist < 95) {
+                samuraiBoss.pose = 'WALK';
+                samuraiBoss.x -= samuraiBoss.facing * 2.0;
+            } else {
+                samuraiBoss.pose = 'STAND';
+            }
+            samuraiBoss.x = Math.max(samuraiBoss.arenaLeft + 55, Math.min(samuraiBoss.arenaRight - 55, samuraiBoss.x));
+
+            if (samuraiBoss.attackCooldown <= 0) {
+                // Pick next Boss Ability (4 abilities rotating smartly)
+                const nextAtk = samuraiBoss.attackCycle[samuraiBoss.attackIdx % samuraiBoss.attackCycle.length];
+                samuraiBoss.attackIdx++;
+                samuraiBoss.stateTimer = 0;
+
+                if (nextAtk === 'HELL_SLASH') {
+                    samuraiBoss.state = 'HELL_WINDUP';
+                    samuraiBoss.pose = 'HELL_WINDUP';
+                    samuraiBoss.facing = distToPlayer >= 0 ? 1 : -1;
+                    spawnSamuraiPopup(samuraiBoss.x, samuraiBoss.y - 120, '🔥 РАЗРЕЗ АДА!', '#f97316', false);
+                } else if (nextAtk === 'FIRE_VORTEX') {
+                    samuraiBoss.state = 'VORTEX_WINDUP';
+                    samuraiBoss.pose = 'VORTEX_WINDUP';
+                    samuraiBoss.facing = distToPlayer >= 0 ? 1 : -1;
+                    spawnSamuraiPopup(samuraiBoss.x, samuraiBoss.y - 120, '🌪️ ВИХРЬ ОГНЯ!', '#ef4444', false);
+                } else if (nextAtk === 'COUNTER') {
+                    samuraiBoss.state = 'COUNTER';
+                    samuraiBoss.pose = 'COUNTER';
+                    samuraiBoss.counterTimer = 1.0; // Full 1.0s counter window (highlighted for first 0.5s!)
+                    samuraiBoss.counterTriggered = false;
+                    samuraiBoss.facing = distToPlayer >= 0 ? 1 : -1;
+                    playSound('katanaClash');
+                    spawnSamuraiPopup(samuraiBoss.x, samuraiBoss.y - 120, '🛡️ КАУНТЕР!', '#fde047', false);
+                } else if (nextAtk === 'EARTH_FIRE') {
+                    samuraiBoss.state = 'EARTH_WINDUP';
+                    samuraiBoss.pose = 'EARTH_WINDUP';
+                    samuraiBoss.earthCracksProgress = 0;
+                    samuraiBoss.earthFireActive = false;
+                    samuraiBoss.earthHitDone = false;
+                    // Step closer if far away before plunging blade
+                    if (absDist > 260) {
+                        samuraiBoss.x += Math.sign(distToPlayer) * 110;
+                        samuraiBoss.x = Math.max(samuraiBoss.arenaLeft + 75, Math.min(samuraiBoss.arenaRight - 75, samuraiBoss.x));
+                    }
+                    spawnSamuraiPopup(samuraiBoss.x, samuraiBoss.y - 120, '🌋 ОГОНЬ ИЗ НЁДР!', '#fb923c', false);
+                }
+            }
+        } else if (samuraiBoss.state === 'HELL_WINDUP') {
+            samuraiBoss.facing = distToPlayer >= 0 ? 1 : -1;
+            if (samuraiBoss.stateTimer >= 0.58) {
+                // Launch massive jumpable hellfire slash traveling all the way to the end of the battlefield!
+                samuraiBoss.state = 'HELL_SLASH';
+                samuraiBoss.pose = 'HELL_SLASH';
+                samuraiBoss.stateTimer = 0;
+                playSound('hellSlash');
+                screenShake = 11;
+                samuraiBoss.hellSlashes.push({
+                    x: samuraiBoss.x + samuraiBoss.facing * 45,
+                    y: samuraiBoss.y,
+                    vx: samuraiBoss.facing * 10.5,
+                    dir: samuraiBoss.facing,
+                    h: 92, // Towering wave that is cleanly jumpable with Space!
+                    age: 0
+                });
+            }
+        } else if (samuraiBoss.state === 'HELL_SLASH') {
+            if (samuraiBoss.stateTimer >= 0.45) {
+                samuraiBoss.state = 'IDLE';
+                samuraiBoss.pose = 'STAND';
+                samuraiBoss.attackCooldown = 1.25;
+            }
+        } else if (samuraiBoss.state === 'VORTEX_WINDUP') {
+            samuraiBoss.facing = distToPlayer >= 0 ? 1 : -1;
+            if (samuraiBoss.stateTimer >= 0.48) {
+                samuraiBoss.state = 'VORTEX';
+                samuraiBoss.pose = 'VORTEX';
+                samuraiBoss.stateTimer = 0;
+                samuraiBoss.vortexAngle = 0;
+                samuraiBoss.vortexTickTimer = 0;
+                playSound('fireVortex');
+            }
+        } else if (samuraiBoss.state === 'VORTEX') {
+            // Boss Ability 2: Fire Vortex lasts 2.0 seconds, spinning with katana forward creating a ring of fire!
+            samuraiBoss.vortexAngle += 0.34;
+            samuraiBoss.vortexTickTimer += 0.016;
+            if (samuraiBoss.vortexTickTimer >= 0.45) {
+                samuraiBoss.vortexTickTimer = 0;
+                playSound('fireVortex');
+            }
+            // Slowly tracks toward player while spinning
+            const driftDir = distToPlayer >= 0 ? 1 : -1;
+            samuraiBoss.x += driftDir * 2.55;
+            samuraiBoss.x = Math.max(samuraiBoss.arenaLeft + 65, Math.min(samuraiBoss.arenaRight - 65, samuraiBoss.x));
+
+            // Fire ring sparks
+            if (Math.random() < 0.85) {
+                const ang = Math.random() * Math.PI * 2;
+                particles.push({
+                    x: samuraiBoss.x + Math.cos(ang) * 95,
+                    y: samuraiBoss.y - 46 + Math.sin(ang) * 28,
+                    vx: -Math.sin(ang) * 3.5,
+                    vy: -(1.2 + Math.random() * 2.8),
+                    size: 3 + Math.random() * 3.5,
+                    color: Math.random() < 0.5 ? '#ef4444' : '#facc15',
+                    life: 0.42,
+                    decay: 0.04
+                });
+            }
+
+            // Hit check on player inside the fire ring
+            const isSkill3Invuln = (playerSamuraiSkills.activeSkill === 3);
+            if (!isSkill3Invuln && player.damageCooldown <= 0 && Math.abs(player.x - samuraiBoss.x) < 105 && player.y > samuraiBoss.y - 105) {
+                playerTakeDamage(15, 'samuraiVortex');
+                player.vx = (player.x >= samuraiBoss.x ? 1 : -1) * 12;
+                player.vy = -7;
+                screenShake = 9;
+            }
+
+            if (samuraiBoss.stateTimer >= 2.0) {
+                samuraiBoss.state = 'IDLE';
+                samuraiBoss.pose = 'STAND';
+                samuraiBoss.attackCooldown = 1.3;
+            }
+        } else if (samuraiBoss.state === 'COUNTER') {
+            // Boss Ability 3: Counter stance for 1.0s (first 0.5s brightly glowing telegraph!)
+            samuraiBoss.counterTimer = Math.max(0, samuraiBoss.counterTimer - 0.016);
+            if (samuraiBoss.counterTimer <= 0) {
+                samuraiBoss.state = 'IDLE';
+                samuraiBoss.pose = 'STAND';
+                samuraiBoss.attackCooldown = 1.15;
+            }
+        } else if (samuraiBoss.state === 'COUNTER_STRIKE') {
+            if (samuraiBoss.stateTimer >= 0.52) {
+                samuraiBoss.state = 'IDLE';
+                samuraiBoss.pose = 'STAND';
+                samuraiBoss.attackCooldown = 1.25;
+            }
+        } else if (samuraiBoss.state === 'EARTH_WINDUP') {
+            // Boss Ability 4: Plunges sword into floor, glowing fire cracks spread around him
+            samuraiBoss.earthCracksProgress = Math.min(1, samuraiBoss.stateTimer / 0.62);
+            if (samuraiBoss.stateTimer >= 0.62) {
+                samuraiBoss.state = 'EARTH_FIRE';
+                samuraiBoss.pose = 'EARTH_FIRE';
+                samuraiBoss.stateTimer = 0;
+                samuraiBoss.earthFireActive = true;
+                playSound('earthFire');
+                screenShake = 14;
+                // Flame eruption burst
+                for (let p = 0; p < 34; p++) {
+                    particles.push({
+                        x: samuraiBoss.x + (Math.random() - 0.5) * samuraiBoss.earthRadius * 2,
+                        y: samuraiBoss.y - 6,
+                        vx: (Math.random() - 0.5) * 3.2,
+                        vy: -(5 + Math.random() * 8),
+                        size: 4 + Math.random() * 5,
+                        color: Math.random() < 0.45 ? '#ef4444' : (Math.random() < 0.6 ? '#f97316' : '#fef08a'),
+                        life: 0.75,
+                        decay: 0.03
+                    });
+                }
+            }
+        } else if (samuraiBoss.state === 'EARTH_FIRE') {
+            // Roaring circle of fire erupts around the boss for 1.1s
+            if (Math.random() < 0.85) {
+                particles.push({
+                    x: samuraiBoss.x + (Math.random() - 0.5) * samuraiBoss.earthRadius * 1.9,
+                    y: samuraiBoss.y - 10,
+                    vx: (Math.random() - 0.5) * 1.6,
+                    vy: -(4 + Math.random() * 6),
+                    size: 3.5 + Math.random() * 4.5,
+                    color: Math.random() < 0.5 ? '#ef4444' : '#fbbf24',
+                    life: 0.5,
+                    decay: 0.04
+                });
+            }
+
+            const isSkill3Invuln = (playerSamuraiSkills.activeSkill === 3);
+            if (!isSkill3Invuln && player.damageCooldown <= 0 && Math.abs(player.x - samuraiBoss.x) < samuraiBoss.earthRadius && player.y > samuraiBoss.y - 125) {
+                playerTakeDamage(20, 'samuraiEarthFire');
+                player.vx = (player.x >= samuraiBoss.x ? 1 : -1) * 11;
+                player.vy = -8;
+                screenShake = 10;
+            }
+
+            if (samuraiBoss.stateTimer >= 1.15) {
+                samuraiBoss.earthFireActive = false;
+                samuraiBoss.earthCracksProgress = 0;
+                samuraiBoss.state = 'IDLE';
+                samuraiBoss.pose = 'STAND';
+                samuraiBoss.attackCooldown = 1.35;
+            }
+        }
+    }
+
+    // --- SAMURAI BOSS DEFEAT CUTSCENE (5 LINES + EXIT WALK + BOSS COLLAPSE) ---
+    function startSamuraiDefeatCutscene() {
+        samuraiBoss.active = false;
+        samuraiBoss.isFallen = true;
+        samuraiBoss.health = 0;
+        samuraiBoss.pose = 'KNEELING_DEFEAT';
+        samuraiBoss.state = 'DEFEATED';
+        samuraiBoss.hellSlashes = [];
+        samuraiBoss.delayedSlash = null;
+        samuraiBoss.earthFireActive = false;
+        samuraiBoss.earthCracksProgress = 0;
+        updateSamuraiBossHud();
+
+        playerSamuraiSkills.activeSkill = 0;
+        playerSamuraiSkills.thousandTimer = 0;
+        playerSamuraiSkills.xSlashVfx = [];
+        playerSamuraiSkills.dashAfterimages = [];
+
+        currentState = STATES.CUTSCENE;
+        samuraiDefeatCutscene.active = true;
+        samuraiDefeatCutscene.phase = 'DIALOGUE';
+        samuraiDefeatCutscene.timer = 0;
+        samuraiDefeatCutscene.lineIndex = 0;
+        samuraiDefeatCutscene.lineTimer = 0;
+        samuraiDefeatCutscene.collapseAngle = 0;
+        samuraiDefeatCutscene.slammedFloor = false;
+
+        const dojo = currentLevelData.dojoArena;
+        player.vx = 0;
+        player.vy = 0;
+        player.y = dojo.floorY;
+        player.grounded = true;
+        player.state = 'IDLE';
+        // Position player slightly left of boss so player cleanly walks past & out the right door
+        if (player.x > samuraiBoss.x - 110) {
+            player.x = Math.max(dojo.arenaLeft + 80, samuraiBoss.x - 140);
+        }
+        player.facing = 1;
+        samuraiBoss.facing = -1;
+
+        if (hudOverlay) hudOverlay.classList.add('hidden');
+        if (bossHud) bossHud.classList.add('hidden');
+        if (samuraiSkillsHud) samuraiSkillsHud.classList.add('hidden');
+        if (cutsceneOverlay) {
+            cutsceneOverlay.classList.remove('hidden');
+            const hintEl = cutsceneOverlay.querySelector('.cutscene-hint');
+            if (hintEl) hintEl.textContent = 'Нажмите [Пробел] для следующей реплики • [Пропустить] для финала';
+        }
+
+        playSound('katanaClash');
+        screenShake = 12;
+        showCutsceneDialogueLine(SAMURAI_DEFEAT_LINES[0]);
+    }
+
+    function advanceSamuraiDefeatCutscene() {
+        if (!samuraiDefeatCutscene.active) return;
+        if (samuraiDefeatCutscene.phase === 'DIALOGUE') {
+            samuraiDefeatCutscene.lineIndex++;
+            samuraiDefeatCutscene.lineTimer = 0;
+            if (samuraiDefeatCutscene.lineIndex < SAMURAI_DEFEAT_LINES.length) {
+                showCutsceneDialogueLine(SAMURAI_DEFEAT_LINES[samuraiDefeatCutscene.lineIndex]);
+                playSound('grab');
+            } else {
+                samuraiDefeatCutscene.phase = 'EXIT_AND_COLLAPSE';
+                samuraiDefeatCutscene.timer = 0;
+                player.katanaDrawn = false; // Sheathes katana calmly
+                player.facing = 1;
+                player.state = 'WALK';
+                playSound('sakuraGlow');
+                resetCutsceneChapterStyle();
+                if (cutsceneChapter) cutsceneChapter.textContent = '🌸 ПОБЕДА САМУРАЯ';
+                if (cutsceneText) cutsceneText.textContent = 'Вы уходите вперёд из святилища, пока побеждённый Багровый Самурай падает на землю...';
+            }
+        } else {
+            finishSamuraiDefeatCutscene();
+        }
+    }
+
+    function updateSamuraiDefeatCutscene() {
+        if (!samuraiDefeatCutscene.active) return;
+        const dojo = currentLevelData.dojoArena;
+        const scale = canvas.height / 675;
+        const screenW = canvas.width / scale;
+
+        samuraiDefeatCutscene.timer += 0.016;
+
+        if (samuraiDefeatCutscene.phase === 'DIALOGUE') {
+            const cur = SAMURAI_DEFEAT_LINES[samuraiDefeatCutscene.lineIndex];
+            // Dynamically glide camera between kneeling Crimson Samurai Boss and Player!
+            const targetCamX = (cur && cur.speaker === 'BOSS')
+                ? (samuraiBoss.x - screenW * 0.56)
+                : (player.x - screenW * 0.42);
+            const targetCamY = (cur && cur.speaker === 'BOSS') ? -24 : -22;
+            cameraX += (targetCamX - cameraX) * 0.065;
+            cameraY += (targetCamY - cameraY) * 0.07;
+            player.animTime += 0.06;
+
+            samuraiDefeatCutscene.lineTimer += 0.016;
+            const waitDur = cur && cur.text.length > 42 ? 3.6 : 2.9;
+            if (samuraiDefeatCutscene.lineTimer >= waitDur) {
+                advanceSamuraiDefeatCutscene();
+            }
+        } else if (samuraiDefeatCutscene.phase === 'EXIT_AND_COLLAPSE') {
+            // Open exit doors smoothly
+            dojo.exitDoorOpen = Math.min(1, samuraiDefeatCutscene.timer / 0.85);
+
+            // Player walks calmly forward out of the Dojo building
+            player.state = 'WALK';
+            player.facing = 1;
+            player.x += 2.9;
+            player.animTime += 0.16;
+
+            // Boss slowly falls flat onto the dojo ground
+            if (samuraiDefeatCutscene.timer >= 0.45) {
+                const fallT = Math.min(1, (samuraiDefeatCutscene.timer - 0.45) / 0.72);
+                const easeIn = fallT * fallT;
+                samuraiDefeatCutscene.collapseAngle = easeIn * (Math.PI / 2);
+                samuraiBoss.pose = 'COLLAPSED';
+                if (fallT >= 1 && !samuraiDefeatCutscene.slammedFloor) {
+                    samuraiDefeatCutscene.slammedFloor = true;
+                    playSound('slam');
+                    screenShake = 8;
+                    spawnDust(samuraiBoss.x, samuraiBoss.y);
+                }
+            }
+
+            // Camera first frames boss collapsing, then smoothly tracks the player leaving the Dojo
+            const targetCamX = (samuraiDefeatCutscene.timer < 1.25)
+                ? ((player.x + samuraiBoss.x) * 0.5 - screenW * 0.5)
+                : (player.x - screenW * 0.42);
+            cameraX += (targetCamX - cameraX) * 0.06;
+            cameraY += (-18 - cameraY) * 0.07;
+
+            if (player.x >= dojo.x + dojo.w + 185 || samuraiDefeatCutscene.timer >= 4.2) {
+                finishSamuraiDefeatCutscene();
+            }
+        }
+    }
+
+    function finishSamuraiDefeatCutscene() {
+        if (!samuraiDefeatCutscene.active) return;
+        samuraiDefeatCutscene.active = false;
+        resetCutsceneChapterStyle();
+        if (cutsceneOverlay) {
+            cutsceneOverlay.classList.add('hidden');
+            const hintEl = cutsceneOverlay.querySelector('.cutscene-hint');
+            if (hintEl) hintEl.textContent = 'Нажмите [Пробел] чтобы пропустить катсцену';
+        }
+        if (samuraiSkillsHud) samuraiSkillsHud.classList.add('hidden');
+        if (bossHud) bossHud.classList.add('hidden');
+
+        // Clear boss autosave checkpoint upon conquering Level 100!
+        clearSamuraiBossCheckpoint();
+
+        // Unlock Achievement #5: "Круглое число" (Пройди 100 уровень)!
+        checkLevelCompleteAchievements(100);
+
+        playSound('victory');
+        spawnConfetti(player.x, player.y - 80);
+
+        if (victoryTitle) victoryTitle.textContent = '🏆 УРОВЕНЬ 100 ПРОЙДЕН!';
+        if (victorySubtext) {
+            victorySubtext.textContent = 'ЛЕГЕНДАРНАЯ ПОБЕДА! Вы одолели Багрового Самурая в честной дуэли на катанах и покорили все 100 уровней Вселенной паркура!';
+        }
+        if (btnNextLevel) btnNextLevel.classList.add('hidden');
+        if (btnReplay) btnReplay.innerHTML = '<span class="btn-icon">🔄</span> Пройти снова';
+        if (btnToMenu) btnToMenu.innerHTML = '<span class="btn-icon">📋</span> К уровням';
+
+        currentState = STATES.VICTORY;
+        player.state = 'VICTORY_IDLE';
+        if (victoryScreen) {
+            victoryScreen.classList.remove('hidden');
+            victoryScreen.classList.add('screen-active');
+        }
+    }
+
+    // --- DRAW GRAND CRIMSON SAMURAI DOJO BUILDING (LEVEL 100) ---
+    function drawSamuraiDojoBack(scale) {
+        if (currentLevelIndex !== 100 || !currentLevelData || !currentLevelData.dojoArena) return;
+        const dojo = currentLevelData.dojoArena;
+        const dx = (dojo.x - cameraX) * scale;
+        const dy = (dojo.roofY - cameraY) * scale;
+        const dw = dojo.w * scale;
+        const floorY = (dojo.floorY - cameraY) * scale;
+        const dh = floorY - dy;
+
+        if (dx + dw < -160 || dx > canvas.width + 160) return;
+
+        ctx.save();
+        // Interior Dojo Wall Background (warm dark wood + shoji screens)
+        const wallGrad = ctx.createLinearGradient(dx, dy, dx, floorY);
+        wallGrad.addColorStop(0, '#1c0a0d');
+        wallGrad.addColorStop(0.55, '#2b1016');
+        wallGrad.addColorStop(1, '#1a0b0e');
+        ctx.fillStyle = wallGrad;
+        ctx.fillRect(dx, dy, dw, dh);
+
+        // Tall luminous Shoji paper panels along back wall with crimson silhouettes
+        const panelCount = 6;
+        const panelGap = 24 * scale;
+        const panelW = (dw - panelGap * (panelCount + 1)) / panelCount;
+        for (let i = 0; i < panelCount; i++) {
+            const px = dx + panelGap + i * (panelW + panelGap);
+            const py = dy + 56 * scale;
+            const ph = dh - 108 * scale;
+
+            const shojiGrad = ctx.createLinearGradient(px, py, px, py + ph);
+            shojiGrad.addColorStop(0, 'rgba(254, 215, 170, 0.22)');
+            shojiGrad.addColorStop(0.5, 'rgba(251, 146, 60, 0.14)');
+            shojiGrad.addColorStop(1, 'rgba(220, 38, 38, 0.16)');
+            ctx.fillStyle = shojiGrad;
+            ctx.fillRect(px, py, panelW, ph);
+
+            // Wooden Kumiko lattice grid
+            ctx.strokeStyle = 'rgba(127, 29, 29, 0.72)';
+            ctx.lineWidth = 2 * scale;
+            ctx.strokeRect(px, py, panelW, ph);
+            for (let r = 1; r <= 4; r++) {
+                ctx.beginPath();
+                ctx.moveTo(px, py + (ph * r) / 5);
+                ctx.lineTo(px + panelW, py + (ph * r) / 5);
+                ctx.stroke();
+            }
+            for (let c = 1; c <= 2; c++) {
+                ctx.beginPath();
+                ctx.moveTo(px + (panelW * c) / 3, py);
+                ctx.lineTo(px + (panelW * c) / 3, py + ph);
+                ctx.stroke();
+            }
+        }
+
+        // Giant Crimson Sun & Twin Katana Emblem painted in center of the Dojo wall
+        const centerX = dx + dw * 0.5;
+        const centerY = dy + dh * 0.48;
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.28)';
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 82 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.45)';
+        ctx.lineWidth = 3 * scale;
+        ctx.stroke();
+
+        // Massive Crimson Lacquered Wooden Pillars
+        const pillarPositions = [0.02, 0.34, 0.66, 0.96];
+        pillarPositions.forEach(frac => {
+            const px = dx + dw * frac;
+            const pGrad = ctx.createLinearGradient(px, 0, px + 24 * scale, 0);
+            pGrad.addColorStop(0, '#450a0a');
+            pGrad.addColorStop(0.5, '#991b1b');
+            pGrad.addColorStop(1, '#450a0a');
+            ctx.fillStyle = pGrad;
+            ctx.fillRect(px, dy, 24 * scale, dh);
+            // Gold collar rings
+            ctx.fillStyle = '#fbbf24';
+            ctx.fillRect(px - 2 * scale, dy + 42 * scale, 28 * scale, 5 * scale);
+            ctx.fillRect(px - 2 * scale, floorY - 26 * scale, 28 * scale, 5 * scale);
+        });
+
+        // Glowing Hanging Paper Lanterns across Dojo ceiling
+        for (let l = 1; l <= 5; l++) {
+            const lx = dx + (dw * l) / 6;
+            const ly = dy + 54 * scale;
+            const pulse = 0.8 + 0.2 * Math.sin(Date.now() * 0.004 + l);
+            const lg = ctx.createRadialGradient(lx, ly, 4 * scale, lx, ly, 58 * scale);
+            lg.addColorStop(0, `rgba(254, 240, 138, ${0.42 * pulse})`);
+            lg.addColorStop(0.5, `rgba(239, 68, 68, ${0.18 * pulse})`);
+            lg.addColorStop(1, 'rgba(239, 68, 68, 0)');
+            ctx.fillStyle = lg;
+            ctx.beginPath();
+            ctx.arc(lx, ly, 58 * scale, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 2 * scale;
+            ctx.beginPath();
+            ctx.moveTo(lx, dy + 16 * scale);
+            ctx.lineTo(lx, ly - 14 * scale);
+            ctx.stroke();
+
+            ctx.fillStyle = '#dc2626';
+            ctx.beginPath();
+            ctx.ellipse(lx, ly, 12 * scale, 16 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#fef08a';
+            ctx.beginPath();
+            ctx.ellipse(lx, ly, 6 * scale, 10 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Grand Pagoda Sweeping Eaves Roof Overhead
+        ctx.fillStyle = '#0f172a';
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 3 * scale;
+        ctx.beginPath();
+        ctx.moveTo(dx - 55 * scale, dy + 22 * scale);
+        ctx.quadraticCurveTo(dx + dw * 0.5, dy - 65 * scale, dx + dw + 55 * scale, dy + 22 * scale);
+        ctx.lineTo(dx + dw + 20 * scale, dy + 36 * scale);
+        ctx.lineTo(dx - 20 * scale, dy + 36 * scale);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Entrance Signboard Plaque on Left Wall
+        if (!samuraiBoss.active && !samuraiBoss.isFallen) {
+            ctx.fillStyle = '#450a0a';
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 2.5 * scale;
+            ctx.fillRect(dx - 18 * scale, dy + 58 * scale, 210 * scale, 34 * scale);
+            ctx.strokeRect(dx - 18 * scale, dy + 58 * scale, 210 * scale, 34 * scale);
+            ctx.fillStyle = '#fef08a';
+            ctx.font = `bold ${13 * scale}px "Russo One", sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.fillText('⛩️ ДОДЗЁ БАГРОВОГО САМУРАЯ', dx + 87 * scale, dy + 80 * scale);
+        }
+
+        // Right-side Exit Door (glows warm golden-sakura as it slides open on defeat!)
+        const doorW = 64 * scale;
+        const doorH = 165 * scale;
+        const doorX = dx + dw - 34 * scale;
+        const doorY = floorY - doorH;
+        const openAmt = dojo.exitDoorOpen || 0;
+
+        if (openAmt > 0.02) {
+            const beamGrad = ctx.createLinearGradient(doorX - 160 * scale, doorY, doorX + 60 * scale, floorY);
+            beamGrad.addColorStop(0, 'rgba(254, 240, 138, 0)');
+            beamGrad.addColorStop(0.55, `rgba(251, 207, 232, ${0.32 * openAmt})`);
+            beamGrad.addColorStop(1, `rgba(254, 240, 138, ${0.72 * openAmt})`);
+            ctx.fillStyle = beamGrad;
+            ctx.beginPath();
+            ctx.moveTo(doorX, doorY);
+            ctx.lineTo(doorX + doorW, doorY);
+            ctx.lineTo(doorX + doorW, floorY);
+            ctx.lineTo(doorX - 180 * scale * openAmt, floorY);
+            ctx.closePath();
+            ctx.fill();
+        }
+        // Sliding wooden door panel
+        ctx.fillStyle = '#7f1d1d';
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 2.5 * scale;
+        const closedH = doorH * (1 - openAmt * 0.92);
+        ctx.fillRect(doorX, doorY, 18 * scale, closedH);
+        ctx.strokeRect(doorX, doorY, 18 * scale, closedH);
+
+        // Polished Dark Tatami / Hardwood Dojo Floor strip
+        ctx.fillStyle = '#78350f';
+        ctx.fillRect(dx, floorY - 6 * scale, dw, 10 * scale);
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillRect(dx, floorY - 6 * scale, dw, 2 * scale);
+
+        ctx.restore();
+    }
+
+    // --- DRAW CRIMSON SAMURAI BOSS (STICKMAN SLIGHTLY LARGER THAN PLAYER: RED ARMOR, BLACK DEMON MASK, FIRE SAYA) ---
+    function drawSamuraiBoss(scale) {
+        if (currentLevelIndex !== 100) return;
+        const dojo = currentLevelData && currentLevelData.dojoArena;
+        if (!dojo) return;
+
+        const bx = (samuraiBoss.x - cameraX) * scale;
+        const by = (samuraiBoss.y - cameraY) * scale;
+        if (bx < -220 || bx > canvas.width + 220) return;
+
+        // Slightly taller & broader stickman than the player (1.20x player scale!)
+        const bs = scale * 1.20;
+        const facing = samuraiBoss.facing || -1;
+        const isFlashing = samuraiBoss.hitFlashTimer > 0 && Math.floor(Date.now() / 45) % 2 === 0;
+        const time = Date.now() * 0.009;
+
+        const inCounterHighlight = (samuraiBoss.state === 'COUNTER' && samuraiBoss.counterTimer > 0.5);
+        const inCounterWindow = (samuraiBoss.state === 'COUNTER' && samuraiBoss.counterTimer > 0);
+
+        ctx.save();
+        ctx.translate(bx, by);
+
+        // Collapse rotation on defeat
+        if (samuraiBoss.pose === 'COLLAPSED') {
+            ctx.rotate(samuraiDefeatCutscene.collapseAngle * (-facing));
+        }
+
+        // Ground shadow beneath stickman samurai
+        ctx.fillStyle = 'rgba(2, 6, 23, 0.5)';
+        ctx.beginPath();
+        ctx.ellipse(0, 2 * scale, 26 * bs, 5.5 * bs, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Boss Counter Aura Highlight (first 0.5s brightly glowing, full 1.0s active stance)
+        if (inCounterWindow) {
+            const auraR = (inCounterHighlight ? 64 : 50) * bs;
+            const auraGrad = ctx.createRadialGradient(0, -45 * bs, 6 * bs, 0, -45 * bs, auraR);
+            auraGrad.addColorStop(0, inCounterHighlight ? 'rgba(254, 240, 138, 0.88)' : 'rgba(239, 68, 68, 0.32)');
+            auraGrad.addColorStop(0.55, inCounterHighlight ? 'rgba(239, 68, 68, 0.55)' : 'rgba(251, 191, 36, 0.18)');
+            auraGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+            ctx.fillStyle = auraGrad;
+            ctx.beginPath();
+            ctx.arc(0, -45 * bs, auraR, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = inCounterHighlight ? '#fef08a' : 'rgba(248, 113, 113, 0.72)';
+            ctx.lineWidth = (inCounterHighlight ? 3.2 : 1.8) * bs;
+            ctx.beginPath();
+            ctx.arc(0, -45 * bs, (inCounterHighlight ? 50 : 42) * bs, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // --- ARTICULATED STICKMAN SKELETON JOINTS (same coordinate system as player stickman!) ---
+        const breath = Math.sin(time * 0.7) * 1.4;
+        let hip = { x: 0, y: -38 + breath * 0.5 };
+        let shoulder = { x: 0, y: -54 + breath * 0.8 };
+        let head = { x: 0, y: -68 + breath };
+        let leftFoot = { x: -10 * facing, y: 0 };
+        let rightFoot = { x: 10 * facing, y: 0 };
+        let leftKnee = { x: -8 * facing, y: -19 };
+        let rightKnee = { x: 9 * facing, y: -19 };
+        let leftHand = { x: -facing * 9, y: -38 + breath };
+        let rightHand = { x: facing * 15, y: -42 + breath };
+        let bladeAng = facing > 0 ? -0.42 : Math.PI + 0.42;
+
+        const isSeiza = (samuraiBoss.pose === 'SEIZA_BACK' || (samuraiIntroCutscene.active && samuraiIntroCutscene.seizaProgress > 0.05));
+        const seizaT = samuraiBoss.pose === 'SEIZA_BACK' ? 1 : (samuraiIntroCutscene.active ? samuraiIntroCutscene.seizaProgress : 0);
+
+        if (isSeiza) {
+            // Kneeling gracefully in Seiza (sitting with back turned to player!)
+            const drop = 21 * seizaT;
+            hip = { x: 0, y: -38 + drop };
+            shoulder = { x: 0, y: -54 + drop };
+            head = { x: 0, y: -68 + drop };
+            leftKnee = { x: facing * 12 * seizaT - 8 * (1 - seizaT), y: -4 * seizaT - 19 * (1 - seizaT) };
+            rightKnee = { x: facing * 14 * seizaT + 9 * (1 - seizaT), y: -4 * seizaT - 19 * (1 - seizaT) };
+            leftFoot = { x: -facing * 12 * seizaT - 10 * (1 - seizaT), y: 0 };
+            rightFoot = { x: -facing * 10 * seizaT + 10 * (1 - seizaT), y: 0 };
+            leftHand = { x: facing * 9, y: hip.y + 4 };
+            rightHand = { x: facing * 11, y: hip.y + 4 };
+        } else if (samuraiBoss.pose === 'WALK') {
+            const walkCycle = time * 1.6;
+            const bob = Math.abs(Math.sin(walkCycle)) * 2.2;
+            hip = { x: 0, y: -38 + bob };
+            shoulder = { x: facing * 3, y: -54 + bob * 0.8 };
+            head = { x: facing * 4.5, y: -68 + bob * 0.8 };
+            const sL = Math.sin(walkCycle);
+            const sR = Math.sin(walkCycle + Math.PI);
+            leftFoot = { x: sL * 13 * facing, y: sL > 0 ? -sL * 6 : 0 };
+            rightFoot = { x: sR * 13 * facing, y: sR > 0 ? -sR * 6 : 0 };
+            leftKnee = { x: (hip.x + leftFoot.x) * 0.5 + facing * 4.5, y: -19 + (sL > 0 ? -3.5 : 0.5) };
+            rightKnee = { x: (hip.x + rightFoot.x) * 0.5 + facing * 4.5, y: -19 + (sR > 0 ? -3.5 : 0.5) };
+            leftHand = { x: -facing * 8, y: -39 + bob };
+            rightHand = { x: facing * 16, y: -43 + bob };
+        } else if (samuraiBoss.pose === 'HELL_WINDUP') {
+            // Two-handed overhead flaming katana windup!
+            hip = { x: -facing * 3, y: -36 };
+            shoulder = { x: -facing * 5, y: -52 };
+            head = { x: -facing * 3, y: -66 };
+            leftKnee = { x: -facing * 12, y: -18 };
+            rightKnee = { x: facing * 12, y: -18 };
+            leftFoot = { x: -facing * 14, y: 0 };
+            rightFoot = { x: facing * 14, y: 0 };
+            leftHand = { x: -facing * 6, y: -74 };
+            rightHand = { x: -facing * 8, y: -76 };
+            bladeAng = facing > 0 ? -2.35 : -0.78;
+        } else if (samuraiBoss.pose === 'HELL_SLASH') {
+            // Sweeping forward cleave follow-through!
+            hip = { x: facing * 6, y: -34 };
+            shoulder = { x: facing * 13, y: -48 };
+            head = { x: facing * 16, y: -61 };
+            leftKnee = { x: -facing * 10, y: -17 };
+            rightKnee = { x: facing * 16, y: -17 };
+            leftFoot = { x: -facing * 16, y: 0 };
+            rightFoot = { x: facing * 18, y: 0 };
+            leftHand = { x: -facing * 8, y: -42 };
+            rightHand = { x: facing * 26, y: -32 };
+            bladeAng = facing > 0 ? 0.45 : Math.PI - 0.45;
+        } else if (samuraiBoss.pose === 'VORTEX_WINDUP' || samuraiBoss.pose === 'VORTEX') {
+            const spinDir = samuraiBoss.pose === 'VORTEX' ? Math.cos(samuraiBoss.vortexAngle) : facing;
+            hip = { x: 0, y: -36 };
+            shoulder = { x: spinDir * 4, y: -52 };
+            head = { x: spinDir * 5, y: -66 };
+            leftKnee = { x: -10, y: -18 };
+            rightKnee = { x: 10, y: -18 };
+            leftFoot = { x: -12, y: 0 };
+            rightFoot = { x: 12, y: 0 };
+            leftHand = { x: -spinDir * 14, y: -44 };
+            rightHand = { x: spinDir * 24, y: -44 };
+            bladeAng = spinDir >= 0 ? 0 : Math.PI;
+        } else if (samuraiBoss.pose === 'COUNTER') {
+            // Low coiled iaijutsu counter stance!
+            hip = { x: -facing * 3, y: -30 };
+            shoulder = { x: facing * 4, y: -45 };
+            head = { x: facing * 7, y: -58 };
+            leftKnee = { x: -facing * 12, y: -15 };
+            rightKnee = { x: facing * 15, y: -15 };
+            leftFoot = { x: -facing * 16, y: 0 };
+            rightFoot = { x: facing * 17, y: 0 };
+            leftHand = { x: -facing * 4, y: -32 };
+            rightHand = { x: facing * 10, y: -34 };
+            bladeAng = facing > 0 ? -0.95 : Math.PI + 0.95;
+        } else if (samuraiBoss.pose === 'COUNTER_STRIKE') {
+            // Dynamic slash + martial arts kick!
+            hip = { x: facing * 4, y: -36 };
+            shoulder = { x: -facing * 3, y: -52 };
+            head = { x: -facing * 1, y: -66 };
+            leftKnee = { x: -facing * 6, y: -18 };
+            leftFoot = { x: -facing * 8, y: 0 };
+            rightKnee = { x: facing * 16, y: -32 };
+            rightFoot = { x: facing * 34, y: -38 };
+            leftHand = { x: -facing * 14, y: -46 };
+            rightHand = { x: facing * 24, y: -44 };
+            bladeAng = facing > 0 ? 0.2 : Math.PI - 0.2;
+        } else if (samuraiBoss.pose === 'EARTH_WINDUP' || samuraiBoss.pose === 'EARTH_FIRE') {
+            // Deep crouch plunging katana straight down into the dojo floor!
+            hip = { x: 0, y: -27 };
+            shoulder = { x: facing * 6, y: -42 };
+            head = { x: facing * 9, y: -54 };
+            leftKnee = { x: -facing * 13, y: -13 };
+            rightKnee = { x: facing * 14, y: -13 };
+            leftFoot = { x: -facing * 16, y: 0 };
+            rightFoot = { x: facing * 15, y: 0 };
+            leftHand = { x: facing * 10, y: -24 };
+            rightHand = { x: facing * 11, y: -22 };
+            bladeAng = Math.PI / 2;
+        } else if (samuraiBoss.pose === 'STUNNED') {
+            // Staggered back in stupor!
+            const shiv = Math.sin(Date.now() * 0.04) * 1.6;
+            hip = { x: -facing * 3 + shiv, y: -36 };
+            shoulder = { x: -facing * 8 + shiv, y: -51 };
+            head = { x: -facing * 11 + shiv, y: -64 };
+            leftHand = { x: -facing * 16, y: -42 };
+            rightHand = { x: facing * 10, y: -46 };
+            bladeAng = facing > 0 ? -1.4 : -1.7;
+        } else if (samuraiBoss.pose === 'KNEELING_DEFEAT') {
+            // Dropped onto one knee, leaning on planted katana
+            hip = { x: -facing * 2, y: -22 };
+            shoulder = { x: facing * 5, y: -37 };
+            head = { x: facing * 9, y: -49 };
+            leftKnee = { x: -facing * 10, y: -3 };
+            leftFoot = { x: -facing * 19, y: 0 };
+            rightKnee = { x: facing * 11, y: -18 };
+            rightFoot = { x: facing * 11, y: 0 };
+            leftHand = { x: -facing * 4, y: -24 };
+            rightHand = { x: facing * 15, y: -22 };
+            bladeAng = Math.PI / 2;
+        }
+
+        const stickInk = isFlashing ? '#ffffff' : '#090d16';
+        const armorMain = isFlashing ? '#ffffff' : '#b91c1c';
+        const armorDark = isFlashing ? '#fecaca' : '#7f1d1d';
+        const armorBright = isFlashing ? '#ffffff' : '#ef4444';
+        const goldTrim = '#fbbf24';
+
+        // 1. Draw Core Stickman Skeleton (exact crisp stickman look, scaled 1.20x!)
+        ctx.strokeStyle = stickInk;
+        ctx.fillStyle = stickInk;
+        ctx.lineWidth = 4.6 * bs;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        // Spine & neck
+        ctx.beginPath();
+        ctx.moveTo(hip.x * bs, hip.y * bs);
+        ctx.lineTo(shoulder.x * bs, shoulder.y * bs);
+        ctx.lineTo(head.x * bs, head.y * bs);
+        ctx.stroke();
+
+        // Stickman head circle
+        const hdX = head.x * bs;
+        const hdY = head.y * bs - 4 * bs;
+        ctx.beginPath();
+        ctx.arc(hdX, hdY, 9.2 * bs, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Stickman arms
+        ctx.beginPath();
+        ctx.moveTo(shoulder.x * bs, shoulder.y * bs);
+        ctx.lineTo(leftHand.x * bs, leftHand.y * bs);
+        ctx.moveTo(shoulder.x * bs, shoulder.y * bs);
+        ctx.lineTo(rightHand.x * bs, rightHand.y * bs);
+        ctx.stroke();
+
+        // Stickman legs
+        ctx.beginPath();
+        ctx.moveTo(hip.x * bs, hip.y * bs);
+        ctx.lineTo(leftKnee.x * bs, leftKnee.y * bs);
+        ctx.lineTo(leftFoot.x * bs, leftFoot.y * bs);
+        ctx.moveTo(hip.x * bs, hip.y * bs);
+        ctx.lineTo(rightKnee.x * bs, rightKnee.y * bs);
+        ctx.lineTo(rightFoot.x * bs, rightFoot.y * bs);
+        ctx.stroke();
+
+        // 2. Crimson Samurai Armor Layered Over the Stickman Anatomy!
+        const hX = hip.x * bs;
+        const hY = hip.y * bs;
+        const sX = shoulder.x * bs;
+        const sY = shoulder.y * bs;
+
+        // Crimson Hakama Trousers & Red Armored Greaves along stickman legs
+        ctx.strokeStyle = armorDark;
+        ctx.lineWidth = 9.5 * bs;
+        ctx.lineCap = 'butt';
+        ctx.beginPath();
+        ctx.moveTo(hX, hY);
+        ctx.lineTo(leftKnee.x * bs, leftKnee.y * bs);
+        ctx.moveTo(hX, hY);
+        ctx.lineTo(rightKnee.x * bs, rightKnee.y * bs);
+        ctx.stroke();
+
+        ctx.strokeStyle = armorMain;
+        ctx.lineWidth = 5.5 * bs;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(leftKnee.x * bs, leftKnee.y * bs);
+        ctx.lineTo(leftFoot.x * bs, leftFoot.y * bs);
+        ctx.moveTo(rightKnee.x * bs, rightKnee.y * bs);
+        ctx.lineTo(rightFoot.x * bs, rightFoot.y * bs);
+        ctx.stroke();
+
+        // Crimson O-Yoroi Chestplate (Do) fitted over stickman spine
+        const torsoAngle = Math.atan2(hY - sY, hX - sX);
+        const perpX = Math.cos(torsoAngle - Math.PI / 2);
+        const perpY = Math.sin(torsoAngle - Math.PI / 2);
+
+        const doGrad = ctx.createLinearGradient(sX - 9 * bs, sY, sX + 9 * bs, hY);
+        doGrad.addColorStop(0, armorBright);
+        doGrad.addColorStop(0.55, armorMain);
+        doGrad.addColorStop(1, armorDark);
+        ctx.fillStyle = doGrad;
+        ctx.strokeStyle = goldTrim;
+        ctx.lineWidth = 1.8 * bs;
+        ctx.beginPath();
+        ctx.moveTo(sX - perpX * 8.5 * bs, sY - perpY * 8.5 * bs);
+        ctx.lineTo(sX + perpX * 8.5 * bs, sY + perpY * 8.5 * bs);
+        ctx.lineTo(hX + perpX * 10.5 * bs, hY + perpY * 10.5 * bs + 3 * bs);
+        ctx.lineTo(hX - perpX * 10.5 * bs, hY - perpY * 10.5 * bs + 3 * bs);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Gold lamellar armor lacing lines on chestplate
+        ctx.strokeStyle = goldTrim;
+        ctx.lineWidth = 1.4 * bs;
+        const midTX = (sX + hX) * 0.5;
+        const midTY = (sY + hY) * 0.5;
+        ctx.beginPath();
+        ctx.moveTo(midTX - perpX * 8.5 * bs, midTY - perpY * 8.5 * bs);
+        ctx.lineTo(midTX + perpX * 8.5 * bs, midTY + perpY * 8.5 * bs);
+        ctx.stroke();
+
+        // Red Samurai Shoulder Plates (Sode) & Armored Upper Sleeves
+        [leftHand, rightHand].forEach(hand => {
+            const midArmX = sX + (hand.x * bs - sX) * 0.52;
+            const midArmY = sY + (hand.y * bs - sY) * 0.52;
+            ctx.strokeStyle = armorMain;
+            ctx.lineWidth = 8 * bs;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(sX, sY);
+            ctx.lineTo(midArmX, midArmY);
+            ctx.stroke();
+
+            ctx.strokeStyle = goldTrim;
+            ctx.lineWidth = 1.8 * bs;
+            ctx.beginPath();
+            ctx.moveTo(midArmX - 2.5 * bs, midArmY - 2.5 * bs);
+            ctx.lineTo(midArmX + 2.5 * bs, midArmY + 2.5 * bs);
+            ctx.stroke();
+        });
+
+        // Crimson & Gold Obi Sash at Waist
+        ctx.fillStyle = '#450a0a';
+        ctx.strokeStyle = goldTrim;
+        ctx.lineWidth = 1.6 * bs;
+        ctx.beginPath();
+        ctx.roundRect(hX - 10 * bs, hY - 4 * bs, 20 * bs, 8 * bs, 2.5 * bs);
+        ctx.fill();
+        ctx.stroke();
+
+        // 3. Crimson Samurai Kabuto Helmet with Golden Horns + BLACK DEMON MASK (Чёрная маска демона)
+        ctx.fillStyle = armorMain;
+        ctx.strokeStyle = goldTrim;
+        ctx.lineWidth = 1.6 * bs;
+        ctx.beginPath();
+        ctx.arc(hdX, hdY - 1 * bs, 10.6 * bs, Math.PI, 0);
+        ctx.lineTo(hdX + 13 * bs, hdY + 2.5 * bs);
+        ctx.lineTo(hdX - 13 * bs, hdY + 2.5 * bs);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Twin Golden Kuwagata Helmet Horns
+        ctx.strokeStyle = goldTrim;
+        ctx.lineWidth = 2.4 * bs;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(hdX, hdY - 10 * bs);
+        ctx.quadraticCurveTo(hdX - 10 * bs, hdY - 16 * bs, hdX - 13 * bs, hdY - 25 * bs);
+        ctx.moveTo(hdX, hdY - 10 * bs);
+        ctx.quadraticCurveTo(hdX + 10 * bs, hdY - 16 * bs, hdX + 13 * bs, hdY - 25 * bs);
+        ctx.stroke();
+
+        if (samuraiBoss.pose !== 'SEIZA_BACK') {
+            // Black Oni Demon Mask over front of stickman head
+            ctx.fillStyle = '#090d16';
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 1.2 * bs;
+            ctx.beginPath();
+            ctx.arc(hdX + facing * 2.5 * bs, hdY + 2.5 * bs, 7.6 * bs, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Glowing Fiery Demon Eyes
+            ctx.save();
+            ctx.fillStyle = inCounterHighlight ? '#fef08a' : '#ef4444';
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 9 * bs;
+            ctx.beginPath();
+            ctx.moveTo(hdX + facing * 1.5 * bs, hdY + 0.5 * bs);
+            ctx.lineTo(hdX + facing * 7.8 * bs, hdY - 1 * bs);
+            ctx.lineTo(hdX + facing * 6.2 * bs, hdY + 3 * bs);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+
+            // Sharp White Oni Fangs
+            ctx.fillStyle = '#f8fafc';
+            ctx.beginPath();
+            ctx.moveTo(hdX + facing * 2.5 * bs, hdY + 7.5 * bs);
+            ctx.lineTo(hdX + facing * 4.2 * bs, hdY + 4.8 * bs);
+            ctx.lineTo(hdX + facing * 5.8 * bs, hdY + 7.5 * bs);
+            ctx.moveTo(hdX + facing * 6.5 * bs, hdY + 7.5 * bs);
+            ctx.lineTo(hdX + facing * 8.1 * bs, hdY + 5 * bs);
+            ctx.lineTo(hdX + facing * 9.5 * bs, hdY + 7.5 * bs);
+            ctx.fill();
+        } else {
+            // Back of red armored helmet neck-guard (Shikoro) when sitting with back turned!
+            ctx.fillStyle = armorDark;
+            ctx.strokeStyle = goldTrim;
+            ctx.lineWidth = 1.4 * bs;
+            ctx.beginPath();
+            ctx.roundRect(hdX - 11.5 * bs, hdY + 1 * bs, 23 * bs, 9 * bs, 3 * bs);
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        // 4. FIRE-PAINTED SCABBARD AT WAIST (Сая с изображением огня!)
+        ctx.save();
+        ctx.translate(hX, hY + 1 * bs);
+        ctx.rotate(facing * -0.22);
+
+        // Obsidian curved scabbard body
+        ctx.strokeStyle = '#090d16';
+        ctx.lineWidth = 5.4 * bs;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(facing * 4 * bs, 0);
+        ctx.quadraticCurveTo(-facing * 14 * bs, 3.5 * bs, -facing * 32 * bs, 8 * bs);
+        ctx.stroke();
+
+        // Vivid Fiery Flames Painted Along the Saya!
+        for (let f = 0; f < 4; f++) {
+            const t = f / 3.4;
+            const fx = facing * (1 - t * 29) * bs;
+            const fy = (0.8 + t * 6.5) * bs;
+            ctx.fillStyle = f % 2 === 0 ? '#ef4444' : '#f97316';
+            ctx.beginPath();
+            ctx.moveTo(fx + facing * 3.2 * bs, fy + 1.5 * bs);
+            ctx.quadraticCurveTo(fx - facing * 1.5 * bs, fy - 5.5 * bs, fx - facing * 6.2 * bs, fy - 1.5 * bs);
+            ctx.quadraticCurveTo(fx - facing * 2.2 * bs, fy + 2.2 * bs, fx + facing * 3.2 * bs, fy + 1.5 * bs);
+            ctx.fill();
+            ctx.fillStyle = '#fde047';
+            ctx.beginPath();
+            ctx.arc(fx - facing * 0.8 * bs, fy - 0.8 * bs, 1.5 * bs, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.fillStyle = goldTrim;
+        ctx.beginPath();
+        ctx.arc(-facing * 32 * bs, 8 * bs, 2.5 * bs, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Sheathed hilt & golden guard when katana is not yet drawn
+        if (!samuraiBoss.katanaDrawn) {
+            ctx.fillStyle = goldTrim;
+            ctx.beginPath();
+            ctx.ellipse(facing * 5 * bs, -0.5 * bs, 2.5 * bs, 6.5 * bs, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#7f1d1d';
+            ctx.lineWidth = 4.2 * bs;
+            ctx.beginPath();
+            ctx.moveTo(facing * 6 * bs, -1 * bs);
+            ctx.lineTo(facing * 19 * bs, -4.5 * bs);
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // 5. DRAWN BLAZING KATANA GRIPPED IN STICKMAN'S HAND
+        if (samuraiBoss.katanaDrawn && samuraiBoss.pose !== 'COLLAPSED') {
+            ctx.save();
+            ctx.translate(rightHand.x * bs, rightHand.y * bs);
+            ctx.rotate(bladeAng);
+
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 3.8 * bs;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(-11 * bs, 0);
+            ctx.lineTo(3 * bs, 0);
+            ctx.stroke();
+
+            ctx.fillStyle = goldTrim;
+            ctx.beginPath();
+            ctx.ellipse(4 * bs, 0, 2.4 * bs, 6.2 * bs, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            const bGrad = ctx.createLinearGradient(5 * bs, 0, 56 * bs, 0);
+            bGrad.addColorStop(0, '#94a3b8');
+            bGrad.addColorStop(0.55, '#f8fafc');
+            bGrad.addColorStop(1, '#fecaca');
+            ctx.fillStyle = bGrad;
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = (samuraiBoss.pose === 'HELL_WINDUP' || samuraiBoss.pose === 'VORTEX' || samuraiBoss.pose === 'EARTH_FIRE') ? 15 * bs : 6 * bs;
+            ctx.beginPath();
+            ctx.moveTo(5 * bs, -2.2 * bs);
+            ctx.quadraticCurveTo(30 * bs, -3.8 * bs, 56 * bs, -5.2 * bs);
+            ctx.lineTo(52 * bs, 0.8 * bs);
+            ctx.quadraticCurveTo(28 * bs, 1.1 * bs, 5 * bs, 1.8 * bs);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 1.4 * bs;
+            ctx.beginPath();
+            ctx.moveTo(5 * bs, -2 * bs);
+            ctx.quadraticCurveTo(30 * bs, -3.6 * bs, 55 * bs, -5 * bs);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // Stickman Hands
+        ctx.fillStyle = stickInk;
+        ctx.beginPath();
+        ctx.arc(leftHand.x * bs, leftHand.y * bs, 3.2 * bs, 0, Math.PI * 2);
+        ctx.arc(rightHand.x * bs, rightHand.y * bs, 3.2 * bs, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 6. BOSS ABILITY 2 VISUAL: SPINNING RING OF FIRE (Вихрь огня — 2s!)
+        if (samuraiBoss.pose === 'VORTEX') {
+            const ringR = 90 * bs;
+            ctx.save();
+            ctx.translate(0, -40 * bs);
+            for (let ring = 0; ring < 3; ring++) {
+                ctx.strokeStyle = ring === 0 ? '#ef4444' : (ring === 1 ? '#f97316' : '#fef08a');
+                ctx.shadowColor = '#f97316';
+                ctx.shadowBlur = 14 * bs;
+                ctx.lineWidth = (8.5 - ring * 2.2) * bs;
+                ctx.beginPath();
+                ctx.ellipse(0, (ring - 1) * 12 * bs, ringR - ring * 5 * bs, 22 * bs, 0, samuraiBoss.vortexAngle + ring * 2, samuraiBoss.vortexAngle + ring * 2 + Math.PI * 1.45);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        // 7. HANGING SHRINKING SLASH MARK ON BOSS (Player Skill 3: 2.0s stun + shrinking slash!)
+        if (samuraiBoss.delayedSlash) {
+            const ratio = Math.max(0.05, samuraiBoss.delayedSlash.timer / samuraiBoss.delayedSlash.maxTimer);
+            const halfLen = 58 * ratio * bs;
+            ctx.save();
+            ctx.translate(0, -46 * bs);
+            ctx.rotate(samuraiBoss.delayedSlash.angle || -0.58);
+            ctx.strokeStyle = '#ffffff';
+            ctx.shadowColor = '#f472b6';
+            ctx.shadowBlur = 16 * bs;
+            ctx.lineWidth = (3.2 + (1 - ratio) * 4.0) * bs;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(-halfLen, 0);
+            ctx.lineTo(halfLen, 0);
+            ctx.stroke();
+
+            ctx.strokeStyle = 'rgba(244, 114, 182, 0.85)';
+            ctx.lineWidth = 1.8 * bs;
+            ctx.beginPath();
+            ctx.arc(0, 0, halfLen * 0.42, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        ctx.restore();
+    }
+
+    // --- DRAW ALL LEVEL 100 COMBAT VFX (BOSS ABILITIES 1 & 4 + PLAYER SKILLS 1-4 + POPUPS) ---
+    function drawSamuraiCombatVfx(scale) {
+        if (currentLevelIndex !== 100) return;
+
+        // 1. Boss Ability 4: Fiery Ground Cracks & Erupting Circle of Earth Fire
+        if (samuraiBoss.earthCracksProgress > 0 || samuraiBoss.earthFireActive) {
+            const bx = (samuraiBoss.x - cameraX) * scale;
+            const by = (samuraiBoss.y - cameraY) * scale;
+            const rad = samuraiBoss.earthRadius * scale * (samuraiBoss.earthFireActive ? 1 : samuraiBoss.earthCracksProgress);
+
+            ctx.save();
+            // Glowing magma floor zone
+            const glowGrad = ctx.createRadialGradient(bx, by, 8 * scale, bx, by, rad);
+            glowGrad.addColorStop(0, 'rgba(254, 240, 138, 0.78)');
+            glowGrad.addColorStop(0.55, 'rgba(239, 68, 68, 0.55)');
+            glowGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+            ctx.fillStyle = glowGrad;
+            ctx.beginPath();
+            ctx.ellipse(bx, by - 2 * scale, rad, 18 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Jagged glowing fiery cracks radiating from the embedded sword
+            ctx.strokeStyle = '#fde047';
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 12 * scale;
+            ctx.lineWidth = 3 * scale;
+            for (let c = -3; c <= 3; c++) {
+                if (c === 0) continue;
+                const endX = bx + (c / 3) * rad;
+                ctx.beginPath();
+                ctx.moveTo(bx, by - 2 * scale);
+                ctx.lineTo(bx + (endX - bx) * 0.45, by - 7 * scale);
+                ctx.lineTo(endX, by - 1 * scale);
+                ctx.stroke();
+            }
+
+            // Erupting wall of earth-fire pillars filling the radius around boss!
+            if (samuraiBoss.earthFireActive) {
+                const t = Date.now() * 0.02;
+                const pillarCount = 11;
+                for (let i = 0; i < pillarCount; i++) {
+                    const frac = (i / (pillarCount - 1)) * 2 - 1; // -1 .. 1
+                    const fx = bx + frac * rad * 0.94;
+                    const fh = (88 + Math.sin(t + i * 1.3) * 26) * scale * (1 - Math.abs(frac) * 0.22);
+                    const fw = 22 * scale;
+
+                    const fGrad = ctx.createLinearGradient(fx, by, fx, by - fh);
+                    fGrad.addColorStop(0, 'rgba(254, 240, 138, 0.95)');
+                    fGrad.addColorStop(0.45, 'rgba(249, 115, 22, 0.88)');
+                    fGrad.addColorStop(1, 'rgba(220, 38, 38, 0)');
+                    ctx.fillStyle = fGrad;
+                    ctx.beginPath();
+                    ctx.moveTo(fx - fw, by);
+                    ctx.quadraticCurveTo(fx - fw * 0.4, by - fh * 0.65, fx, by - fh);
+                    ctx.quadraticCurveTo(fx + fw * 0.4, by - fh * 0.65, fx + fw, by);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+            ctx.restore();
+        }
+
+        // 2. Boss Ability 1: Massive Hell-Piercing Crescent Slash Waves (Разрез, пробивающий ад)
+        samuraiBoss.hellSlashes.forEach(wave => {
+            const wx = (wave.x - cameraX) * scale;
+            const wy = (wave.y - cameraY) * scale;
+            const wh = wave.h * scale;
+            const dir = wave.dir;
+
+            ctx.save();
+            ctx.translate(wx, wy - wh * 0.5);
+            if (dir < 0) ctx.scale(-1, 1);
+
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 22 * scale;
+
+            // Outer fiery crimson crescent wave
+            const wGrad = ctx.createLinearGradient(-30 * scale, 0, 32 * scale, 0);
+            wGrad.addColorStop(0, 'rgba(153, 27, 27, 0)');
+            wGrad.addColorStop(0.55, 'rgba(239, 68, 68, 0.92)');
+            wGrad.addColorStop(1, '#fef08a');
+            ctx.fillStyle = wGrad;
+            ctx.beginPath();
+            ctx.moveTo(-24 * scale, -wh * 0.52);
+            ctx.quadraticCurveTo(38 * scale, 0, -24 * scale, wh * 0.52);
+            ctx.quadraticCurveTo(10 * scale, 0, -24 * scale, -wh * 0.52);
+            ctx.closePath();
+            ctx.fill();
+
+            // Inner white-hot cutting edge
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 4 * scale;
+            ctx.beginPath();
+            ctx.moveTo(-8 * scale, -wh * 0.46);
+            ctx.quadraticCurveTo(30 * scale, 0, -8 * scale, wh * 0.46);
+            ctx.stroke();
+            ctx.restore();
+        });
+
+        // 3. Player Skill 1 VFX: Giant Luminous X-Slash!
+        playerSamuraiSkills.xSlashVfx.forEach(fx => {
+            const alpha = Math.max(0, fx.timer / fx.maxTimer);
+            const sx = (fx.x - cameraX) * scale;
+            const sy = (fx.y - cameraY) * scale;
+            const arm = 54 * scale;
+
+            ctx.save();
+            ctx.translate(sx, sy);
+            ctx.globalAlpha = alpha;
+            ctx.strokeStyle = '#f472b6';
+            ctx.shadowColor = '#ec4899';
+            ctx.shadowBlur = 20 * scale;
+            ctx.lineWidth = (14 * alpha) * scale;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(-arm, -arm);
+            ctx.lineTo(arm, arm);
+            ctx.moveTo(arm, -arm);
+            ctx.lineTo(-arm, arm);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = (5 * alpha) * scale;
+            ctx.beginPath();
+            ctx.moveTo(-arm * 0.95, -arm * 0.95);
+            ctx.lineTo(arm * 0.95, arm * 0.95);
+            ctx.moveTo(arm * 0.95, -arm * 0.95);
+            ctx.lineTo(-arm * 0.95, arm * 0.95);
+            ctx.stroke();
+            ctx.restore();
+        });
+
+        // 4. Player Skill 3 VFX: Lightning Dash Afterimages & Speed Ribbon
+        playerSamuraiSkills.dashAfterimages.forEach(img => {
+            const ax = (img.x - cameraX) * scale;
+            const ay = (img.y - cameraY) * scale;
+            ctx.save();
+            ctx.globalAlpha = img.alpha * 0.55;
+            ctx.fillStyle = '#f472b6';
+            ctx.beginPath();
+            ctx.ellipse(ax, ay - 38 * scale, 14 * scale, 34 * scale, img.facing * 0.25, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        });
+
+        // 5. Player Skill 4 VFX: Thousand Cuts Spinning Blade Barrier (Тысячи разрезов — 2.0s!)
+        if (playerSamuraiSkills.thousandTimer > 0) {
+            const px = (player.x - cameraX) * scale;
+            const py = (player.y - 42 - cameraY) * scale;
+            const t = Date.now() * 0.025;
+            const domeR = 96 * scale;
+
+            ctx.save();
+            ctx.translate(px, py);
+
+            // Translucent protective aura dome
+            const domeGrad = ctx.createRadialGradient(0, 0, 12 * scale, 0, 0, domeR);
+            domeGrad.addColorStop(0, 'rgba(244, 114, 182, 0.08)');
+            domeGrad.addColorStop(0.75, 'rgba(244, 114, 182, 0.26)');
+            domeGrad.addColorStop(1, 'rgba(255, 255, 255, 0.45)');
+            ctx.fillStyle = domeGrad;
+            ctx.beginPath();
+            ctx.arc(0, 0, domeR, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 12 crisscrossing rapid silver-pink slash arcs
+            for (let i = 0; i < 12; i++) {
+                const ang = t * (i % 2 === 0 ? 1.4 : -1.7) + i * 0.52;
+                const r = (48 + (i % 4) * 14) * scale;
+                ctx.strokeStyle = i % 3 === 0 ? '#ffffff' : (i % 3 === 1 ? '#f9a8d4' : '#38bdf8');
+                ctx.lineWidth = (2.2 + (i % 2) * 1.4) * scale;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.arc(0, 0, r, ang, ang + 0.95);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        // 6. Intro Katana Draw Screen Flash
+        if (samuraiIntroCutscene.active && samuraiIntroCutscene.drawFlash > 0) {
+            ctx.save();
+            ctx.fillStyle = `rgba(255, 241, 242, ${samuraiIntroCutscene.drawFlash * 0.5})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.restore();
+        }
+
+        // 7. Crisp Floating Combat Damage & Status Popups
+        samuraiBoss.floatingTexts.forEach(ft => {
+            const fx = (ft.x - cameraX) * scale;
+            const fy = (ft.y - cameraY) * scale;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, ft.life);
+            ctx.font = `900 ${(ft.big ? 22 : 16) * scale}px "Russo One", sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.lineWidth = 4 * scale;
+            ctx.strokeStyle = '#090d16';
+            ctx.strokeText(ft.text, fx, fy);
+            ctx.fillStyle = ft.color;
+            ctx.fillText(ft.text, fx, fy);
+            ctx.restore();
+        });
+    }
+
+    // Wire up clickable HUD Skill Buttons (1..4)
+    for (let i = 1; i <= 4; i++) {
+        if (skillSlots[i]) {
+            skillSlots[i].addEventListener('click', (e) => {
+                e.stopPropagation();
+                initAudio();
+                usePlayerSamuraiSkill(i);
+            });
+        }
+    }
+    if (cutsceneOverlay) {
+        const cBanner = cutsceneOverlay.querySelector('.cutscene-banner');
+        if (cBanner) {
+            cBanner.addEventListener('click', () => {
+                if (samuraiIntroCutscene.active) {
+                    advanceSamuraiIntroCutscene();
+                } else if (samuraiDefeatCutscene.active) {
+                    advanceSamuraiDefeatCutscene();
+                }
+            });
+        }
     }
 
     // --- AMBIENT SNOW PARTICLES (BLIZZARD FLAKES) ---
@@ -30627,6 +33377,19 @@
             }
         }
 
+        // Check boss arena intro trigger on Level 100 (enters Crimson Samurai Dojo after 50 parkour objects!)
+        if (currentLevelIndex === 100 && currentLevelData && currentLevelData.dojoArena && typeof samuraiBoss !== 'undefined' && !samuraiBoss.active && !samuraiBoss.isFallen && player.state !== 'DEFEAT') {
+            const dojo = currentLevelData.dojoArena;
+            if (player.x >= dojo.triggerX) {
+                if (!samuraiBoss.introPlayed && (!samuraiIntroCutscene || !samuraiIntroCutscene.active)) {
+                    startSamuraiIntroCutscene();
+                    return;
+                } else if (!samuraiBoss.active && samuraiBoss.introPlayed) {
+                    startSamuraiFight();
+                }
+            }
+        }
+
         // --- FREEZE STATE (100% ХОЛОДА: АНИМАЦИЯ ЗАМЕРЗАНИЯ И ПРОИГРЫШ) ---
         if (player.state === 'FREEZE') {
             player.freezeTimer += 0.016;
@@ -30783,6 +33546,7 @@
             }
 
             if (player.victoryTimer > 1.0) {
+                checkLevelCompleteAchievements(currentLevelIndex);
                 if (victoryTitle) victoryTitle.textContent = `${currentLevelData.title} пройден!`;
                 if (victorySubtext) victorySubtext.textContent = `Отличный паркур и результаты на Уровне ${currentLevelIndex}!`;
 
@@ -30847,7 +33611,9 @@
                                     ? '<span class="btn-icon">🏜️</span> Исохшая земля: Уровень 61'
                                     : (nextLevelNum === 62)
                                         ? '<span class="btn-icon">💧</span> Пустынный колодец: Уровень 62'
-                                        : '<span class="btn-icon">➡️</span> Следующий уровень';
+                                        : (nextLevelNum === 100)
+                                            ? '<span class="btn-icon">👹</span> К БОССУ: БАГРОВЫЙ САМУРАЙ (100)'
+                                            : '<span class="btn-icon">➡️</span> Следующий уровень';
                 } else {
                     btnNextLevel.classList.add('hidden');
                 }
@@ -31728,6 +34494,11 @@
         player.x = Math.max(20, nextX);
         player.y = nextY;
 
+        // Level 100: Keep player inside the Crimson Samurai Dojo Arena during the duel
+        if (currentLevelIndex === 100 && typeof samuraiBoss !== 'undefined' && samuraiBoss.active && !samuraiBoss.isFallen) {
+            player.x = Math.max(samuraiBoss.arenaLeft + 18, Math.min(samuraiBoss.arenaRight - 18, player.x));
+        }
+
         // Damage invulnerability timer
         if (player.damageCooldown > 0) {
             player.damageCooldown = Math.max(0, player.damageCooldown - 0.016);
@@ -31906,6 +34677,14 @@
                 cameraX += (targetCamX - cameraX) * 0.08;
                 const minCam = Math.max(0, mummy.arenaLeft - 40);
                 const maxCam = Math.max(minCam, mummy.arenaRight + 40 - screenW);
+                cameraX = Math.max(minCam, Math.min(maxCam, cameraX));
+            } else if (currentLevelIndex === 100 && typeof samuraiBoss !== 'undefined' && (samuraiBoss.active || samuraiBoss.isFallen)) {
+                // Boss Samurai Dojo arena camera: smoothly frame the duel inside the dojo!
+                const targetMidX = (player.x + samuraiBoss.x) * 0.5;
+                const targetCamX = targetMidX - screenW * 0.5;
+                cameraX += (targetCamX - cameraX) * 0.08;
+                const minCam = Math.max(0, samuraiBoss.dojoX - 25);
+                const maxCam = Math.max(minCam, samuraiBoss.dojoX + samuraiBoss.dojoW + 25 - screenW);
                 cameraX = Math.max(minCam, Math.min(maxCam, cameraX));
             } else {
                 const targetCamX = player.x - screenW * 0.35;
@@ -32941,6 +35720,9 @@
         drawGolemHazards();
         drawYetiHazards();
 
+        // Draw Level 100 Crimson Samurai Dojo Building (behind fighters)
+        if (typeof drawSamuraiDojoBack === 'function') drawSamuraiDojoBack(scale);
+
         // Render Particles
         drawParticles();
 
@@ -32961,6 +35743,10 @@
         drawMummyHazards(scale);
         drawSandInEyesOverlay(scale);
         drawQteBalanceBar(scale);
+
+        // Draw Level 100 Crimson Samurai Boss & Combat VFX
+        if (typeof drawSamuraiBoss === 'function') drawSamuraiBoss(scale);
+        if (typeof drawSamuraiCombatVfx === 'function') drawSamuraiCombatVfx(scale);
 
         // Draw Snowy Biome & Cold Breath
         drawSnowyBiome(scale);
@@ -33643,6 +36429,14 @@
 
         // Dynamic Samurai Katana Slash Pose Overlay (LMB katana strike in Sakura biome)
         const isKatanaSlashing = !!(player.hasSamuraiOutfit && player.katanaSlashTimer && player.katanaSlashTimer > 0);
+        const isKatanaReadyInHand = !!(player.hasSamuraiOutfit && player.katanaDrawn && !isKatanaSlashing);
+        if (typeof playerSamuraiSkills !== 'undefined' && playerSamuraiSkills.kickVfxTimer > 0) {
+            // Dynamic spinning martial-arts kick pose for Skill 2 finisher!
+            rightKnee = { x: facing * 18, y: -36 };
+            rightFoot = { x: facing * 38, y: -42 };
+            leftHand = { x: -facing * 16, y: -46 };
+            shoulder.x -= facing * 5;
+        }
         let katanaSlashProgress = 0;
         let katanaSwingAngle = 0;
         if (isKatanaSlashing) {
@@ -33862,7 +36656,7 @@
             ctx.arc(-facing * 6 * scale, 1.5 * scale, 2.5 * scale, 0, Math.PI * 2);
             ctx.fill();
 
-            if (!isKatanaSlashing) {
+            if (!isKatanaSlashing && !isKatanaReadyInHand) {
                 // Ornate Golden Handguard (Tsuba) at the waist (when katana is sheathed)
                 ctx.fillStyle = '#fbbf24';
                 ctx.strokeStyle = '#78350f';
@@ -33993,6 +36787,36 @@
                 ctx.moveTo(5 * scale, 1.5 * scale);
                 ctx.quadraticCurveTo(28 * scale, 0.6 * scale, 50 * scale, 0.2 * scale);
                 ctx.stroke();
+                ctx.restore();
+            } else if (isKatanaReadyInHand) {
+                // Drawn Katana held combat-ready in hand during Level 100 Samurai Boss Duel!
+                const rhX = rightHand.x * scale;
+                const rhY = rightHand.y * scale;
+                ctx.save();
+                ctx.translate(rhX, rhY);
+                if (facing < 0) ctx.scale(-1, 1);
+                ctx.rotate(-0.42);
+                ctx.strokeStyle = '#1e293b';
+                ctx.lineWidth = 4 * scale;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(-10 * scale, 0);
+                ctx.lineTo(3 * scale, 0);
+                ctx.stroke();
+                ctx.fillStyle = '#fbbf24';
+                ctx.beginPath();
+                ctx.ellipse(4 * scale, 0, 2.3 * scale, 6 * scale, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#f8fafc';
+                ctx.shadowColor = '#f9a8d4';
+                ctx.shadowBlur = 5 * scale;
+                ctx.beginPath();
+                ctx.moveTo(5 * scale, -2.1 * scale);
+                ctx.quadraticCurveTo(29 * scale, -3.6 * scale, 52 * scale, -5 * scale);
+                ctx.lineTo(48 * scale, 0.4 * scale);
+                ctx.quadraticCurveTo(27 * scale, 0.8 * scale, 5 * scale, 1.7 * scale);
+                ctx.closePath();
+                ctx.fill();
                 ctx.restore();
             }
             ctx.restore();
@@ -34243,12 +37067,18 @@
                 updateMummyDefeatCutscene();
             } else if (typeof mummyIntroCutscene !== 'undefined' && mummyIntroCutscene && mummyIntroCutscene.active) {
                 updateMummyIntroCutscene();
+            } else if (typeof samuraiIntroCutscene !== 'undefined' && samuraiIntroCutscene && samuraiIntroCutscene.active) {
+                updateSamuraiIntroCutscene();
+            } else if (typeof samuraiDefeatCutscene !== 'undefined' && samuraiDefeatCutscene && samuraiDefeatCutscene.active) {
+                updateSamuraiDefeatCutscene();
             } else {
                 updateCutscene();
             }
             updateParticles();
             if (!((typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active) ||
                   (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) ||
+                  (typeof samuraiIntroCutscene !== 'undefined' && samuraiIntroCutscene && samuraiIntroCutscene.active) ||
+                  (typeof samuraiDefeatCutscene !== 'undefined' && samuraiDefeatCutscene && samuraiDefeatCutscene.active) ||
                   (typeof mummyIntroCutscene !== 'undefined' && mummyIntroCutscene && mummyIntroCutscene.active) ||
                   (typeof mummyDefeatCutscene !== 'undefined' && mummyDefeatCutscene && mummyDefeatCutscene.active) ||
                   (typeof yetiIntroCutscene !== 'undefined' && yetiIntroCutscene && yetiIntroCutscene.active) || 
@@ -34427,7 +37257,11 @@
             pauseScreen.classList.add('hidden');
             triggerFadeTransition(() => {
                 player.reset();
-                currentState = STATES.PLAYING;
+                if (currentLevelIndex === 100 && hasSamuraiBossCheckpoint()) {
+                    startSamuraiQuickRematchCutscene();
+                } else {
+                    currentState = STATES.PLAYING;
+                }
             });
         });
     }
@@ -34467,7 +37301,11 @@
             defeatScreen.classList.add('hidden');
             triggerFadeTransition(() => {
                 player.reset();
-                currentState = STATES.PLAYING;
+                if (currentLevelIndex === 100 && hasSamuraiBossCheckpoint()) {
+                    startSamuraiQuickRematchCutscene();
+                } else {
+                    currentState = STATES.PLAYING;
+                }
             });
         });
     }
@@ -34500,6 +37338,426 @@
             });
         });
     }
+
+    // ==========================================
+    // --- ACHIEVEMENTS SYSTEM (10 ACHIEVEMENTS) ---
+    // ==========================================
+    const ACHIEVEMENTS_STORAGE_KEY = 'parkour_universe_achievements_v1';
+    const ACHIEVEMENTS_CONFIG = [
+        {
+            id: 'ach_start',
+            title: 'Начало',
+            description: 'Пройди 1 уровень',
+            image: 'assets/achievements/ach_start.svg'
+        },
+        {
+            id: 'ach_progress',
+            title: 'Продвижение',
+            description: 'Пройди 25 уровень',
+            image: 'assets/achievements/ach_progress.svg'
+        },
+        {
+            id: 'ach_three_locations',
+            title: '3 Локации',
+            description: 'Пройди 50 уровень',
+            image: 'assets/achievements/ach_three_locations.svg'
+        },
+        {
+            id: 'ach_long_road',
+            title: 'Далёкая дорога',
+            description: 'Пройди 75 уровень',
+            image: 'assets/achievements/ach_long_road.svg'
+        },
+        {
+            id: 'ach_round_number',
+            title: 'Круглое число',
+            description: 'Пройди 100 уровень',
+            image: 'assets/achievements/ach_round_number.svg'
+        },
+        {
+            id: 'ach_locked_in',
+            title: 'Взаперти',
+            description: 'Сыграй впервые в 1 локацию',
+            image: 'assets/achievements/ach_locked_in.svg'
+        },
+        {
+            id: 'ach_fresh_air',
+            title: 'Свежий глоток воздуха',
+            description: 'Сыграй впервые в 2 локацию',
+            image: 'assets/achievements/ach_fresh_air.svg'
+        },
+        {
+            id: 'ach_frost',
+            title: 'Мороз',
+            description: 'Сыграй впервые в 3 локацию',
+            image: 'assets/achievements/ach_frost.svg'
+        },
+        {
+            id: 'ach_drought',
+            title: 'Засуха',
+            description: 'Сыграй впервые в 4 локацию',
+            image: 'assets/achievements/ach_drought.svg'
+        },
+        {
+            id: 'ach_japan',
+            title: 'Японская атмосфера',
+            description: 'Сыграй впервые в 5 локацию',
+            image: 'assets/achievements/ach_japan.svg'
+        }
+    ];
+
+    const unlockedAchievements = new Set();
+    const activeAchievementToasts = [];
+    const deferredAchievementToasts = [];
+
+    function loadAchievements() {
+        try {
+            const raw = localStorage.getItem(ACHIEVEMENTS_STORAGE_KEY);
+            if (!raw) return;
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+                parsed.forEach(id => {
+                    if (ACHIEVEMENTS_CONFIG.some(a => a.id === id)) {
+                        unlockedAchievements.add(id);
+                    }
+                });
+            }
+        } catch (e) {
+            // Ignore storage access errors in restricted modes
+        }
+    }
+
+    function saveAchievements() {
+        try {
+            localStorage.setItem(ACHIEVEMENTS_STORAGE_KEY, JSON.stringify([...unlockedAchievements]));
+        } catch (e) {
+            // Ignore storage access errors
+        }
+    }
+
+    function updateAchievementCounters() {
+        const unlockedCount = unlockedAchievements.size;
+        const totalCount = ACHIEVEMENTS_CONFIG.length;
+        if (menuAchCount) menuAchCount.textContent = `${unlockedCount} / ${totalCount}`;
+        if (levelAchCount) levelAchCount.textContent = `${unlockedCount}/${totalCount}`;
+        if (achievementsProgressBadge) achievementsProgressBadge.textContent = `${unlockedCount} / ${totalCount}`;
+        if (achievementsBarFill) {
+            achievementsBarFill.style.width = `${Math.round((unlockedCount / totalCount) * 100)}%`;
+        }
+        if (achievementsSubtext) {
+            if (unlockedCount === totalCount) {
+                achievementsSubtext.textContent = 'Невероятно! Все достижения Вселенной паркура собраны!';
+            } else if (unlockedCount === 0) {
+                achievementsSubtext.textContent = 'Открывай локации и проходи ключевые уровни, чтобы собрать все награды!';
+            } else {
+                achievementsSubtext.textContent = `Собрано ${unlockedCount} из ${totalCount} достижений. Продолжай покорять новые локации!`;
+            }
+        }
+    }
+
+    function renderAchievementsGrid() {
+        if (!achievementsGrid) return;
+        achievementsGrid.innerHTML = '';
+
+        ACHIEVEMENTS_CONFIG.forEach(ach => {
+            const isUnlocked = unlockedAchievements.has(ach.id);
+            const card = document.createElement('article');
+            card.className = `achievement-card ${isUnlocked ? 'unlocked' : 'locked'}`;
+
+            const iconWrap = document.createElement('div');
+            iconWrap.className = 'achievement-icon-wrap';
+
+            const img = document.createElement('img');
+            img.className = 'achievement-img';
+            img.src = ach.image;
+            img.alt = ach.title;
+            img.width = 68;
+            img.height = 68;
+            iconWrap.appendChild(img);
+
+            if (!isUnlocked) {
+                const lockEl = document.createElement('div');
+                lockEl.className = 'achievement-lock-overlay';
+                lockEl.setAttribute('aria-hidden', 'true');
+                lockEl.textContent = '🔒';
+                iconWrap.appendChild(lockEl);
+            }
+
+            const info = document.createElement('div');
+            info.className = 'achievement-info';
+
+            const nameRow = document.createElement('div');
+            nameRow.className = 'achievement-name-row';
+
+            const nameEl = document.createElement('h3');
+            nameEl.className = 'achievement-name';
+            nameEl.textContent = ach.title;
+
+            const statusEl = document.createElement('span');
+            if (isUnlocked) {
+                statusEl.className = 'achievement-status done';
+                statusEl.textContent = 'Получено ✓';
+            } else if (ach.currentlyImpossible) {
+                statusEl.className = 'achievement-status impossible';
+                statusEl.textContent = 'Пока невозможно';
+            } else {
+                statusEl.className = 'achievement-status pending';
+                statusEl.textContent = 'Закрыто';
+            }
+
+            nameRow.appendChild(nameEl);
+            nameRow.appendChild(statusEl);
+
+            const descEl = document.createElement('p');
+            descEl.className = 'achievement-desc';
+            descEl.textContent = ach.description;
+
+            info.appendChild(nameRow);
+            info.appendChild(descEl);
+
+            card.appendChild(iconWrap);
+            card.appendChild(info);
+            achievementsGrid.appendChild(card);
+        });
+    }
+
+    function layoutAchievementToasts() {
+        let topOffset = 20;
+        activeAchievementToasts.forEach(toast => {
+            toast.style.setProperty('--toast-top', `${topOffset}px`);
+            const h = toast.offsetHeight || 82;
+            topOffset += h + 12;
+        });
+    }
+
+    function announceAchievementToast(text) {
+        if (typeof document.ariaNotify === 'function') {
+            try {
+                document.ariaNotify(text);
+                return;
+            } catch (e) {
+                // Fall back to live region below
+            }
+        }
+        if (achievementLiveRegion) {
+            achievementLiveRegion.textContent = '';
+            setTimeout(() => {
+                achievementLiveRegion.textContent = text;
+            }, 30);
+        }
+    }
+
+    function showAchievementToast(ach) {
+        if (!achievementToastRegion) return;
+        // Suppress toasts while modal dialog is open; show once dismissed
+        if (achievementsModal && achievementsModal.open) {
+            deferredAchievementToasts.push(ach);
+            return;
+        }
+
+        const toastId = `ach-toast-${ach.id}-${Date.now()}`;
+        const toast = document.createElement('div');
+        toast.id = toastId;
+        toast.className = 'achievement-toast';
+        const supportsPopover = Object.hasOwn(HTMLElement.prototype, 'popover');
+        if (supportsPopover) {
+            toast.setAttribute('popover', 'manual');
+        }
+
+        const img = document.createElement('img');
+        img.className = 'achievement-toast-img';
+        img.src = ach.image;
+        img.alt = '';
+        img.width = 54;
+        img.height = 54;
+
+        const body = document.createElement('div');
+        body.className = 'achievement-toast-body';
+
+        const kicker = document.createElement('div');
+        kicker.className = 'achievement-toast-kicker';
+        kicker.textContent = '🏆 Достижение получено!';
+
+        const title = document.createElement('div');
+        title.className = 'achievement-toast-title';
+        title.textContent = ach.title;
+
+        const desc = document.createElement('div');
+        desc.className = 'achievement-toast-desc';
+        desc.textContent = ach.description;
+
+        body.appendChild(kicker);
+        body.appendChild(title);
+        body.appendChild(desc);
+
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'achievement-toast-close';
+        closeBtn.setAttribute('aria-label', `Закрыть уведомление: ${ach.title}`);
+        if (supportsPopover) {
+            closeBtn.setAttribute('popovertarget', toastId);
+            closeBtn.setAttribute('popovertargetaction', 'hide');
+        }
+        closeBtn.textContent = '✕';
+
+        toast.appendChild(img);
+        toast.appendChild(body);
+        toast.appendChild(closeBtn);
+        achievementToastRegion.appendChild(toast);
+
+        const prevFocused = document.activeElement;
+        let dismissTimer = null;
+        let removed = false;
+
+        const cleanupToast = () => {
+            if (removed) return;
+            removed = true;
+            if (dismissTimer) clearTimeout(dismissTimer);
+            const wasFocused = toast.contains(document.activeElement);
+            const idx = activeAchievementToasts.indexOf(toast);
+            if (idx !== -1) activeAchievementToasts.splice(idx, 1);
+
+            if (supportsPopover && toast.matches(':popover-open')) {
+                try { toast.hidePopover(); } catch (e) { /* already hidden */ }
+            } else {
+                toast.classList.remove('is-open');
+            }
+
+            if (wasFocused) {
+                const nextToast = activeAchievementToasts[0];
+                const nextBtn = nextToast ? nextToast.querySelector('.achievement-toast-close') : null;
+                if (nextBtn) {
+                    nextBtn.focus();
+                } else if (prevFocused && typeof prevFocused.focus === 'function' && document.contains(prevFocused)) {
+                    prevFocused.focus();
+                }
+            }
+
+            layoutAchievementToasts();
+            setTimeout(() => {
+                if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 360);
+        };
+
+        const scheduleAutoDismiss = () => {
+            if (dismissTimer) clearTimeout(dismissTimer);
+            dismissTimer = setTimeout(() => {
+                if (toast.contains(document.activeElement)) return;
+                cleanupToast();
+            }, 4800);
+        };
+
+        toast.addEventListener('focusin', () => {
+            if (dismissTimer) clearTimeout(dismissTimer);
+        });
+        toast.addEventListener('focusout', (e) => {
+            if (!toast.contains(e.relatedTarget)) {
+                scheduleAutoDismiss();
+            }
+        });
+        if (supportsPopover) {
+            toast.addEventListener('toggle', (e) => {
+                if (e.newState === 'closed') cleanupToast();
+            });
+        } else {
+            closeBtn.addEventListener('click', cleanupToast);
+        }
+
+        activeAchievementToasts.push(toast);
+        if (supportsPopover) {
+            try { toast.showPopover(); } catch (e) { toast.classList.add('is-open'); }
+        } else {
+            requestAnimationFrame(() => toast.classList.add('is-open'));
+        }
+        layoutAchievementToasts();
+        announceAchievementToast(`Достижение получено: ${ach.title}. ${ach.description}`);
+        scheduleAutoDismiss();
+    }
+
+    function unlockAchievement(id) {
+        if (unlockedAchievements.has(id)) return false;
+        const ach = ACHIEVEMENTS_CONFIG.find(a => a.id === id);
+        if (!ach) return false;
+
+        unlockedAchievements.add(id);
+        saveAchievements();
+        updateAchievementCounters();
+        renderAchievementsGrid();
+        playSound('achievementUnlock');
+        showAchievementToast(ach);
+        return true;
+    }
+
+    function checkLocationAchievements(levelNum) {
+        if (levelNum >= 1 && levelNum <= 20) {
+            unlockAchievement('ach_locked_in');
+        } else if (levelNum >= 21 && levelNum <= 40) {
+            unlockAchievement('ach_fresh_air');
+        } else if (levelNum >= 41 && levelNum <= 60) {
+            unlockAchievement('ach_frost');
+        } else if (levelNum >= 61 && levelNum <= 80) {
+            unlockAchievement('ach_drought');
+        } else if (levelNum >= 81 && levelNum <= 100) {
+            unlockAchievement('ach_japan');
+        }
+    }
+
+    function checkLevelCompleteAchievements(levelNum) {
+        if (levelNum === 1) unlockAchievement('ach_start');
+        else if (levelNum === 25) unlockAchievement('ach_progress');
+        else if (levelNum === 50) unlockAchievement('ach_three_locations');
+        else if (levelNum === 75) unlockAchievement('ach_long_road');
+        else if (levelNum === 100) unlockAchievement('ach_round_number');
+    }
+
+    function openAchievementsModal() {
+        if (!achievementsModal) return;
+        initAudio();
+        updateAchievementCounters();
+        renderAchievementsGrid();
+        if (typeof achievementsModal.showModal === 'function') {
+            if (!achievementsModal.open) achievementsModal.showModal();
+        } else {
+            achievementsModal.setAttribute('open', '');
+        }
+    }
+
+    if (btnAchievements) {
+        btnAchievements.addEventListener('click', openAchievementsModal);
+    }
+    if (btnLevelAchievements) {
+        btnLevelAchievements.addEventListener('click', openAchievementsModal);
+    }
+
+    if (achievementsModal) {
+        achievementsModal.addEventListener('close', () => {
+            achievementsModal.returnValue = '';
+            while (deferredAchievementToasts.length > 0) {
+                showAchievementToast(deferredAchievementToasts.shift());
+            }
+        });
+
+        // Fallback for light-dismiss (closedby="any") in browsers without native HTMLDialogElement.prototype.closedBy
+        if (!('closedBy' in HTMLDialogElement.prototype)) {
+            const isOutsideDialog = (e, dialog) => {
+                const r = dialog.getBoundingClientRect();
+                return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+            };
+            let pressedOutside = false;
+            achievementsModal.addEventListener('pointerdown', (e) => {
+                pressedOutside = isOutsideDialog(e, achievementsModal);
+            });
+            achievementsModal.addEventListener('pointerup', (e) => {
+                if (pressedOutside && isOutsideDialog(e, achievementsModal)) {
+                    achievementsModal.close();
+                }
+            });
+        }
+    }
+
+    loadAchievements();
+    updateAchievementCounters();
+    renderAchievementsGrid();
 
     requestAnimationFrame(gameLoop);
 })();

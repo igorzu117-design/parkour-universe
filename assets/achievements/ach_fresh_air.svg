@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="60%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#bae6fd"/>
+    </linearGradient>
+    <linearGradient id="hill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="120" height="120" rx="26" fill="url(#sky)" stroke="#4ade80" stroke-width="5"/>
+  <!-- Sun -->
+  <circle cx="94" cy="30" r="14" fill="#fef08a"/>
+  <!-- Breeze swirls -->
+  <path d="M20 44 Q42 32 58 42 Q68 48 64 38" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" opacity="0.9"/>
+  <path d="M26 58 Q50 50 74 58 Q86 62 82 52" fill="none" stroke="#e0f2fe" stroke-width="3.8" stroke-linecap="round" opacity="0.85"/>
+  <!-- Green hills -->
+  <path d="M6 94 Q42 66 78 88 Q102 74 122 92 L122 122 L6 122 Z" fill="url(#hill)"/>
+  <!-- Pine trees -->
+  <polygon points="34,94 46,66 58,94" fill="#166534"/>
+  <polygon points="37,80 46,58 55,80" fill="#15803d"/>
+  <polygon points="84,96 94,72 104,96" fill="#166534"/>
+  <!-- Floating green leaf -->
+  <ellipse cx="64" cy="34" rx="8" ry="4" transform="rotate(-22 64 34)" fill="#4ade80"/>
+</svg>
+

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#831843"/>
+      <stop offset="50%" stop-color="#db2777"/>
+      <stop offset="100%" stop-color="#fbcfe8"/>
+    </linearGradient>
+    <linearGradient id="torii" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#991b1b"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="120" height="120" rx="26" fill="url(#sky)" stroke="#f9a8d4" stroke-width="5"/>
+  <!-- Full glowing moon -->
+  <circle cx="64" cy="54" r="32" fill="#fff1f2" opacity="0.9"/>
+  <!-- Torii Gate -->
+  <path d="M22 44 Q64 52 106 44 L102 53 Q64 59 26 53 Z" fill="#1e293b"/>
+  <rect x="28" y="51" width="72" height="7" rx="2" fill="url(#torii)"/>
+  <rect x="34" y="64" width="60" height="6" rx="2" fill="url(#torii)"/>
+  <rect x="40" y="54" width="9" height="54" fill="url(#torii)"/>
+  <rect x="79" y="54" width="9" height="54" fill="url(#torii)"/>
+  <rect x="60" y="57" width="8" height="11" fill="#fbbf24"/>
+  <!-- Ground hill -->
+  <path d="M6 104 Q64 94 122 104 L122 122 L6 122 Z" fill="#1e1b4b"/>
+  <!-- Floating Sakura petals -->
+  <ellipse cx="26" cy="30" rx="7" ry="4" transform="rotate(-25 26 30)" fill="#fbcfe8"/>
+  <ellipse cx="102" cy="28" rx="6.5" ry="3.8" transform="rotate(32 102 28)" fill="#f9a8d4"/>
+  <ellipse cx="96" cy="84" rx="6" ry="3.5" transform="rotate(-18 96 84)" fill="#fbcfe8"/>
+  <ellipse cx="28" cy="82" rx="6" ry="3.5" transform="rotate(24 28 82)" fill="#f472b6"/>
+</svg>
+

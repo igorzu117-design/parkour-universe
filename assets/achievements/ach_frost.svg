@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#082f49"/>
+      <stop offset="55%" stop-color="#0369a1"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="120" height="120" rx="26" fill="url(#bg)" stroke="#bae6fd" stroke-width="5"/>
+  <!-- Snowflake crystal -->
+  <g stroke="#f0f9ff" stroke-width="5" stroke-linecap="round">
+    <line x1="64" y1="22" x2="64" y2="106"/>
+    <line x1="27" y1="43" x2="101" y2="85"/>
+    <line x1="101" y1="43" x2="27" y2="85"/>
+  </g>
+  <g stroke="#bae6fd" stroke-width="3.5" stroke-linecap="round" fill="none">
+    <polyline points="54,32 64,42 74,32"/>
+    <polyline points="54,96 64,86 74,96"/>
+    <polyline points="32,57 44,53 41,41"/>
+    <polyline points="96,71 84,75 87,87"/>
+    <polyline points="87,41 84,53 96,57"/>
+    <polyline points="41,87 44,75 32,71"/>
+  </g>
+  <circle cx="64" cy="64" r="10" fill="#0284c7" stroke="#ffffff" stroke-width="3.5"/>
+  <circle cx="24" cy="26" r="3" fill="#e0f2fe"/>
+  <circle cx="104" cy="28" r="2.5" fill="#e0f2fe"/>
+  <circle cx="22" cy="100" r="2.5" fill="#bae6fd"/>
+  <circle cx="104" cy="102" r="3" fill="#e0f2fe"/>
+</svg>
+

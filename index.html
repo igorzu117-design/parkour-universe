@@ -28,6 +28,11 @@
                         <span class="btn-icon">▶</span>
                         <span class="btn-text">Играть</span>
                     </button>
+                    <button type="button" id="btnAchievements" class="btn btn-achievements">
+                        <span class="btn-icon">🏆</span>
+                        <span class="btn-text">Достижения</span>
+                        <span class="ach-btn-badge" id="menuAchCount">0 / 10</span>
+                    </button>
                 </div>
                 <div class="controls-preview">
                     <div class="control-item">
@@ -64,7 +69,13 @@
                 <div class="level-header">
                     <h2 class="level-title">Выбор уровня</h2>
                     <span class="level-page-badge" id="levelPageBadge">1 страница - Здание Препятствий</span>
-                    <button id="btnBackToMenu" class="btn-close">✕</button>
+                    <div class="level-header-actions">
+                        <button type="button" id="btnLevelAchievements" class="btn-ach-icon" title="Достижения" aria-label="Открыть достижения">
+                            <span>🏆</span>
+                            <span id="levelAchCount">0/10</span>
+                        </button>
+                        <button id="btnBackToMenu" class="btn-close" aria-label="Вернуться в меню">✕</button>
+                    </div>
                 </div>
 
                 <p class="level-subtext" id="levelSubtext">Выберите доступный уровень для старта</p>
@@ -185,6 +196,41 @@
                     <div class="boss-health-fill" id="bossHealthBar"></div>
                 </div>
             </div>
+            <!-- Level 100 Samurai Boss 4-Ability Hotbar HUD -->
+            <div class="samurai-skills-hud hidden" id="samuraiSkillsHud" aria-label="Способности катаны">
+                <button type="button" class="skill-slot" id="skillSlot1" data-skill="1">
+                    <span class="skill-key">1</span>
+                    <span class="skill-icon">⚔️</span>
+                    <span class="skill-name">X-Разрез</span>
+                    <span class="skill-dmg">10 ур.</span>
+                    <span class="skill-cd-overlay" id="skillCd1"></span>
+                    <span class="skill-cd-text" id="skillCdText1"></span>
+                </button>
+                <button type="button" class="skill-slot" id="skillSlot2" data-skill="2">
+                    <span class="skill-key">2</span>
+                    <span class="skill-icon">🦵</span>
+                    <span class="skill-name">Серия + Пинок</span>
+                    <span class="skill-dmg">3×3 + 5</span>
+                    <span class="skill-cd-overlay" id="skillCd2"></span>
+                    <span class="skill-cd-text" id="skillCdText2"></span>
+                </button>
+                <button type="button" class="skill-slot" id="skillSlot3" data-skill="3">
+                    <span class="skill-key">3</span>
+                    <span class="skill-icon">⚡</span>
+                    <span class="skill-name">Рывок-разрез</span>
+                    <span class="skill-dmg">5 + 6 ур.</span>
+                    <span class="skill-cd-overlay" id="skillCd3"></span>
+                    <span class="skill-cd-text" id="skillCdText3"></span>
+                </button>
+                <button type="button" class="skill-slot" id="skillSlot4" data-skill="4">
+                    <span class="skill-key">4</span>
+                    <span class="skill-icon">🌀</span>
+                    <span class="skill-name">Тысячи разрезов</span>
+                    <span class="skill-dmg">0.5 / 0.25с</span>
+                    <span class="skill-cd-overlay" id="skillCd4"></span>
+                    <span class="skill-cd-text" id="skillCdText4"></span>
+                </button>
+            </div>
             <button id="btnPause" class="btn-pause">
                 <span>⏸️</span> Пауза
             </button>
@@ -248,6 +294,35 @@
                 </div>
             </div>
         </div>
+
+        <!-- Achievements Modal Dialog (Native <dialog> with light dismiss) -->
+        <dialog id="achievementsModal" class="achievements-dialog" closedby="any" aria-labelledby="achievementsTitle">
+            <div class="achievements-card glass-panel">
+                <div class="achievements-header">
+                    <div class="achievements-title-group">
+                        <h2 id="achievementsTitle" class="achievements-title">🏆 Достижения</h2>
+                        <span class="achievements-progress-badge" id="achievementsProgressBadge">0 / 10</span>
+                    </div>
+                    <form method="dialog">
+                        <button type="submit" value="close" class="btn-close" aria-label="Закрыть достижения" autofocus>✕</button>
+                    </form>
+                </div>
+                <div class="achievements-progress-wrap">
+                    <div class="achievements-bar-track">
+                        <div class="achievements-bar-fill" id="achievementsBarFill"></div>
+                    </div>
+                    <p class="achievements-subtext" id="achievementsSubtext">Открывай локации и проходи ключевые уровни, чтобы собрать все награды!</p>
+                </div>
+                <div class="achievements-grid" id="achievementsGrid">
+                    <!-- 10 Achievement cards populated via JS -->
+                </div>
+            </div>
+        </dialog>
+
+        <!-- Achievement Unlock Toast Region & Screen Reader Live Region Fallback -->
+        <div id="achievementToastRegion" class="achievement-toast-region" role="region" aria-label="Уведомления о достижениях"></div>
+        <p class="inclusively-hidden">Уведомления о достижениях</p>
+        <div id="achievementLiveRegion" class="inclusively-hidden" aria-live="polite" aria-atomic="true"></div>
     </div>
 
     <script src="game.js?v=eternal_cold_page3_fixed"></script>
