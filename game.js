@@ -48,6 +48,7 @@
     const dotPage3 = document.getElementById('dotPage3');
     const dotPage4 = document.getElementById('dotPage4');
     const dotPage5 = document.getElementById('dotPage5');
+    const dotPage6 = document.getElementById('dotPage6');
     const levelPageBadge = document.getElementById('levelPageBadge');
     const cutsceneOverlay = document.getElementById('cutsceneOverlay');
     const cutsceneChapter = document.getElementById('cutsceneChapter');
@@ -926,6 +927,54 @@
                 gain.connect(audioCtx.destination);
                 osc.start(now);
                 osc.stop(now + 0.21);
+            } else if (type === 'cloudBounce') {
+                // Joyful airy springy cloud trampoline boing!
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(240, now);
+                osc.frequency.exponentialRampToValueAtTime(660, now + 0.16);
+                osc.frequency.exponentialRampToValueAtTime(520, now + 0.28);
+                gain.gain.setValueAtTime(0.34, now);
+                gain.gain.exponentialRampToValueAtTime(0.005, now + 0.3);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.32);
+                // Soft fluffy air puff
+                const bufLen = Math.floor(audioCtx.sampleRate * 0.16);
+                const buf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
+                const ch = buf.getChannelData(0);
+                for (let i = 0; i < bufLen; i++) ch[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufLen * 0.35));
+                const src = audioCtx.createBufferSource();
+                src.buffer = buf;
+                const lp = audioCtx.createBiquadFilter();
+                lp.type = 'lowpass';
+                lp.frequency.setValueAtTime(1200, now);
+                const ng = audioCtx.createGain();
+                ng.gain.setValueAtTime(0.18, now);
+                ng.gain.exponentialRampToValueAtTime(0.005, now + 0.16);
+                src.connect(lp);
+                lp.connect(ng);
+                ng.connect(audioCtx.destination);
+                src.start(now);
+            } else if (type === 'skyAscend') {
+                // Ethereal celestial harp arpeggio ascending into the sky!
+                const notes = [392.0, 493.88, 587.33, 783.99, 987.77, 1174.66]; // G4, B4, D5, G5, B5, D6
+                notes.forEach((f, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    const t0 = now + idx * 0.095;
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(f, t0);
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.setValueAtTime(0.22, t0);
+                    gain.gain.exponentialRampToValueAtTime(0.004, t0 + 0.72);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(t0);
+                    osc.stop(t0 + 0.76);
+                });
             }
         } catch (e) {
             console.error(e);
@@ -1024,6 +1073,11 @@
                     finishLevel81IntroCutscene();
                     return;
                 }
+            } else if (typeof cutsceneIntro101 !== 'undefined' && cutsceneIntro101 && cutsceneIntro101.active) {
+                if (e.code === 'Space' || e.code === 'Escape' || e.code === 'Enter') {
+                    finishLevel101IntroCutscene();
+                    return;
+                }
             } else if (typeof golemCutscene !== 'undefined' && golemCutscene && golemCutscene.active) {
                 if (e.code === 'Space' || e.code === 'Escape' || e.code === 'Enter') {
                     finishGolemDefeatCutscene();
@@ -1095,9 +1149,19 @@
                     playSound('jump');
                     generateLevelsGrid();
                     return;
+                } else if (currentSelectPage === 5) {
+                    currentSelectPage = 6;
+                    playSound('jump');
+                    generateLevelsGrid();
+                    return;
                 }
             } else if (e.code === 'ArrowLeft') {
-                if (currentSelectPage === 5) {
+                if (currentSelectPage === 6) {
+                    currentSelectPage = 5;
+                    playSound('jump');
+                    generateLevelsGrid();
+                    return;
+                } else if (currentSelectPage === 5) {
                     currentSelectPage = 4;
                     playSound('jump');
                     generateLevelsGrid();
@@ -1177,7 +1241,7 @@
                 } else {
                     playerPunch();
                 }
-            } else if (player.hasSamuraiOutfit || (currentLevelData && currentLevelData.theme === 'sakura') || currentLevelIndex >= 81) {
+            } else if (player.hasSamuraiOutfit || (currentLevelData && currentLevelData.theme === 'sakura') || (currentLevelIndex >= 81 && currentLevelIndex <= 100)) {
                 playerKatanaSlash();
             } else {
                 playerPunch();
@@ -1213,7 +1277,8 @@
     let unlockedPage3Levels = 60; // 3rd Page (Вечный холод): levels 41 to 60 unlocked!
     let unlockedPage4Levels = 80; // 4th Page (Исохшая земля): levels 61-80 unlocked (Boss Level 80)!
     let unlockedPage5Levels = 100; // 5th Page (Цветение сакуры): levels 81-100 unlocked (Boss Level 100)!
-    let currentSelectPage = 1;    // 1: Building (1-20), 2: Nature (21-40), 3: Eternal Cold (41-60), 4: Dried Earth (61-80), 5: Sakura Blossom (81-100)
+    let unlockedPage6Levels = 119; // 6th Page (Небесные острова): levels 101-119 unlocked!
+    let currentSelectPage = 1;    // 1: Building (1-20), 2: Nature (21-40), 3: Eternal Cold (41-60), 4: Dried Earth (61-80), 5: Sakura Blossom (81-100), 6: Sky Islands (101-120)
     let currentLevelIndex = 1;
 
     const levelsData = {
@@ -18366,6 +18431,444 @@
         };
     })();
 
+    // --- LEVEL 101: SKY ISLANDS (PAGE 6 - НЕБЕСНЫЕ ОСТРОВА) ---
+    levelsData[101] = {
+        id: 101,
+        title: "Уровень 101: Небесные острова",
+        theme: "sky",
+        hasThirst: false,
+        worldWidth: 12550,
+        groundY: 540,
+        playerStartX: 190,
+        platforms: [
+            { x: 0, y: 540, w: 12550, h: 200 }
+        ],
+        // 5 Wide Open-Sky Abysses separating 6 Floating Sky Islands!
+        chasms: [
+            { startX: 1580, endX: 2180 },
+            { startX: 3720, endX: 4380 },
+            { startX: 5980, endX: 6680 },
+            { startX: 8320, endX: 9040 },
+            { startX: 10620, endX: 11340 }
+        ],
+        // Celestial Marble & Gold Sky Buildings resting on the floating islands
+        boxes: [
+            // Island 1 (0..1580): Welcome Cloud-Arch & Sunlit Sky Temple
+            { id: "sky101_b1", x: 520, y: 380, w: 230, h: 160, isSkyBuilding: true, skyStyle: "arch" },
+            { id: "sky101_b2", x: 860, y: 270, w: 250, h: 270, isSkyBuilding: true, skyStyle: "temple" },
+            { id: "sky101_b3", x: 1230, y: 310, w: 270, h: 230, isSkyBuilding: true, skyStyle: "observatory" },
+
+            // Island 2 (2180..3720): Twin Wind Towers & Sky Temple Plaza
+            { id: "sky101_b4", x: 2230, y: 370, w: 240, h: 170, isSkyBuilding: true, skyStyle: "arch" },
+            { id: "sky101_b5", x: 2640, y: 230, w: 250, h: 310, isSkyBuilding: true, skyStyle: "tower" },
+            { id: "sky101_b6", x: 3010, y: 170, w: 260, h: 370, isSkyBuilding: true, skyStyle: "temple" },
+            { id: "sky101_b7", x: 3390, y: 290, w: 260, h: 250, isSkyBuilding: true, skyStyle: "observatory" },
+
+            // Island 3 (4380..5980): Celestial Observatory Quarter
+            { id: "sky101_b8", x: 4440, y: 360, w: 240, h: 180, isSkyBuilding: true, skyStyle: "temple" },
+            { id: "sky101_b9", x: 4860, y: 240, w: 260, h: 300, isSkyBuilding: true, skyStyle: "observatory" },
+            { id: "sky101_b10", x: 5250, y: 180, w: 250, h: 360, isSkyBuilding: true, skyStyle: "tower" },
+            { id: "sky101_b11", x: 5620, y: 270, w: 290, h: 270, isSkyBuilding: true, skyStyle: "arch" },
+
+            // Island 4 (6680..8320): High Sky Citadel Spires
+            { id: "sky101_b12", x: 6740, y: 350, w: 240, h: 190, isSkyBuilding: true, skyStyle: "arch" },
+            { id: "sky101_b13", x: 7160, y: 210, w: 260, h: 330, isSkyBuilding: true, skyStyle: "tower" },
+            { id: "sky101_b14", x: 7550, y: 165, w: 270, h: 375, isSkyBuilding: true, skyStyle: "temple" },
+            { id: "sky101_b15", x: 7950, y: 280, w: 300, h: 260, isSkyBuilding: true, skyStyle: "observatory" },
+
+            // Island 5 (9040..10620): Golden Cloud Viaduct & Wind Spires
+            { id: "sky101_b16", x: 9100, y: 360, w: 240, h: 180, isSkyBuilding: true, skyStyle: "temple" },
+            { id: "sky101_b17", x: 9520, y: 230, w: 260, h: 310, isSkyBuilding: true, skyStyle: "observatory" },
+            { id: "sky101_b18", x: 9910, y: 175, w: 260, h: 365, isSkyBuilding: true, skyStyle: "tower" },
+            { id: "sky101_b19", x: 10290, y: 270, w: 260, h: 270, isSkyBuilding: true, skyStyle: "arch" },
+
+            // Island 6 (11340..12550): Grand Celestial Sky Sanctuary (Finish)
+            { id: "sky101_b20", x: 11400, y: 340, w: 240, h: 200, isSkyBuilding: true, skyStyle: "arch" },
+            { id: "sky101_b21", x: 11790, y: 210, w: 480, h: 330, isSkyBuilding: true, skyStyle: "temple" }
+        ],
+        // NEW MECHANIC: Bouncy Trampoline Clouds! Jump on them to bounce high into the sky!
+        bounceClouds: [
+            // Intro bouncy cloud right before Building 1 & boost up to Building 2
+            { id: "sky101_bc1", x: 400, y: 480, w: 108, h: 36, bounceVy: -19.2 },
+            { id: "sky101_bc2", x: 1775, y: 410, w: 116, h: 38, bounceVy: -19.8 },
+            { id: "sky101_bc3", x: 2005, y: 370, w: 116, h: 38, bounceVy: -19.5 },
+
+            // Boost up to tall Tower b5 on Island 2
+            { id: "sky101_bc4", x: 2555, y: 470, w: 108, h: 36, bounceVy: -20.2 },
+
+            // Across Chasm 2 (3720..4380): Bouncy cloud chain!
+            { id: "sky101_bc5", x: 3920, y: 405, w: 118, h: 38, bounceVy: -20.0 },
+            { id: "sky101_bc6", x: 4185, y: 365, w: 118, h: 38, bounceVy: -19.5 },
+
+            // Boost up to Observatory b9 on Island 3
+            { id: "sky101_bc7", x: 4770, y: 465, w: 108, h: 36, bounceVy: -20.0 },
+
+            // Across Chasm 3 (5980..6680): Cloud + Sky Turnik combo!
+            { id: "sky101_bc8", x: 6165, y: 400, w: 116, h: 38, bounceVy: -19.8 },
+            { id: "sky101_bc9", x: 6490, y: 385, w: 116, h: 38, bounceVy: -19.8 },
+
+            // Boost up to tall Tower b13 on Island 4
+            { id: "sky101_bc10", x: 7070, y: 465, w: 110, h: 36, bounceVy: -20.6 },
+
+            // Across Chasm 4 (8320..9040): Triple Bouncy Cloud Sky-Bridge!
+            { id: "sky101_bc11", x: 8480, y: 410, w: 112, h: 36, bounceVy: -19.8 },
+            { id: "sky101_bc12", x: 8690, y: 350, w: 112, h: 36, bounceVy: -20.2 },
+            { id: "sky101_bc13", x: 8890, y: 390, w: 112, h: 36, bounceVy: -19.5 },
+
+            // Boost up to Observatory b17 on Island 5
+            { id: "sky101_bc14", x: 9430, y: 465, w: 108, h: 36, bounceVy: -20.2 },
+
+            // Across Chasm 5 (10620..11340): Cloud -> Lantern/Sky Rope -> Cloud!
+            { id: "sky101_bc15", x: 10785, y: 400, w: 114, h: 38, bounceVy: -20.0 },
+            { id: "sky101_bc16", x: 11175, y: 380, w: 114, h: 38, bounceVy: -19.8 },
+
+            // Final bouncy cloud launch up to the Grand Sky Sanctuary finish roof!
+            { id: "sky101_bc17", x: 11715, y: 455, w: 112, h: 38, bounceVy: -20.5 }
+        ],
+        ladders: [
+            { id: "sky101_lad1", x: 875, topY: 270, bottomY: 540, w: 42, isSkyLadder: true },
+            { id: "sky101_lad2", x: 2655, topY: 230, bottomY: 540, w: 42, isSkyLadder: true },
+            { id: "sky101_lad3", x: 4875, topY: 240, bottomY: 540, w: 42, isSkyLadder: true },
+            { id: "sky101_lad4", x: 7175, topY: 210, bottomY: 540, w: 42, isSkyLadder: true },
+            { id: "sky101_lad5", x: 9535, topY: 230, bottomY: 540, w: 42, isSkyLadder: true }
+        ],
+        turniks: [
+            { id: "sky101_tur1", x: 6330, y: 210, boxBottomY: 540, length: 95, isSkyTurnik: true }
+        ],
+        ropes: [
+            { id: "sky101_rop1", x: 10985, anchorY: 68, length: 185, isSkyRope: true }
+        ],
+        // Damaging Celestial Storm-Crystal Hazards (deals 25 HP damage!)
+        cacti: [
+            { id: "sky101_hz1", x: 1360, y: 310, w: 40, h: 52, isSkyHazard: true },
+            { id: "sky101_hz2", x: 3140, y: 170, w: 40, h: 52, isSkyHazard: true },
+            { id: "sky101_hz3", x: 3520, y: 290, w: 40, h: 52, isSkyHazard: true },
+            { id: "sky101_hz4", x: 5375, y: 180, w: 40, h: 52, isSkyHazard: true },
+            { id: "sky101_hz5", x: 5765, y: 270, w: 40, h: 52, isSkyHazard: true },
+            { id: "sky101_hz6", x: 7685, y: 165, w: 40, h: 52, isSkyHazard: true },
+            { id: "sky101_hz7", x: 8100, y: 280, w: 40, h: 52, isSkyHazard: true },
+            { id: "sky101_hz8", x: 10040, y: 175, w: 40, h: 52, isSkyHazard: true },
+            { id: "sky101_hz9", x: 10420, y: 270, w: 40, h: 52, isSkyHazard: true },
+            { id: "sky101_hz10", x: 11960, y: 210, w: 40, h: 52, isSkyHazard: true }
+        ],
+        flag: { x: 12160, y: 210, poleHeight: 118, bannerW: 48, bannerH: 34, isSkyFlag: true }
+    };
+
+    // --- PROCEDURAL CURATED BUILDER FOR PAGE 6 SKY ISLANDS LEVELS (102-119) ---
+    (function populateSkyLevels102To119() {
+        const SKY_LEVEL_SPECS = [
+            {
+                id: 102, title: "Уровень 102: Облачный батут",
+                spikeChance: 0.38,
+                chasmPattern: ['double_cloud', 'cloud_turnik_cloud', 'double_cloud', 'triple_cloud'],
+                styleOrder: ['arch', 'temple', 'observatory', 'tower']
+            },
+            {
+                id: 103, title: "Уровень 103: Мраморные арки",
+                spikeChance: 0.42,
+                chasmPattern: ['double_cloud', 'cloud_rope_cloud', 'double_cloud', 'cloud_turnik_cloud'],
+                styleOrder: ['arch', 'arch', 'temple', 'observatory']
+            },
+            {
+                id: 104, title: "Уровень 104: Поток ветра",
+                spikeChance: 0.44,
+                chasmPattern: ['cloud_turnik_cloud', 'triple_cloud', 'cloud_rope_cloud', 'double_cloud', 'cloud_turnik_cloud'],
+                styleOrder: ['tower', 'arch', 'temple', 'tower']
+            },
+            {
+                id: 105, title: "Уровень 105: Солнечная обсерватория",
+                spikeChance: 0.46,
+                chasmPattern: ['double_cloud', 'triple_cloud', 'cloud_turnik_cloud', 'cloud_rope_cloud', 'triple_cloud'],
+                styleOrder: ['observatory', 'temple', 'observatory', 'arch']
+            },
+            {
+                id: 106, title: "Уровень 106: Прыжки по облакам",
+                spikeChance: 0.46,
+                chasmPattern: ['triple_cloud', 'double_cloud', 'triple_cloud', 'triple_cloud', 'double_cloud'],
+                styleOrder: ['arch', 'tower', 'observatory', 'temple']
+            },
+            {
+                id: 107, title: "Уровень 107: Грозовые кристаллы",
+                spikeChance: 0.54,
+                chasmPattern: ['double_cloud', 'cloud_turnik_cloud', 'triple_cloud', 'cloud_rope_cloud', 'triple_cloud'],
+                styleOrder: ['temple', 'tower', 'temple', 'arch']
+            },
+            {
+                id: 108, title: "Уровень 108: Золотые цепи небес",
+                spikeChance: 0.52,
+                chasmPattern: ['cloud_rope_cloud', 'double_rope_cloud', 'cloud_turnik_cloud', 'cloud_rope_cloud', 'double_rope_cloud'],
+                styleOrder: ['observatory', 'arch', 'tower', 'temple']
+            },
+            {
+                id: 109, title: "Уровень 109: Башни облачного края",
+                spikeChance: 0.54,
+                chasmPattern: ['triple_cloud', 'cloud_turnik_cloud', 'double_rope_cloud', 'triple_cloud', 'cloud_rope_cloud', 'triple_cloud'],
+                styleOrder: ['tower', 'tower', 'observatory', 'temple']
+            },
+            {
+                id: 110, title: "Уровень 110: Храм Ясного Солнца",
+                spikeChance: 0.56,
+                chasmPattern: ['cloud_turnik_cloud', 'triple_cloud', 'cloud_rope_cloud', 'double_rope_cloud', 'triple_cloud', 'cloud_turnik_cloud'],
+                styleOrder: ['temple', 'arch', 'temple', 'observatory']
+            },
+            {
+                id: 111, title: "Уровень 111: Каскад островов",
+                spikeChance: 0.56,
+                chasmPattern: ['double_cloud', 'triple_cloud', 'double_cloud', 'triple_cloud', 'cloud_turnik_cloud', 'triple_cloud'],
+                styleOrder: ['arch', 'observatory', 'tower', 'temple']
+            },
+            {
+                id: 112, title: "Уровень 112: Небесная гроза",
+                spikeChance: 0.62,
+                chasmPattern: ['triple_cloud', 'cloud_rope_cloud', 'double_rope_cloud', 'cloud_turnik_cloud', 'triple_cloud', 'cloud_rope_cloud'],
+                styleOrder: ['tower', 'temple', 'arch', 'tower']
+            },
+            {
+                id: 113, title: "Уровень 113: Виадук зенита",
+                spikeChance: 0.60,
+                chasmPattern: ['cloud_turnik_cloud', 'double_rope_cloud', 'triple_cloud', 'cloud_rope_cloud', 'double_rope_cloud', 'triple_cloud'],
+                styleOrder: ['arch', 'arch', 'observatory', 'temple']
+            },
+            {
+                id: 114, title: "Уровень 114: Парящие шпили",
+                spikeChance: 0.62,
+                chasmPattern: ['triple_cloud', 'cloud_turnik_cloud', 'double_rope_cloud', 'triple_cloud', 'cloud_turnik_cloud', 'cloud_rope_cloud', 'triple_cloud'],
+                styleOrder: ['tower', 'observatory', 'tower', 'temple']
+            },
+            {
+                id: 115, title: "Уровень 115: Лабиринт облаков",
+                spikeChance: 0.64,
+                chasmPattern: ['triple_cloud', 'triple_cloud', 'cloud_rope_cloud', 'triple_cloud', 'double_rope_cloud', 'triple_cloud', 'cloud_turnik_cloud'],
+                styleOrder: ['observatory', 'arch', 'temple', 'tower']
+            },
+            {
+                id: 116, title: "Уровень 116: Мост из молний",
+                spikeChance: 0.68,
+                chasmPattern: ['cloud_rope_cloud', 'triple_cloud', 'double_rope_cloud', 'cloud_turnik_cloud', 'triple_cloud', 'double_rope_cloud', 'cloud_rope_cloud'],
+                styleOrder: ['temple', 'tower', 'observatory', 'arch']
+            },
+            {
+                id: 117, title: "Уровень 117: Цитадель ветров",
+                spikeChance: 0.68,
+                chasmPattern: ['double_rope_cloud', 'triple_cloud', 'cloud_turnik_cloud', 'double_rope_cloud', 'triple_cloud', 'cloud_rope_cloud', 'triple_cloud'],
+                styleOrder: ['tower', 'temple', 'tower', 'observatory']
+            },
+            {
+                id: 118, title: "Уровень 118: Высота богов",
+                spikeChance: 0.70,
+                chasmPattern: ['triple_cloud', 'double_rope_cloud', 'cloud_turnik_cloud', 'triple_cloud', 'double_rope_cloud', 'cloud_rope_cloud', 'triple_cloud', 'cloud_turnik_cloud'],
+                styleOrder: ['temple', 'observatory', 'tower', 'temple']
+            },
+            {
+                id: 119, title: "Уровень 119: Преддверие Солнечного Трона",
+                spikeChance: 0.72,
+                chasmPattern: ['triple_cloud', 'double_rope_cloud', 'cloud_turnik_cloud', 'triple_cloud', 'double_rope_cloud', 'cloud_turnik_cloud', 'triple_cloud', 'double_rope_cloud'],
+                styleOrder: ['arch', 'temple', 'tower', 'observatory']
+            }
+        ];
+
+        function makeRng(seed) {
+            let s = (seed * 2654435761) >>> 0;
+            return () => {
+                s = (s * 1664525 + 1013904223) >>> 0;
+                return s / 4294967296;
+            };
+        }
+        function randInt(rng, min, max) {
+            return Math.floor(rng() * (max - min + 1)) + min;
+        }
+
+        SKY_LEVEL_SPECS.forEach(spec => {
+            const lvl = spec.id;
+            const diff = (lvl - 101) / 18;
+            const rng = makeRng(lvl * 131 + 2026);
+            const groundY = 540;
+            const prefix = `sky${lvl}`;
+
+            const chasms = [];
+            const boxes = [];
+            const bounceClouds = [];
+            const ladders = [];
+            const turniks = [];
+            const ropes = [];
+            const cacti = [];
+
+            let boxIdx = 1, bcIdx = 1, ladIdx = 1, turIdx = 1, ropIdx = 1, hzIdx = 1;
+            let cursorX = 510;
+            // Welcome bouncy cloud near start on alternating levels
+            if (lvl % 2 === 0) {
+                bounceClouds.push({ id: `${prefix}_bc${bcIdx++}`, x: 385, y: 478, w: 108, h: 36, bounceVy: -19.4 });
+            }
+
+            const totalIslands = spec.chasmPattern.length + 1;
+            let styleCursor = 0;
+
+            for (let d = 0; d < totalIslands; d++) {
+                const isFinalIsland = (d === totalIslands - 1);
+                const bCount = isFinalIsland ? 2 : (d % 2 === 0 ? 4 : 3);
+                let prevY = 365;
+
+                for (let b = 0; b < bCount; b++) {
+                    const isFinalTemple = isFinalIsland && (b === bCount - 1);
+                    const style = isFinalTemple ? 'temple' : spec.styleOrder[styleCursor++ % spec.styleOrder.length];
+
+                    let w, y;
+                    if (isFinalTemple) {
+                        w = 480;
+                        y = randInt(rng, 200, 220);
+                    } else if (b === 0) {
+                        w = randInt(rng, 225, 255);
+                        y = isFinalIsland ? randInt(rng, 295, 310) : randInt(rng, 340, 380);
+                    } else {
+                        w = randInt(rng, 235, 275);
+                        const peak = Math.floor(bCount * 0.6);
+                        if (b <= peak) {
+                            y = Math.max(168, prevY - randInt(rng, 60, 105));
+                        } else {
+                            y = Math.min(310, prevY + randInt(rng, 40, 88));
+                        }
+                        if (prevY - y > 105) y = prevY - 105;
+                    }
+
+                    const boxObj = {
+                        id: `${prefix}_b${boxIdx++}`,
+                        x: cursorX,
+                        y: y,
+                        w: w,
+                        h: groundY - y,
+                        isSkyBuilding: true,
+                        skyStyle: style
+                    };
+                    boxes.push(boxObj);
+
+                    // Add Sky Ladder on the 2nd building for easy climb recovery
+                    let hasLadder = false;
+                    if (b === 1 && !isFinalTemple && y <= 315) {
+                        ladders.push({
+                            id: `${prefix}_lad${ladIdx++}`,
+                            x: boxObj.x + 15,
+                            topY: boxObj.y,
+                            bottomY: groundY,
+                            w: 42,
+                            isSkyLadder: true
+                        });
+                        hasLadder = true;
+                    }
+
+                    // Add a fun Bouncy Boost Cloud before tall towers or final temple!
+                    if (isFinalTemple || (b === 1 && y <= 265 && (d + lvl) % 2 === 0)) {
+                        bounceClouds.push({
+                            id: `${prefix}_bc${bcIdx++}`,
+                            x: boxObj.x - 68,
+                            y: 462,
+                            w: 108,
+                            h: 36,
+                            bounceVy: -20.4
+                        });
+                    }
+
+                    // Damaging Celestial Storm Crystal Hazards on safe rooftop spots
+                    if (isFinalTemple) {
+                        cacti.push({
+                            id: `${prefix}_hz${hzIdx++}`,
+                            x: boxObj.x + 170,
+                            y: boxObj.y,
+                            w: 40,
+                            h: 52,
+                            isSkyHazard: true
+                        });
+                    } else if (b > 0 && boxObj.w >= 225 && rng() < spec.spikeChance) {
+                        const off = hasLadder ? Math.max(138, boxObj.w - 74) : Math.round(boxObj.w * (0.46 + rng() * 0.12));
+                        cacti.push({
+                            id: `${prefix}_hz${hzIdx++}`,
+                            x: boxObj.x + off,
+                            y: boxObj.y,
+                            w: 40,
+                            h: 52,
+                            isSkyHazard: true
+                        });
+                    }
+
+                    prevY = y;
+                    if (b < bCount - 1) {
+                        const gap = (isFinalIsland && b === 0) ? 148 : randInt(rng, Math.round(92 + diff * 18), Math.round(126 + diff * 20));
+                        cursorX += w + gap;
+                    } else {
+                        cursorX += w;
+                    }
+                }
+
+                // Build Open-Sky Chasm Crossing between Floating Islands
+                if (!isFinalIsland) {
+                    const cType = spec.chasmPattern[d];
+                    const chasmStartX = cursorX + 42;
+                    let chasmW = 600;
+
+                    if (cType === 'double_cloud') {
+                        chasmW = randInt(rng, 580, 625);
+                        bounceClouds.push({ id: `${prefix}_bc${bcIdx++}`, x: chasmStartX + 185, y: 410, w: 116, h: 38, bounceVy: -19.8 });
+                        bounceClouds.push({ id: `${prefix}_bc${bcIdx++}`, x: chasmStartX + chasmW - 185, y: 372, w: 116, h: 38, bounceVy: -19.6 });
+                    } else if (cType === 'triple_cloud') {
+                        chasmW = randInt(rng, 735, 785);
+                        bounceClouds.push({ id: `${prefix}_bc${bcIdx++}`, x: chasmStartX + 165, y: 412, w: 112, h: 36, bounceVy: -19.8 });
+                        bounceClouds.push({ id: `${prefix}_bc${bcIdx++}`, x: chasmStartX + Math.round(chasmW * 0.5), y: 352, w: 112, h: 36, bounceVy: -20.2 });
+                        bounceClouds.push({ id: `${prefix}_bc${bcIdx++}`, x: chasmStartX + chasmW - 165, y: 390, w: 112, h: 36, bounceVy: -19.6 });
+                    } else if (cType === 'cloud_turnik_cloud') {
+                        chasmW = randInt(rng, 685, 725);
+                        bounceClouds.push({ id: `${prefix}_bc${bcIdx++}`, x: chasmStartX + 175, y: 405, w: 114, h: 38, bounceVy: -19.8 });
+                        turniks.push({ id: `${prefix}_tur${turIdx++}`, x: chasmStartX + Math.round(chasmW * 0.5), y: 210, boxBottomY: groundY, length: 95, isSkyTurnik: true });
+                        bounceClouds.push({ id: `${prefix}_bc${bcIdx++}`, x: chasmStartX + chasmW - 175, y: 385, w: 114, h: 38, bounceVy: -19.8 });
+                    } else if (cType === 'cloud_rope_cloud') {
+                        chasmW = randInt(rng, 700, 740);
+                        bounceClouds.push({ id: `${prefix}_bc${bcIdx++}`, x: chasmStartX + 170, y: 402, w: 114, h: 38, bounceVy: -20.0 });
+                        ropes.push({ id: `${prefix}_rop${ropIdx++}`, x: chasmStartX + Math.round(chasmW * 0.5), anchorY: 68, length: 185, isSkyRope: true });
+                        bounceClouds.push({ id: `${prefix}_bc${bcIdx++}`, x: chasmStartX + chasmW - 170, y: 382, w: 114, h: 38, bounceVy: -19.8 });
+                    } else if (cType === 'double_rope_cloud') {
+                        chasmW = randInt(rng, 820, 860);
+                        ropes.push({ id: `${prefix}_rop${ropIdx++}`, x: chasmStartX + 180, anchorY: 68, length: 185, isSkyRope: true });
+                        ropes.push({ id: `${prefix}_rop${ropIdx++}`, x: chasmStartX + Math.round(chasmW * 0.5), anchorY: 72, length: 185, isSkyRope: true });
+                        bounceClouds.push({ id: `${prefix}_bc${bcIdx++}`, x: chasmStartX + chasmW - 165, y: 382, w: 114, h: 38, bounceVy: -19.8 });
+                    }
+
+                    const chasmEndX = chasmStartX + chasmW;
+                    chasms.push({ startX: chasmStartX, endX: chasmEndX });
+                    cursorX = chasmEndX + 54;
+                }
+            }
+
+            const lastBox = boxes[boxes.length - 1];
+            const worldWidth = lastBox.x + lastBox.w + 340;
+
+            levelsData[lvl] = {
+                id: lvl,
+                title: spec.title,
+                theme: "sky",
+                hasThirst: false,
+                worldWidth: worldWidth,
+                groundY: groundY,
+                playerStartX: 190,
+                platforms: [
+                    { x: 0, y: groundY, w: worldWidth, h: 200 }
+                ],
+                chasms: chasms,
+                boxes: boxes,
+                bounceClouds: bounceClouds,
+                ladders: ladders,
+                turniks: turniks,
+                ropes: ropes,
+                cacti: cacti,
+                flag: {
+                    x: lastBox.x + 365,
+                    y: lastBox.y,
+                    poleHeight: 118,
+                    bannerW: 48,
+                    bannerH: 34,
+                    isSkyFlag: true
+                }
+            };
+        });
+    })();
+
     let currentLevelData = levelsData[1];
 
     function loadLevel(levelNum) {
@@ -18373,17 +18876,20 @@
         currentLevelData = levelsData[levelNum] || levelsData[1];
 
         // Dynamic HUD control descriptions
-        const isSakura = currentLevelData.theme === 'sakura' || currentLevelIndex >= 81;
-        const isDesert = !isSakura && (currentLevelData.theme === 'desert' || (currentLevelIndex >= 61 && currentLevelIndex <= 80));
-        const isSnow = !isSakura && !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
-        const isNature = !isSakura && !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
+        const isSky = currentLevelData.theme === 'sky' || currentLevelIndex >= 101;
+        const isSakura = !isSky && (currentLevelData.theme === 'sakura' || (currentLevelIndex >= 81 && currentLevelIndex <= 100));
+        const isDesert = !isSky && !isSakura && (currentLevelData.theme === 'desert' || (currentLevelIndex >= 61 && currentLevelIndex <= 80));
+        const isSnow = !isSky && !isSakura && !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
+        const isNature = !isSky && !isSakura && !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
 
         if (ctrlTurnik) {
             if (isDesert) {
                 ctrlTurnik.style.display = 'none';
             } else {
                 ctrlTurnik.style.display = 'block';
-                if (isSakura) {
+                if (isSky) {
+                    ctrlTurnik.innerHTML = '<span>ОБЛАКА / ПЕРЕКЛАДИНА</span> Отскок от облаков, раскачка A/D';
+                } else if (isSakura) {
                     ctrlTurnik.innerHTML = '<span>ВЕТКА САКУРЫ</span> Раскачка A/D, рывок Пробел';
                 } else if (isSnow) {
                     ctrlTurnik.innerHTML = '<span>СУХАЯ ВЕТКА</span> Раскачка A/D, рывок Пробел';
@@ -18399,7 +18905,9 @@
                 ctrlRope.style.display = 'none';
             } else {
                 ctrlRope.style.display = 'block';
-                if (isSakura) {
+                if (isSky) {
+                    ctrlRope.innerHTML = '<span>НЕБЕСНАЯ ЦЕПЬ</span> Раскачка A/D, рывок Пробел';
+                } else if (isSakura) {
                     ctrlRope.innerHTML = '<span>КАНАТ ФОНАРЯ</span> Раскачка A/D, рывок Пробел';
                 } else if (isSnow) {
                     ctrlRope.innerHTML = '<span>СВИСАЮЩАЯ ВЕТКА</span> Раскачка A/D, рывок Пробел';
@@ -18411,7 +18919,9 @@
             }
         }
         if (ctrlLadder) {
-            if (isSakura) {
+            if (isSky) {
+                ctrlLadder.innerHTML = '<span>E</span> Небесная лестница';
+            } else if (isSakura) {
                 ctrlLadder.innerHTML = '<span>E</span> Бамбуковая лестница';
             } else if (isDesert) {
                 ctrlLadder.innerHTML = '<span>E</span> Лестница на здании';
@@ -18445,7 +18955,7 @@
         }
 
         if (healthHud) {
-            if ((isDesert || isSakura) && currentState === STATES.PLAYING) {
+            if ((isDesert || isSakura || isSky) && currentState === STATES.PLAYING) {
                 healthHud.classList.remove('hidden');
                 updateHealthHud();
             } else {
@@ -18690,6 +19200,11 @@
                         defeatSubtextEl.textContent = 'Огонь из нёдр земли сжёг вас! Отбегите от огненных трещин вокруг босса.';
                     }
                 }
+            } else if (source === 'skyHazard') {
+                const defeatTitleEl = defeatScreen ? defeatScreen.querySelector('.defeat-title') : null;
+                const defeatSubtextEl = defeatScreen ? defeatScreen.querySelector('.defeat-subtext') : null;
+                if (defeatTitleEl) defeatTitleEl.textContent = '⚡ Небесные грозовые кристаллы';
+                if (defeatSubtextEl) defeatSubtextEl.textContent = 'Разряд грозовых кристаллов сразил вас! Перепрыгивайте опасные кристаллы и берегите здоровье.';
             }
         }
     }
@@ -18700,11 +19215,12 @@
         2: { name: 'Дикая Природа', shortName: 'Природа', themeClass: 'theme-nature' },
         3: { name: 'Вечный холод', shortName: 'Вечный холод', themeClass: 'theme-snow' },
         4: { name: 'Исохшая земля', shortName: 'Исохшая земля', themeClass: 'theme-desert' },
-        5: { name: 'Цветение сакуры', shortName: 'Цветение сакуры', themeClass: 'theme-sakura' }
+        5: { name: 'Цветение сакуры', shortName: 'Цветение сакуры', themeClass: 'theme-sakura' },
+        6: { name: 'Небесные острова', shortName: 'Небесные острова', themeClass: 'theme-sky' }
     };
 
     function updatePaginationArrows(page) {
-        const allThemes = ['theme-building', 'theme-nature', 'theme-snow', 'theme-desert', 'theme-sakura'];
+        const allThemes = ['theme-building', 'theme-nature', 'theme-snow', 'theme-desert', 'theme-sakura', 'theme-sky'];
 
         // Left / Previous Arrow (leads to page - 1)
         if (btnPrevPage) {
@@ -18729,7 +19245,7 @@
         if (btnNextPage) {
             btnNextPage.classList.remove(...allThemes, 'pulse-hint');
             const nextPage = page + 1;
-            if (nextPage <= 5 && PAGE_NAV_THEMES[nextPage]) {
+            if (nextPage <= 6 && PAGE_NAV_THEMES[nextPage]) {
                 const nextTheme = PAGE_NAV_THEMES[nextPage];
                 btnNextPage.disabled = false;
                 btnNextPage.classList.remove('disabled');
@@ -18750,6 +19266,7 @@
         if (!levelsGrid) return;
         levelsGrid.innerHTML = '';
         updatePaginationArrows(currentSelectPage);
+        if (dotPage6) dotPage6.classList.remove('active', 'nature', 'snow', 'desert', 'sakura', 'sky');
 
         if (currentSelectPage === 1) {
             if (levelPageBadge) {
@@ -18921,27 +19438,18 @@
                 }
                 levelsGrid.appendChild(tile);
             }
-        } else {
+        } else if (currentSelectPage === 5) {
             // Page 5: Цветение сакуры (Levels 81-100)
             if (levelPageBadge) {
                 levelPageBadge.textContent = '5 страница - Цветение сакуры';
                 levelPageBadge.className = 'level-page-badge page-sakura';
             }
-            if (dotPage1) {
-                dotPage1.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
-            }
-            if (dotPage2) {
-                dotPage2.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
-            }
-            if (dotPage3) {
-                dotPage3.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
-            }
-            if (dotPage4) {
-                dotPage4.classList.remove('active', 'nature', 'snow', 'desert', 'sakura');
-            }
+            [dotPage1, dotPage2, dotPage3, dotPage4, dotPage6].forEach(d => {
+                if (d) d.classList.remove('active', 'nature', 'snow', 'desert', 'sakura', 'sky');
+            });
             if (dotPage5) {
                 dotPage5.classList.add('active', 'sakura');
-                dotPage5.classList.remove('nature', 'snow', 'desert');
+                dotPage5.classList.remove('nature', 'snow', 'desert', 'sky');
             }
 
             for (let i = 81; i <= 100; i++) {
@@ -18963,26 +19471,47 @@
                 }
                 levelsGrid.appendChild(tile);
             }
+        } else {
+            // Page 6: Небесные острова (Levels 101-120)
+            if (levelPageBadge) {
+                levelPageBadge.textContent = '6 страница - Небесные острова';
+                levelPageBadge.className = 'level-page-badge page-sky';
+            }
+            [dotPage1, dotPage2, dotPage3, dotPage4, dotPage5].forEach(d => {
+                if (d) d.classList.remove('active', 'nature', 'snow', 'desert', 'sakura', 'sky');
+            });
+            if (dotPage6) {
+                dotPage6.classList.add('active', 'sky');
+                dotPage6.classList.remove('nature', 'snow', 'desert', 'sakura');
+            }
+
+            for (let i = 101; i <= 120; i++) {
+                const tile = document.createElement('div');
+                if (i <= unlockedPage6Levels && levelsData[i]) {
+                    tile.className = (i === 120) ? 'level-tile unlocked sky boss-level-120' : 'level-tile unlocked sky';
+                    tile.innerHTML = (i === 120)
+                        ? `<span>120</span><span style="font-size: 0.65rem; display: block; font-weight: 700; letter-spacing: 0.5px;">☀️ БОСС</span>`
+                        : `<span>${i}</span><span style="font-size: 0.65rem; display: block; font-weight: 700; letter-spacing: 0.5px;">☁️ НЕБО</span>`;
+                    const levelNum = i;
+                    tile.addEventListener('click', () => {
+                        startLevelWithFade(levelNum);
+                    });
+                } else {
+                    tile.className = (i === 120) ? 'level-tile locked sky boss-level-120' : 'level-tile locked sky';
+                    tile.innerHTML = (i === 120)
+                        ? `<span>120 ☀️</span><span class="lock-icon">🔒</span>`
+                        : `<span>${i}</span><span class="lock-icon">🔒</span>`;
+                }
+                levelsGrid.appendChild(tile);
+            }
         }
     }
 
     if (btnNextPage) {
         btnNextPage.addEventListener('click', () => {
             initAudio();
-            if (currentSelectPage === 1) {
-                currentSelectPage = 2;
-                playSound('jump');
-                generateLevelsGrid();
-            } else if (currentSelectPage === 2) {
-                currentSelectPage = 3;
-                playSound('jump');
-                generateLevelsGrid();
-            } else if (currentSelectPage === 3) {
-                currentSelectPage = 4;
-                playSound('jump');
-                generateLevelsGrid();
-            } else if (currentSelectPage === 4) {
-                currentSelectPage = 5;
+            if (currentSelectPage < 6) {
+                currentSelectPage++;
                 playSound('jump');
                 generateLevelsGrid();
             }
@@ -18992,20 +19521,8 @@
     if (btnPrevPage) {
         btnPrevPage.addEventListener('click', () => {
             initAudio();
-            if (currentSelectPage === 5) {
-                currentSelectPage = 4;
-                playSound('jump');
-                generateLevelsGrid();
-            } else if (currentSelectPage === 4) {
-                currentSelectPage = 3;
-                playSound('jump');
-                generateLevelsGrid();
-            } else if (currentSelectPage === 3) {
-                currentSelectPage = 2;
-                playSound('jump');
-                generateLevelsGrid();
-            } else if (currentSelectPage === 2) {
-                currentSelectPage = 1;
+            if (currentSelectPage > 1) {
+                currentSelectPage--;
                 playSound('jump');
                 generateLevelsGrid();
             }
@@ -19067,6 +19584,17 @@
         });
     }
 
+    if (dotPage6) {
+        dotPage6.addEventListener('click', () => {
+            if (currentSelectPage !== 6) {
+                initAudio();
+                currentSelectPage = 6;
+                playSound('jump');
+                generateLevelsGrid();
+            }
+        });
+    }
+
     generateLevelsGrid();
 
     // Smooth Fade Transition Handler
@@ -19099,11 +19627,14 @@
                 startLevel81IntroCutscene();
             } else if (levelNum === 100 && hasSamuraiBossCheckpoint()) {
                 startSamuraiQuickRematchCutscene();
+            } else if (levelNum === 101 && !forceSkipCutscene) {
+                startLevel101IntroCutscene();
             } else {
                 hudOverlay.classList.remove('hidden');
-                const isSakura = (currentLevelData.theme === 'sakura' || currentLevelIndex >= 81);
-                const isDesert = !isSakura && (currentLevelData.theme === 'desert' || (currentLevelIndex >= 61 && currentLevelIndex <= 80));
-                const isSnow = !isSakura && !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
+                const isSky = (currentLevelData.theme === 'sky' || currentLevelIndex >= 101);
+                const isSakura = !isSky && (currentLevelData.theme === 'sakura' || (currentLevelIndex >= 81 && currentLevelIndex <= 100));
+                const isDesert = !isSky && !isSakura && (currentLevelData.theme === 'desert' || (currentLevelIndex >= 61 && currentLevelIndex <= 80));
+                const isSnow = !isSky && !isSakura && !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
                 if (inventoryHud && isSnow) {
                     inventoryHud.classList.remove('hidden');
                 }
@@ -19111,7 +19642,7 @@
                     coldHud.classList.remove('hidden');
                     updateColdHud();
                 }
-                if (healthHud && (isDesert || isSakura)) {
+                if (healthHud && (isDesert || isSakura || isSky)) {
                     healthHud.classList.remove('hidden');
                     updateHealthHud();
                 }
@@ -19422,6 +19953,7 @@
     function triggerDefeat(isAbyss = false) {
         if (player.state === 'DEFEAT' || player.state === 'VICTORY' || player.state === 'VICTORY_IDLE' || currentState === STATES.CUTSCENE) return;
         player.state = 'DEFEAT';
+        if (typeof recordPlayerDeath === 'function') recordPlayerDeath();
         player.isAbyssFall = isAbyss;
         player.staggerTimer = 0;
         player.staggerAngle = 0;
@@ -19510,6 +20042,7 @@
     function triggerFreezeDefeat() {
         if (player.state === 'FREEZE' || player.state === 'DEFEAT' || player.state === 'VICTORY' || currentState === STATES.CUTSCENE) return;
         player.state = 'FREEZE';
+        if (typeof recordPlayerDeath === 'function') recordPlayerDeath();
         player.freezeTimer = 0;
         player.vx = 0;
         player.vy = 0;
@@ -29042,8 +29575,991 @@
                 finishSamuraiIntroCutscene();
             } else if (typeof samuraiDefeatCutscene !== 'undefined' && samuraiDefeatCutscene && samuraiDefeatCutscene.active) {
                 finishSamuraiDefeatCutscene();
+            } else if (typeof cutsceneIntro101 !== 'undefined' && cutsceneIntro101 && cutsceneIntro101.active) {
+                finishLevel101IntroCutscene();
             }
         });
+    }
+
+    // =========================================================================
+    // --- PAGE 6: SKY ISLANDS (НЕБЕСНЫЕ ОСТРОВА) INTRO CUTSCENE & RENDERING ---
+    // =========================================================================
+    const cutsceneIntro101 = {
+        active: false,
+        phase: 'SAKURA_ASCEND', // 'SAKURA_ASCEND' -> 'SKY_TRANSFORM' -> 'LAND_ISLAND'
+        timer: 0,
+        altitude: 0,      // 0 = Sakura ground, 1 = high sky clouds, 2 = Sky Islands!
+        glowIntensity: 0,
+        rings: [],
+        swirlParticles: []
+    };
+
+    const ambientSky = [];
+    for (let i = 0; i < 42; i++) {
+        ambientSky.push({
+            x: Math.random() * 1400,
+            y: Math.random() * 675,
+            vx: -(0.35 + Math.random() * 0.75),
+            vy: (Math.random() - 0.5) * 0.2,
+            size: 2 + Math.random() * 3.5,
+            alpha: 0.25 + Math.random() * 0.45,
+            isStreak: Math.random() < 0.35
+        });
+    }
+
+    function updateAmbientSky() {
+        for (let i = 0; i < ambientSky.length; i++) {
+            const p = ambientSky[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.x < -60) p.x = width + 60;
+            if (p.y < -30) p.y = 690;
+            if (p.y > 700) p.y = -20;
+        }
+    }
+
+    function drawAmbientSky(scale) {
+        ctx.save();
+        for (let i = 0; i < ambientSky.length; i++) {
+            const p = ambientSky[i];
+            const sx = p.x * scale;
+            const sy = p.y * scale;
+            ctx.globalAlpha = p.alpha;
+            if (p.isStreak) {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+                ctx.lineWidth = 1.6 * scale;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(sx, sy);
+                ctx.lineTo(sx + 26 * scale, sy);
+                ctx.stroke();
+            } else {
+                ctx.fillStyle = '#fef9c3';
+                ctx.beginPath();
+                ctx.arc(sx, sy, p.size * scale, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        ctx.restore();
+    }
+
+    function startLevel101IntroCutscene() {
+        currentState = STATES.CUTSCENE;
+        cutsceneIntro101.active = true;
+        cutsceneIntro101.phase = 'SAKURA_ASCEND';
+        cutsceneIntro101.timer = 0;
+        cutsceneIntro101.altitude = 0;
+        cutsceneIntro101.glowIntensity = 0;
+        cutsceneIntro101.rings = [];
+        cutsceneIntro101.swirlParticles = [];
+
+        if (hudOverlay) hudOverlay.classList.add('hidden');
+        if (inventoryHud) inventoryHud.classList.add('hidden');
+        if (coldHud) coldHud.classList.add('hidden');
+        if (healthHud) healthHud.classList.add('hidden');
+        if (thirstHud) thirstHud.classList.add('hidden');
+        if (bossHud) bossHud.classList.add('hidden');
+        if (samuraiSkillsHud) samuraiSkillsHud.classList.add('hidden');
+
+        if (cutsceneOverlay) {
+            cutsceneOverlay.classList.remove('hidden');
+            const hintEl = cutsceneOverlay.querySelector('.cutscene-hint');
+            if (hintEl) hintEl.textContent = 'Нажмите [Пробел] чтобы пропустить катсцену';
+        }
+        resetCutsceneChapterStyle();
+        if (cutsceneChapter) cutsceneChapter.textContent = '☁️ СТРАНИЦА 6: НЕБЕСНЫЕ ОСТРОВА';
+        if (cutsceneText) cutsceneText.textContent = 'Сверкающий небесный столб света поднимает героя прямо из цветущей Японии высоко в небо...';
+
+        // Player starts in Sakura Japanese outfit before ascending into the sky!
+        player.x = 320;
+        player.y = 540;
+        player.vx = 0;
+        player.vy = 0;
+        player.facing = 1;
+        player.state = 'IDLE';
+        player.grounded = true;
+        player.hasSamuraiOutfit = true;
+        player.katanaDrawn = false;
+        player.health = 100;
+
+        cameraX = 0;
+        cameraY = 0;
+        playSound('skyAscend');
+    }
+
+    function updateCutsceneIntro101() {
+        if (!cutsceneIntro101.active) return;
+        cutsceneIntro101.timer += 0.016;
+        updateAmbientSky();
+
+        for (let i = cutsceneIntro101.rings.length - 1; i >= 0; i--) {
+            const r = cutsceneIntro101.rings[i];
+            r.radius += r.speed;
+            r.alpha -= 0.022;
+            if (r.alpha <= 0) cutsceneIntro101.rings.splice(i, 1);
+        }
+        for (let i = cutsceneIntro101.swirlParticles.length - 1; i >= 0; i--) {
+            const sp = cutsceneIntro101.swirlParticles[i];
+            sp.angle += sp.angSpeed;
+            sp.y -= sp.vy;
+            sp.radius += sp.radSpeed;
+            sp.alpha -= 0.015;
+            if (sp.alpha <= 0) cutsceneIntro101.swirlParticles.splice(i, 1);
+        }
+
+        if (cutsceneIntro101.phase === 'SAKURA_ASCEND') {
+            const t = Math.min(1, cutsceneIntro101.timer / 2.2);
+            cutsceneIntro101.altitude = t * t; // 0 -> 1 ascending from Sakura town into open sky
+            cutsceneIntro101.glowIntensity = Math.min(0.65, t * 0.75);
+            player.state = t > 0.18 ? 'JUMP' : 'IDLE';
+            player.y = 540 - t * 210;
+            player.animTime += 0.1;
+
+            if (Math.random() < 0.75) {
+                cutsceneIntro101.swirlParticles.push({
+                    angle: Math.random() * Math.PI * 2,
+                    angSpeed: 0.1,
+                    radius: 18 + Math.random() * 26,
+                    radSpeed: 0.2,
+                    y: player.y - Math.random() * 65,
+                    vy: 2.2 + Math.random() * 2.2,
+                    size: 3 + Math.random() * 3.5,
+                    color: Math.random() < 0.5 ? '#f9a8d4' : '#fef08a',
+                    alpha: 0.9
+                });
+            }
+
+            if (cutsceneIntro101.timer >= 2.25) {
+                cutsceneIntro101.phase = 'SKY_TRANSFORM';
+                cutsceneIntro101.timer = 0;
+                playSound('sakuraGlow');
+                cutsceneIntro101.rings.push({ radius: 12, speed: 4.8, alpha: 0.95, color: '#ffffff' });
+                cutsceneIntro101.rings.push({ radius: 6, speed: 3.4, alpha: 0.9, color: '#7dd3fc' });
+                if (cutsceneChapter) cutsceneChapter.textContent = '✨ ПРЕОБРАЖЕНИЕ В НЕБЕСАХ';
+                if (cutsceneText) cutsceneText.textContent = 'В потоке чистого небесного ветра японская одежда и катана исчезают — герой вновь становится обычным стикменом!';
+            }
+        } else if (cutsceneIntro101.phase === 'SKY_TRANSFORM') {
+            const p = Math.min(1, cutsceneIntro101.timer / 2.1);
+            cutsceneIntro101.altitude = 1 + p * 0.5;
+            cutsceneIntro101.glowIntensity = Math.sin(p * Math.PI);
+            player.y = 330 + Math.sin(cutsceneIntro101.timer * 4) * 10;
+            player.state = 'JUMP';
+            player.animTime += 0.08;
+
+            if (Math.random() < 0.8) {
+                cutsceneIntro101.swirlParticles.push({
+                    angle: Math.random() * Math.PI * 2,
+                    angSpeed: 0.12,
+                    radius: 14 + Math.random() * 32,
+                    radSpeed: 0.55,
+                    y: player.y - 10 - Math.random() * 50,
+                    vy: 1.4 + Math.random() * 2.0,
+                    size: 3 + Math.random() * 4,
+                    color: p < 0.5 ? '#f472b6' : (Math.random() < 0.5 ? '#ffffff' : '#38bdf8'),
+                    alpha: 0.95
+                });
+            }
+
+            // At peak light flash: Japanese outfit & katana vanish, player becomes normal stickman!
+            if (p >= 0.48 && player.hasSamuraiOutfit) {
+                player.hasSamuraiOutfit = false;
+                player.katanaDrawn = false;
+                screenShake = 8;
+                cutsceneIntro101.rings.push({ radius: 16, speed: 6.2, alpha: 1.0, color: '#fef08a' });
+                cutsceneIntro101.rings.push({ radius: 10, speed: 4.5, alpha: 0.95, color: '#38bdf8' });
+            }
+
+            if (cutsceneIntro101.timer >= 2.2) {
+                cutsceneIntro101.phase = 'LAND_ISLAND';
+                cutsceneIntro101.timer = 0;
+                playSound('skyAscend');
+                if (cutsceneChapter) cutsceneChapter.textContent = '🏝️ НЕБЕСНЫЕ ОСТРОВА';
+                if (cutsceneText) cutsceneText.textContent = 'Облака расступаются, открывая парящие небесные острова, облака-батуты и сияющие храмы!';
+            }
+        } else if (cutsceneIntro101.phase === 'LAND_ISLAND') {
+            const t = Math.min(1, cutsceneIntro101.timer / 1.5);
+            cutsceneIntro101.altitude = 1.5 + t * 0.5;
+            cutsceneIntro101.glowIntensity = Math.max(0, 0.25 * (1 - t));
+            // Smooth descent onto the first floating sky island
+            const easeOut = 1 - Math.pow(1 - t, 3);
+            player.y = 330 + easeOut * (540 - 330);
+            player.state = t < 0.92 ? 'JUMP' : 'IDLE';
+            player.animTime += 0.08;
+
+            if (cutsceneIntro101.timer >= 1.95) {
+                finishLevel101IntroCutscene();
+            }
+        }
+    }
+
+    function finishLevel101IntroCutscene() {
+        if (!cutsceneIntro101.active) return;
+        cutsceneIntro101.active = false;
+        cutsceneIntro101.glowIntensity = 0;
+        resetCutsceneChapterStyle();
+        if (cutsceneOverlay) cutsceneOverlay.classList.add('hidden');
+        triggerFadeTransition(() => {
+            loadLevel(101);
+            player.reset();
+            player.hasSamuraiOutfit = false;
+            player.katanaDrawn = false;
+            if (hudOverlay) hudOverlay.classList.remove('hidden');
+            if (inventoryHud) inventoryHud.classList.add('hidden');
+            if (coldHud) coldHud.classList.add('hidden');
+            if (thirstHud) thirstHud.classList.add('hidden');
+            if (healthHud) {
+                healthHud.classList.remove('hidden');
+                updateHealthHud();
+            }
+            currentState = STATES.PLAYING;
+        });
+    }
+
+    function drawCutscene101Scene(scale) {
+        const alt = cutsceneIntro101.altitude; // 0 (Sakura) -> 1 (Clouds) -> 2 (Sky Islands)
+        const skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        if (alt < 1) {
+            skyGrad.addColorStop(0, '#0284c7');
+            skyGrad.addColorStop(0.55, '#7dd3fc');
+            skyGrad.addColorStop(1, '#fbcfe8');
+        } else {
+            skyGrad.addColorStop(0, '#0284c7');
+            skyGrad.addColorStop(0.45, '#38bdf8');
+            skyGrad.addColorStop(0.85, '#bae6fd');
+            skyGrad.addColorStop(1, '#f0f9ff');
+        }
+        ctx.fillStyle = skyGrad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Radiant Sun in clear sky
+        const sunX = canvas.width - 210 * scale;
+        const sunY = (115 - Math.min(1, alt) * 10) * scale;
+        const sunHalo = ctx.createRadialGradient(sunX, sunY, 12 * scale, sunX, sunY, 130 * scale);
+        sunHalo.addColorStop(0, '#ffffff');
+        sunHalo.addColorStop(0.28, '#fef08a');
+        sunHalo.addColorStop(0.62, 'rgba(253, 224, 71, 0.32)');
+        sunHalo.addColorStop(1, 'rgba(253, 224, 71, 0)');
+        ctx.fillStyle = sunHalo;
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, 130 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Phase 1 receding Sakura ground & torii shrinking below as player ascends!
+        if (alt < 1.15) {
+            const dropY = alt * 340 * scale;
+            const gY = (540 - cameraY) * scale + dropY;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, 1 - alt * 0.9);
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(0, gY, canvas.width, 220 * scale);
+            ctx.fillStyle = '#22c55e';
+            ctx.fillRect(0, gY, canvas.width, 8 * scale);
+            // Distant crimson Torii silhouette on ground
+            const tx = 580 * scale;
+            ctx.fillStyle = '#dc2626';
+            ctx.fillRect(tx - 44 * scale, gY - 120 * scale, 12 * scale, 120 * scale);
+            ctx.fillRect(tx + 32 * scale, gY - 120 * scale, 12 * scale, 120 * scale);
+            ctx.fillRect(tx - 60 * scale, gY - 122 * scale, 120 * scale, 12 * scale);
+            ctx.fillStyle = '#f472b6';
+            ctx.beginPath();
+            ctx.arc(160 * scale, gY - 85 * scale, 52 * scale, 0, Math.PI * 2);
+            ctx.arc(820 * scale, gY - 92 * scale, 58 * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // Passing fluffy clouds rushing downward during ascent
+        ctx.save();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+        for (let i = 0; i < 6; i++) {
+            const cx = ((i * 250 + 90) % 1300) * scale;
+            const cy = ((i * 115 + alt * 260) % 620) * scale;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 30 * scale, 0, Math.PI * 2);
+            ctx.arc(cx + 28 * scale, cy - 6 * scale, 24 * scale, 0, Math.PI * 2);
+            ctx.arc(cx - 26 * scale, cy - 4 * scale, 22 * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.restore();
+
+        // Phase 3 Floating Sky Island rising into view under the player!
+        if (alt >= 1.35) {
+            const islandProg = Math.min(1, (alt - 1.35) / 0.55);
+            const islandY = (540 + (1 - islandProg) * 180) * scale;
+            const ix = 120 * scale;
+            const iw = 440 * scale;
+            ctx.save();
+            // Tapered floating sky-island rock bottom
+            const rGrad = ctx.createLinearGradient(ix, islandY, ix, islandY + 130 * scale);
+            rGrad.addColorStop(0, '#cbd5e1');
+            rGrad.addColorStop(0.45, '#94a3b8');
+            rGrad.addColorStop(1, '#475569');
+            ctx.fillStyle = rGrad;
+            ctx.beginPath();
+            ctx.moveTo(ix, islandY);
+            ctx.lineTo(ix + iw, islandY);
+            ctx.lineTo(ix + iw - 48 * scale, islandY + 75 * scale);
+            ctx.lineTo(ix + iw * 0.52, islandY + 135 * scale);
+            ctx.lineTo(ix + 52 * scale, islandY + 80 * scale);
+            ctx.closePath();
+            ctx.fill();
+            // Lush sunlit grass top
+            ctx.fillStyle = '#22c55e';
+            ctx.fillRect(ix, islandY, iw, 12 * scale);
+            ctx.fillStyle = '#4ade80';
+            ctx.fillRect(ix, islandY, iw, 4 * scale);
+            ctx.restore();
+        }
+
+        // Radiant Ascension Beam & Transformation Glow around Player
+        const px = (player.x - cameraX) * scale;
+        const py = (player.y - 38 - cameraY) * scale;
+        if (cutsceneIntro101.glowIntensity > 0.02) {
+            ctx.save();
+            const beamGrad = ctx.createLinearGradient(px - 65 * scale, 0, px + 65 * scale, 0);
+            beamGrad.addColorStop(0, 'rgba(186, 230, 253, 0)');
+            beamGrad.addColorStop(0.5, `rgba(254, 249, 195, ${0.42 * cutsceneIntro101.glowIntensity})`);
+            beamGrad.addColorStop(1, 'rgba(186, 230, 253, 0)');
+            ctx.fillStyle = beamGrad;
+            ctx.fillRect(px - 65 * scale, 0, 130 * scale, canvas.height);
+
+            const orbGrad = ctx.createRadialGradient(px, py, 6 * scale, px, py, 95 * scale);
+            orbGrad.addColorStop(0, `rgba(255, 255, 255, ${0.95 * cutsceneIntro101.glowIntensity})`);
+            orbGrad.addColorStop(0.45, `rgba(125, 211, 252, ${0.6 * cutsceneIntro101.glowIntensity})`);
+            orbGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
+            ctx.fillStyle = orbGrad;
+            ctx.beginPath();
+            ctx.arc(px, py, 95 * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // Expanding Sky Rings & Swirling Particles
+        cutsceneIntro101.rings.forEach(r => {
+            ctx.save();
+            ctx.strokeStyle = r.color;
+            ctx.globalAlpha = Math.max(0, r.alpha);
+            ctx.lineWidth = 3.5 * scale;
+            ctx.beginPath();
+            ctx.arc(px, py, r.radius * scale, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+        });
+        cutsceneIntro101.swirlParticles.forEach(sp => {
+            const sx = px + Math.cos(sp.angle) * sp.radius * scale;
+            const sy = (sp.y - cameraY) * scale;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, sp.alpha);
+            ctx.fillStyle = sp.color;
+            ctx.beginPath();
+            ctx.arc(sx, sy, sp.size * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        });
+        drawAmbientSky(scale);
+    }
+
+    // --- SKY ISLANDS CLEAR DAYTIME BACKGROUND (SUN, CLOUDS, FLOATING BACKGROUND ISLANDS) ---
+    function drawSkyBackground(scale) {
+        // 1. Radiant Clear Daytime Azure Sky
+        const skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        skyGrad.addColorStop(0, '#0284c7');    // clear zenith azure
+        skyGrad.addColorStop(0.38, '#38bdf8'); // vibrant sky blue
+        skyGrad.addColorStop(0.76, '#bae6fd'); // bright sunlit horizon mist
+        skyGrad.addColorStop(1, '#f0f9ff');    // cloud sea glow below
+        ctx.fillStyle = skyGrad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 2. Warm Radiant Sun with Soft Rays
+        const sunX = canvas.width - 210 * scale;
+        const sunY = 112 * scale;
+        const sunHalo = ctx.createRadialGradient(sunX, sunY, 14 * scale, sunX, sunY, 155 * scale);
+        sunHalo.addColorStop(0, '#ffffff');
+        sunHalo.addColorStop(0.24, '#fef08a');
+        sunHalo.addColorStop(0.55, 'rgba(253, 224, 71, 0.34)');
+        sunHalo.addColorStop(1, 'rgba(253, 224, 71, 0)');
+        ctx.fillStyle = sunHalo;
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, 155 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#fffbeb';
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, 34 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 3. Distant Parallax Fluffy Clouds
+        const timeDrift = Date.now() * 0.008;
+        ctx.save();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.86)';
+        const farCloudStep = 370 * scale;
+        const farCloudOff = -((cameraX * 0.045 + timeDrift * 0.6) * scale) % farCloudStep;
+        for (let cx = farCloudOff - farCloudStep; cx < canvas.width + farCloudStep; cx += farCloudStep) {
+            const idx = Math.round((cx - farCloudOff) / farCloudStep);
+            const cy = (88 + Math.abs(Math.sin(idx * 1.7)) * 75) * scale;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 26 * scale, 0, Math.PI * 2);
+            ctx.arc(cx + 26 * scale, cy - 8 * scale, 22 * scale, 0, Math.PI * 2);
+            ctx.arc(cx + 50 * scale, cy + 2 * scale, 19 * scale, 0, Math.PI * 2);
+            ctx.arc(cx - 24 * scale, cy + 2 * scale, 20 * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.restore();
+
+        // 4. Distant Background Floating Sky Islands (Parallax Layer 1 & 2 with Grass, Rock Bottoms & Tiny Waterfalls!)
+        const drawBgIsland = (ix, iy, iw, ih, hasTemple, hasWaterfall) => {
+            ctx.save();
+            // Tapered floating rock underside
+            const rGrad = ctx.createLinearGradient(ix, iy, ix, iy + ih);
+            rGrad.addColorStop(0, '#94a3b8');
+            rGrad.addColorStop(0.5, '#64748b');
+            rGrad.addColorStop(1, '#334155');
+            ctx.fillStyle = rGrad;
+            ctx.beginPath();
+            ctx.moveTo(ix, iy);
+            ctx.lineTo(ix + iw, iy);
+            ctx.lineTo(ix + iw * 0.84, iy + ih * 0.56);
+            ctx.lineTo(ix + iw * 0.52, iy + ih);
+            ctx.lineTo(ix + iw * 0.16, iy + ih * 0.58);
+            ctx.closePath();
+            ctx.fill();
+
+            // Lush emerald grass cap
+            ctx.fillStyle = '#22c55e';
+            ctx.beginPath();
+            ctx.roundRect(ix - 3 * scale, iy - 5 * scale, iw + 6 * scale, 11 * scale, 5 * scale);
+            ctx.fill();
+            ctx.fillStyle = '#86efac';
+            ctx.fillRect(ix, iy - 5 * scale, iw, 3 * scale);
+
+            // Optional tiny distant white sky-temple on the background island
+            if (hasTemple) {
+                const tx = ix + iw * 0.5;
+                ctx.fillStyle = 'rgba(248, 250, 252, 0.9)';
+                ctx.fillRect(tx - 18 * scale, iy - 28 * scale, 36 * scale, 23 * scale);
+                ctx.fillStyle = '#fbbf24';
+                ctx.beginPath();
+                ctx.moveTo(tx - 24 * scale, iy - 28 * scale);
+                ctx.lineTo(tx, iy - 42 * scale);
+                ctx.lineTo(tx + 24 * scale, iy - 28 * scale);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // Optional cascading sky waterfall dissolving into mist
+            if (hasWaterfall) {
+                const wx = ix + iw * 0.68;
+                const wfGrad = ctx.createLinearGradient(wx, iy, wx, iy + ih * 1.45);
+                wfGrad.addColorStop(0, 'rgba(186, 230, 253, 0.82)');
+                wfGrad.addColorStop(1, 'rgba(224, 242, 254, 0)');
+                ctx.fillStyle = wfGrad;
+                ctx.fillRect(wx, iy + 2 * scale, 8 * scale, ih * 1.4);
+            }
+            ctx.restore();
+        };
+
+        const bgIslandStep = 520 * scale;
+        const bgIslandOff = -(cameraX * 0.14 * scale) % bgIslandStep;
+        for (let n = -1; n <= Math.ceil(canvas.width / bgIslandStep) + 1; n++) {
+            const ix = bgIslandOff + n * bgIslandStep + 60 * scale;
+            const bob = Math.sin(Date.now() * 0.0014 + n * 1.9) * 6 * scale;
+            const iy = (225 + (Math.abs(n) % 3) * 58) * scale + bob;
+            const iw = (135 + (Math.abs(n) % 2) * 55) * scale;
+            const ih = (62 + (Math.abs(n) % 2) * 24) * scale;
+            drawBgIsland(ix, iy, iw, ih, Math.abs(n) % 2 === 0, Math.abs(n) % 3 === 1);
+        }
+
+        // 5. Lower Cloud Sea Billows Beneath the Islands
+        ctx.save();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
+        const seaStep = 260 * scale;
+        const seaOff = -(cameraX * 0.08 * scale) % seaStep;
+        const seaY = canvas.height - 22 * scale;
+        for (let sx = seaOff - seaStep; sx < canvas.width + seaStep; sx += seaStep) {
+            ctx.beginPath();
+            ctx.arc(sx, seaY, 58 * scale, 0, Math.PI * 2);
+            ctx.arc(sx + 70 * scale, seaY + 8 * scale, 52 * scale, 0, Math.PI * 2);
+            ctx.arc(sx + 145 * scale, seaY - 4 * scale, 64 * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.restore();
+
+        drawAmbientSky(scale);
+    }
+
+    // --- DRAW SCULPTED FLOATING SKY ISLAND GROUND SEGMENTS (AROUND CHASMS) ---
+    function drawSkyFloatingIslands(scale) {
+        const groundY = currentLevelData.groundY || 540;
+        const worldW = currentLevelData.worldWidth || 12000;
+        const chasms = (currentLevelData.chasms || []).slice().sort((a, b) => a.startX - b.startX);
+
+        // Compute solid island spans between chasms
+        const islands = [];
+        let start = 0;
+        chasms.forEach(c => {
+            if (c.startX > start) islands.push({ x1: start, x2: c.startX });
+            start = c.endX;
+        });
+        if (start < worldW) islands.push({ x1: start, x2: worldW });
+
+        const topY = (groundY - cameraY) * scale;
+
+        islands.forEach((isl, idx) => {
+            const leftX = (isl.x1 - cameraX) * scale;
+            const rightX = (isl.x2 - cameraX) * scale;
+            const iw = rightX - leftX;
+            if (rightX < -120 || leftX > canvas.width + 120) return;
+
+            ctx.save();
+            // Tapered Floating Island Cliff Underside
+            const rockGrad = ctx.createLinearGradient(0, topY, 0, topY + 175 * scale);
+            rockGrad.addColorStop(0, '#e2e8f0');
+            rockGrad.addColorStop(0.28, '#cbd5e1');
+            rockGrad.addColorStop(0.65, '#64748b');
+            rockGrad.addColorStop(1, '#334155');
+            ctx.fillStyle = rockGrad;
+            ctx.beginPath();
+            ctx.moveTo(leftX, topY);
+            ctx.lineTo(rightX, topY);
+            ctx.lineTo(rightX - Math.min(iw * 0.08, 44 * scale), topY + 72 * scale);
+            ctx.lineTo(rightX - Math.min(iw * 0.18, 120 * scale), topY + 128 * scale);
+            ctx.lineTo(leftX + iw * 0.5, topY + 158 * scale);
+            ctx.lineTo(leftX + Math.min(iw * 0.18, 120 * scale), topY + 122 * scale);
+            ctx.lineTo(leftX + Math.min(iw * 0.08, 44 * scale), topY + 70 * scale);
+            ctx.closePath();
+            ctx.fill();
+
+            // Golden Marble Edge Trim along cliff top
+            ctx.fillStyle = '#fde68a';
+            ctx.fillRect(leftX, topY + 11 * scale, iw, 5 * scale);
+
+            // Lush Sunlit Emerald Grass Turf
+            const grassGrad = ctx.createLinearGradient(0, topY, 0, topY + 12 * scale);
+            grassGrad.addColorStop(0, '#4ade80');
+            grassGrad.addColorStop(1, '#16a34a');
+            ctx.fillStyle = grassGrad;
+            ctx.fillRect(leftX, topY, iw, 12 * scale);
+
+            // Little decorative grass blades & sky flowers along island surface
+            const step = 36;
+            const visMin = Math.max(isl.x1 + 16, Math.floor((cameraX - 40) / step) * step);
+            const visMax = Math.min(isl.x2 - 16, Math.ceil((cameraX + canvas.width / scale + 40) / step) * step);
+            for (let wx = visMin; wx <= visMax; wx += step) {
+                const gx = (wx - cameraX) * scale;
+                ctx.fillStyle = '#86efac';
+                ctx.beginPath();
+                ctx.moveTo(gx - 2 * scale, topY);
+                ctx.lineTo(gx + 1 * scale, topY - 7 * scale);
+                ctx.lineTo(gx + 4 * scale, topY);
+                ctx.fill();
+                if ((wx / step) % 3 === 0) {
+                    ctx.fillStyle = '#fef08a';
+                    ctx.beginPath();
+                    ctx.arc(gx + 8 * scale, topY - 3 * scale, 2.6 * scale, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // Soft cloud wisps drifting under the floating island
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+            ctx.beginPath();
+            ctx.ellipse(leftX + iw * 0.25, topY + 132 * scale, 52 * scale, 14 * scale, 0, 0, Math.PI * 2);
+            ctx.ellipse(leftX + iw * 0.75, topY + 138 * scale, 58 * scale, 15 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        });
+    }
+
+    // --- DRAW BOUNCY TRAMPOLINE CLOUD (ОБЛАКО ДЛЯ ОТСКОКА) ---
+    function drawSkyBounceCloud(cloud, scale) {
+        const cx = (cloud.x - cameraX) * scale;
+        const cy = (cloud.y - cameraY) * scale;
+        const w = (cloud.w || 110) * scale;
+        const h = (cloud.h || 36) * scale;
+        if (cx + w < -90 || cx - w > canvas.width + 90) return;
+
+        // Juicy spring squish deformation when bounced on!
+        const sq = cloud.squishTimer || 0;
+        const squishWave = sq > 0 ? Math.sin((sq / 0.36) * Math.PI * 2.5) * (sq / 0.36) : 0;
+        const scaleX = 1 + squishWave * 0.22;
+        const scaleY = 1 - squishWave * 0.28;
+        const floatY = Math.sin(Date.now() * 0.003 + cloud.x * 0.02) * 3 * scale;
+
+        ctx.save();
+        ctx.translate(cx, cy + h * 0.35 + floatY);
+        ctx.scale(scaleX, scaleY);
+
+        // Soft glowing sunlit halo under the bouncy cloud
+        const halo = ctx.createRadialGradient(0, 0, 6 * scale, 0, 0, w * 0.65);
+        halo.addColorStop(0, 'rgba(254, 240, 138, 0.45)');
+        halo.addColorStop(1, 'rgba(186, 230, 253, 0)');
+        ctx.fillStyle = halo;
+        ctx.beginPath();
+        ctx.ellipse(0, 4 * scale, w * 0.65, h * 0.8, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Soft sky-blue cloud underside shadow
+        ctx.fillStyle = '#bae6fd';
+        ctx.beginPath();
+        ctx.ellipse(0, 6 * scale, w * 0.46, h * 0.44, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Plump multi-puff gleaming white cumulus cloud body
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#7dd3fc';
+        ctx.lineWidth = 2 * scale;
+        ctx.beginPath();
+        ctx.arc(-w * 0.28, 1 * scale, h * 0.46, 0, Math.PI * 2);
+        ctx.arc(-w * 0.10, -h * 0.18, h * 0.54, 0, Math.PI * 2);
+        ctx.arc(w * 0.13, -h * 0.14, h * 0.52, 0, Math.PI * 2);
+        ctx.arc(w * 0.30, 2 * scale, h * 0.43, 0, Math.PI * 2);
+        ctx.ellipse(0, 4 * scale, w * 0.42, h * 0.36, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Golden sunlit rim highlight on top
+        ctx.strokeStyle = 'rgba(254, 240, 138, 0.9)';
+        ctx.lineWidth = 2.4 * scale;
+        ctx.beginPath();
+        ctx.arc(-w * 0.10, -h * 0.18, h * 0.46, Math.PI * 1.15, Math.PI * 1.85);
+        ctx.stroke();
+
+        // Subtle animated upward bounce chevrons (shows it's a trampoline cloud!)
+        const chevPulse = Math.sin(Date.now() * 0.008 + cloud.x) * 3 * scale;
+        ctx.strokeStyle = '#0284c7';
+        ctx.lineWidth = 2.4 * scale;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-7 * scale, 1 * scale - chevPulse);
+        ctx.lineTo(0, -6 * scale - chevPulse);
+        ctx.lineTo(7 * scale, 1 * scale - chevPulse);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    // --- DRAW CELESTIAL SKY BUILDINGS (TEMPLE, OBSERVATORY, TOWER, ARCH) ---
+    function drawSkyBuilding(box, scale) {
+        const drawX = (box.x - cameraX) * scale;
+        const drawY = (box.y - cameraY) * scale;
+        const drawW = box.w * scale;
+        const drawH = box.h * scale;
+        if (drawX + drawW < -100 || drawX > canvas.width + 100) return;
+
+        const style = box.skyStyle || 'temple';
+        ctx.save();
+
+        // Sunlit Ivory White Marble Facade
+        const marbleGrad = ctx.createLinearGradient(drawX, drawY, drawX + drawW, drawY + drawH);
+        marbleGrad.addColorStop(0, '#ffffff');
+        marbleGrad.addColorStop(0.5, '#f1f5f9');
+        marbleGrad.addColorStop(1, '#cbd5e1');
+        ctx.fillStyle = marbleGrad;
+        ctx.fillRect(drawX, drawY, drawW, drawH);
+
+        // Golden Celestial Border & Cornice
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 2.5 * scale;
+        ctx.strokeRect(drawX, drawY, drawW, drawH);
+
+        // Top Gold & Azure Roof Deck Trim
+        ctx.fillStyle = '#38bdf8';
+        ctx.fillRect(drawX - 4 * scale, drawY, drawW + 8 * scale, 10 * scale);
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillRect(drawX - 6 * scale, drawY, drawW + 12 * scale, 4 * scale);
+
+        // Fluted Classical Columns along sides
+        const colW = 14 * scale;
+        [drawX + 10 * scale, drawX + drawW - 10 * scale - colW].forEach(cx => {
+            ctx.fillStyle = '#e2e8f0';
+            ctx.fillRect(cx, drawY + 10 * scale, colW, drawH - 10 * scale);
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1.2 * scale;
+            ctx.strokeRect(cx, drawY + 10 * scale, colW, drawH - 10 * scale);
+            // Gold capital
+            ctx.fillStyle = '#fbbf24';
+            ctx.fillRect(cx - 2 * scale, drawY + 10 * scale, colW + 4 * scale, 6 * scale);
+        });
+
+        // Style-specific Celestial Architectural Accents
+        if (style === 'arch') {
+            // Grand sunlit sky archway cutout look
+            const archW = drawW * 0.48;
+            const archH = Math.min(drawH * 0.65, 95 * scale);
+            const ax = drawX + (drawW - archW) * 0.5;
+            const ay = drawY + drawH - archH;
+            ctx.fillStyle = '#7dd3fc';
+            ctx.beginPath();
+            ctx.arc(ax + archW * 0.5, ay + archW * 0.35, archW * 0.5, Math.PI, 0);
+            ctx.lineTo(ax + archW, drawY + drawH);
+            ctx.lineTo(ax, drawY + drawH);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 2.5 * scale;
+            ctx.stroke();
+        } else if (style === 'observatory') {
+            // Glowing Azure Crystal Dome Window in facade
+            const r = Math.min(drawW * 0.24, 42 * scale);
+            const ox = drawX + drawW * 0.5;
+            const oy = drawY + Math.min(drawH * 0.45, 76 * scale);
+            const orbGrad = ctx.createRadialGradient(ox - 6 * scale, oy - 6 * scale, 4 * scale, ox, oy, r);
+            orbGrad.addColorStop(0, '#e0f2fe');
+            orbGrad.addColorStop(0.55, '#38bdf8');
+            orbGrad.addColorStop(1, '#0369a1');
+            ctx.fillStyle = orbGrad;
+            ctx.beginPath();
+            ctx.arc(ox, oy, r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 3 * scale;
+            ctx.stroke();
+        } else if (style === 'tower') {
+            // Stacked tall azure lancet windows & gold filigree bands
+            const floors = Math.max(2, Math.floor(box.h / 75));
+            for (let f = 0; f < floors; f++) {
+                const wy = drawY + 28 * scale + f * 66 * scale;
+                if (wy + 34 * scale > drawY + drawH - 12 * scale) break;
+                ctx.fillStyle = '#0ea5e9';
+                ctx.beginPath();
+                ctx.roundRect(drawX + drawW * 0.5 - 16 * scale, wy, 32 * scale, 36 * scale, [16 * scale, 16 * scale, 2 * scale, 2 * scale]);
+                ctx.fill();
+                ctx.strokeStyle = '#fbbf24';
+                ctx.lineWidth = 2 * scale;
+                ctx.stroke();
+            }
+        } else {
+            // Classical Sky Temple golden emblem & sunlit columns
+            const cx = drawX + drawW * 0.5;
+            const cy = drawY + Math.min(64 * scale, drawH * 0.4);
+            ctx.fillStyle = '#fbbf24';
+            ctx.beginPath();
+            ctx.arc(cx, cy, 16 * scale, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#38bdf8';
+            ctx.beginPath();
+            ctx.arc(cx, cy, 9 * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Ledge-grab golden glow corner accents
+        ctx.fillStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.arc(drawX, drawY, 4.5 * scale, 0, Math.PI * 2);
+        ctx.arc(drawX + drawW, drawY, 4.5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+
+    function drawSkyLadder(lad, scale) {
+        const drawX = (lad.x - cameraX) * scale;
+        const topY = (lad.topY - cameraY) * scale;
+        const botY = (lad.bottomY - cameraY) * scale;
+        const drawW = (lad.w || 42) * scale;
+        const leftX = drawX - drawW * 0.5;
+        const rightX = drawX + drawW * 0.5;
+
+        ctx.save();
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 4.5 * scale;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(leftX, topY);
+        ctx.lineTo(leftX, botY);
+        ctx.moveTo(rightX, topY);
+        ctx.lineTo(rightX, botY);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#fef08a';
+        ctx.lineWidth = 3.2 * scale;
+        for (let rY = lad.topY + 14; rY <= lad.bottomY - 8; rY += 22) {
+            const sy = (rY - cameraY) * scale;
+            ctx.beginPath();
+            ctx.moveTo(leftX + 2 * scale, sy);
+            ctx.lineTo(rightX - 2 * scale, sy);
+            ctx.stroke();
+        }
+        ctx.restore();
+    }
+
+    function drawSkyTurnik(tur, scale) {
+        const drawX = (tur.x - cameraX) * scale;
+        const drawY = (tur.y - cameraY) * scale;
+        const barLen = (tur.length || 95) * scale;
+
+        ctx.save();
+        // Floating cloud halo supporting the celestial golden bar
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.beginPath();
+        ctx.arc(drawX - barLen * 0.5, drawY - 12 * scale, 14 * scale, 0, Math.PI * 2);
+        ctx.arc(drawX + barLen * 0.5, drawY - 12 * scale, 14 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        const barGrad = ctx.createLinearGradient(drawX - barLen * 0.5, drawY, drawX + barLen * 0.5, drawY);
+        barGrad.addColorStop(0, '#f59e0b');
+        barGrad.addColorStop(0.5, '#fef08a');
+        barGrad.addColorStop(1, '#f59e0b');
+        ctx.strokeStyle = barGrad;
+        ctx.lineWidth = 6.5 * scale;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(drawX - barLen * 0.5, drawY);
+        ctx.lineTo(drawX + barLen * 0.5, drawY);
+        ctx.stroke();
+
+        // Celestial cyan wing gems at bar tips
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(drawX - barLen * 0.5, drawY, 5.5 * scale, 0, Math.PI * 2);
+        ctx.arc(drawX + barLen * 0.5, drawY, 5.5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+
+    function drawSkyRope(rope, scale) {
+        const anchorX = (rope.x - cameraX) * scale;
+        const anchorY = (rope.anchorY - cameraY) * scale;
+        const ropeLen = (rope.length || 185) * scale;
+        let currentAngle = Math.sin(Date.now() * 0.002 + rope.x) * 0.05;
+        if (player.state === 'ROPE' && player.activeRope && player.activeRope.id === rope.id) {
+            currentAngle = player.ropeAngle;
+        }
+        const endX = anchorX + Math.sin(currentAngle) * ropeLen;
+        const endY = anchorY + Math.cos(currentAngle) * ropeLen;
+
+        ctx.save();
+        // Floating fluffy cloud anchor overhead
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(anchorX, anchorY, 16 * scale, 0, Math.PI * 2);
+        ctx.arc(anchorX - 14 * scale, anchorY + 3 * scale, 12 * scale, 0, Math.PI * 2);
+        ctx.arc(anchorX + 14 * scale, anchorY + 3 * scale, 12 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Radiant Golden Sky-Chain Rope
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 4.5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(anchorX, anchorY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#fef08a';
+        ctx.lineWidth = 2 * scale;
+        ctx.setLineDash([5 * scale, 5 * scale]);
+        ctx.beginPath();
+        ctx.moveTo(anchorX, anchorY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Glowing Sky-Orb Grip Knot
+        ctx.fillStyle = '#38bdf8';
+        ctx.strokeStyle = '#fef08a';
+        ctx.lineWidth = 2.4 * scale;
+        ctx.beginPath();
+        ctx.arc(endX, endY, 9 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    // --- DRAW DAMAGING SKY HAZARD (ELECTRIC STORM CRYSTALS / THORNS) ---
+    function drawSkyHazard(hz, scale) {
+        const drawX = (hz.x - cameraX) * scale;
+        const drawY = (hz.y - cameraY) * scale;
+        const w = (hz.w || 40) * scale;
+        const h = (hz.h || 52) * scale;
+        if (drawX + w < -60 || drawX - w > canvas.width + 60) return;
+
+        const pulse = 0.65 + 0.35 * Math.sin(Date.now() * 0.012 + hz.x);
+        ctx.save();
+
+        // Crackling storm danger aura
+        const glow = ctx.createRadialGradient(drawX, drawY - h * 0.45, 3 * scale, drawX, drawY - h * 0.45, w * 0.85);
+        glow.addColorStop(0, `rgba(250, 204, 21, ${0.45 * pulse})`);
+        glow.addColorStop(0.6, `rgba(168, 85, 247, ${0.32 * pulse})`);
+        glow.addColorStop(1, 'rgba(168, 85, 247, 0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(drawX, drawY - h * 0.45, w * 0.85, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 3 Jagged Dark-Storm Lightning Crystal Spires
+        const shards = [
+            { ox: -0.28, sh: 0.72, col: '#581c87' },
+            { ox: 0.0, sh: 1.0, col: '#7e22ce' },
+            { ox: 0.28, sh: 0.78, col: '#581c87' }
+        ];
+        shards.forEach(s => {
+            const sx = drawX + s.ox * w;
+            const topY = drawY - h * s.sh;
+            ctx.fillStyle = s.col;
+            ctx.strokeStyle = '#fde047';
+            ctx.lineWidth = 1.6 * scale;
+            ctx.beginPath();
+            ctx.moveTo(sx - 7 * scale, drawY);
+            ctx.lineTo(sx, topY);
+            ctx.lineTo(sx + 7 * scale, drawY);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        });
+
+        // Flickering electric spark bolt across the tips
+        if (Math.sin(Date.now() * 0.025 + hz.x) > 0.1) {
+            ctx.strokeStyle = '#fef08a';
+            ctx.lineWidth = 2 * scale;
+            ctx.beginPath();
+            ctx.moveTo(drawX - 11 * scale, drawY - h * 0.68);
+            ctx.lineTo(drawX - 2 * scale, drawY - h * 0.82);
+            ctx.lineTo(drawX + 4 * scale, drawY - h * 0.74);
+            ctx.lineTo(drawX + 12 * scale, drawY - h * 0.88);
+            ctx.stroke();
+        }
+        ctx.restore();
+    }
+
+    function drawSkyFlag(flag, scale) {
+        const flagX = (flag.x - cameraX) * scale;
+        const flagY = (flag.y - cameraY) * scale;
+        const poleH = (flag.poleHeight || 118) * scale;
+        const bannerW = (flag.bannerW || 48) * scale;
+        const bannerH = (flag.bannerH || 34) * scale;
+
+        ctx.save();
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(flagX, flagY);
+        ctx.lineTo(flagX, flagY - poleH);
+        ctx.stroke();
+
+        ctx.fillStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.arc(flagX, flagY - poleH, 7.5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        const wave = Math.sin(Date.now() * 0.006) * 5 * scale;
+        const topY = flagY - poleH + 8 * scale;
+        const fGrad = ctx.createLinearGradient(flagX, topY, flagX + bannerW, topY);
+        fGrad.addColorStop(0, '#0284c7');
+        fGrad.addColorStop(0.5, '#38bdf8');
+        fGrad.addColorStop(1, '#fef08a');
+
+        ctx.fillStyle = fGrad;
+        ctx.beginPath();
+        ctx.moveTo(flagX, topY);
+        ctx.quadraticCurveTo(flagX + bannerW * 0.5, topY + wave, flagX + bannerW, topY + wave / 2);
+        ctx.lineTo(flagX + bannerW, topY + bannerH + wave / 2);
+        ctx.quadraticCurveTo(flagX + bannerW * 0.5, topY + bannerH + wave, flagX, topY + bannerH);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `bold ${16 * scale}px sans-serif`;
+        ctx.fillText('☁️', flagX + 10 * scale, topY + bannerH * 0.72 + wave / 2);
+        ctx.restore();
     }
 
     // =========================================================================
@@ -30444,9 +31960,16 @@
 
         if (victoryTitle) victoryTitle.textContent = '🏆 УРОВЕНЬ 100 ПРОЙДЕН!';
         if (victorySubtext) {
-            victorySubtext.textContent = 'ЛЕГЕНДАРНАЯ ПОБЕДА! Вы одолели Багрового Самурая в честной дуэли на катанах и покорили все 100 уровней Вселенной паркура!';
+            victorySubtext.textContent = 'ЛЕГЕНДАРНАЯ ПОБЕДА! Вы одолели Багрового Самурая! Впереди новая 6 страница — «Небесные острова» (Уровень 101)!';
         }
-        if (btnNextLevel) btnNextLevel.classList.add('hidden');
+        if (btnNextLevel) {
+            if (levelsData[101]) {
+                btnNextLevel.classList.remove('hidden');
+                btnNextLevel.innerHTML = '<span class="btn-icon">☁️</span> Небесные острова: Уровень 101';
+            } else {
+                btnNextLevel.classList.add('hidden');
+            }
+        }
         if (btnReplay) btnReplay.innerHTML = '<span class="btn-icon">🔄</span> Пройти снова';
         if (btnToMenu) btnToMenu.innerHTML = '<span class="btn-icon">📋</span> К уровням';
 
@@ -33217,7 +34740,7 @@
             this.rollTimer = 0;
             this.rollCooldown = 0;
             this.hasLighter = (currentLevelIndex >= 41 && currentLevelIndex <= 60);
-            this.hasSamuraiOutfit = (currentLevelData && currentLevelData.theme === 'sakura') || currentLevelIndex >= 81;
+            this.hasSamuraiOutfit = (currentLevelData && currentLevelData.theme === 'sakura') || (currentLevelIndex >= 81 && currentLevelIndex <= 100);
             this.cold = 0;
             this.freezeTimer = 0;
             this.isWarming = false;
@@ -33233,6 +34756,9 @@
             cameraY = 0;
 
             resetBamboos();
+            if (currentLevelData && currentLevelData.bounceClouds) {
+                currentLevelData.bounceClouds.forEach(c => { c.squishTimer = 0; });
+            }
 
             if (currentLevelData && currentLevelData.cave) {
                 currentLevelData.cave.isLit = false;
@@ -33257,8 +34783,8 @@
             }
 
             if (thirstHud) {
-                const isSakuraLvl = currentLevelData && (currentLevelData.theme === 'sakura' || currentLevelIndex >= 81);
-                if (!isSakuraLvl && currentLevelData && (currentLevelData.hasThirst || (currentLevelIndex >= 62 && currentLevelIndex <= 80)) && currentState === STATES.PLAYING) {
+                const isSakuraOrSky = currentLevelData && (currentLevelData.theme === 'sakura' || currentLevelData.theme === 'sky' || currentLevelIndex >= 81);
+                if (!isSakuraOrSky && currentLevelData && (currentLevelData.hasThirst || (currentLevelIndex >= 62 && currentLevelIndex <= 80)) && currentState === STATES.PLAYING) {
                     thirstHud.classList.remove('hidden');
                     updateThirstHud();
                 } else {
@@ -33284,6 +34810,9 @@
             }
             if (typeof cutsceneIntro81 !== 'undefined') {
                 cutsceneIntro81.active = false;
+            }
+            if (typeof cutsceneIntro101 !== 'undefined') {
+                cutsceneIntro101.active = false;
             }
             if (cutsceneOverlay) {
                 cutsceneOverlay.classList.add('hidden');
@@ -33551,7 +35080,17 @@
                 if (victorySubtext) victorySubtext.textContent = `Отличный паркур и результаты на Уровне ${currentLevelIndex}!`;
 
                 const nextLevelNum = currentLevelIndex + 1;
-                if (currentLevelIndex >= 81) {
+                if (currentLevelIndex >= 101) {
+                    unlockedPage6Levels = Math.max(unlockedPage6Levels, Math.min(120, nextLevelNum));
+                    generateLevelsGrid();
+                    if (victorySubtext) {
+                        if (currentLevelIndex === 119) {
+                            victorySubtext.textContent = 'НЕВЕРОЯТНО! Все 119 уровней пройдены! Вы достигли Преддверия Солнечного Трона на вершине Небесных островов!';
+                        } else {
+                            victorySubtext.textContent = `Невероятный полёт! Уровень ${currentLevelIndex} среди Небесных островов пройден!`;
+                        }
+                    }
+                } else if (currentLevelIndex >= 81) {
                     unlockedPage5Levels = Math.max(unlockedPage5Levels, Math.min(100, nextLevelNum));
                     generateLevelsGrid();
                     if (victorySubtext) {
@@ -34491,6 +36030,42 @@
             }
         }
 
+        // --- BOUNCY TRAMPOLINE CLOUDS (PAGE 6: НЕБЕСНЫЕ ОСТРОВА) ---
+        if (currentLevelData.bounceClouds) {
+            for (const cloud of currentLevelData.bounceClouds) {
+                if (cloud.squishTimer > 0) {
+                    cloud.squishTimer = Math.max(0, cloud.squishTimer - 0.016);
+                }
+                const halfW = (cloud.w || 110) * 0.52;
+                const cloudTop = cloud.y - 6;
+                const cloudCatchBottom = cloud.y + 26;
+                if (player.vy >= 0 && nextX + 12 > cloud.x - halfW && nextX - 12 < cloud.x + halfW &&
+                    player.y <= cloudCatchBottom && nextY >= cloudTop) {
+                    nextY = cloudTop;
+                    player.vy = cloud.bounceVy || -19.6;
+                    player.grounded = false;
+                    player.canDoubleJump = true;
+                    player.state = 'JUMP';
+                    cloud.squishTimer = 0.36;
+                    playSound('cloudBounce');
+                    // Burst of fluffy sunlit cloud puffs!
+                    for (let p = 0; p < 12; p++) {
+                        particles.push({
+                            x: nextX + (Math.random() - 0.5) * 34,
+                            y: cloudTop + 4,
+                            vx: (Math.random() - 0.5) * 4.2,
+                            vy: -(1.2 + Math.random() * 3.2),
+                            size: 3.5 + Math.random() * 4,
+                            color: Math.random() < 0.7 ? '#ffffff' : '#bae6fd',
+                            life: 0.55,
+                            decay: 0.032
+                        });
+                    }
+                    break;
+                }
+            }
+        }
+
         player.x = Math.max(20, nextX);
         player.y = nextY;
 
@@ -34531,17 +36106,20 @@
                 const cBottom = cactus.y;
 
                 if (pRight > cLeft && pLeft < cRight && pBottom > cTop && pTop < cBottom) {
-                    const dmgSource = (cactus.isBambooSpikes || currentLevelData.theme === 'sakura' || currentLevelIndex >= 81) ? 'bamboo' : 'cactus';
+                    const dmgSource = (cactus.isSkyHazard || currentLevelData.theme === 'sky' || currentLevelIndex >= 101)
+                        ? 'skyHazard'
+                        : ((cactus.isBambooSpikes || currentLevelData.theme === 'sakura' || currentLevelIndex >= 81) ? 'bamboo' : 'cactus');
                     playerTakeDamage(25, dmgSource);
                     break;
                 }
             }
         }
 
-        // Thirst System (Desert Biome / Level 62-80 only, disabled on Sakura Page 5 and during Mummy boss fight)
+        // Thirst System (Desert Biome / Level 62-80 only, disabled on Sakura Page 5, Sky Page 6, and during Mummy boss fight)
         const isMummyBossFight = (currentLevelIndex === 80 && (mummy.active || (typeof mummyIntroCutscene !== 'undefined' && mummyIntroCutscene.active) || (typeof mummyDefeatCutscene !== 'undefined' && mummyDefeatCutscene.active) || player.x >= 13150));
-        const isSakuraBiome = (currentLevelData.theme === 'sakura' || currentLevelIndex >= 81);
-        const hasThirstBiome = !isSakuraBiome && (currentLevelData.hasThirst || (currentLevelIndex >= 62 && currentLevelIndex <= 80)) && !isMummyBossFight;
+        const isSkyBiome = (currentLevelData.theme === 'sky' || currentLevelIndex >= 101);
+        const isSakuraBiome = !isSkyBiome && (currentLevelData.theme === 'sakura' || (currentLevelIndex >= 81 && currentLevelIndex <= 100));
+        const hasThirstBiome = !isSkyBiome && !isSakuraBiome && (currentLevelData.hasThirst || (currentLevelIndex >= 62 && currentLevelIndex <= 80)) && !isMummyBossFight;
         if (isMummyBossFight && thirstHud && !thirstHud.classList.contains('hidden')) {
             thirstHud.classList.add('hidden');
         }
@@ -34821,15 +36399,20 @@
             return;
 
         } else {
-            const isSakura = currentLevelData.theme === 'sakura' || currentLevelIndex >= 81;
-            const isDesert = !isSakura && (currentLevelData.theme === 'desert' || (currentLevelIndex >= 61 && currentLevelIndex <= 80));
-            const isSnow = !isSakura && !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
-            const isNature = !isSakura && !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
+            const isSky = currentLevelData.theme === 'sky' || currentLevelIndex >= 101;
+            const isSakura = !isSky && (currentLevelData.theme === 'sakura' || (currentLevelIndex >= 81 && currentLevelIndex <= 100));
+            const isDesert = !isSky && !isSakura && (currentLevelData.theme === 'desert' || (currentLevelIndex >= 61 && currentLevelIndex <= 80));
+            const isSnow = !isSky && !isSakura && !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
+            const isNature = !isSky && !isSakura && !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
 
-            if (typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active) {
+            if (typeof cutsceneIntro101 !== 'undefined' && cutsceneIntro101 && cutsceneIntro101.active) {
+                drawCutscene101Scene(scale);
+            } else if (typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active) {
                 drawCutscene81Scene(scale);
             } else if (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) {
                 drawCutscene61Scene(scale);
+            } else if (isSky) {
+                drawSkyBackground(scale);
             } else if (isSakura) {
                 // ==========================================
                 // SAKURA BLOSSOM THEME (PAGE 5: JAPAN, MOUNT FUJI, SAKURA TREES & PETALS)
@@ -35215,15 +36798,21 @@
             }
         }
 
-        const isSakura = currentLevelData.theme === 'sakura' || currentLevelIndex >= 81;
-        const isDesert = !isSakura && (currentLevelData.theme === 'desert' || (currentLevelIndex >= 61 && currentLevelIndex <= 80));
-        const isSnow = !isSakura && !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
-        const isNature = !isSakura && !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
+        const isSky = currentLevelData.theme === 'sky' || currentLevelIndex >= 101;
+        const isSakura = !isSky && (currentLevelData.theme === 'sakura' || (currentLevelIndex >= 81 && currentLevelIndex <= 100));
+        const isDesert = !isSky && !isSakura && (currentLevelData.theme === 'desert' || (currentLevelIndex >= 61 && currentLevelIndex <= 80));
+        const isSnow = !isSky && !isSakura && !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
+        const isNature = !isSky && !isSakura && !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
+        const isCustomIntroCutscene = (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) ||
+            (typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active) ||
+            (typeof cutsceneIntro101 !== 'undefined' && cutsceneIntro101 && cutsceneIntro101.active);
 
         // --- RENDER LEVEL PLATFORMS & OBSTACLES ---
-        if ((typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) ||
-            (typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active)) {
-            // Cutscene 61 / 81 rendered its custom world scene
+        if (isCustomIntroCutscene) {
+            // Cutscene 61 / 81 / 101 rendered its custom world scene
+        } else if (isSky) {
+            // Sculpted Floating Sky Islands around sky chasms!
+            drawSkyFloatingIslands(scale);
         } else {
             if (isSakura && currentLevelData.chasms) {
                 drawSakuraChasms(scale);
@@ -35406,9 +36995,11 @@
         });
         }
 
-        // Box / Stone Obstacles / Desert Buildings / Japanese Buildings & Shrines
-        currentLevelData.boxes.forEach(box => {
-            if (box.isSakuraShrine) {
+        // Box / Stone Obstacles / Desert Buildings / Japanese Buildings & Shrines / Celestial Sky Buildings
+        if (!isCustomIntroCutscene) currentLevelData.boxes.forEach(box => {
+            if (isSky || box.isSkyBuilding) {
+                drawSkyBuilding(box, scale);
+            } else if (box.isSakuraShrine) {
                 drawSakuraShrine(box, scale);
             } else if (isSakura || box.isSakuraBuilding) {
                 drawSakuraBuilding(box, scale);
@@ -35452,9 +37043,11 @@
         });
 
         // Render Ladders
-        if (currentLevelData.ladders) {
+        if (currentLevelData.ladders && !isCustomIntroCutscene) {
             currentLevelData.ladders.forEach(lad => {
-                if (isSakura || lad.isSakuraLadder) {
+                if (isSky || lad.isSkyLadder) {
+                    drawSkyLadder(lad, scale);
+                } else if (isSakura || lad.isSakuraLadder) {
                     drawSakuraLadder(lad, scale);
                 } else if (isDesert || lad.isDesertLadder) {
                     drawDesertLadder(lad, scale);
@@ -35503,10 +37096,12 @@
             });
         }
 
-        // Render Turniks / Trees / Bare Branches / Sakura Branches
-        if (currentLevelData.turniks) {
+        // Render Turniks / Trees / Bare Branches / Sakura Branches / Sky Wind-Bars
+        if (currentLevelData.turniks && !isCustomIntroCutscene) {
             currentLevelData.turniks.forEach(tur => {
-                if (isSakura || tur.isSakuraTree) {
+                if (isSky || tur.isSkyTurnik) {
+                    drawSkyTurnik(tur, scale);
+                } else if (isSakura || tur.isSakuraTree) {
                     drawSakuraTreeTurnik(tur, scale);
                 } else if (isSnow || tur.isBareTree) {
                     drawSnowDryBranchTurnik(tur, scale);
@@ -35551,10 +37146,12 @@
             });
         }
 
-        // Render Ropes / Vines / Dry Hanging Branches / Shrine Lantern Ropes
-        if (currentLevelData.ropes) {
+        // Render Ropes / Vines / Dry Hanging Branches / Shrine Lantern Ropes / Sky Chains
+        if (currentLevelData.ropes && !isCustomIntroCutscene) {
             currentLevelData.ropes.forEach(rope => {
-                if (isSakura || rope.isSakuraRope) {
+                if (isSky || rope.isSkyRope) {
+                    drawSkyRope(rope, scale);
+                } else if (isSakura || rope.isSakuraRope) {
                     drawSakuraRope(rope, scale);
                 } else if (isSnow || rope.isDryHangingBranch) {
                     drawSnowDryHangingBranch(rope, scale);
@@ -35633,14 +37230,23 @@
             drawSnowCave(currentLevelData.cave, scale);
         }
 
-        // Render Cacti (Desert Biome) / Bamboo Spikes (Sakura Biome)
-        if (currentLevelData.cacti) {
+        // Render Cacti (Desert Biome) / Bamboo Spikes (Sakura Biome) / Storm Crystals (Sky Islands)
+        if (currentLevelData.cacti && !isCustomIntroCutscene) {
             currentLevelData.cacti.forEach(cactus => {
-                if (isSakura || cactus.isBambooSpikes) {
+                if (isSky || cactus.isSkyHazard) {
+                    drawSkyHazard(cactus, scale);
+                } else if (isSakura || cactus.isBambooSpikes) {
                     drawSakuraHazard(cactus, scale);
                 } else {
                     drawDesertCactus(cactus, scale);
                 }
+            });
+        }
+
+        // Render Bouncy Trampoline Clouds (Sky Islands / Page 6)
+        if (currentLevelData.bounceClouds && !isCustomIntroCutscene) {
+            currentLevelData.bounceClouds.forEach(cloud => {
+                drawSkyBounceCloud(cloud, scale);
             });
         }
 
@@ -35659,8 +37265,10 @@
         }
 
         // Finish Flag
-        if (currentLevelData.flag) {
-            if (isSakura || currentLevelData.flag.isSakuraFlag) {
+        if (currentLevelData.flag && !isCustomIntroCutscene) {
+            if (isSky || currentLevelData.flag.isSkyFlag) {
+                drawSkyFlag(currentLevelData.flag, scale);
+            } else if (isSakura || currentLevelData.flag.isSakuraFlag) {
                 drawSakuraFlag(currentLevelData.flag, scale);
             } else if (isDesert || currentLevelData.flag.isDesertFlag) {
                 drawDesertFlag(currentLevelData.flag, scale);
@@ -37027,11 +38635,14 @@
 
     // Game loop
     function gameLoop() {
-        const isSakura = currentLevelData.theme === 'sakura' || currentLevelIndex >= 81;
-        const isDesert = !isSakura && (currentLevelData.theme === 'desert' || (currentLevelIndex >= 61 && currentLevelIndex <= 80));
-        const isSnow = !isSakura && !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
-        const isNature = !isSakura && !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
-        if (isSakura) {
+        const isSky = currentLevelData.theme === 'sky' || currentLevelIndex >= 101;
+        const isSakura = !isSky && (currentLevelData.theme === 'sakura' || (currentLevelIndex >= 81 && currentLevelIndex <= 100));
+        const isDesert = !isSky && !isSakura && (currentLevelData.theme === 'desert' || (currentLevelIndex >= 61 && currentLevelIndex <= 80));
+        const isSnow = !isSky && !isSakura && !isDesert && (currentLevelData.theme === 'snow' || (currentLevelIndex >= 41 && currentLevelIndex <= 60));
+        const isNature = !isSky && !isSakura && !isDesert && !isSnow && (currentLevelData.theme === 'nature' || currentLevelIndex >= 21);
+        if (isSky) {
+            updateAmbientSky();
+        } else if (isSakura) {
             updateAmbientSakura();
         } else if (isDesert) {
             updateAmbientSand();
@@ -37047,7 +38658,9 @@
             updateParticles();
             updateCamera();
         } else if (currentState === STATES.CUTSCENE) {
-            if (typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active) {
+            if (typeof cutsceneIntro101 !== 'undefined' && cutsceneIntro101 && cutsceneIntro101.active) {
+                updateCutsceneIntro101();
+            } else if (typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active) {
                 updateCutsceneIntro81();
             } else if (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) {
                 updateCutsceneIntro61();
@@ -37075,7 +38688,8 @@
                 updateCutscene();
             }
             updateParticles();
-            if (!((typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active) ||
+            if (!((typeof cutsceneIntro101 !== 'undefined' && cutsceneIntro101 && cutsceneIntro101.active) ||
+                  (typeof cutsceneIntro81 !== 'undefined' && cutsceneIntro81 && cutsceneIntro81.active) ||
                   (typeof cutsceneIntro61 !== 'undefined' && cutsceneIntro61 && cutsceneIntro61.active) ||
                   (typeof samuraiIntroCutscene !== 'undefined' && samuraiIntroCutscene && samuraiIntroCutscene.active) ||
                   (typeof samuraiDefeatCutscene !== 'undefined' && samuraiDefeatCutscene && samuraiDefeatCutscene.active) ||
@@ -37153,7 +38767,10 @@
         victoryScreen.classList.add('hidden');
 
         const nextLevelNum = currentLevelIndex + 1;
-        if (nextLevelNum > 80) {
+        if (nextLevelNum > 100) {
+            currentSelectPage = 6;
+            generateLevelsGrid();
+        } else if (nextLevelNum > 80) {
             currentSelectPage = 5;
             generateLevelsGrid();
         } else if (nextLevelNum > 60) {
@@ -37208,7 +38825,13 @@
 
         triggerFadeTransition(() => {
             player.reset();
-            if (currentLevelIndex >= 81) {
+            if (currentLevelIndex >= 101) {
+                currentSelectPage = 6;
+                generateLevelsGrid();
+                levelSelectScreen.classList.remove('hidden');
+                levelSelectScreen.classList.add('screen-active');
+                currentState = STATES.LEVEL_SELECT;
+            } else if (currentLevelIndex >= 81) {
                 currentSelectPage = 5;
                 generateLevelsGrid();
                 levelSelectScreen.classList.remove('hidden');
@@ -37275,7 +38898,13 @@
 
             triggerFadeTransition(() => {
                 player.reset();
-                if (currentLevelIndex >= 81) {
+                if (currentLevelIndex >= 101) {
+                currentSelectPage = 6;
+                generateLevelsGrid();
+                levelSelectScreen.classList.remove('hidden');
+                levelSelectScreen.classList.add('screen-active');
+                currentState = STATES.LEVEL_SELECT;
+            } else if (currentLevelIndex >= 81) {
                     currentSelectPage = 5;
                 } else if (currentLevelIndex >= 61) {
                     currentSelectPage = 4;
@@ -37320,7 +38949,13 @@
 
             triggerFadeTransition(() => {
                 player.reset();
-                if (currentLevelIndex >= 81) {
+                if (currentLevelIndex >= 101) {
+                currentSelectPage = 6;
+                generateLevelsGrid();
+                levelSelectScreen.classList.remove('hidden');
+                levelSelectScreen.classList.add('screen-active');
+                currentState = STATES.LEVEL_SELECT;
+            } else if (currentLevelIndex >= 81) {
                     currentSelectPage = 5;
                 } else if (currentLevelIndex >= 61) {
                     currentSelectPage = 4;
@@ -37340,87 +38975,172 @@
     }
 
     // ==========================================
-    // --- ACHIEVEMENTS SYSTEM (10 ACHIEVEMENTS) ---
+    // --- ACHIEVEMENTS SYSTEM (3 GROUPS: ЛОКАЦИИ, УРОВНИ, СМЕРТИ) ---
     // ==========================================
     const ACHIEVEMENTS_STORAGE_KEY = 'parkour_universe_achievements_v1';
+    const DEATH_COUNT_STORAGE_KEY = 'parkour_universe_death_count_v1';
     const ACHIEVEMENTS_CONFIG = [
-        {
-            id: 'ach_start',
-            title: 'Начало',
-            description: 'Пройди 1 уровень',
-            image: 'assets/achievements/ach_start.svg'
-        },
-        {
-            id: 'ach_progress',
-            title: 'Продвижение',
-            description: 'Пройди 25 уровень',
-            image: 'assets/achievements/ach_progress.svg'
-        },
-        {
-            id: 'ach_three_locations',
-            title: '3 Локации',
-            description: 'Пройди 50 уровень',
-            image: 'assets/achievements/ach_three_locations.svg'
-        },
-        {
-            id: 'ach_long_road',
-            title: 'Далёкая дорога',
-            description: 'Пройди 75 уровень',
-            image: 'assets/achievements/ach_long_road.svg'
-        },
-        {
-            id: 'ach_round_number',
-            title: 'Круглое число',
-            description: 'Пройди 100 уровень',
-            image: 'assets/achievements/ach_round_number.svg'
-        },
+        // --- Группа 1: Локации ---
         {
             id: 'ach_locked_in',
+            group: 'locations',
             title: 'Взаперти',
             description: 'Сыграй впервые в 1 локацию',
             image: 'assets/achievements/ach_locked_in.svg'
         },
         {
             id: 'ach_fresh_air',
+            group: 'locations',
             title: 'Свежий глоток воздуха',
             description: 'Сыграй впервые в 2 локацию',
             image: 'assets/achievements/ach_fresh_air.svg'
         },
         {
             id: 'ach_frost',
+            group: 'locations',
             title: 'Мороз',
             description: 'Сыграй впервые в 3 локацию',
             image: 'assets/achievements/ach_frost.svg'
         },
         {
             id: 'ach_drought',
+            group: 'locations',
             title: 'Засуха',
             description: 'Сыграй впервые в 4 локацию',
             image: 'assets/achievements/ach_drought.svg'
         },
         {
             id: 'ach_japan',
+            group: 'locations',
             title: 'Японская атмосфера',
             description: 'Сыграй впервые в 5 локацию',
             image: 'assets/achievements/ach_japan.svg'
+        },
+        {
+            id: 'ach_sky_gates',
+            group: 'locations',
+            title: 'Врата в небеса',
+            description: 'Зайди впервые на локацию Небесные острова',
+            image: 'assets/achievements/ach_sky_gates.svg'
+        },
+
+        // --- Группа 2: Уровни ---
+        {
+            id: 'ach_start',
+            group: 'levels',
+            title: 'Начало',
+            description: 'Пройди 1 уровень',
+            image: 'assets/achievements/ach_start.svg'
+        },
+        {
+            id: 'ach_progress',
+            group: 'levels',
+            title: 'Продвижение',
+            description: 'Пройди 25 уровень',
+            image: 'assets/achievements/ach_progress.svg'
+        },
+        {
+            id: 'ach_three_locations',
+            group: 'levels',
+            title: '3 Локации',
+            description: 'Пройди 50 уровень',
+            image: 'assets/achievements/ach_three_locations.svg'
+        },
+        {
+            id: 'ach_long_road',
+            group: 'levels',
+            title: 'Далёкая дорога',
+            description: 'Пройди 75 уровень',
+            image: 'assets/achievements/ach_long_road.svg'
+        },
+        {
+            id: 'ach_round_number',
+            group: 'levels',
+            title: 'Круглое число',
+            description: 'Пройди 100 уровень',
+            image: 'assets/achievements/ach_round_number.svg'
+        },
+
+        // --- Группа 3: Смерти ---
+        {
+            id: 'ach_death_1',
+            group: 'deaths',
+            deathTarget: 1,
+            title: 'Ничего страшного!',
+            description: 'Погибни 1 раз',
+            image: 'assets/achievements/ach_death_1.svg'
+        },
+        {
+            id: 'ach_death_10',
+            group: 'deaths',
+            deathTarget: 10,
+            title: 'Больно',
+            description: 'Погибни 10 раз',
+            image: 'assets/achievements/ach_death_10.svg'
+        },
+        {
+            id: 'ach_death_25',
+            group: 'deaths',
+            deathTarget: 25,
+            title: 'Толпа мертвецов',
+            description: 'Погибни 25 раз',
+            image: 'assets/achievements/ach_death_25.svg'
+        },
+        {
+            id: 'ach_death_50',
+            group: 'deaths',
+            deathTarget: 50,
+            title: 'Страшная картина',
+            description: 'Погибни 50 раз',
+            image: 'assets/achievements/ach_death_50.svg'
+        },
+        {
+            id: 'ach_death_75',
+            group: 'deaths',
+            deathTarget: 75,
+            title: 'Полу-псих',
+            description: 'Погибни 75 раз',
+            image: 'assets/achievements/ach_death_75.svg'
+        },
+        {
+            id: 'ach_death_100',
+            group: 'deaths',
+            deathTarget: 100,
+            title: 'Гора черепов',
+            description: 'Погибни 100 раз',
+            image: 'assets/achievements/ach_death_100.svg'
         }
     ];
 
     const unlockedAchievements = new Set();
+    let playerDeathCount = 0;
+    let activeAchievementGroup = 'locations'; // 'locations' | 'levels' | 'deaths'
     const activeAchievementToasts = [];
     const deferredAchievementToasts = [];
+
+    const achievementsTabs = document.getElementById('achievementsTabs');
+    const achievementsGroupMeta = document.getElementById('achievementsGroupMeta');
+    const achTabCountLocations = document.getElementById('achTabCountLocations');
+    const achTabCountLevels = document.getElementById('achTabCountLevels');
+    const achTabCountDeaths = document.getElementById('achTabCountDeaths');
 
     function loadAchievements() {
         try {
             const raw = localStorage.getItem(ACHIEVEMENTS_STORAGE_KEY);
-            if (!raw) return;
-            const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed)) {
-                parsed.forEach(id => {
-                    if (ACHIEVEMENTS_CONFIG.some(a => a.id === id)) {
-                        unlockedAchievements.add(id);
-                    }
-                });
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) {
+                    parsed.forEach(id => {
+                        if (ACHIEVEMENTS_CONFIG.some(a => a.id === id)) {
+                            unlockedAchievements.add(id);
+                        }
+                    });
+                }
+            }
+            const rawDeaths = localStorage.getItem(DEATH_COUNT_STORAGE_KEY);
+            if (rawDeaths) {
+                const n = parseInt(rawDeaths, 10);
+                if (!Number.isNaN(n) && n >= 0) playerDeathCount = n;
             }
         } catch (e) {
             // Ignore storage access errors in restricted modes
@@ -37430,6 +39150,7 @@
     function saveAchievements() {
         try {
             localStorage.setItem(ACHIEVEMENTS_STORAGE_KEY, JSON.stringify([...unlockedAchievements]));
+            localStorage.setItem(DEATH_COUNT_STORAGE_KEY, String(playerDeathCount));
         } catch (e) {
             // Ignore storage access errors
         }
@@ -37444,11 +39165,21 @@
         if (achievementsBarFill) {
             achievementsBarFill.style.width = `${Math.round((unlockedCount / totalCount) * 100)}%`;
         }
+
+        const countGroup = (grp) => {
+            const list = ACHIEVEMENTS_CONFIG.filter(a => a.group === grp);
+            const done = list.filter(a => unlockedAchievements.has(a.id)).length;
+            return `${done}/${list.length}`;
+        };
+        if (achTabCountLocations) achTabCountLocations.textContent = countGroup('locations');
+        if (achTabCountLevels) achTabCountLevels.textContent = countGroup('levels');
+        if (achTabCountDeaths) achTabCountDeaths.textContent = countGroup('deaths');
+
         if (achievementsSubtext) {
             if (unlockedCount === totalCount) {
                 achievementsSubtext.textContent = 'Невероятно! Все достижения Вселенной паркура собраны!';
             } else if (unlockedCount === 0) {
-                achievementsSubtext.textContent = 'Открывай локации и проходи ключевые уровни, чтобы собрать все награды!';
+                achievementsSubtext.textContent = 'Открывай локации, проходи уровни и собирай достижения по группам!';
             } else {
                 achievementsSubtext.textContent = `Собрано ${unlockedCount} из ${totalCount} достижений. Продолжай покорять новые локации!`;
             }
@@ -37459,7 +39190,27 @@
         if (!achievementsGrid) return;
         achievementsGrid.innerHTML = '';
 
-        ACHIEVEMENTS_CONFIG.forEach(ach => {
+        // Update active tab states
+        if (achievementsTabs) {
+            achievementsTabs.querySelectorAll('.ach-tab').forEach(btn => {
+                const isActive = btn.dataset.group === activeAchievementGroup;
+                btn.classList.toggle('active', isActive);
+                btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
+        }
+
+        // Show total death counter banner when viewing the "Смерти" group
+        if (achievementsGroupMeta) {
+            if (activeAchievementGroup === 'deaths') {
+                achievementsGroupMeta.classList.remove('hidden');
+                achievementsGroupMeta.innerHTML = `<span>💀 Всего поражений: <strong>${playerDeathCount}</strong></span><span>Испытания стойкости</span>`;
+            } else {
+                achievementsGroupMeta.classList.add('hidden');
+            }
+        }
+
+        const filtered = ACHIEVEMENTS_CONFIG.filter(ach => ach.group === activeAchievementGroup);
+        filtered.forEach(ach => {
             const isUnlocked = unlockedAchievements.has(ach.id);
             const card = document.createElement('article');
             card.className = `achievement-card ${isUnlocked ? 'unlocked' : 'locked'}`;
@@ -37497,9 +39248,6 @@
             if (isUnlocked) {
                 statusEl.className = 'achievement-status done';
                 statusEl.textContent = 'Получено ✓';
-            } else if (ach.currentlyImpossible) {
-                statusEl.className = 'achievement-status impossible';
-                statusEl.textContent = 'Пока невозможно';
             } else {
                 statusEl.className = 'achievement-status pending';
                 statusEl.textContent = 'Закрыто';
@@ -37515,9 +39263,27 @@
             info.appendChild(nameRow);
             info.appendChild(descEl);
 
+            if (ach.deathTarget && !isUnlocked) {
+                const progEl = document.createElement('div');
+                progEl.className = 'achievement-death-progress';
+                progEl.textContent = `Прогресс: ${Math.min(playerDeathCount, ach.deathTarget)} / ${ach.deathTarget}`;
+                info.appendChild(progEl);
+            }
+
             card.appendChild(iconWrap);
             card.appendChild(info);
             achievementsGrid.appendChild(card);
+        });
+    }
+
+    if (achievementsTabs) {
+        achievementsTabs.querySelectorAll('.ach-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                initAudio();
+                activeAchievementGroup = btn.dataset.group || 'locations';
+                playSound('jump');
+                renderAchievementsGrid();
+            });
         });
     }
 
@@ -37699,7 +39465,28 @@
             unlockAchievement('ach_drought');
         } else if (levelNum >= 81 && levelNum <= 100) {
             unlockAchievement('ach_japan');
+        } else if (levelNum >= 101 && levelNum <= 120) {
+            unlockAchievement('ach_sky_gates');
         }
+    }
+
+    function recordPlayerDeath() {
+        playerDeathCount++;
+        saveAchievements();
+        checkDeathAchievements();
+        updateAchievementCounters();
+        if (achievementsModal && achievementsModal.open && activeAchievementGroup === 'deaths') {
+            renderAchievementsGrid();
+        }
+    }
+
+    function checkDeathAchievements() {
+        if (playerDeathCount >= 1) unlockAchievement('ach_death_1');
+        if (playerDeathCount >= 10) unlockAchievement('ach_death_10');
+        if (playerDeathCount >= 25) unlockAchievement('ach_death_25');
+        if (playerDeathCount >= 50) unlockAchievement('ach_death_50');
+        if (playerDeathCount >= 75) unlockAchievement('ach_death_75');
+        if (playerDeathCount >= 100) unlockAchievement('ach_death_100');
     }
 
     function checkLevelCompleteAchievements(levelNum) {

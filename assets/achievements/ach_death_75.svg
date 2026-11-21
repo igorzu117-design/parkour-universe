@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3b0764"/>
+      <stop offset="55%" stop-color="#86198f"/>
+      <stop offset="100%" stop-color="#450a0a"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="120" height="120" rx="26" fill="url(#bg)" stroke="#e879f9" stroke-width="5"/>
+  <!-- Crackling madness lightning -->
+  <polyline points="20,30 36,42 28,54 44,64" fill="none" stroke="#fde047" stroke-width="3" stroke-linecap="round"/>
+  <polyline points="108,28 92,40 100,52 84,62" fill="none" stroke="#fde047" stroke-width="3" stroke-linecap="round"/>
+  <!-- Spiral Manic Eyes & Wide Grin -->
+  <circle cx="46" cy="54" r="15" fill="#090d16" stroke="#f0abfc" stroke-width="3"/>
+  <circle cx="46" cy="54" r="8" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+  <circle cx="46" cy="54" r="3" fill="#fef08a"/>
+  <circle cx="82" cy="54" r="17" fill="#090d16" stroke="#f0abfc" stroke-width="3"/>
+  <circle cx="82" cy="54" r="9.5" fill="none" stroke="#e879f9" stroke-width="2.5"/>
+  <circle cx="82" cy="54" r="3.5" fill="#fef08a"/>
+  <!-- Jagged Grin -->
+  <path d="M36 80 Q64 98 92 80" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round"/>
+  <polyline points="46,84 52,92 60,86 68,93 76,86 82,91" fill="none" stroke="#f0abfc" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- Badge "75" -->
+  <circle cx="96" cy="96" r="19" fill="#090d16" stroke="#e879f9" stroke-width="3.5"/>
+  <text x="96" y="103" text-anchor="middle" font-size="19" font-family="Arial Black, sans-serif" font-weight="900" fill="#f5d0fe">75</text>
+</svg>
+

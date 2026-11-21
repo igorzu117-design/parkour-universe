@@ -31,7 +31,7 @@
                     <button type="button" id="btnAchievements" class="btn btn-achievements">
                         <span class="btn-icon">🏆</span>
                         <span class="btn-text">Достижения</span>
-                        <span class="ach-btn-badge" id="menuAchCount">0 / 10</span>
+                        <span class="ach-btn-badge" id="menuAchCount">0 / 17</span>
                     </button>
                 </div>
                 <div class="controls-preview">
@@ -72,7 +72,7 @@
                     <div class="level-header-actions">
                         <button type="button" id="btnLevelAchievements" class="btn-ach-icon" title="Достижения" aria-label="Открыть достижения">
                             <span>🏆</span>
-                            <span id="levelAchCount">0/10</span>
+                            <span id="levelAchCount">0/17</span>
                         </button>
                         <button id="btnBackToMenu" class="btn-close" aria-label="Вернуться в меню">✕</button>
                     </div>
@@ -104,6 +104,7 @@
                     <span class="indicator-dot" id="dotPage3" title="3 Страница: Вечный холод"></span>
                     <span class="indicator-dot" id="dotPage4" title="4 Страница: Исохшая земля"></span>
                     <span class="indicator-dot" id="dotPage5" title="5 Страница: Цветение сакуры"></span>
+                    <span class="indicator-dot" id="dotPage6" title="6 Страница: Небесные острова"></span>
                 </div>
             </div>
         </div>
@@ -301,7 +302,7 @@
                 <div class="achievements-header">
                     <div class="achievements-title-group">
                         <h2 id="achievementsTitle" class="achievements-title">🏆 Достижения</h2>
-                        <span class="achievements-progress-badge" id="achievementsProgressBadge">0 / 10</span>
+                        <span class="achievements-progress-badge" id="achievementsProgressBadge">0 / 17</span>
                     </div>
                     <form method="dialog">
                         <button type="submit" value="close" class="btn-close" aria-label="Закрыть достижения" autofocus>✕</button>
@@ -313,8 +314,23 @@
                     </div>
                     <p class="achievements-subtext" id="achievementsSubtext">Открывай локации и проходи ключевые уровни, чтобы собрать все награды!</p>
                 </div>
-                <div class="achievements-grid" id="achievementsGrid">
-                    <!-- 10 Achievement cards populated via JS -->
+                <div class="achievements-tabs" id="achievementsTabs" role="tablist" aria-label="Группы достижений">
+                    <button type="button" class="ach-tab active" role="tab" aria-selected="true" data-group="locations">
+                        <span>🗺️ Локации</span>
+                        <span class="ach-tab-count" id="achTabCountLocations">0/6</span>
+                    </button>
+                    <button type="button" class="ach-tab" role="tab" aria-selected="false" data-group="levels">
+                        <span>🏆 Уровни</span>
+                        <span class="ach-tab-count" id="achTabCountLevels">0/5</span>
+                    </button>
+                    <button type="button" class="ach-tab" role="tab" aria-selected="false" data-group="deaths">
+                        <span>💀 Смерти</span>
+                        <span class="ach-tab-count" id="achTabCountDeaths">0/6</span>
+                    </button>
+                </div>
+                <div class="achievements-group-meta hidden" id="achievementsGroupMeta"></div>
+                <div class="achievements-grid" id="achievementsGrid" role="tabpanel">
+                    <!-- Achievement cards populated via JS -->
                 </div>
             </div>
         </dialog>

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="60%" stop-color="#312e81"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="120" height="120" rx="26" fill="url(#bg)" stroke="#818cf8" stroke-width="5"/>
+  <!-- Eerie ghost crowd silhouettes -->
+  <g fill="#6366f1" opacity="0.55">
+    <circle cx="32" cy="54" r="11"/>
+    <path d="M18 106 V70 A14 14 0 0 1 46 70 V106 Z"/>
+    <circle cx="96" cy="54" r="11"/>
+    <path d="M82 106 V70 A14 14 0 0 1 110 70 V106 Z"/>
+  </g>
+  <!-- Center undead skull-silhouette -->
+  <circle cx="64" cy="48" r="16" fill="#e2e8f0" stroke="#475569" stroke-width="2.5"/>
+  <path d="M44 106 V72 A20 20 0 0 1 84 72 V106 Z" fill="#1e293b" stroke="#94a3b8" stroke-width="2.5"/>
+  <circle cx="58" cy="46" r="3.6" fill="#22d3ee"/>
+  <circle cx="70" cy="46" r="3.6" fill="#22d3ee"/>
+  <circle cx="29" cy="53" r="2.2" fill="#38bdf8"/>
+  <circle cx="35" cy="53" r="2.2" fill="#38bdf8"/>
+  <circle cx="93" cy="53" r="2.2" fill="#38bdf8"/>
+  <circle cx="99" cy="53" r="2.2" fill="#38bdf8"/>
+  <!-- Badge "25" -->
+  <circle cx="96" cy="96" r="19" fill="#0f172a" stroke="#38bdf8" stroke-width="3.5"/>
+  <text x="96" y="103" text-anchor="middle" font-size="19" font-family="Arial Black, sans-serif" font-weight="900" fill="#bae6fd">25</text>
+</svg>
+
